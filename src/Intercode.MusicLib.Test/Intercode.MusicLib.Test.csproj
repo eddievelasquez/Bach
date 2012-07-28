@@ -52,7 +52,6 @@
   <ItemGroup>
     <Compile Include="NoteTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ToneTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intercode.MusicLib\Intercode.MusicLib.csproj">
