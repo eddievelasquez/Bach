@@ -1,0 +1,23 @@
+syntax: glob
+*.dll
+*.exp
+*.ilk
+*.pdb
+*.lib
+*.ncb
+*.opt
+*.plg
+*.user
+*.suo
+*.sdf
+*.opensdf
+include\
+lib\
+Win32\
+x64\
+Debug*\
+*Debug\
+obj\
+bin\
+output\
+TestResults\
