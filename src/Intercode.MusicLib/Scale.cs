@@ -10,6 +10,7 @@
     #region Constants
 
     public static readonly Scale Major = new Scale("Major", 2, 2, 1, 2, 2, 2, 1);
+    public static readonly Scale NaturalMinor = new Scale("Natural Minor", 2, 1, 2, 2, 1, 2, 2);
 
     #endregion
 
@@ -52,10 +53,16 @@
         Debug.Assert(current != null, "current != null");
         yield return current.Value;
 
+        Note? previous = current;
+
         index %= Intervals.Length;
         int interval = Intervals[index];
-        if( !current.Value.TryNext(interval, false, out current) )
+        if( !current.Value.TryNext(interval, out current) )
           break;
+
+        //if(current.ToString()[0] == previous.ToString()[0])
+        if ( current.Value.ToneWithoutAccidental == previous.Value.ToneWithoutAccidental)
+          current = current.Value.AsFlat();
 
         ++index;
       }

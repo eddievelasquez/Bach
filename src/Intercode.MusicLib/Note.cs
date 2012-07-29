@@ -324,7 +324,7 @@
 
     #region Internal Methods
 
-    internal bool TryNext( int interval, bool flat, out Note? note )
+    internal bool TryNext( int interval, out Note? note )
     {
       if( interval == 0 )
       {
@@ -342,17 +342,14 @@
       int octave = (index / INTERVAL_COUNT) + 1;
       var tone = (int)s_tones[index % INTERVAL_COUNT];
 
-      if( flat && s_accidentals[tone] == Accidental.Sharp )
-        tone = ((tone + 1) % TONE_COUNT);
-
       note = new Note((Tone)tone, octave);
       return true;
     }
 
-    internal Note Next( int interval, bool flat )
+    internal Note Next( int interval )
     {
       Note? result;
-      if( !TryNext(interval, flat, out result) )
+      if( !TryNext(interval, out result) )
       {
         throw new ArgumentOutOfRangeException("interval",
                                               String.Format("Notes higher than G#{0} are not supported", MAX_OCTAVE));
@@ -362,10 +359,10 @@
       return result.Value;
     }
 
-    internal Note Previous( int interval, bool flat )
+    internal Note Previous( int interval )
     {
       Note? result;
-      if( !TryNext(-interval, flat, out result) )
+      if( !TryNext(-interval, out result) )
         throw new ArgumentOutOfRangeException("interval",
                                               String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
 

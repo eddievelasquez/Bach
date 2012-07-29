@@ -15,12 +15,13 @@
     }
 
     [ TestMethod ]
-    public void MajorGetNotesTest()
+    public void GetNotesTest()
     {
-      TestScale(Scale.Major, Note.C(1), Note.C(1), Note.D(1), Note.E(1), Note.F(1), Note.G(1), Note.A(2), Note.B(2), Note.C(2));
+      TestScale(Note.C(1), Scale.Major, Note.C(1), Note.D(1), Note.E(1), Note.F(1), Note.G(1), Note.A(2), Note.B(2), Note.C(2));
+      TestScale(Note.C(1), Scale.NaturalMinor, Note.C(1), Note.D(1), Note.EFlat(1), Note.F(1), Note.G(1), Note.AFlat(1), Note.BFlat(2), Note.C(2));
     }
 
-    private static void TestScale( Scale scale, Note root, params Note[] expectedNotes )
+    private static void TestScale( Note root, Scale scale, params Note[] expectedNotes )
     {
       Note[] notes = scale.GetNotes(root).Take(expectedNotes.Length).ToArray();
       Assert.AreEqual(expectedNotes.Length, notes.Length);
