@@ -46,23 +46,21 @@
     public IEnumerable<Note> GetNotes( Note root )
     {
       int index = 0;
-      Note? current = root;
+      Note current = root;
 
       while( true )
       {
-        Debug.Assert(current != null, "current != null");
-        yield return current.Value;
+        yield return current;
 
-        Note? previous = current;
+        Note previous = current;
 
         index %= Intervals.Length;
         int interval = Intervals[index];
-        if( !current.Value.TryNext(interval, out current) )
+        if( !current.TryNext(interval, out current) )
           break;
 
-        //if(current.ToString()[0] == previous.ToString()[0])
-        if ( current.Value.ToneWithoutAccidental == previous.Value.ToneWithoutAccidental)
-          current = current.Value.AsFlat();
+        if ( current.ToneWithoutAccidental == previous.ToneWithoutAccidental)
+          current = current.AsFlat();
 
         ++index;
       }

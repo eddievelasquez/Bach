@@ -1,12 +1,11 @@
 ﻿namespace Intercode.MusicLib
 {
   using System;
-  using System.Diagnostics;
   using System.Diagnostics.Contracts;
 
   public struct Note: IEquatable<Note>, IComparable<Note>
   {
-    #region Constants
+    #region Private Constants
 
     private const int INTERVAL_COUNT = 12;
     private const int TONE_COUNT = Tone.AFlat - Tone.A + 1;
@@ -108,7 +107,8 @@
     #endregion
 
     #region Data Members
-
+    
+    public static readonly Note Invalid = new Note((Tone)(-1), -1);
     private readonly byte _tone;
     private readonly byte _octave;
 
@@ -116,13 +116,8 @@
 
     #region Construction
 
-    internal Note( Tone tone, int octave )
+    private Note( Tone tone, int octave )
     {
-      Contract.Requires<ArgumentOutOfRangeException>(tone >= Tone.A, "tone");
-      Contract.Requires<ArgumentOutOfRangeException>(tone <= Tone.AFlat, "tone");
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
       _tone = (byte)tone;
       _octave = (byte)octave;
     }
@@ -324,7 +319,7 @@
 
     #region Internal Methods
 
-    internal bool TryNext( int interval, out Note? note )
+    internal bool TryNext( int interval, out Note note )
     {
       if( interval == 0 )
       {
@@ -335,7 +330,7 @@
       int index = Index + interval;
       if( index < MIN_INDEX || index > MAX_INDEX )
       {
-        note = null;
+        note = Invalid;
         return false;
       }
 
@@ -348,26 +343,24 @@
 
     internal Note Next( int interval )
     {
-      Note? result;
+      Note result;
       if( !TryNext(interval, out result) )
       {
         throw new ArgumentOutOfRangeException("interval",
                                               String.Format("Notes higher than G#{0} are not supported", MAX_OCTAVE));
       }
 
-      Debug.Assert(result != null, "result != null");
-      return result.Value;
+      return result;
     }
 
     internal Note Previous( int interval )
     {
-      Note? result;
+      Note result;
       if( !TryNext(-interval, out result) )
         throw new ArgumentOutOfRangeException("interval",
                                               String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
 
-      Debug.Assert(result != null, "result != null");
-      return result.Value;
+      return result;
     }
 
     #endregion
