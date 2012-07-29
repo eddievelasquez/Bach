@@ -1,6 +1,7 @@
 ﻿namespace Intercode.MusicLib
 {
   using System;
+  using System.Diagnostics;
   using System.Diagnostics.Contracts;
 
   public struct Note: IEquatable<Note>, IComparable<Note>
@@ -297,33 +298,55 @@
 
     #region Internal Methods
 
-    internal Note Next( int interval, bool flat )
+    internal bool TryNext(int interval, bool flat, out Note? note)
     {
       if( interval == 0 )
-        return this;
+      {
+        note = this;
+        return true;
+      }
 
       int index = Index + interval;
-      if( index < MIN_INDEX )
-        throw new ArgumentOutOfRangeException("interval",
-                                              String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
-
-      if( index > MAX_INDEX )
-        throw new ArgumentOutOfRangeException("interval",
-                                              String.Format("Notes higher than G#{0} are not supported", MAX_OCTAVE));
-
+      if( index < MIN_INDEX || index > MAX_INDEX)
+      {
+        note = null;
+        return false;
+      }
+     
       int octave = (index / INTERVAL_COUNT) + 1;
       var tone = (int)s_tones[index % INTERVAL_COUNT];
 
       if( flat && s_accidentals[tone] == Accidental.Sharp )
         tone = ((tone + 1) % TONE_COUNT);
 
-      var note = new Note((Tone)tone, octave);
-      return note;
+      note = new Note((Tone)tone, octave);
+      return true;
+    }
+
+    internal Note Next( int interval, bool flat )
+    {
+      Note? result;
+      if (!TryNext(interval, flat, out result))
+      {
+        throw new ArgumentOutOfRangeException("interval",
+                                              String.Format("Notes higher than G#{0} are not supported", MAX_OCTAVE));
+      }
+
+      Debug.Assert(result != null, "result != null");
+      return result.Value;
     }
 
     internal Note Previous( int interval, bool flat )
     {
-      return Next(-interval, flat);
+      Note? result;
+      if (!TryNext(-interval, flat, out result))
+      {
+        throw new ArgumentOutOfRangeException("interval",
+                                              String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
+      }
+
+      Debug.Assert(result != null, "result != null");
+      return result.Value;
     }
 
     #endregion
