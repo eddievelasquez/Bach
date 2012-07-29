@@ -16,7 +16,7 @@
     [ TestMethod ]
     public void MajorGetNotesTest()
     {
-      TestScale(Scale.Major, Note.C1, Note.C1, Note.D1, Note.E1, Note.F1, Note.G1, Note.A2, Note.B2);
+      TestScale(Scale.Major, Note.C(1), Note.C(1), Note.D(1), Note.E(1), Note.F(1), Note.G(1), Note.A(2), Note.B(2));
     }
 
     private static void TestScale( Scale scale, Note root, params Note[] expectedNotes )
