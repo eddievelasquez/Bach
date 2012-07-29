@@ -8,14 +8,11 @@
     #region Constants
 
     private const int INTERVAL_COUNT = 12;
+    private const int TONE_COUNT = Tone.AFlat - Tone.A + 1;
     private const int MIN_OCTAVE = 1;
     private const int MAX_OCTAVE = 8;
-
-    private static readonly string[] s_sharpRepresentations = new[]
-    { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
-
-    private static readonly string[] s_flatRepresentations = new[]
-    { "A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab" };
+    private const int MIN_INDEX = 0;
+    private const int MAX_INDEX = (MAX_OCTAVE * INTERVAL_COUNT) - 1;
 
     private static readonly Accidental[] s_accidentals = new[]
     {
@@ -35,10 +32,10 @@
       Accidental.Flat, // Gb
       Accidental.None, // G
       Accidental.Sharp, // G#
-      Accidental.Flat, // Ab
+      Accidental.Flat // Ab
     };
 
-    private static readonly int[] s_indexes = new[]
+    private static readonly int[] s_intervals = new[]
     {
       0, // A
       1, // A#
@@ -56,7 +53,13 @@
       9, // Gb
       10, // G
       11, // G#
-      11, // Ab
+      11 // Ab
+    };
+
+    private static readonly Tone[] s_tones = new[]
+    {
+      Tone.A, Tone.ASharp, Tone.B, Tone.C, Tone.CSharp, Tone.D, Tone.DSharp, Tone.E, Tone.F, Tone.FSharp, Tone.G,
+      Tone.GSharp
     };
 
     private static readonly string[] s_representations = new[]
@@ -77,37 +80,29 @@
       "Gb", // Gb
       "G", // G
       "G#", // G#
-      "Ab", // Ab
+      "Ab" // Ab
     };
 
     #endregion
 
     #region Data Members
 
-    private readonly Accidental _accidental;
-    private readonly byte _index;
+    private readonly byte _tone;
+    private readonly byte _octave;
 
     #endregion
 
     #region Construction
 
-    internal Note( Tone tone, Accidental accidental, int octave )
+    internal Note( Tone tone, int octave )
     {
       Contract.Requires<ArgumentOutOfRangeException>(tone >= Tone.A, "tone");
       Contract.Requires<ArgumentOutOfRangeException>(tone <= Tone.AFlat, "tone");
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.None, "accidental");
-      Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.Flat, "accidental");
 
-      _index = (byte)(((octave - 1) * INTERVAL_COUNT) + tone);
-      _accidental = accidental;
-    }
-
-    [ Obsolete ]
-    private Note( byte index, Accidental accidental )
-      : this((Tone)(index % INTERVAL_COUNT), accidental, (index / INTERVAL_COUNT) + 1)
-    {
+      _tone = (byte)tone;
+      _octave = (byte)octave;
     }
 
     #endregion
@@ -119,7 +114,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.A, Accidental.None, octave);
+      return new Note(Tone.A, octave);
     }
 
     public static Note ASharp( int octave )
@@ -127,7 +122,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.ASharp, Accidental.Sharp, octave);
+      return new Note(Tone.ASharp, octave);
     }
 
     public static Note BFlat( int octave )
@@ -135,7 +130,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.BFlat, Accidental.Flat, octave);
+      return new Note(Tone.BFlat, octave);
     }
 
     public static Note B( int octave )
@@ -143,7 +138,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.B, Accidental.None, octave);
+      return new Note(Tone.B, octave);
     }
 
     public static Note C( int octave )
@@ -151,7 +146,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.C, Accidental.None, octave);
+      return new Note(Tone.C, octave);
     }
 
     public static Note CSharp( int octave )
@@ -159,7 +154,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.CSharp, Accidental.Sharp, octave);
+      return new Note(Tone.CSharp, octave);
     }
 
     public static Note DFlat( int octave )
@@ -167,7 +162,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.DFlat, Accidental.Flat, octave);
+      return new Note(Tone.DFlat, octave);
     }
 
     public static Note D( int octave )
@@ -175,7 +170,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.D, Accidental.None, octave);
+      return new Note(Tone.D, octave);
     }
 
     public static Note DSharp( int octave )
@@ -183,7 +178,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.DSharp, Accidental.Sharp, octave);
+      return new Note(Tone.DSharp, octave);
     }
 
     public static Note EFlat( int octave )
@@ -191,7 +186,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.EFlat, Accidental.Flat, octave);
+      return new Note(Tone.EFlat, octave);
     }
 
     public static Note E( int octave )
@@ -199,7 +194,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.E, Accidental.None, octave);
+      return new Note(Tone.E, octave);
     }
 
     public static Note F( int octave )
@@ -207,7 +202,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.F, Accidental.None, octave);
+      return new Note(Tone.F, octave);
     }
 
     public static Note FSharp( int octave )
@@ -215,7 +210,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.FSharp, Accidental.Sharp, octave);
+      return new Note(Tone.FSharp, octave);
     }
 
     public static Note GFlat( int octave )
@@ -223,7 +218,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.GFlat, Accidental.Flat, octave);
+      return new Note(Tone.GFlat, octave);
     }
 
     public static Note G( int octave )
@@ -231,7 +226,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.G, Accidental.None, octave);
+      return new Note(Tone.G, octave);
     }
 
     public static Note GSharp( int octave )
@@ -239,7 +234,7 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.GSharp, Accidental.Sharp, octave);
+      return new Note(Tone.GSharp, octave);
     }
 
     public static Note AFlat( int octave )
@@ -247,31 +242,31 @@
       Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
       Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-      return new Note(Tone.AFlat, Accidental.Flat, octave);
+      return new Note(Tone.AFlat, octave);
     }
 
     #endregion
 
     #region Properties
 
-    private byte Index
+    private int Index
     {
-      get { return _index; }
+      get { return ((Octave - 1) * INTERVAL_COUNT) + s_intervals[_tone]; }
     }
 
     public Int32 Octave
     {
-      get { return (Index / INTERVAL_COUNT) + 1; }
+      get { return _octave; }
     }
 
     public Tone Tone
     {
-      get { return (Tone)(Index % INTERVAL_COUNT); }
+      get { return (Tone)_tone; }
     }
 
     public Accidental Accidental
     {
-      get { return _accidental; }
+      get { return s_accidentals[_tone]; }
     }
 
     #endregion
@@ -280,19 +275,21 @@
 
     public Note AsSharp()
     {
-      if( Accidental == Accidental.None )
+      if( Accidental != Accidental.Flat )
         return this;
 
-      var note = new Note(Tone, Accidental.Sharp, Octave);
+      var tone = (Tone)((int)(Tone - 1) % TONE_COUNT);
+      var note = new Note(tone, Octave);
       return note;
     }
 
     public Note AsFlat()
     {
-      if( Accidental == Accidental.None )
+      if( Accidental != Accidental.Sharp )
         return this;
 
-      var note = new Note(Tone, Accidental.Flat, Octave);
+      var tone = (Tone)((int)(Tone + 1) % TONE_COUNT);
+      var note = new Note(tone, Octave);
       return note;
     }
 
@@ -302,39 +299,31 @@
 
     internal Note Next( int interval, bool flat )
     {
-      Contract.Requires<ArgumentOutOfRangeException>(interval >= 0, "interval");
-
       if( interval == 0 )
         return this;
 
-      int octave = CalcOctave(interval);
-      if( octave > MAX_OCTAVE )
+      int index = Index + interval;
+      if( index < MIN_INDEX )
+        throw new ArgumentOutOfRangeException("interval",
+                                              String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
+
+      if( index > MAX_INDEX )
         throw new ArgumentOutOfRangeException("interval",
                                               String.Format("Notes higher than G#{0} are not supported", MAX_OCTAVE));
 
-      int newIndex = Index + interval;
+      int octave = (index / INTERVAL_COUNT) + 1;
+      var tone = (int)s_tones[index % INTERVAL_COUNT];
 
-      var newAccidental = CalcAccidental(newIndex, flat);
-      var note = new Note((byte)newIndex, newAccidental);
+      if( flat && s_accidentals[tone] == Accidental.Sharp )
+        tone = ((tone + 1) % TONE_COUNT);
+
+      var note = new Note((Tone)tone, octave);
       return note;
     }
 
     internal Note Previous( int interval, bool flat )
     {
-      Contract.Requires<ArgumentOutOfRangeException>(interval >= 0, "interval");
-
-      if( interval == 0 )
-        return this;
-
-      int octave = CalcOctave(interval);
-      if( octave < MIN_OCTAVE )
-        throw new ArgumentOutOfRangeException("interval",
-                                              String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
-
-      int newIndex = Index - interval;
-      var newAccidental = CalcAccidental(newIndex, flat);
-      var note = new Note((byte)newIndex, newAccidental);
-      return note;
+      return Next(-interval, flat);
     }
 
     #endregion
@@ -365,11 +354,7 @@
 
     public override string ToString()
     {
-      int pos = Index % INTERVAL_COUNT;
-      if( Accidental == Accidental.Flat )
-        return s_flatRepresentations[pos] + Octave;
-
-      return s_sharpRepresentations[pos] + Octave;
+      return s_representations[(int)Tone] + Octave;
     }
 
     #endregion
@@ -393,26 +378,6 @@
     public static bool operator !=( Note left, Note right )
     {
       return !left.Equals(right);
-    }
-
-    #endregion
-
-    #region Implementation
-
-    private static int CalcOctave( int index )
-    {
-      int octave = (index / INTERVAL_COUNT) + 1;
-      return octave;
-    }
-
-    private static Accidental CalcAccidental( int index, bool flat )
-    {
-      var newAccidental = Accidental.None;
-      int pos = index % INTERVAL_COUNT;
-      if( s_sharpRepresentations[pos].Length > 1 )
-        newAccidental = flat ? Accidental.Flat : Accidental.Sharp;
-
-      return newAccidental;
     }
 
     #endregion

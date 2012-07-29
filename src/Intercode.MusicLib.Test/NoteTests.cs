@@ -1,5 +1,6 @@
 ﻿namespace Intercode.MusicLib.Test
 {
+  using System;
   using Microsoft.VisualStudio.TestTools.UnitTesting;
 
   /// <summary>
@@ -8,6 +9,121 @@
   [ TestClass ]
   public class NoteTests
   {
+    [ TestMethod ]
+    public void EqualsContractTest()
+    {
+      object x = Note.AFlat(1);
+      object y = Note.GSharp(1);
+      object z = Note.AFlat(1);
+
+      Assert.IsTrue(x.Equals(x)); // Reflexive
+      Assert.IsTrue(x.Equals(y)); // Symetric
+      Assert.IsTrue(y.Equals(x));
+      Assert.IsTrue(y.Equals(z)); // Transitive
+      Assert.IsTrue(x.Equals(z));
+      Assert.IsFalse(x.Equals(null)); // Never equal to null
+    }
+
+    [ TestMethod ]
+    public void TypeSafeEqualsContractTest()
+    {
+      var x = Note.AFlat(1);
+      var y = Note.GSharp(1);
+      var z = Note.AFlat(1);
+
+      Assert.IsTrue(x.Equals(x)); // Reflexive
+      Assert.IsTrue(x.Equals(y)); // Symetric
+      Assert.IsTrue(y.Equals(x));
+      Assert.IsTrue(y.Equals(z)); // Transitive
+      Assert.IsTrue(x.Equals(z));
+      Assert.IsFalse(x.Equals(null)); // Never equal to null
+    }
+
+    [ TestMethod ]
+    public void EqualsFailsWithDifferentTypeTest()
+    {
+      object actual = Note.A(1);
+      Assert.IsFalse(actual.Equals(Int32.MinValue));
+    }
+
+    [ TestMethod ]
+    public void TypeSafeEqualsFailsWithDifferentTypeTest()
+    {
+      var actual = Note.A(1);
+      Assert.IsFalse(actual.Equals(Int32.MinValue));
+    }
+
+    [ TestMethod ]
+    public void EqualsFailsWithNullTest()
+    {
+      object actual = Note.A(1);
+      Assert.IsFalse(actual.Equals(null));
+    }
+
+    [ TestMethod ]
+    public void TypeSafeEqualsFailsWithNullTest()
+    {
+      var actual = Note.A(1);
+      Assert.IsFalse(actual.Equals(null));
+    }
+
+    [ TestMethod ]
+    public void EqualsSucceedsWithSameObjectTest()
+    {
+      var actual = Note.A(1);
+      Assert.IsTrue(actual.Equals(actual));
+    }
+
+    [ TestMethod ]
+    public void GetHashcodeTest()
+    {
+      var actual = Note.A(1);
+      var expected = Note.A(1);
+      Assert.IsTrue(expected.Equals(actual));
+      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+    }
+
+    [ TestMethod ]
+    public void EqualitySucceedsWithTwoObjectsTest()
+    {
+      var lhs = Note.A(1);
+      var rhs = Note.A(1);
+      Assert.IsTrue(lhs == rhs);
+    }
+
+    [ TestMethod ]
+    public void EqualitySucceedsWithSameObjectTest()
+    {
+#pragma warning disable 1718
+      var lhs = Note.A(1);
+      Assert.IsTrue(lhs == lhs);
+#pragma warning restore 1718
+    }
+
+    [ TestMethod ]
+    public void EqualityFailsWithNullTest()
+    {
+      var lhs = Note.A(1);
+      Assert.IsFalse(lhs == null);
+    }
+
+    [ TestMethod ]
+    public void InequalitySucceedsWithTwoObjectsTest()
+    {
+      var lhs = Note.A(1);
+      var rhs = Note.A(2);
+      Assert.IsTrue(lhs != rhs);
+    }
+
+    [ TestMethod ]
+    public void InequalityFailsWithSameObjectTest()
+    {
+#pragma warning disable 1718
+      var lhs = Note.A(1);
+      Assert.IsFalse(lhs != lhs);
+#pragma warning restore 1718
+    }
+
     [ TestMethod ]
     public void PropertiesTest()
     {
@@ -117,8 +233,8 @@
     public void AsFlatTest()
     {
       Assert.AreEqual(Note.A(4), Note.A(4).AsFlat());
-      Assert.AreEqual(Note.AFlat(4), Note.AFlat(4).AsSharp());
-      Assert.AreEqual(Note.AFlat(4), Note.GSharp(4).AsSharp());
+      Assert.AreEqual(Note.AFlat(4), Note.AFlat(4).AsFlat());
+      Assert.AreEqual(Note.AFlat(4), Note.GSharp(4).AsFlat());
     }
   }
 }

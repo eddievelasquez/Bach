@@ -4,20 +4,20 @@ namespace Intercode.MusicLib
   {
     A,
     ASharp,
-    BFlat = ASharp,
+    BFlat,
     B,
     C,
     CSharp,
-    DFlat = CSharp,
+    DFlat,
     D,
     DSharp,
-    EFlat = DSharp,
+    EFlat,
     E,
     F,
     FSharp,
-    GFlat = FSharp,
+    GFlat,
     G,
     GSharp,
-    AFlat = GSharp
+    AFlat
   }
 }
