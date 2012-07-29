@@ -63,6 +63,27 @@
       Tone.GSharp
     };
 
+    private static readonly Tone[] s_tonesNoAccidentals = new[]
+    {
+      Tone.A, // A
+      Tone.A, // A#
+      Tone.B, // Bb
+      Tone.B, // B
+      Tone.C, // C
+      Tone.C, // C#
+      Tone.D, // Db
+      Tone.D, // D
+      Tone.D, // D#
+      Tone.E, // Eb
+      Tone.E, // E
+      Tone.F, // F
+      Tone.F, // F#
+      Tone.G, // Gb
+      Tone.G, // G
+      Tone.G, // G#
+      Tone.A // Ab
+    };
+
     private static readonly string[] s_representations = new[]
     {
       "A", // A
@@ -265,6 +286,11 @@
       get { return (Tone)_tone; }
     }
 
+    public Tone ToneWithoutAccidental
+    {
+      get { return s_tonesNoAccidentals[_tone]; }
+    }
+
     public Accidental Accidental
     {
       get { return s_accidentals[_tone]; }
@@ -298,7 +324,7 @@
 
     #region Internal Methods
 
-    internal bool TryNext(int interval, bool flat, out Note? note)
+    internal bool TryNext( int interval, bool flat, out Note? note )
     {
       if( interval == 0 )
       {
@@ -307,12 +333,12 @@
       }
 
       int index = Index + interval;
-      if( index < MIN_INDEX || index > MAX_INDEX)
+      if( index < MIN_INDEX || index > MAX_INDEX )
       {
         note = null;
         return false;
       }
-     
+
       int octave = (index / INTERVAL_COUNT) + 1;
       var tone = (int)s_tones[index % INTERVAL_COUNT];
 
@@ -326,7 +352,7 @@
     internal Note Next( int interval, bool flat )
     {
       Note? result;
-      if (!TryNext(interval, flat, out result))
+      if( !TryNext(interval, flat, out result) )
       {
         throw new ArgumentOutOfRangeException("interval",
                                               String.Format("Notes higher than G#{0} are not supported", MAX_OCTAVE));
@@ -339,11 +365,9 @@
     internal Note Previous( int interval, bool flat )
     {
       Note? result;
-      if (!TryNext(-interval, flat, out result))
-      {
+      if( !TryNext(-interval, flat, out result) )
         throw new ArgumentOutOfRangeException("interval",
                                               String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
-      }
 
       Debug.Assert(result != null, "result != null");
       return result.Value;
