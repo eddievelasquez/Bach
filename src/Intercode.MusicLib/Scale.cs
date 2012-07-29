@@ -2,13 +2,14 @@
 {
   using System;
   using System.Collections.Generic;
+  using System.Diagnostics;
   using System.Diagnostics.Contracts;
 
   public class Scale
   {
     #region Constants
 
-    public static readonly Scale Major = new Scale("Major", 2, 2, 1, 2, 2, 2);
+    public static readonly Scale Major = new Scale("Major", 2, 2, 1, 2, 2, 2, 1);
 
     #endregion
 
@@ -29,20 +30,37 @@
     #region Properties
 
     public String Name { get; private set; }
+
+    public Int32 NoteCount
+    {
+      get { return Intervals.Length; }
+    }
+
     private Int32[] Intervals { get; set; }
 
     #endregion
 
+    #region Public Methods
+
     public IEnumerable<Note> GetNotes( Note root )
     {
-      yield return root;
+      int index = 0;
+      Note? current = root;
 
-      Note current = root;
-      foreach( var interval in Intervals )
+      while( true )
       {
-        current = current.Next(interval, false);
-        yield return current;
+        Debug.Assert(current != null, "current != null");
+        yield return current.Value;
+
+        index %= Intervals.Length;
+        int interval = Intervals[index];
+        if( !current.Value.TryNext(interval, false, out current) )
+          break;
+
+        ++index;
       }
     }
+
+    #endregion
   }
 }
