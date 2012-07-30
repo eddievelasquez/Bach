@@ -2,7 +2,6 @@
 {
   using System;
   using System.Collections.Generic;
-  using System.Diagnostics;
   using System.Diagnostics.Contracts;
 
   public class Scale
@@ -11,6 +10,13 @@
 
     public static readonly Scale Major = new Scale("Major", 2, 2, 1, 2, 2, 2, 1);
     public static readonly Scale NaturalMinor = new Scale("Natural Minor", 2, 1, 2, 2, 1, 2, 2);
+    public static readonly Scale HarmonicMinor = new Scale("Harmonic Minor", 2, 1, 2, 2, 1, 3, 1);
+    public static readonly Scale MelodicMinor = new Scale("Melodic Minor", 2, 1, 2, 2, 2, 2, 1);
+    public static readonly Scale Diminished = new Scale("Diminished", 2, 1, 2, 1, 2, 1, 2, 1);
+    public static readonly Scale Polytonal = new Scale("Polytonal", 1, 2, 1, 2, 1, 2, 1, 2);
+    public static readonly Scale Pentatonic = new Scale("Pentatonic", 2, 2, 3, 2, 3);
+    public static readonly Scale Blues = new Scale("Blues", 3, 2, 1, 1, 3, 2);
+    public static readonly Scale Gospel = new Scale("Gospel", 2, 1, 1, 3, 2, 3);
 
     #endregion
 
@@ -59,11 +65,20 @@
         if( !current.TryNext(interval, out current) )
           break;
 
-        if ( current.ToneWithoutAccidental == previous.ToneWithoutAccidental)
+        if( current.ToneWithoutAccidental == previous.ToneWithoutAccidental )
           current = current.AsFlat();
 
         ++index;
       }
+    }
+
+    #endregion
+
+    #region Object Members
+
+    public override string ToString()
+    {
+      return Name;
     }
 
     #endregion
