@@ -8,7 +8,7 @@
     #region Private Constants
 
     private const int INTERVAL_COUNT = 12;
-    private const int TONE_COUNT = Tone.AFlat - Tone.A + 1;
+    private const int TONE_COUNT = Tone.B - Tone.C + 1;
     private const int MIN_OCTAVE = 1;
     private const int MAX_OCTAVE = 8;
     private const int MIN_INDEX = 0;
@@ -16,10 +16,6 @@
 
     private static readonly Accidental[] s_accidentals = new[]
     {
-      Accidental.None, // A
-      Accidental.Sharp, // A#
-      Accidental.Flat, // Bb
-      Accidental.None, // B
       Accidental.None, // C
       Accidental.Sharp, // C#
       Accidental.Flat, // Db
@@ -32,42 +28,42 @@
       Accidental.Flat, // Gb
       Accidental.None, // G
       Accidental.Sharp, // G#
-      Accidental.Flat // Ab
+      Accidental.Flat, // Ab
+      Accidental.None, // A
+      Accidental.Sharp, // A#
+      Accidental.Flat, // Bb
+      Accidental.None // B
     };
 
     private static readonly int[] s_intervals = new[]
     {
-      0, // A
-      1, // A#
-      1, // Bb
-      2, // B
-      3, // C
-      4, // C#
-      4, // Db
-      5, // D
-      6, // D#
-      6, // Eb
-      7, // E
-      8, // F
-      9, // F#
-      9, // Gb
-      10, // G
-      11, // G#
-      11 // Ab
+      0, // C
+      1, // C#
+      1, // Db
+      2, // D
+      3, // D#
+      3, // Eb
+      4, // E
+      5, // F
+      6, // F#
+      6, // Gb
+      7, // G
+      8, // G#
+      8, // Ab
+      9, // A
+      10, // A#
+      10, // Bb
+      11 // B
     };
 
     private static readonly Tone[] s_tones = new[]
     {
-      Tone.A, Tone.ASharp, Tone.B, Tone.C, Tone.CSharp, Tone.D, Tone.DSharp, Tone.E, Tone.F, Tone.FSharp, Tone.G,
-      Tone.GSharp
+      Tone.C, Tone.CSharp, Tone.D, Tone.DSharp, Tone.E, Tone.F, Tone.FSharp, Tone.G,
+      Tone.GSharp, Tone.A, Tone.ASharp, Tone.B
     };
 
     private static readonly Tone[] s_tonesNoAccidentals = new[]
     {
-      Tone.A, // A
-      Tone.A, // A#
-      Tone.B, // Bb
-      Tone.B, // B
       Tone.C, // C
       Tone.C, // C#
       Tone.D, // Db
@@ -80,15 +76,15 @@
       Tone.G, // Gb
       Tone.G, // G
       Tone.G, // G#
-      Tone.A // Ab
+      Tone.A, // Ab
+      Tone.A, // A
+      Tone.A, // A#
+      Tone.B, // Bb
+      Tone.B, // B
     };
 
     private static readonly string[] s_representations = new[]
     {
-      "A", // A
-      "A#", // A#
-      "Bb", // Bb
-      "B", // B
       "C", // C
       "C#", // C#
       "Db", // Db
@@ -101,7 +97,11 @@
       "Gb", // Gb
       "G", // G
       "G#", // G#
-      "Ab" // Ab
+      "Ab", // Ab
+      "A", // A
+      "A#", // A#
+      "Bb", // Bb
+      "B", // B
     };
 
     #endregion
@@ -125,38 +125,6 @@
     #endregion
 
     #region Factories
-
-    public static Note A( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.A, octave);
-    }
-
-    public static Note ASharp( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.ASharp, octave);
-    }
-
-    public static Note BFlat( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.BFlat, octave);
-    }
-
-    public static Note B( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.B, octave);
-    }
 
     public static Note C( int octave )
     {
@@ -262,6 +230,38 @@
       return new Note(Tone.AFlat, octave);
     }
 
+    public static Note A( int octave )
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
+      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
+
+      return new Note(Tone.A, octave);
+    }
+
+    public static Note ASharp( int octave )
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
+      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
+
+      return new Note(Tone.ASharp, octave);
+    }
+
+    public static Note BFlat( int octave )
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
+      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
+
+      return new Note(Tone.BFlat, octave);
+    }
+
+    public static Note B( int octave )
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
+      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
+
+      return new Note(Tone.B, octave);
+    }
+
     #endregion
 
     #region Properties
@@ -347,7 +347,7 @@
       if( !TryNext(interval, out result) )
       {
         throw new ArgumentOutOfRangeException("interval",
-                                              String.Format("Notes higher than G#{0} are not supported", MAX_OCTAVE));
+                                              String.Format("Notes higher than B{0} are not supported", MAX_OCTAVE));
       }
 
       return result;
@@ -358,7 +358,7 @@
       Note result;
       if( !TryNext(-interval, out result) )
         throw new ArgumentOutOfRangeException("interval",
-                                              String.Format("Notes lower than A{0} are not supported", MIN_OCTAVE));
+                                              String.Format("Notes lower than C{0} are not supported", MIN_OCTAVE));
 
       return result;
     }

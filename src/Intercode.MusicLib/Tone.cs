@@ -2,10 +2,6 @@ namespace Intercode.MusicLib
 {
   public enum Tone
   {
-    A,
-    ASharp,
-    BFlat,
-    B,
     C,
     CSharp,
     DFlat,
@@ -18,6 +14,10 @@ namespace Intercode.MusicLib
     GFlat,
     G,
     GSharp,
-    AFlat
+    AFlat,
+    A,
+    ASharp,
+    BFlat,
+    B
   }
 }

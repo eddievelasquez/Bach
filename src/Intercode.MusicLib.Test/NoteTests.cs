@@ -167,58 +167,42 @@
     [ TestMethod ]
     public void NextTest()
     {
-      Assert.AreEqual(Note.A(1), Note.A(1).Next(0));
-      Assert.AreEqual(Note.A(1), Note.A(1).Next(0));
+      Assert.AreEqual(Note.C(1), Note.C(1).Next(0));
 
       Assert.AreEqual(Note.ASharp(1), Note.A(1).Next(1));
       Assert.AreEqual(Note.BFlat(1), Note.A(1).Next(1));
 
-      Assert.AreEqual(Note.A(2), Note.GSharp(1).Next(1));
-      Assert.AreEqual(Note.A(3), Note.GSharp(2).Next(1));
-      Assert.AreEqual(Note.A(4), Note.GSharp(3).Next(1));
-      Assert.AreEqual(Note.A(5), Note.GSharp(4).Next(1));
-      Assert.AreEqual(Note.A(6), Note.GSharp(5).Next(1));
-      Assert.AreEqual(Note.A(7), Note.GSharp(6).Next(1));
-      Assert.AreEqual(Note.A(8), Note.GSharp(7).Next(1));
+      Assert.AreEqual(Note.C(2), Note.B(1).Next(1));
+      Assert.AreEqual(Note.C(3), Note.B(2).Next(1));
+      Assert.AreEqual(Note.C(4), Note.B(3).Next(1));
+      Assert.AreEqual(Note.C(5), Note.B(4).Next(1));
+      Assert.AreEqual(Note.C(6), Note.B(5).Next(1));
+      Assert.AreEqual(Note.C(7), Note.B(6).Next(1));
+      Assert.AreEqual(Note.C(8), Note.B(7).Next(1));
 
-      Assert.AreEqual(Note.A(2), Note.A(1).Next(12));
-      Assert.AreEqual(Note.ASharp(2), Note.A(1).Next(13));
-      Assert.AreEqual(Note.BFlat(2), Note.A(1).Next(13));
+      Assert.AreEqual(Note.C(2), Note.C(1).Next(12));
+      Assert.AreEqual(Note.CSharp(2), Note.C(1).Next(13));
+      Assert.AreEqual(Note.DFlat(2), Note.C(1).Next(13));
     }
 
     [ TestMethod ]
     public void PreviousTest()
     {
-      Assert.AreEqual(Note.A(1), Note.A(1).Previous(0));
-      Assert.AreEqual(Note.A(1), Note.A(1).Previous(0));
+      Assert.AreEqual(Note.C(1), Note.C(1).Previous(0));
 
-      Assert.AreEqual(Note.A(1), Note.ASharp(1).Previous(1));
-      Assert.AreEqual(Note.A(1), Note.BFlat(1).Previous(1));
+      Assert.AreEqual(Note.C(1), Note.CSharp(1).Previous(1));
+      Assert.AreEqual(Note.C(1), Note.DFlat(1).Previous(1));
 
-      Assert.AreEqual(Note.GSharp(7), Note.A(8).Previous(1));
-      Assert.AreEqual(Note.AFlat(7), Note.A(8).Previous(1));
+      Assert.AreEqual(Note.B(7), Note.C(8).Previous(1));
+      Assert.AreEqual(Note.B(6), Note.C(7).Previous(1));
+      Assert.AreEqual(Note.B(5), Note.C(6).Previous(1));
+      Assert.AreEqual(Note.B(4), Note.C(5).Previous(1));
+      Assert.AreEqual(Note.B(3), Note.C(4).Previous(1));
+      Assert.AreEqual(Note.B(2), Note.C(3).Previous(1));
+      Assert.AreEqual(Note.B(1), Note.C(2).Previous(1));
 
-      Assert.AreEqual(Note.GSharp(6), Note.A(7).Previous(1));
-      Assert.AreEqual(Note.AFlat(6), Note.A(7).Previous(1));
-
-      Assert.AreEqual(Note.GSharp(5), Note.A(6).Previous(1));
-      Assert.AreEqual(Note.AFlat(5), Note.A(6).Previous(1));
-
-      Assert.AreEqual(Note.GSharp(4), Note.A(5).Previous(1));
-      Assert.AreEqual(Note.AFlat(4), Note.A(5).Previous(1));
-
-      Assert.AreEqual(Note.GSharp(3), Note.A(4).Previous(1));
-      Assert.AreEqual(Note.AFlat(3), Note.A(4).Previous(1));
-
-      Assert.AreEqual(Note.GSharp(2), Note.A(3).Previous(1));
-      Assert.AreEqual(Note.AFlat(2), Note.A(3).Previous(1));
-
-      Assert.AreEqual(Note.GSharp(1), Note.A(2).Previous(1));
-      Assert.AreEqual(Note.AFlat(1), Note.A(2).Previous(1));
-
-      Assert.AreEqual(Note.A(3), Note.A(4).Previous(12));
-      Assert.AreEqual(Note.GSharp(2), Note.A(4).Previous(13));
-      Assert.AreEqual(Note.AFlat(2), Note.A(4).Previous(13));
+      Assert.AreEqual(Note.C(3), Note.C(4).Previous(12));
+      Assert.AreEqual(Note.B(2), Note.C(4).Previous(13));
     }
 
     [ TestMethod ]
