@@ -220,5 +220,19 @@
       Assert.AreEqual(Note.AFlat(4), Note.AFlat(4).AsFlat());
       Assert.AreEqual(Note.AFlat(4), Note.GSharp(4).AsFlat());
     }
+
+    [ TestMethod ]
+    public void ParseTest()
+    {
+      CollectionAssert.AreEqual(new[] { Note.C(1), Note.D(1), Note.E(1), Note.F(1), Note.G(1), Note.A(1), Note.B(1) },
+                                Note.Parse("C,D,E,F,G,A,B", 1));
+    }
+
+    [ TestMethod ]
+    public void ParseWithEmbeddedOctaveTest()
+    {
+      CollectionAssert.AreEqual(new[] { Note.C(1), Note.D(2), Note.E(3), Note.F(4), Note.G(5), Note.A(6), Note.B(7) },
+                                Note.Parse("C1,D2,E3,F4,G5,A6,B7", 8));
+    }
   }
 }

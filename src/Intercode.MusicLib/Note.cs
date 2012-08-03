@@ -1,6 +1,7 @@
 ﻿namespace Intercode.MusicLib
 {
   using System;
+  using System.Collections.Generic;
   using System.Diagnostics.Contracts;
 
   public struct Note: IEquatable<Note>, IComparable<Note>
@@ -58,8 +59,8 @@
 
     private static readonly Tone[] s_tones = new[]
     {
-      Tone.C, Tone.CSharp, Tone.D, Tone.DSharp, Tone.E, Tone.F, Tone.FSharp, Tone.G,
-      Tone.GSharp, Tone.A, Tone.ASharp, Tone.B
+      Tone.C, Tone.CSharp, Tone.D, Tone.DSharp, Tone.E, Tone.F, Tone.FSharp, Tone.G, Tone.GSharp, Tone.A, Tone.ASharp,
+      Tone.B
     };
 
     private static readonly Tone[] s_tonesNoAccidentals = new[]
@@ -104,10 +105,32 @@
       "B", // B
     };
 
+    private static readonly Dictionary<String, Tone> s_representationToTones =
+      new Dictionary<string, Tone>(StringComparer.OrdinalIgnoreCase)
+      {
+        { "C", Tone.C },
+        { "C#", Tone.CSharp },
+        { "Db", Tone.DFlat },
+        { "D", Tone.D },
+        { "D#", Tone.DSharp },
+        { "Eb", Tone.EFlat },
+        { "E", Tone.E },
+        { "F", Tone.F },
+        { "F#", Tone.FSharp },
+        { "Gb", Tone.GFlat },
+        { "G", Tone.G },
+        { "G#", Tone.GSharp },
+        { "Ab", Tone.AFlat },
+        { "A", Tone.A },
+        { "A#", Tone.ASharp },
+        { "Bb", Tone.BFlat },
+        { "B", Tone.B },
+      };
+
     #endregion
 
     #region Data Members
-    
+
     public static readonly Note Invalid = new Note((Tone)(-1), -1);
     private readonly byte _tone;
     private readonly byte _octave;
@@ -125,6 +148,40 @@
     #endregion
 
     #region Factories
+
+    public static Note[] Parse( String value, int octave = 4 )
+    {
+      Contract.Requires<ArgumentNullException>(value != null, "value");
+      Contract.Requires<ArgumentException>(value.Length > 0, "value");
+      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
+      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
+
+      string[] values = value.Split(',');
+      var result = new List<Note>(values.Length);
+
+      foreach( var s in values )
+      {
+        string noteStr = s;
+        int length = noteStr.Length;
+        if( length > 3 )
+          throw new FormatException(noteStr + " is not a valid note");
+
+        string lastChar = noteStr.Substring(length - 1);
+        if( Char.IsDigit(lastChar[0]) )
+        {
+          noteStr = noteStr.Substring(0, length - 1);
+          octave = int.Parse(lastChar);
+        }
+
+        Tone tone;
+        if( !s_representationToTones.TryGetValue(noteStr, out tone) )
+          throw new FormatException(value + " is not a valid note list");
+
+        result.Add(new Note(tone, octave));
+      }
+
+      return result.ToArray();
+    }
 
     public static Note C( int octave )
     {
