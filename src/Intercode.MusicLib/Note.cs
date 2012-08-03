@@ -108,6 +108,7 @@
     private static readonly Dictionary<String, Tone> s_representationToTones =
       new Dictionary<string, Tone>(StringComparer.OrdinalIgnoreCase)
       {
+        { "Cb", Tone.B },
         { "C", Tone.C },
         { "C#", Tone.CSharp },
         { "Db", Tone.DFlat },
@@ -115,6 +116,7 @@
         { "D#", Tone.DSharp },
         { "Eb", Tone.EFlat },
         { "E", Tone.E },
+        { "Fb", Tone.E },
         { "F", Tone.F },
         { "F#", Tone.FSharp },
         { "Gb", Tone.GFlat },
