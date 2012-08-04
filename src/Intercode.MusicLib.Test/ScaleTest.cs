@@ -17,19 +17,21 @@
     [ TestMethod ]
     public void GetNotesTest()
     {
-      TestScale(Note.C(1), Scale.Major, Note.C(1), Note.D(1), Note.E(1), Note.F(1), Note.G(1), Note.A(1), Note.B(1), Note.C(2));
-      TestScale(Note.C(1), Scale.NaturalMinor, Note.C(1), Note.D(1), Note.EFlat(1), Note.F(1), Note.G(1), Note.AFlat(1), Note.BFlat(1), Note.C(2));
-      TestScale(Note.C(1), Scale.HarmonicMinor, Note.C(1), Note.D(1), Note.EFlat(1), Note.F(1), Note.G(1), Note.AFlat(1), Note.B(1), Note.C(2));
-      TestScale(Note.C(1), Scale.MelodicMinor, Note.C(1), Note.D(1), Note.EFlat(1), Note.F(1), Note.G(1), Note.A(1), Note.B(1), Note.C(2));
-      TestScale(Note.C(1), Scale.Diminished, Note.C(1), Note.D(1), Note.EFlat(1), Note.F(1), Note.GFlat(1), Note.GSharp(1), Note.A(1), Note.B(1), Note.C(2));
-      TestScale(Note.C(1), Scale.Polytonal, Note.C(1), Note.DFlat(1), Note.EFlat(1), Note.E(1), Note.FSharp(1), Note.G(1), Note.A(1), Note.BFlat(1), Note.C(2));
-      TestScale(Note.C(1), Scale.Pentatonic, Note.C(1), Note.D(1), Note.E(1), Note.G(1), Note.A(1), Note.C(2));
-      TestScale(Note.C(1), Scale.Blues, Note.C(1), Note.EFlat(1), Note.F(1), Note.GFlat(1), Note.G(1), Note.BFlat(1), Note.C(2));
-      TestScale(Note.C(1), Scale.Gospel, Note.C(1), Note.D(1), Note.EFlat(1), Note.E(1), Note.G(1), Note.A(1), Note.C(2));
+      TestScale(Note.C(4), Scale.Major, Note.Parse("C,D,E,F,G,A,B"));
+      TestScale(Note.C(4), Scale.NaturalMinor, Note.Parse("C,D,Eb,F,G,Ab,Bb"));
+      TestScale(Note.C(4), Scale.HarmonicMinor, Note.Parse("C,D,Eb,F,G,Ab,B"));
+      TestScale(Note.C(4), Scale.MelodicMinor, Note.Parse("C,D,Eb,F,G,A,B"));
+      TestScale(Note.C(4), Scale.Diminished, Note.Parse("C,D,Eb,F,Gb,G#,A,B"));
+      TestScale(Note.C(4), Scale.Polytonal, Note.Parse("C,Db,Eb,Fb,F#,G,A,Bb"));
+      TestScale(Note.C(4), Scale.Pentatonic, Note.Parse("C,D,E,G,A"));
+      TestScale(Note.C(4), Scale.Blues, Note.Parse("C,Eb,F,Gb,G,Bb"));
+      TestScale(Note.C(4), Scale.Gospel, Note.Parse("C,D,Eb,E,G,A"));
     }
 
     private static void TestScale( Note root, Scale scale, params Note[] expectedNotes )
     {
+      Assert.IsNotNull(scale);
+
       Note[] notes = scale.GetNotes(root).Take(expectedNotes.Length).ToArray();
       Assert.AreEqual(expectedNotes.Length, notes.Length);
 
