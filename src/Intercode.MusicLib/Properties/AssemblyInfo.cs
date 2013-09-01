@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [ assembly: AssemblyConfiguration( "" ) ]
 [ assembly: AssemblyCompany( "" ) ]
 [ assembly: AssemblyProduct( "Intercode.MusicLib" ) ]
-[ assembly: AssemblyCopyright( "Copyright © Intercode Consulting, 2012" ) ]
+[assembly: AssemblyCopyright("Copyright (c) 2012-2013, Intercode Consulting")]
 [ assembly: AssemblyTrademark( "" ) ]
 [ assembly: AssemblyCulture( "" ) ]
 
