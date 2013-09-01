@@ -33,19 +33,6 @@ namespace Intercode.MusicLib.Test
       #endregion
 
       /// <summary>
-      ///    A test for IsPrefix
-      /// </summary>
-      [ TestMethod ]
-      public void IsPrefixTest()
-      {
-         Assert.IsTrue(Accidental.DoubleFlat.IsPrefix());
-         Assert.IsTrue(Accidental.Flat.IsPrefix());
-         Assert.IsFalse(Accidental.Natural.IsPrefix());
-         Assert.IsFalse(Accidental.Sharp.IsPrefix());
-         Assert.IsFalse(Accidental.DoubleSharp.IsPrefix());
-      }
-
-      /// <summary>
       ///    A test for ToSymbol
       /// </summary>
       [ TestMethod ]

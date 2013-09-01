@@ -25,11 +25,5 @@ namespace Intercode.MusicLib
          Contract.Requires(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
          return s_symbols[(int)accidental + Math.Abs((int)Accidental.DoubleFlat)];
       }
-
-      public static bool IsPrefix(this Accidental accidental)
-      {
-         Contract.Requires(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-         return accidental < Accidental.Natural;
-      }
    }
 }
