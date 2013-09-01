@@ -1,23 +1,26 @@
+// 
+//   Tone.cs: 
+// 
+//   Author: Eddie Velasquez
+// 
+//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// 
+//      Unauthorized use, duplication or distribution of this software, 
+//      or any portion of it, is prohibited.  
+// 
+//   http://www.intercodeconsulting.com
+// 
+
 namespace Intercode.MusicLib
 {
-  public enum Tone
-  {
-    C,
-    CSharp,
-    DFlat,
-    D,
-    DSharp,
-    EFlat,
-    E,
-    F,
-    FSharp,
-    GFlat,
-    G,
-    GSharp,
-    AFlat,
-    A,
-    ASharp,
-    BFlat,
-    B
-  }
+   public enum Tone
+   {
+      C,
+      D,
+      E,
+      F,
+      G,
+      A,
+      B
+   }
 }
