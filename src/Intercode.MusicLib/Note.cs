@@ -1,481 +1,154 @@
-﻿namespace Intercode.MusicLib
+﻿// 
+//   Note.cs: 
+// 
+//   Author: Eddie Velasquez
+// 
+//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// 
+//      Unauthorized use, duplication or distribution of this software, 
+//      or any portion of it, is prohibited.  
+// 
+//   http://www.intercodeconsulting.com
+// 
+
+namespace Intercode.MusicLib
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Diagnostics.Contracts;
+   using System;
+   using System.Diagnostics.Contracts;
 
-  public struct Note: IEquatable<Note>, IComparable<Note>
-  {
-    #region Private Constants
+   public struct Note: IEquatable<Note>, IComparable<Note>
+   {
+      #region Data Members
 
-    private const int INTERVAL_COUNT = 12;
-    private const int TONE_COUNT = Tone.B - Tone.C + 1;
-    private const int MIN_OCTAVE = 1;
-    private const int MAX_OCTAVE = 8;
-    private const int MIN_INDEX = 0;
-    private const int MAX_INDEX = (MAX_OCTAVE * INTERVAL_COUNT) - 1;
+      private readonly Accidental _accidental;
+      private readonly int _octave;
+      private readonly Tone _tone;
 
-    private static readonly Accidental[] s_accidentals = new[]
-    {
-      Accidental.None, // C
-      Accidental.Sharp, // C#
-      Accidental.Flat, // Db
-      Accidental.None, // D
-      Accidental.Sharp, // D#
-      Accidental.Flat, // Eb
-      Accidental.None, // E
-      Accidental.None, // F
-      Accidental.Sharp, // F#
-      Accidental.Flat, // Gb
-      Accidental.None, // G
-      Accidental.Sharp, // G#
-      Accidental.Flat, // Ab
-      Accidental.None, // A
-      Accidental.Sharp, // A#
-      Accidental.Flat, // Bb
-      Accidental.None // B
-    };
+      #endregion
 
-    private static readonly int[] s_intervals = new[]
-    {
-      0, // C
-      1, // C#
-      1, // Db
-      2, // D
-      3, // D#
-      3, // Eb
-      4, // E
-      5, // F
-      6, // F#
-      6, // Gb
-      7, // G
-      8, // G#
-      8, // Ab
-      9, // A
-      10, // A#
-      10, // Bb
-      11 // B
-    };
+      #region Construction
 
-    private static readonly Tone[] s_tones = new[]
-    {
-      Tone.C, Tone.CSharp, Tone.D, Tone.DSharp, Tone.E, Tone.F, Tone.FSharp, Tone.G, Tone.GSharp, Tone.A, Tone.ASharp,
-      Tone.B
-    };
-
-    private static readonly Tone[] s_tonesNoAccidentals = new[]
-    {
-      Tone.C, // C
-      Tone.C, // C#
-      Tone.D, // Db
-      Tone.D, // D
-      Tone.D, // D#
-      Tone.E, // Eb
-      Tone.E, // E
-      Tone.F, // F
-      Tone.F, // F#
-      Tone.G, // Gb
-      Tone.G, // G
-      Tone.G, // G#
-      Tone.A, // Ab
-      Tone.A, // A
-      Tone.A, // A#
-      Tone.B, // Bb
-      Tone.B, // B
-    };
-
-    private static readonly string[] s_representations = new[]
-    {
-      "C", // C
-      "C#", // C#
-      "Db", // Db
-      "D", // D
-      "D#", // D#
-      "Eb", // Eb
-      "E", // E
-      "F", // F
-      "F#", // F#
-      "Gb", // Gb
-      "G", // G
-      "G#", // G#
-      "Ab", // Ab
-      "A", // A
-      "A#", // A#
-      "Bb", // Bb
-      "B", // B
-    };
-
-    private static readonly Dictionary<String, Tone> s_representationToTones =
-      new Dictionary<string, Tone>(StringComparer.OrdinalIgnoreCase)
+      public Note(Tone tone, Accidental accidental, int octave)
       {
-        { "Cb", Tone.B },
-        { "C", Tone.C },
-        { "C#", Tone.CSharp },
-        { "Db", Tone.DFlat },
-        { "D", Tone.D },
-        { "D#", Tone.DSharp },
-        { "Eb", Tone.EFlat },
-        { "E", Tone.E },
-        { "Fb", Tone.E },
-        { "F", Tone.F },
-        { "F#", Tone.FSharp },
-        { "Gb", Tone.GFlat },
-        { "G", Tone.G },
-        { "G#", Tone.GSharp },
-        { "Ab", Tone.AFlat },
-        { "A", Tone.A },
-        { "A#", Tone.ASharp },
-        { "Bb", Tone.BFlat },
-        { "B", Tone.B },
-      };
+         Contract.Requires<ArgumentOutOfRangeException>(tone >= Tone.C, "tone");
+         Contract.Requires<ArgumentOutOfRangeException>(tone <= Tone.B, "tone");
+         Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat, "accidental");
+         Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.DoubleSharp, "accidental");
+         Contract.Requires<ArgumentOutOfRangeException>(octave >= 1, "octave");
+         Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-    #endregion
-
-    #region Data Members
-
-    public static readonly Note Invalid = new Note((Tone)(-1), -1);
-    private readonly byte _tone;
-    private readonly byte _octave;
-
-    #endregion
-
-    #region Construction
-
-    private Note( Tone tone, int octave )
-    {
-      _tone = (byte)tone;
-      _octave = (byte)octave;
-    }
-
-    #endregion
-
-    #region Factories
-
-    public static Note[] Parse( String value, int octave = 4 )
-    {
-      Contract.Requires<ArgumentNullException>(value != null, "value");
-      Contract.Requires<ArgumentException>(value.Length > 0, "value");
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      string[] values = value.Split(',');
-      var result = new List<Note>(values.Length);
-
-      foreach( var s in values )
-      {
-        string noteStr = s;
-        int length = noteStr.Length;
-        if( length > 3 )
-          throw new FormatException(noteStr + " is not a valid note");
-
-        string lastChar = noteStr.Substring(length - 1);
-        if( Char.IsDigit(lastChar[0]) )
-        {
-          noteStr = noteStr.Substring(0, length - 1);
-          octave = int.Parse(lastChar);
-        }
-
-        Tone tone;
-        if( !s_representationToTones.TryGetValue(noteStr, out tone) )
-          throw new FormatException(value + " is not a valid note list");
-
-        result.Add(new Note(tone, octave));
+         _tone = tone;
+         _accidental = accidental;
+         _octave = octave;
       }
 
-      return result.ToArray();
-    }
+      #endregion
 
-    public static Note C( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
+      #region Properties
 
-      return new Note(Tone.C, octave);
-    }
-
-    public static Note CSharp( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.CSharp, octave);
-    }
-
-    public static Note DFlat( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.DFlat, octave);
-    }
-
-    public static Note D( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.D, octave);
-    }
-
-    public static Note DSharp( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.DSharp, octave);
-    }
-
-    public static Note EFlat( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.EFlat, octave);
-    }
-
-    public static Note E( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.E, octave);
-    }
-
-    public static Note F( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.F, octave);
-    }
-
-    public static Note FSharp( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.FSharp, octave);
-    }
-
-    public static Note GFlat( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.GFlat, octave);
-    }
-
-    public static Note G( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.G, octave);
-    }
-
-    public static Note GSharp( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.GSharp, octave);
-    }
-
-    public static Note AFlat( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.AFlat, octave);
-    }
-
-    public static Note A( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.A, octave);
-    }
-
-    public static Note ASharp( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.ASharp, octave);
-    }
-
-    public static Note BFlat( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.BFlat, octave);
-    }
-
-    public static Note B( int octave )
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave > 0, "octave");
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
-
-      return new Note(Tone.B, octave);
-    }
-
-    #endregion
-
-    #region Properties
-
-    private int Index
-    {
-      get { return ((Octave - 1) * INTERVAL_COUNT) + s_intervals[_tone]; }
-    }
-
-    public Int32 Octave
-    {
-      get { return _octave; }
-    }
-
-    public Tone Tone
-    {
-      get { return (Tone)_tone; }
-    }
-
-    public Tone ToneWithoutAccidental
-    {
-      get { return s_tonesNoAccidentals[_tone]; }
-    }
-
-    public Accidental Accidental
-    {
-      get { return s_accidentals[_tone]; }
-    }
-
-    #endregion
-
-    #region Public Methods
-
-    public Note AsSharp()
-    {
-      if( Accidental != Accidental.Flat )
-        return this;
-
-      var tone = (Tone)((int)(Tone - 1) % TONE_COUNT);
-      var note = new Note(tone, Octave);
-      return note;
-    }
-
-    public Note AsFlat()
-    {
-      if( Accidental != Accidental.Sharp )
-        return this;
-
-      var tone = (Tone)((int)(Tone + 1) % TONE_COUNT);
-      var note = new Note(tone, Octave);
-      return note;
-    }
-
-    #endregion
-
-    #region Internal Methods
-
-    internal bool TryNext( int interval, out Note note )
-    {
-      if( interval == 0 )
+      public Tone Tone
       {
-        note = this;
-        return true;
+         get { return _tone; }
       }
 
-      int index = Index + interval;
-      if( index < MIN_INDEX || index > MAX_INDEX )
+      public Accidental Accidental
       {
-        note = Invalid;
-        return false;
+         get { return _accidental; }
       }
 
-      int octave = (index / INTERVAL_COUNT) + 1;
-      var tone = (int)s_tones[index % INTERVAL_COUNT];
-
-      note = new Note((Tone)tone, octave);
-      return true;
-    }
-
-    internal Note Next( int interval )
-    {
-      Note result;
-      if( !TryNext(interval, out result) )
+      public int Octave
       {
-        throw new ArgumentOutOfRangeException("interval",
-                                              String.Format("Notes higher than B{0} are not supported", MAX_OCTAVE));
+         get { return _octave; }
       }
 
-      return result;
-    }
+      #endregion
 
-    internal Note Previous( int interval )
-    {
-      Note result;
-      if( !TryNext(-interval, out result) )
-        throw new ArgumentOutOfRangeException("interval",
-                                              String.Format("Notes lower than C{0} are not supported", MIN_OCTAVE));
+      #region IComparable<Note> Members
 
-      return result;
-    }
+      public int CompareTo(Note other)
+      {
+         int result = Octave.CompareTo(other.Octave);
+         if( result != 0 )
+            return result;
 
-    #endregion
+         result = Tone.CompareTo(other.Tone);
+         if( result == 0 )
+            result = Accidental.CompareTo(other.Accidental);
 
-    #region IEquatable<Note> Members
+         return result;
+      }
 
-    public bool Equals( Note other )
-    {
-      return Index == other.Index;
-    }
+      #endregion
 
-    #endregion
+      #region IEquatable<Note> Members
 
-    #region Object Members
+      public bool Equals(Note other)
+      {
+         return _accidental == other._accidental && _octave == other._octave && _tone == other._tone;
+      }
 
-    public override bool Equals( object obj )
-    {
-      if( ReferenceEquals(null, obj) )
-        return false;
+      #endregion
 
-      return obj is Note && Equals((Note)obj);
-    }
+      #region Overrides
 
-    public override int GetHashCode()
-    {
-      return Index.GetHashCode();
-    }
+      public override bool Equals(object obj)
+      {
+         if( ReferenceEquals(null, obj) )
+            return false;
 
-    public override string ToString()
-    {
-      return s_representations[(int)Tone] + Octave;
-    }
+         return obj is Note && Equals((Note)obj);
+      }
 
-    #endregion
+      public override int GetHashCode()
+      {
+         unchecked
+         {
+            var hashCode = (int)_accidental;
+            hashCode = (hashCode * 397) ^ _octave;
+            hashCode = (hashCode * 397) ^ (int)_tone;
+            return hashCode;
+         }
+      }
 
-    #region IComparable<Note> Members
+      public override string ToString()
+      {
+         return String.Format("{0}{1}{2}", Tone, Accidental.ToSymbol(), Octave);
+      }
 
-    public int CompareTo( Note other )
-    {
-      return Index - other.Index;
-    }
+      #endregion
 
-    #endregion
+      #region Operators
 
-    #region Equality Operators
+      public static bool operator ==(Note left, Note right)
+      {
+         return left.Equals(right);
+      }
 
-    public static bool operator ==( Note left, Note right )
-    {
-      return left.Equals(right);
-    }
+      public static bool operator !=(Note left, Note right)
+      {
+         return !left.Equals(right);
+      }
 
-    public static bool operator !=( Note left, Note right )
-    {
-      return !left.Equals(right);
-    }
+      public static bool operator >(Note left, Note right)
+      {
+         return left.CompareTo(right) > 0;
+      }
 
-    #endregion
-  }
+      public static bool operator <(Note left, Note right)
+      {
+         return left.CompareTo(right) < 0;
+      }
+
+      public static bool operator >=(Note left, Note right)
+      {
+         return left.CompareTo(right) >= 0;
+      }
+
+      public static bool operator <=(Note left, Note right)
+      {
+         return left.CompareTo(right) <= 0;
+      }
+
+      #endregion
+   }
 }
