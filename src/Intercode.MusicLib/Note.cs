@@ -15,14 +15,19 @@ namespace Intercode.MusicLib
 {
    using System;
    using System.Diagnostics.Contracts;
+   using System.Text;
 
    public class Note: IEquatable<Note>, IComparable<Note>
    {
       #region Constants
 
       private const int INTERVALS_PER_OCTAVE = 12;
+      private const int MIN_OCTAVE = 1;
+      private const int MAX_OCTAVE = 8;
 
-      private static readonly int[] s_intervals = { 0, // C 
+      private static readonly int[] s_intervals =
+      {
+         0, // C 
          2, // D
          4, // E
          5, // F
@@ -32,8 +37,8 @@ namespace Intercode.MusicLib
          12 // C
       };
 
-      private static readonly int s_minAbsoluteValue = CalcAbsoluteValue(Tone.C, Accidental.Natural, 1);
-      private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue(Tone.B, Accidental.Natural, 8);
+      private static readonly int s_minAbsoluteValue = CalcAbsoluteValue(Tone.C, Accidental.Natural, MIN_OCTAVE);
+      private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue(Tone.B, Accidental.Natural, MAX_OCTAVE);
 
       #endregion
 
@@ -259,6 +264,44 @@ namespace Intercode.MusicLib
 
       #endregion
 
+      #region Parsing
+
+      public static bool TryParse(string value, out Note note, int defaultOctave = 4)
+      {
+         note = null;
+
+         if( String.IsNullOrEmpty(value) )
+            return false;
+
+         Tone tone;
+         if( !Enum.TryParse(value.Substring(0, 1), true, out tone) )
+            return false;
+
+         int index = 1;
+
+         Accidental accidental;
+         int octave = defaultOctave;
+
+         TryGetAccidental(value, ref index, out accidental);
+         TryGetOctave(value, ref index, ref octave);
+         if( index < value.Length )
+            return false;
+
+         note = Create(tone, accidental, octave);
+         return true;
+      }
+
+      public static Note Parse(string value, int defaultOctave = 4)
+      {
+         Note result;
+         if (!TryParse(value, out result))
+            throw new ArgumentException(String.Format("{0} is not a valid note", value));
+
+         return result;
+      }
+
+      #endregion
+
       #region Implementation
 
       private static int CalcAbsoluteValue(Tone tone, Accidental accidental, int octave)
@@ -285,6 +328,41 @@ namespace Intercode.MusicLib
          }
 
          accidental = (Accidental)remainder;
+      }
+
+      private static void TryGetAccidental(string value, ref int index, out Accidental accidental)
+      {
+         accidental = Accidental.Natural;
+
+         var buf = new StringBuilder();
+         for (int i = index; i < value.Length; ++i)
+         {
+            char ch = value[i];
+            if( ch != '#' && ch != 'b' && ch != 'B' )
+            {
+               if( buf.Length > 0 )
+                  break;
+
+               return;
+            }
+
+            buf.Append(ch);
+         }
+
+         if( buf.Length == 0 )
+            return;
+
+         if( AccidentalExtensions.TryParse(buf.ToString(), out accidental) )
+            index += buf.Length;
+      }
+
+      private static void TryGetOctave(string value, ref int index, ref int octave)
+      {
+         if( index >= value.Length || !int.TryParse(value.Substring(index, 1), out octave) )
+            return;
+
+         if( octave >= MIN_OCTAVE && octave <= MAX_OCTAVE )
+            ++index;
       }
 
       #endregion

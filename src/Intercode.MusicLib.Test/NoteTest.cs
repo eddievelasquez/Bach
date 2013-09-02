@@ -362,5 +362,58 @@ namespace Intercode.MusicLib.Test
          actual = c2 - 2;
          Assert.AreEqual("Bb1", actual.ToString());
       }
+
+      [ TestMethod ]
+      public void TryParseTest()
+      {
+         Note actual;
+         Assert.IsTrue(Note.TryParse("C", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Natural, 4), actual);
+
+         Assert.IsTrue(Note.TryParse("C#", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 4), actual);
+
+         Assert.IsTrue(Note.TryParse("C##", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleSharp, 4), actual);
+
+         Assert.IsTrue(Note.TryParse("Cb", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Flat, 4), actual);
+
+         Assert.IsTrue(Note.TryParse("Cbb", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleFlat, 4), actual);
+
+         Assert.IsTrue(Note.TryParse("C2", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Natural, 2), actual);
+
+         Assert.IsTrue(Note.TryParse("C#2", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 2), actual);
+
+         Assert.IsTrue(Note.TryParse("C##2", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleSharp, 2), actual);
+
+         Assert.IsTrue(Note.TryParse("Cb2", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Flat, 2), actual);
+
+         Assert.IsTrue(Note.TryParse("Cbb2", out actual));
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleFlat, 2), actual);
+
+         Assert.IsFalse(Note.TryParse("H", out actual));
+         Assert.IsNull(actual);
+
+         Assert.IsFalse(Note.TryParse("C!", out actual));
+         Assert.IsNull(actual);
+
+         Assert.IsFalse(Note.TryParse("C#0", out actual));
+         Assert.IsNull(actual);
+
+         Assert.IsFalse(Note.TryParse("C#9", out actual));
+         Assert.IsNull(actual);
+
+         Assert.IsFalse(Note.TryParse("C#b2", out actual));
+         Assert.IsNull(actual);
+
+         Assert.IsFalse(Note.TryParse("Cb#2", out actual));
+         Assert.IsNull(actual);
+      }
    }
 }
