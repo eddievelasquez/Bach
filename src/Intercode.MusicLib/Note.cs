@@ -16,7 +16,7 @@ namespace Intercode.MusicLib
    using System;
    using System.Diagnostics.Contracts;
 
-   public struct Note: IEquatable<Note>, IComparable<Note>
+   public class Note: IEquatable<Note>, IComparable<Note>
    {
       #region Data Members
 
@@ -67,6 +67,9 @@ namespace Intercode.MusicLib
 
       public int CompareTo(Note other)
       {
+         if( other == null )
+            return 1;
+
          int result = Octave.CompareTo(other.Octave);
          if( result != 0 )
             return result;
@@ -84,6 +87,12 @@ namespace Intercode.MusicLib
 
       public bool Equals(Note other)
       {
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) )
+            return false;
+
          return _accidental == other._accidental && _octave == other._octave && _tone == other._tone;
       }
 
@@ -91,12 +100,15 @@ namespace Intercode.MusicLib
 
       #region Overrides
 
-      public override bool Equals(object obj)
+      public override bool Equals(object other)
       {
-         if( ReferenceEquals(null, obj) )
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
             return false;
 
-         return obj is Note && Equals((Note)obj);
+         return Equals((Note)other);
       }
 
       public override int GetHashCode()
@@ -119,33 +131,56 @@ namespace Intercode.MusicLib
 
       #region Operators
 
-      public static bool operator ==(Note left, Note right)
+      public static bool operator ==(Note lhs, Note rhs)
       {
-         return left.Equals(right);
+         if( ReferenceEquals(lhs, rhs) )
+            return true;
+
+         if( ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null) )
+            return false;
+
+         return lhs.Equals(rhs);
       }
 
-      public static bool operator !=(Note left, Note right)
+      public static bool operator !=(Note lhs, Note rhs)
       {
-         return !left.Equals(right);
+         if( ReferenceEquals(lhs, rhs) )
+            return false;
+
+         if( ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null) )
+            return true;
+
+         return !lhs.Equals(rhs);
       }
 
       public static bool operator >(Note left, Note right)
       {
+         if( left == null )
+            return false;
+
          return left.CompareTo(right) > 0;
       }
 
       public static bool operator <(Note left, Note right)
       {
+         if( left == null )
+            return true;
+
          return left.CompareTo(right) < 0;
       }
 
       public static bool operator >=(Note left, Note right)
       {
+         if( left == null )
+            return right == null;
+
          return left.CompareTo(right) >= 0;
       }
 
       public static bool operator <=(Note left, Note right)
       {
+         if( left == null )
+            return true;
          return left.CompareTo(right) <= 0;
       }
 

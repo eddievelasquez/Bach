@@ -119,9 +119,35 @@ namespace Intercode.MusicLib.Test
          Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
       }
 
-      /// <summary>
-      ///    A test for CompareTo
-      /// </summary>
+      [ TestMethod ]
+      public void CompareToContractTest()
+      {
+         {
+            var a = new Note(Tone.A, Accidental.Natural, 1);
+            Assert.IsTrue(a.CompareTo(null) > 0 );
+            Assert.IsTrue(a.CompareTo(a) == 0 );
+
+            var b = new Note(Tone.A, Accidental.Natural, 1);
+            Assert.IsTrue(a.CompareTo(b) == 0);
+            Assert.IsTrue(b.CompareTo(a) == 0);
+
+            var c = new Note(Tone.A, Accidental.Natural, 1);
+            Assert.IsTrue(b.CompareTo(c) == 0);
+            Assert.IsTrue(a.CompareTo(c) == 0);            
+         }
+         {
+            var a = new Note(Tone.C, Accidental.Natural, 1);
+            var b = new Note(Tone.D, Accidental.Natural, 1);
+
+            Assert.AreEqual(a.CompareTo(b), -b.CompareTo(a));
+
+            var c = new Note(Tone.E, Accidental.Natural, 1);
+            Assert.IsTrue(a.CompareTo(b) < 0);
+            Assert.IsTrue(b.CompareTo(c) < 0);
+            Assert.IsTrue(a.CompareTo(c) < 0);
+         }
+      }
+
       [ TestMethod ]
       public void CompareToTest()
       {
@@ -144,9 +170,6 @@ namespace Intercode.MusicLib.Test
          Assert.IsTrue(c1.CompareTo(a1) < 0);
       }
 
-      /// <summary>
-      ///    A test for ToString
-      /// </summary>
       [ TestMethod ]
       public void ToStringTest()
       {
@@ -166,9 +189,6 @@ namespace Intercode.MusicLib.Test
          Assert.AreEqual("A##1", target.ToString());
       }
 
-      /// <summary>
-      ///    A test for op_Equality
-      /// </summary>
       [ TestMethod ]
       public void op_EqualityTest()
       {
@@ -181,9 +201,6 @@ namespace Intercode.MusicLib.Test
          Assert.IsFalse(b == c);
       }
 
-      /// <summary>
-      ///    A test for op_Inequality
-      /// </summary>
       [ TestMethod ]
       public void op_InequalityTest()
       {
