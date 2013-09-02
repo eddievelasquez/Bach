@@ -124,8 +124,8 @@ namespace Intercode.MusicLib.Test
       {
          {
             var a = Note.Create(Tone.A, Accidental.Natural, 1);
-            Assert.IsTrue(a.CompareTo(null) > 0 );
-            Assert.IsTrue(a.CompareTo(a) == 0 );
+            Assert.IsTrue(a.CompareTo(null) > 0);
+            Assert.IsTrue(a.CompareTo(a) == 0);
 
             var b = Note.Create(Tone.A, Accidental.Natural, 1);
             Assert.IsTrue(a.CompareTo(b) == 0);
@@ -133,7 +133,7 @@ namespace Intercode.MusicLib.Test
 
             var c = Note.Create(Tone.A, Accidental.Natural, 1);
             Assert.IsTrue(b.CompareTo(c) == 0);
-            Assert.IsTrue(a.CompareTo(c) == 0);            
+            Assert.IsTrue(a.CompareTo(c) == 0);
          }
          {
             var a = Note.Create(Tone.C, Accidental.Natural, 1);
@@ -225,25 +225,29 @@ namespace Intercode.MusicLib.Test
          Assert.IsFalse(b <= a);
       }
 
-      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      [ TestMethod ]
+      [ ExpectedException(typeof( ArgumentException )) ]
       public void C1DoubleFlatThrowsTest()
       {
          Note.Create(Tone.C, Accidental.DoubleFlat, 1);
       }
 
-      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      [ TestMethod ]
+      [ ExpectedException(typeof( ArgumentException )) ]
       public void C1FlatThrowsTest()
       {
          Note.Create(Tone.C, Accidental.Flat, 1);
       }
 
-      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      [ TestMethod ]
+      [ ExpectedException(typeof( ArgumentException )) ]
       public void B8SharpThrowsTest()
       {
          Note.Create(Tone.B, Accidental.Sharp, 8);
       }
 
-      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      [ TestMethod ]
+      [ ExpectedException(typeof( ArgumentException )) ]
       public void B8DoubleSharpThrowsTest()
       {
          Note.Create(Tone.B, Accidental.DoubleSharp, 8);
@@ -257,14 +261,16 @@ namespace Intercode.MusicLib.Test
          Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleSharp, 1).AbsoluteValue, 2);
          Assert.AreEqual(Note.Create(Tone.B, Accidental.Natural, 1).AbsoluteValue, 11);
          Assert.AreEqual(Note.Create(Tone.C, Accidental.Natural, 2).AbsoluteValue, 12);
-         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 1).AbsoluteValue, Note.Create(Tone.D, Accidental.Flat, 1).AbsoluteValue);
-         Assert.AreEqual(Note.Create(Tone.B, Accidental.Sharp, 1).AbsoluteValue, Note.Create(Tone.C, Accidental.Natural, 2).AbsoluteValue);
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 1).AbsoluteValue,
+            Note.Create(Tone.D, Accidental.Flat, 1).AbsoluteValue);
+         Assert.AreEqual(Note.Create(Tone.B, Accidental.Sharp, 1).AbsoluteValue,
+            Note.Create(Tone.C, Accidental.Natural, 2).AbsoluteValue);
       }
 
       [ TestMethod ]
       public void GetIntervalBetweenTest()
       {
-         var cDoubleFlat2= Note.Create(Tone.C, Accidental.DoubleFlat, 2);
+         var cDoubleFlat2 = Note.Create(Tone.C, Accidental.DoubleFlat, 2);
          var cFlat2 = Note.Create(Tone.C, Accidental.Flat, 2);
          var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
          var cSharp2 = Note.Create(Tone.C, Accidental.Sharp, 2);
@@ -284,6 +290,77 @@ namespace Intercode.MusicLib.Test
          var c3 = Note.Create(Tone.C, Accidental.Natural, 3);
          Assert.AreEqual(c2.GetIntervalBetween(c3), 12);
          Assert.AreEqual(c3.GetIntervalBetween(c2), -12);
+      }
+
+      [ TestMethod ]
+      public void op_AdditionTest()
+      {
+         var c2 = Note.Create (Tone.C, Accidental.Natural, 2);
+            
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 2), c2 + 1);
+         Assert.AreEqual(Note.Create(Tone.B, Accidental.Natural, 1), c2 + -1);
+         Assert.AreEqual(Note.Create(Tone.D, Accidental.Natural, 2), c2 + 2);
+         Assert.AreEqual(Note.Create(Tone.A, Accidental.Sharp, 1), c2 + -2);
+
+      }
+
+      [ TestMethod ]
+      public void op_IncrementTest()
+      {
+         var c2 = Note.Create (Tone.C, Accidental.Natural, 2);
+            
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 2), ++c2);
+         Assert.AreEqual(Note.Create(Tone.D, Accidental.Natural, 2), ++c2);
+      }
+
+      [ TestMethod ]
+      public void op_SubtractionTest()
+      {
+         var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
+
+         Assert.AreEqual(Note.Create(Tone.B, Accidental.Natural, 1), c2 - 1);
+         Assert.AreEqual(Note.Create(Tone.A, Accidental.Sharp, 1), c2 - 2);
+      }
+
+      [ TestMethod ]
+      public void op_DecrementTest()
+      {
+         var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
+
+         Assert.AreEqual(Note.Create(Tone.B, Accidental.Natural, 1), --c2);
+         Assert.AreEqual(Note.Create(Tone.A, Accidental.Sharp, 1), --c2);
+      }
+
+      [ TestMethod ]
+      public void op_AdditionAccidentalModeTest()
+      {
+         var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
+
+         Note.AccidentalMode = AccidentalMode.FavorSharps;
+
+         Note actual = c2 + 1;
+         Assert.AreEqual("C#2", actual.ToString());
+
+         Note.AccidentalMode = AccidentalMode.FavorFlats;
+
+         actual = c2 + 1;
+         Assert.AreEqual("Db2", actual.ToString());
+      }
+
+      [ TestMethod ]
+      public void op_SubtractionAccidentalModeTest()
+      {
+         var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
+
+         Note.AccidentalMode = AccidentalMode.FavorSharps;
+
+         Note actual = c2 - 2;
+         Assert.AreEqual("A#1", actual.ToString());
+
+         Note.AccidentalMode = AccidentalMode.FavorFlats;
+
+         actual = c2 - 2;
+         Assert.AreEqual("Bb1", actual.ToString());
       }
    }
 }

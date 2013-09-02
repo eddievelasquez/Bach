@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Accidental.cs" />
     <Compile Include="AccidentalExtensions.cs" />
+    <Compile Include="AccidentalMode.cs" />
     <Compile Include="Note.cs">
       <SubType>Code</SubType>
     </Compile>

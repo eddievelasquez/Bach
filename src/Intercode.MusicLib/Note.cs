@@ -21,28 +21,24 @@ namespace Intercode.MusicLib
       #region Constants
 
       private const int INTERVALS_PER_OCTAVE = 12;
-      private const int TONE_COUNT = 7;
 
       #endregion
 
       #region Data Members
 
       // Intervals from C
-      private static readonly int[] s_intervals =
-      {
-         0,  // C 
-         2,  // D
-         4,  // E
-         5,  // F
-         7,  // G
-         9,  // A
+      private static readonly int[] s_intervals = { 0, // C 
+         2, // D
+         4, // E
+         5, // F
+         7, // G
+         9, // A
          11, // B
-         12  // C
+         12 // C
       };
 
       private static readonly int MIN_NOTE = CalcAbsoluteValue(Tone.C, Accidental.Natural, 1);
       private static readonly int MAX_NOTE = CalcAbsoluteValue(Tone.B, Accidental.Natural, 8);
-      private static readonly int DOUBLE_FLAT_OFFSET = Math.Abs((int)Accidental.DoubleFlat);
 
       #endregion
 
@@ -85,6 +81,7 @@ namespace Intercode.MusicLib
       public Accidental Accidental { get; private set; }
       public int Octave { get; private set; }
       public int AbsoluteValue { get; private set; }
+      public static AccidentalMode AccidentalMode { get; set; }
 
       #endregion
 
@@ -196,6 +193,62 @@ namespace Intercode.MusicLib
          return left.CompareTo(right) <= 0;
       }
 
+      public static Note operator +(Note note, int interval)
+      {
+         Contract.Requires<ArgumentNullException>(note != null, "note");
+
+         Tone tone;
+         Accidental accidental;
+         int octave;
+         var absoluteValue = note.AbsoluteValue + interval;
+         CalcNote(absoluteValue, out tone, out accidental, out octave);
+
+         var result = new Note(tone, accidental, octave, absoluteValue);
+         return result;
+      }
+
+      public static Note operator ++(Note note)
+      {
+         Contract.Requires<ArgumentNullException>(note != null, "note");
+
+         Tone tone;
+         Accidental accidental;
+         int octave;
+         var absoluteValue = note.AbsoluteValue + 1;
+         CalcNote(absoluteValue, out tone, out accidental, out octave);
+
+         var result = new Note(tone, accidental, octave, absoluteValue);
+         return result;
+      }
+
+      public static Note operator -(Note note, int interval)
+      {
+         Contract.Requires<ArgumentNullException>(note != null, "note");
+
+         Tone tone;
+         Accidental accidental;
+         int octave;
+         var absoluteValue = note.AbsoluteValue - interval;
+         CalcNote(absoluteValue, out tone, out accidental, out octave);
+
+         var result = new Note(tone, accidental, octave, absoluteValue);
+         return result;
+      }
+
+      public static Note operator --(Note note)
+      {
+         Contract.Requires<ArgumentNullException>(note != null, "note");
+
+         Tone tone;
+         Accidental accidental;
+         int octave;
+         var absoluteValue = note.AbsoluteValue - 1;
+         CalcNote(absoluteValue, out tone, out accidental, out octave);
+
+         var result = new Note(tone, accidental, octave, absoluteValue);
+         return result;
+      }
+
       #endregion
 
       #region Intervals
@@ -213,6 +266,26 @@ namespace Intercode.MusicLib
       {
          int value = ((octave - 1) * INTERVALS_PER_OCTAVE) + s_intervals[(int)tone] + (int)accidental;
          return value;
+      }
+
+      private static void CalcNote(int absoluteValue, out Tone tone, out Accidental accidental, out int octave)
+      {
+         int remainder;
+         octave = Math.DivRem(absoluteValue, INTERVALS_PER_OCTAVE, out remainder) + 1;
+
+         tone = Tone.C;
+         foreach( var interval in s_intervals )
+         {
+            if( remainder - interval - AccidentalMode <= 0 )
+            {
+               remainder -= interval;
+               break;
+            }
+
+            ++tone;
+         }
+
+         accidental = (Accidental)remainder;
       }
 
       private static Tone Next(Tone tone)
