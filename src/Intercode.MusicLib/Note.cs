@@ -32,8 +32,8 @@ namespace Intercode.MusicLib
          12 // C
       };
 
-      private static readonly int s_minNote = CalcAbsoluteValue(Tone.C, Accidental.Natural, 1);
-      private static readonly int s_maxNote = CalcAbsoluteValue(Tone.B, Accidental.Natural, 8);
+      private static readonly int s_minAbsoluteValue = CalcAbsoluteValue(Tone.C, Accidental.Natural, 1);
+      private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue(Tone.B, Accidental.Natural, 8);
 
       #endregion
 
@@ -71,14 +71,12 @@ namespace Intercode.MusicLib
          Contract.Requires<ArgumentOutOfRangeException>(octave >= 1, "octave");
          Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-         // TODO: Create a AbsoluteValueToNote function so the note in the error message 
-         // isn't hardcoded.
          int abs = CalcAbsoluteValue(tone, accidental, octave);
-         if( abs < s_minNote )
-            throw new ArgumentException("Must be equal to or greater than C1");
+         if( abs < s_minAbsoluteValue )
+            throw new ArgumentException(String.Format("Must be equal to or greater than {0}", new Note(s_minAbsoluteValue)));
 
-         if( abs > s_maxNote )
-            throw new ArgumentException("Must be equal to or less than B8");
+         if( abs > s_maxAbsoluteValue )
+            throw new ArgumentException(String.Format("Must be equal to or less than {0}", new Note(s_maxAbsoluteValue)));
 
          return new Note(tone, accidental, octave, abs);
       }
