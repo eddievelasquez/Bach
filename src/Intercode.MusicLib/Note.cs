@@ -22,11 +22,6 @@ namespace Intercode.MusicLib
 
       private const int INTERVALS_PER_OCTAVE = 12;
 
-      #endregion
-
-      #region Data Members
-
-      // Intervals from C
       private static readonly int[] s_intervals = { 0, // C 
          2, // D
          4, // E
@@ -37,19 +32,34 @@ namespace Intercode.MusicLib
          12 // C
       };
 
-      private static readonly int MIN_NOTE = CalcAbsoluteValue(Tone.C, Accidental.Natural, 1);
-      private static readonly int MAX_NOTE = CalcAbsoluteValue(Tone.B, Accidental.Natural, 8);
+      private static readonly int s_minNote = CalcAbsoluteValue(Tone.C, Accidental.Natural, 1);
+      private static readonly int s_maxNote = CalcAbsoluteValue(Tone.B, Accidental.Natural, 8);
+
+      #endregion
+
+      #region Data Members
+
+      private readonly Tone _tone;
+      private readonly Accidental _accidental;
+      private readonly int _octave;
+      private readonly int _absoluteValue;
 
       #endregion
 
       #region Construction
 
+      private Note(int absoluteValue)
+      {
+         _absoluteValue = absoluteValue;
+         CalcNote(absoluteValue, out _tone, out _accidental, out _octave);
+      }
+
       private Note(Tone tone, Accidental accidental, int octave, int absoluteValue)
       {
-         Tone = tone;
-         Accidental = accidental;
-         Octave = octave;
-         AbsoluteValue = absoluteValue;
+         _tone = tone;
+         _accidental = accidental;
+         _octave = octave;
+         _absoluteValue = absoluteValue;
       }
 
       public static Note Create(Tone tone, Accidental accidental, int octave)
@@ -64,10 +74,10 @@ namespace Intercode.MusicLib
          // TODO: Create a AbsoluteValueToNote function so the note in the error message 
          // isn't hardcoded.
          int abs = CalcAbsoluteValue(tone, accidental, octave);
-         if( abs < MIN_NOTE )
+         if( abs < s_minNote )
             throw new ArgumentException("Must be equal to or greater than C1");
 
-         if( abs > MAX_NOTE )
+         if( abs > s_maxNote )
             throw new ArgumentException("Must be equal to or less than B8");
 
          return new Note(tone, accidental, octave, abs);
@@ -77,10 +87,26 @@ namespace Intercode.MusicLib
 
       #region Properties
 
-      public Tone Tone { get; private set; }
-      public Accidental Accidental { get; private set; }
-      public int Octave { get; private set; }
-      public int AbsoluteValue { get; private set; }
+      public Tone Tone
+      {
+         get { return _tone; }
+      }
+
+      public Accidental Accidental
+      {
+         get { return _accidental; }
+      }
+
+      public int Octave
+      {
+         get { return _octave; }
+      }
+
+      public int AbsoluteValue
+      {
+         get { return _absoluteValue; }
+      }
+
       public static AccidentalMode AccidentalMode { get; set; }
 
       #endregion
@@ -197,13 +223,7 @@ namespace Intercode.MusicLib
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
 
-         Tone tone;
-         Accidental accidental;
-         int octave;
-         var absoluteValue = note.AbsoluteValue + interval;
-         CalcNote(absoluteValue, out tone, out accidental, out octave);
-
-         var result = new Note(tone, accidental, octave, absoluteValue);
+         var result = new Note(note.AbsoluteValue + interval);
          return result;
       }
 
@@ -211,13 +231,7 @@ namespace Intercode.MusicLib
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
 
-         Tone tone;
-         Accidental accidental;
-         int octave;
-         var absoluteValue = note.AbsoluteValue + 1;
-         CalcNote(absoluteValue, out tone, out accidental, out octave);
-
-         var result = new Note(tone, accidental, octave, absoluteValue);
+         var result = new Note(note.AbsoluteValue + 1);
          return result;
       }
 
@@ -225,13 +239,7 @@ namespace Intercode.MusicLib
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
 
-         Tone tone;
-         Accidental accidental;
-         int octave;
-         var absoluteValue = note.AbsoluteValue - interval;
-         CalcNote(absoluteValue, out tone, out accidental, out octave);
-
-         var result = new Note(tone, accidental, octave, absoluteValue);
+         var result = new Note(note.AbsoluteValue - interval);
          return result;
       }
 
@@ -239,13 +247,7 @@ namespace Intercode.MusicLib
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
 
-         Tone tone;
-         Accidental accidental;
-         int octave;
-         var absoluteValue = note.AbsoluteValue - 1;
-         CalcNote(absoluteValue, out tone, out accidental, out octave);
-
-         var result = new Note(tone, accidental, octave, absoluteValue);
+         var result = new Note(note.AbsoluteValue - 1);
          return result;
       }
 
@@ -285,14 +287,6 @@ namespace Intercode.MusicLib
          }
 
          accidental = (Accidental)remainder;
-      }
-
-      private static Tone Next(Tone tone)
-      {
-         if( tone == Tone.B )
-            return Tone.C;
-
-         return tone + 1;
       }
 
       #endregion
