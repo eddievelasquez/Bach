@@ -249,13 +249,12 @@ namespace Intercode.MusicLib
          return result;
       }
 
-      #endregion
-
-      #region Intervals
-
-      public int GetIntervalBetween(Note other)
+      public static int operator -(Note left, Note right)
       {
-         return other.AbsoluteValue - AbsoluteValue;
+         Contract.Requires<ArgumentNullException>(left != null, "left");
+         Contract.Requires<ArgumentNullException>(right != null, "right");
+
+         return right.AbsoluteValue - left.AbsoluteValue;
       }
 
       #endregion

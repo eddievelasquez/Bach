@@ -268,7 +268,7 @@ namespace Intercode.MusicLib.Test
       }
 
       [ TestMethod ]
-      public void GetIntervalBetweenTest()
+      public void op_SubtractionNoteTest()
       {
          var cDoubleFlat2 = Note.Create(Tone.C, Accidental.DoubleFlat, 2);
          var cFlat2 = Note.Create(Tone.C, Accidental.Flat, 2);
@@ -277,23 +277,23 @@ namespace Intercode.MusicLib.Test
          var cDoubleSharp2 = Note.Create(Tone.C, Accidental.DoubleSharp, 2);
 
          // Test interval with same notes in the same octave with different accidentals
-         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cDoubleFlat2), 0);
-         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cFlat2), 1);
-         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(c2), 2);
-         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cSharp2), 3);
-         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cDoubleSharp2), 4);
-         Assert.AreEqual(cFlat2.GetIntervalBetween(cDoubleFlat2), -1);
-         Assert.AreEqual(c2.GetIntervalBetween(cDoubleFlat2), -2);
-         Assert.AreEqual(cSharp2.GetIntervalBetween(cDoubleFlat2), -3);
-         Assert.AreEqual(cDoubleSharp2.GetIntervalBetween(cDoubleFlat2), -4);
+         Assert.AreEqual(cDoubleFlat2 - cDoubleFlat2, 0);
+         Assert.AreEqual(cDoubleFlat2 - cFlat2, 1);
+         Assert.AreEqual(cDoubleFlat2 - c2, 2);
+         Assert.AreEqual(cDoubleFlat2 - cSharp2, 3);
+         Assert.AreEqual(cDoubleFlat2 - cDoubleSharp2, 4);
+         Assert.AreEqual(cFlat2 - cDoubleFlat2, -1);
+         Assert.AreEqual(c2 - cDoubleFlat2, -2);
+         Assert.AreEqual(cSharp2 - cDoubleFlat2, -3);
+         Assert.AreEqual(cDoubleSharp2 - cDoubleFlat2, -4);
 
          var c3 = Note.Create(Tone.C, Accidental.Natural, 3);
-         Assert.AreEqual(c2.GetIntervalBetween(c3), 12);
-         Assert.AreEqual(c3.GetIntervalBetween(c2), -12);
+         Assert.AreEqual(c2 - c3, 12);
+         Assert.AreEqual(c3 - c2, -12);
       }
 
       [ TestMethod ]
-      public void op_AdditionTest()
+      public void op_AdditionIntTest()
       {
          var c2 = Note.Create (Tone.C, Accidental.Natural, 2);
             
@@ -314,7 +314,7 @@ namespace Intercode.MusicLib.Test
       }
 
       [ TestMethod ]
-      public void op_SubtractionTest()
+      public void op_SubtractionIntTest()
       {
          var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
 
@@ -332,7 +332,7 @@ namespace Intercode.MusicLib.Test
       }
 
       [ TestMethod ]
-      public void op_AdditionAccidentalModeTest()
+      public void op_AdditionIntAccidentalModeTest()
       {
          var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
 
@@ -348,7 +348,7 @@ namespace Intercode.MusicLib.Test
       }
 
       [ TestMethod ]
-      public void op_SubtractionAccidentalModeTest()
+      public void op_SubtractionIntAccidentalModeTest()
       {
          var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
 
