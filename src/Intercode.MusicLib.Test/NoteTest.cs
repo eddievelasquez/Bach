@@ -39,7 +39,7 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void NoteConstructorTest()
       {
-         var target = new Note(Tone.A, Accidental.Natural, 1);
+         var target = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.AreEqual(target.Tone, Tone.A);
          Assert.AreEqual(target.Accidental, Accidental.Natural);
          Assert.AreEqual(target.Octave, 1);
@@ -48,9 +48,9 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void EqualsContractTest()
       {
-         object x = new Note(Tone.A, Accidental.Natural, 1);
-         object y = new Note(Tone.A, Accidental.Natural, 1);
-         object z = new Note(Tone.A, Accidental.Natural, 1);
+         object x = Note.Create(Tone.A, Accidental.Natural, 1);
+         object y = Note.Create(Tone.A, Accidental.Natural, 1);
+         object z = Note.Create(Tone.A, Accidental.Natural, 1);
 
          Assert.IsTrue(x.Equals(x)); // Reflexive
          Assert.IsTrue(x.Equals(y)); // Symetric
@@ -63,9 +63,9 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void TypeSafeEqualsContractTest()
       {
-         var x = new Note(Tone.A, Accidental.Natural, 1);
-         var y = new Note(Tone.A, Accidental.Natural, 1);
-         var z = new Note(Tone.A, Accidental.Natural, 1);
+         var x = Note.Create(Tone.A, Accidental.Natural, 1);
+         var y = Note.Create(Tone.A, Accidental.Natural, 1);
+         var z = Note.Create(Tone.A, Accidental.Natural, 1);
 
          Assert.IsTrue(x.Equals(x)); // Reflexive
          Assert.IsTrue(x.Equals(y)); // Symetric
@@ -78,43 +78,43 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void EqualsFailsWithDifferentTypeTest()
       {
-         object actual = new Note(Tone.A, Accidental.Natural, 1);
+         object actual = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.IsFalse(actual.Equals(Int32.MinValue));
       }
 
       [ TestMethod ]
       public void TypeSafeEqualsFailsWithDifferentTypeTest()
       {
-         var actual = new Note(Tone.A, Accidental.Natural, 1);
+         var actual = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.IsFalse(actual.Equals(Int32.MinValue));
       }
 
       [ TestMethod ]
       public void EqualsFailsWithNullTest()
       {
-         object actual = new Note(Tone.A, Accidental.Natural, 1);
+         object actual = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.IsFalse(actual.Equals(null));
       }
 
       [ TestMethod ]
       public void TypeSafeEqualsFailsWithNullTest()
       {
-         var actual = new Note(Tone.A, Accidental.Natural, 1);
+         var actual = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.IsFalse(actual.Equals(null));
       }
 
       [ TestMethod ]
       public void EqualsSucceedsWithSameObjectTest()
       {
-         var actual = new Note(Tone.A, Accidental.Natural, 1);
+         var actual = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.IsTrue(actual.Equals(actual));
       }
 
       [ TestMethod ]
       public void GetHashcodeTest()
       {
-         var actual = new Note(Tone.A, Accidental.Natural, 1);
-         var expected = new Note(Tone.A, Accidental.Natural, 1);
+         var actual = Note.Create(Tone.A, Accidental.Natural, 1);
+         var expected = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.IsTrue(expected.Equals(actual));
          Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
       }
@@ -123,25 +123,25 @@ namespace Intercode.MusicLib.Test
       public void CompareToContractTest()
       {
          {
-            var a = new Note(Tone.A, Accidental.Natural, 1);
+            var a = Note.Create(Tone.A, Accidental.Natural, 1);
             Assert.IsTrue(a.CompareTo(null) > 0 );
             Assert.IsTrue(a.CompareTo(a) == 0 );
 
-            var b = new Note(Tone.A, Accidental.Natural, 1);
+            var b = Note.Create(Tone.A, Accidental.Natural, 1);
             Assert.IsTrue(a.CompareTo(b) == 0);
             Assert.IsTrue(b.CompareTo(a) == 0);
 
-            var c = new Note(Tone.A, Accidental.Natural, 1);
+            var c = Note.Create(Tone.A, Accidental.Natural, 1);
             Assert.IsTrue(b.CompareTo(c) == 0);
             Assert.IsTrue(a.CompareTo(c) == 0);            
          }
          {
-            var a = new Note(Tone.C, Accidental.Natural, 1);
-            var b = new Note(Tone.D, Accidental.Natural, 1);
+            var a = Note.Create(Tone.C, Accidental.Natural, 1);
+            var b = Note.Create(Tone.D, Accidental.Natural, 1);
 
             Assert.AreEqual(a.CompareTo(b), -b.CompareTo(a));
 
-            var c = new Note(Tone.E, Accidental.Natural, 1);
+            var c = Note.Create(Tone.E, Accidental.Natural, 1);
             Assert.IsTrue(a.CompareTo(b) < 0);
             Assert.IsTrue(b.CompareTo(c) < 0);
             Assert.IsTrue(a.CompareTo(c) < 0);
@@ -151,12 +151,12 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void CompareToTest()
       {
-         var a1 = new Note(Tone.A, Accidental.Natural, 1);
-         var aSharp1 = new Note(Tone.A, Accidental.Sharp, 1);
-         var aFlat1 = new Note(Tone.A, Accidental.Flat, 1);
-         var a2 = new Note(Tone.A, Accidental.Natural, 2);
-         var aSharp2 = new Note(Tone.A, Accidental.Sharp, 2);
-         var aFlat2 = new Note(Tone.A, Accidental.Flat, 2);
+         var a1 = Note.Create(Tone.A, Accidental.Natural, 1);
+         var aSharp1 = Note.Create(Tone.A, Accidental.Sharp, 1);
+         var aFlat1 = Note.Create(Tone.A, Accidental.Flat, 1);
+         var a2 = Note.Create(Tone.A, Accidental.Natural, 2);
+         var aSharp2 = Note.Create(Tone.A, Accidental.Sharp, 2);
+         var aFlat2 = Note.Create(Tone.A, Accidental.Flat, 2);
 
          Assert.IsTrue(a1.CompareTo(a1) == 0);
          Assert.IsTrue(a1.CompareTo(aSharp1) < 0);
@@ -165,7 +165,7 @@ namespace Intercode.MusicLib.Test
          Assert.IsTrue(a1.CompareTo(aFlat2) < 0);
          Assert.IsTrue(a1.CompareTo(aSharp2) < 0);
 
-         var c1 = new Note(Tone.C, Accidental.Natural, 1);
+         var c1 = Note.Create(Tone.C, Accidental.Natural, 1);
          Assert.IsTrue(a1.CompareTo(c1) > 0);
          Assert.IsTrue(c1.CompareTo(a1) < 0);
       }
@@ -173,28 +173,28 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void ToStringTest()
       {
-         var target = new Note(Tone.A, Accidental.DoubleFlat, 1);
+         var target = Note.Create(Tone.A, Accidental.DoubleFlat, 1);
          Assert.AreEqual("Abb1", target.ToString());
 
-         target = new Note(Tone.A, Accidental.Flat, 1);
+         target = Note.Create(Tone.A, Accidental.Flat, 1);
          Assert.AreEqual("Ab1", target.ToString());
 
-         target = new Note(Tone.A, Accidental.Natural, 1);
+         target = Note.Create(Tone.A, Accidental.Natural, 1);
          Assert.AreEqual("A1", target.ToString());
 
-         target = new Note(Tone.A, Accidental.Sharp, 1);
+         target = Note.Create(Tone.A, Accidental.Sharp, 1);
          Assert.AreEqual("A#1", target.ToString());
 
-         target = new Note(Tone.A, Accidental.DoubleSharp, 1);
+         target = Note.Create(Tone.A, Accidental.DoubleSharp, 1);
          Assert.AreEqual("A##1", target.ToString());
       }
 
       [ TestMethod ]
       public void op_EqualityTest()
       {
-         var a = new Note(Tone.A, Accidental.Natural, 1);
-         var b = new Note(Tone.A, Accidental.Natural, 1);
-         var c = new Note(Tone.B, Accidental.Natural, 1);
+         var a = Note.Create(Tone.A, Accidental.Natural, 1);
+         var b = Note.Create(Tone.A, Accidental.Natural, 1);
+         var c = Note.Create(Tone.B, Accidental.Natural, 1);
 
          Assert.IsTrue(a == b);
          Assert.IsFalse(a == c);
@@ -204,9 +204,9 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void op_InequalityTest()
       {
-         var a = new Note(Tone.A, Accidental.Natural, 1);
-         var b = new Note(Tone.A, Accidental.Natural, 1);
-         var c = new Note(Tone.B, Accidental.Natural, 1);
+         var a = Note.Create(Tone.A, Accidental.Natural, 1);
+         var b = Note.Create(Tone.A, Accidental.Natural, 1);
+         var c = Note.Create(Tone.B, Accidental.Natural, 1);
 
          Assert.IsTrue(a != c);
          Assert.IsTrue(b != c);
@@ -216,8 +216,8 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void ComparisonOperatorsTest()
       {
-         var a = new Note(Tone.A, Accidental.Natural, 1);
-         var b = new Note(Tone.B, Accidental.Natural, 1);
+         var a = Note.Create(Tone.A, Accidental.Natural, 1);
+         var b = Note.Create(Tone.B, Accidental.Natural, 1);
 
          Assert.IsTrue(b > a);
          Assert.IsTrue(b >= a);

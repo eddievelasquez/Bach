@@ -28,7 +28,14 @@ namespace Intercode.MusicLib
 
       #region Construction
 
-      public Note(Tone tone, Accidental accidental, int octave)
+      private Note(Tone tone, Accidental accidental, int octave)
+      {
+         _tone = tone;
+         _accidental = accidental;
+         _octave = octave;
+      }
+
+      public static Note Create(Tone tone, Accidental accidental, int octave)
       {
          Contract.Requires<ArgumentOutOfRangeException>(tone >= Tone.C, "tone");
          Contract.Requires<ArgumentOutOfRangeException>(tone <= Tone.B, "tone");
@@ -37,9 +44,7 @@ namespace Intercode.MusicLib
          Contract.Requires<ArgumentOutOfRangeException>(octave >= 1, "octave");
          Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-         _tone = tone;
-         _accidental = accidental;
-         _octave = octave;
+         return new Note(tone, accidental, octave);
       }
 
       #endregion
