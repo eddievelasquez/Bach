@@ -18,21 +18,42 @@ namespace Intercode.MusicLib
 
    public class Note: IEquatable<Note>, IComparable<Note>
    {
+      #region Constants
+
+      private const int INTERVALS_PER_OCTAVE = 12;
+      private const int TONE_COUNT = 7;
+
+      #endregion
+
       #region Data Members
 
-      private readonly Accidental _accidental;
-      private readonly int _octave;
-      private readonly Tone _tone;
+      // Intervals from C
+      private static readonly int[] s_intervals =
+      {
+         0,  // C 
+         2,  // D
+         4,  // E
+         5,  // F
+         7,  // G
+         9,  // A
+         11, // B
+         12  // C
+      };
+
+      private static readonly int MIN_NOTE = CalcAbsoluteValue(Tone.C, Accidental.Natural, 1);
+      private static readonly int MAX_NOTE = CalcAbsoluteValue(Tone.B, Accidental.Natural, 8);
+      private static readonly int DOUBLE_FLAT_OFFSET = Math.Abs((int)Accidental.DoubleFlat);
 
       #endregion
 
       #region Construction
 
-      private Note(Tone tone, Accidental accidental, int octave)
+      private Note(Tone tone, Accidental accidental, int octave, int absoluteValue)
       {
-         _tone = tone;
-         _accidental = accidental;
-         _octave = octave;
+         Tone = tone;
+         Accidental = accidental;
+         Octave = octave;
+         AbsoluteValue = absoluteValue;
       }
 
       public static Note Create(Tone tone, Accidental accidental, int octave)
@@ -44,27 +65,26 @@ namespace Intercode.MusicLib
          Contract.Requires<ArgumentOutOfRangeException>(octave >= 1, "octave");
          Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
 
-         return new Note(tone, accidental, octave);
+         // TODO: Create a AbsoluteValueToNote function so the note in the error message 
+         // isn't hardcoded.
+         int abs = CalcAbsoluteValue(tone, accidental, octave);
+         if( abs < MIN_NOTE )
+            throw new ArgumentException("Must be equal to or greater than C1");
+
+         if( abs > MAX_NOTE )
+            throw new ArgumentException("Must be equal to or less than B8");
+
+         return new Note(tone, accidental, octave, abs);
       }
 
       #endregion
 
       #region Properties
 
-      public Tone Tone
-      {
-         get { return _tone; }
-      }
-
-      public Accidental Accidental
-      {
-         get { return _accidental; }
-      }
-
-      public int Octave
-      {
-         get { return _octave; }
-      }
+      public Tone Tone { get; private set; }
+      public Accidental Accidental { get; private set; }
+      public int Octave { get; private set; }
+      public int AbsoluteValue { get; private set; }
 
       #endregion
 
@@ -75,15 +95,7 @@ namespace Intercode.MusicLib
          if( other == null )
             return 1;
 
-         int result = Octave.CompareTo(other.Octave);
-         if( result != 0 )
-            return result;
-
-         result = Tone.CompareTo(other.Tone);
-         if( result == 0 )
-            result = Accidental.CompareTo(other.Accidental);
-
-         return result;
+         return AbsoluteValue - other.AbsoluteValue;
       }
 
       #endregion
@@ -98,7 +110,7 @@ namespace Intercode.MusicLib
          if( ReferenceEquals(other, null) )
             return false;
 
-         return _accidental == other._accidental && _octave == other._octave && _tone == other._tone;
+         return AbsoluteValue == other.AbsoluteValue;
       }
 
       #endregion
@@ -118,13 +130,7 @@ namespace Intercode.MusicLib
 
       public override int GetHashCode()
       {
-         unchecked
-         {
-            var hashCode = (int)_accidental;
-            hashCode = (hashCode * 397) ^ _octave;
-            hashCode = (hashCode * 397) ^ (int)_tone;
-            return hashCode;
-         }
+         return AbsoluteValue;
       }
 
       public override string ToString()
@@ -186,7 +192,35 @@ namespace Intercode.MusicLib
       {
          if( left == null )
             return true;
+
          return left.CompareTo(right) <= 0;
+      }
+
+      #endregion
+
+      #region Intervals
+
+      public int GetIntervalBetween(Note other)
+      {
+         return other.AbsoluteValue - AbsoluteValue;
+      }
+
+      #endregion
+
+      #region Implementation
+
+      private static int CalcAbsoluteValue(Tone tone, Accidental accidental, int octave)
+      {
+         int value = ((octave - 1) * INTERVALS_PER_OCTAVE) + s_intervals[(int)tone] + (int)accidental;
+         return value;
+      }
+
+      private static Tone Next(Tone tone)
+      {
+         if( tone == Tone.B )
+            return Tone.C;
+
+         return tone + 1;
       }
 
       #endregion

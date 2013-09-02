@@ -224,5 +224,66 @@ namespace Intercode.MusicLib.Test
          Assert.IsFalse(b < a);
          Assert.IsFalse(b <= a);
       }
+
+      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      public void C1DoubleFlatThrowsTest()
+      {
+         Note.Create(Tone.C, Accidental.DoubleFlat, 1);
+      }
+
+      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      public void C1FlatThrowsTest()
+      {
+         Note.Create(Tone.C, Accidental.Flat, 1);
+      }
+
+      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      public void B8SharpThrowsTest()
+      {
+         Note.Create(Tone.B, Accidental.Sharp, 8);
+      }
+
+      [ TestMethod, ExpectedException(typeof(ArgumentException)) ]
+      public void B8DoubleSharpThrowsTest()
+      {
+         Note.Create(Tone.B, Accidental.DoubleSharp, 8);
+      }
+
+      [ TestMethod ]
+      public void AbsoluteValueTest()
+      {
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Natural, 1).AbsoluteValue, 0);
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 1).AbsoluteValue, 1);
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleSharp, 1).AbsoluteValue, 2);
+         Assert.AreEqual(Note.Create(Tone.B, Accidental.Natural, 1).AbsoluteValue, 11);
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Natural, 2).AbsoluteValue, 12);
+         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 1).AbsoluteValue, Note.Create(Tone.D, Accidental.Flat, 1).AbsoluteValue);
+         Assert.AreEqual(Note.Create(Tone.B, Accidental.Sharp, 1).AbsoluteValue, Note.Create(Tone.C, Accidental.Natural, 2).AbsoluteValue);
+      }
+
+      [ TestMethod ]
+      public void GetIntervalBetweenTest()
+      {
+         var cDoubleFlat2= Note.Create(Tone.C, Accidental.DoubleFlat, 2);
+         var cFlat2 = Note.Create(Tone.C, Accidental.Flat, 2);
+         var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
+         var cSharp2 = Note.Create(Tone.C, Accidental.Sharp, 2);
+         var cDoubleSharp2 = Note.Create(Tone.C, Accidental.DoubleSharp, 2);
+
+         // Test interval with same notes in the same octave with different accidentals
+         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cDoubleFlat2), 0);
+         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cFlat2), 1);
+         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(c2), 2);
+         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cSharp2), 3);
+         Assert.AreEqual(cDoubleFlat2.GetIntervalBetween(cDoubleSharp2), 4);
+         Assert.AreEqual(cFlat2.GetIntervalBetween(cDoubleFlat2), -1);
+         Assert.AreEqual(c2.GetIntervalBetween(cDoubleFlat2), -2);
+         Assert.AreEqual(cSharp2.GetIntervalBetween(cDoubleFlat2), -3);
+         Assert.AreEqual(cDoubleSharp2.GetIntervalBetween(cDoubleFlat2), -4);
+
+         var c3 = Note.Create(Tone.C, Accidental.Natural, 3);
+         Assert.AreEqual(c2.GetIntervalBetween(c3), 12);
+         Assert.AreEqual(c3.GetIntervalBetween(c2), -12);
+      }
    }
 }
