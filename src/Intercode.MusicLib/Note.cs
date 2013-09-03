@@ -349,6 +349,34 @@ namespace Intercode.MusicLib
          }
 
          accidental = (Accidental)remainder;
+
+         // Special cases
+         if (accidental == Accidental.Sharp)
+         {
+            if( tone == Tone.E)
+            {
+               tone = Tone.F;
+               accidental = Accidental.Natural;
+            }
+            else if( tone == Tone.B )
+            {
+               tone = Tone.C;
+               accidental = Accidental.Natural;
+            }               
+         }
+         else if( accidental == Accidental.Flat )
+         {
+            if( tone == Tone.C )
+            {
+               tone = Tone.B;
+               accidental = Accidental.Natural;
+            }
+            else if( tone == Tone.F)
+            {
+               tone = Tone.E;
+               accidental = Accidental.Natural;
+            }
+         }
       }
 
       private static void TryGetAccidental(string value, ref int index, out Accidental accidental)
