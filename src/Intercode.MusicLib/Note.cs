@@ -14,7 +14,9 @@
 namespace Intercode.MusicLib
 {
    using System;
+   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
+   using System.Linq;
    using System.Text;
 
    public class Note: IEquatable<Note>, IComparable<Note>
@@ -305,6 +307,17 @@ namespace Intercode.MusicLib
             throw new ArgumentException(String.Format("{0} is not a valid note", value));
 
          return result;
+      }
+
+      public static IEnumerable<Note> ParseArray(string value, int defaultOctave = 4)
+      {
+         Contract.Requires<ArgumentNullException>(value != null, "value");
+         Contract.Requires<ArgumentException>(value.Length > 0, "value");
+         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= MIN_OCTAVE, "defaultOctave");
+         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= MAX_OCTAVE, "defaultOctave");
+
+         string[] values = value.Split(',');
+         return values.Select(s => Parse(s, defaultOctave));
       }
 
       #endregion
