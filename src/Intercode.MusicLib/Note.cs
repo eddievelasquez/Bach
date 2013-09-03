@@ -53,10 +53,10 @@ namespace Intercode.MusicLib
 
       #region Construction
 
-      private Note(int absoluteValue)
+      private Note(int absoluteValue, AccidentalMode accidentalMode)
       {
          _absoluteValue = absoluteValue;
-         CalcNote(absoluteValue, out _tone, out _accidental, out _octave);
+         CalcNote(absoluteValue, out _tone, out _accidental, out _octave, accidentalMode);
       }
 
       private Note(Tone tone, Accidental accidental, int octave, int absoluteValue)
@@ -78,10 +78,13 @@ namespace Intercode.MusicLib
 
          int abs = CalcAbsoluteValue(tone, accidental, octave);
          if( abs < s_minAbsoluteValue )
-            throw new ArgumentException(String.Format("Must be equal to or greater than {0}", new Note(s_minAbsoluteValue)));
+         {
+            throw new ArgumentException(String.Format("Must be equal to or greater than {0}",
+               new Note(s_minAbsoluteValue, AccidentalMode)));
+         }
 
          if( abs > s_maxAbsoluteValue )
-            throw new ArgumentException(String.Format("Must be equal to or less than {0}", new Note(s_maxAbsoluteValue)));
+            throw new ArgumentException(String.Format("Must be equal to or less than {0}", new Note(s_maxAbsoluteValue, AccidentalMode)));
 
          return new Note(tone, accidental, octave, abs);
       }
@@ -222,36 +225,40 @@ namespace Intercode.MusicLib
          return left.CompareTo(right) <= 0;
       }
 
+      public Note Add(int interval, AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+      {
+         var result = new Note(AbsoluteValue + interval, accidentalMode);
+         return result;         
+      }
+
+      public Note Subtract(int interval, AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+      {
+         var result = new Note(AbsoluteValue - interval, accidentalMode);
+         return result;         
+      }
+
       public static Note operator +(Note note, int interval)
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
-
-         var result = new Note(note.AbsoluteValue + interval);
-         return result;
+         return note.Add(interval, AccidentalMode);
       }
 
       public static Note operator ++(Note note)
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
-
-         var result = new Note(note.AbsoluteValue + 1);
-         return result;
+         return note.Add(1, AccidentalMode);
       }
 
       public static Note operator -(Note note, int interval)
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
-
-         var result = new Note(note.AbsoluteValue - interval);
-         return result;
+         return note.Subtract(interval, AccidentalMode);
       }
 
       public static Note operator --(Note note)
       {
          Contract.Requires<ArgumentNullException>(note != null, "note");
-
-         var result = new Note(note.AbsoluteValue - 1);
-         return result;
+         return note.Subtract(1, AccidentalMode);
       }
 
       public static int operator -(Note left, Note right)
@@ -294,7 +301,7 @@ namespace Intercode.MusicLib
       public static Note Parse(string value, int defaultOctave = 4)
       {
          Note result;
-         if (!TryParse(value, out result))
+         if( !TryParse(value, out result) )
             throw new ArgumentException(String.Format("{0} is not a valid note", value));
 
          return result;
@@ -310,7 +317,8 @@ namespace Intercode.MusicLib
          return value;
       }
 
-      private static void CalcNote(int absoluteValue, out Tone tone, out Accidental accidental, out int octave)
+      private static void CalcNote(int absoluteValue, out Tone tone, out Accidental accidental, out int octave,
+         AccidentalMode accidentalMode)
       {
          int remainder;
          octave = Math.DivRem(absoluteValue, INTERVALS_PER_OCTAVE, out remainder) + 1;
@@ -318,7 +326,7 @@ namespace Intercode.MusicLib
          tone = Tone.C;
          foreach( var interval in s_intervals )
          {
-            if( remainder - interval - AccidentalMode <= 0 )
+            if( remainder - interval - accidentalMode <= 0 )
             {
                remainder -= interval;
                break;
@@ -335,7 +343,7 @@ namespace Intercode.MusicLib
          accidental = Accidental.Natural;
 
          var buf = new StringBuilder();
-         for (int i = index; i < value.Length; ++i)
+         for( int i = index; i < value.Length; ++i )
          {
             char ch = value[i];
             if( ch != '#' && ch != 'b' && ch != 'B' )
