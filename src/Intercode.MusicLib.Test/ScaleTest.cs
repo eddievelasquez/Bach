@@ -1,42 +1,65 @@
-﻿namespace Intercode.MusicLib.Test
+﻿// 
+//   ScaleTest.cs: 
+// 
+//   Author: Eddie Velasquez
+// 
+//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// 
+//      Unauthorized use, duplication or distribution of this software, 
+//      or any portion of it, is prohibited.  
+// 
+//   http://www.intercodeconsulting.com
+// 
+
+namespace Intercode.MusicLib.Test
 {
-  using System.Linq;
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+   using System.Collections.Generic;
+   using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-  [ TestClass ]
-  public class ScaleTest
-  {
-    [ TestMethod ]
-    public void ConstructorTest()
-    {
-      var major = new Scale("Major", 2, 2, 1, 2, 2, 2, 2);
-      Assert.AreEqual("Major", major.Name);
-      Assert.AreEqual(7, major.NoteCount);
-    }
+   [ TestClass ]
+   public class ScaleTest
+   {
+      #region Implementation
 
-    [ TestMethod ]
-    public void GetNotesTest()
-    {
-      TestScale(Note.C(4), Scale.Major, Note.Parse("C,D,E,F,G,A,B"));
-      TestScale(Note.C(4), Scale.NaturalMinor, Note.Parse("C,D,Eb,F,G,Ab,Bb"));
-      TestScale(Note.C(4), Scale.HarmonicMinor, Note.Parse("C,D,Eb,F,G,Ab,B"));
-      TestScale(Note.C(4), Scale.MelodicMinor, Note.Parse("C,D,Eb,F,G,A,B"));
-      TestScale(Note.C(4), Scale.Diminished, Note.Parse("C,D,Eb,F,Gb,G#,A,B"));
-      TestScale(Note.C(4), Scale.Polytonal, Note.Parse("C,Db,Eb,Fb,F#,G,A,Bb"));
-      TestScale(Note.C(4), Scale.Pentatonic, Note.Parse("C,D,E,G,A"));
-      TestScale(Note.C(4), Scale.Blues, Note.Parse("C,Eb,F,Gb,G,Bb"));
-      TestScale(Note.C(4), Scale.Gospel, Note.Parse("C,D,Eb,E,G,A"));
-    }
+      private static void TestScale(Note root, Scale scale, IEnumerable<Note> expectedNotes)
+      {
+         Assert.IsNotNull(scale);
 
-    private static void TestScale( Note root, Scale scale, params Note[] expectedNotes )
-    {
-      Assert.IsNotNull(scale);
+         var actualNotes = scale.GetNotes(root).GetEnumerator();
+         foreach( var expectedNote in expectedNotes )
+         {
+            Assert.IsTrue(actualNotes.MoveNext());
+            Assert.AreEqual(expectedNote, actualNotes.Current);
+         }
+      }
 
-      Note[] notes = scale.GetNotes(root).Take(expectedNotes.Length).ToArray();
-      Assert.AreEqual(expectedNotes.Length, notes.Length);
+      #endregion
 
-      for( int i = 0; i < expectedNotes.Length; i++ )
-        Assert.AreEqual(expectedNotes[i], notes[i]);
-    }
-  }
+      #region Tests
+
+      [ TestMethod ]
+      public void ConstructorTest()
+      {
+         var major = new Scale("Major", 2, 2, 1, 2, 2, 2, 2);
+         Assert.AreEqual("Major", major.Name);
+         Assert.AreEqual(7, major.Count);
+      }
+
+      [ TestMethod ]
+      public void GetNotesTest()
+      {
+         var root = Note.Create(Tone.C, Accidental.Natural, 4);
+         TestScale(root, Scale.Major, Note.ParseArray("C,D,E,F,G,A,B"));
+         TestScale(root, Scale.NaturalMinor, Note.ParseArray("C,D,Eb,F,G,Ab,Bb"));
+         TestScale(root, Scale.HarmonicMinor, Note.ParseArray("C,D,Eb,F,G,Ab,B"));
+         TestScale(root, Scale.MelodicMinor, Note.ParseArray("C,D,Eb,F,G,A,B"));
+         TestScale(root, Scale.Diminished, Note.ParseArray("C,D,Eb,F,Gb,G#,A,B"));
+         TestScale(root, Scale.Polytonal, Note.ParseArray("C,Db,Eb,Fb,F#,G,A,Bb"));
+         TestScale(root, Scale.Pentatonic, Note.ParseArray("C,D,E,G,A"));
+         TestScale(root, Scale.Blues, Note.ParseArray("C,Eb,F,Gb,G,Bb"));
+         TestScale(root, Scale.Gospel, Note.ParseArray("C,D,Eb,E,G,A"));
+      }
+
+      #endregion
+   }
 }
