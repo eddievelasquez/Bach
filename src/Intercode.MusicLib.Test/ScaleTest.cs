@@ -1,5 +1,5 @@
 ﻿// 
-//   ScaleTest.cs: 
+//   ScaleFormulaTest.cs: 
 // 
 //   Author: Eddie Velasquez
 // 
@@ -17,15 +17,15 @@ namespace Intercode.MusicLib.Test
    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
    [ TestClass ]
-   public class ScaleTest
+   public class ScaleFormulaTest
    {
       #region Implementation
 
-      private static void TestScale(Note root, Scale scale, IEnumerable<Note> expectedNotes)
+      private static void TestScale(Note root, ScaleFormula formula, IEnumerable<Note> expectedNotes)
       {
-         Assert.IsNotNull(scale);
+         Assert.IsNotNull(formula);
 
-         var actualNotes = scale.GetNotes(root).GetEnumerator();
+         var actualNotes = formula.GetNotes(root).GetEnumerator();
          foreach( var expectedNote in expectedNotes )
          {
             Assert.IsTrue(actualNotes.MoveNext());
@@ -40,7 +40,7 @@ namespace Intercode.MusicLib.Test
       [ TestMethod ]
       public void ConstructorTest()
       {
-         var major = new Scale("Major", 2, 2, 1, 2, 2, 2, 2);
+         var major = new ScaleFormula("Major", 2, 2, 1, 2, 2, 2, 2);
          Assert.AreEqual("Major", major.Name);
          Assert.AreEqual(7, major.Count);
       }
@@ -49,15 +49,15 @@ namespace Intercode.MusicLib.Test
       public void GetNotesTest()
       {
          var root = Note.Create(Tone.C, Accidental.Natural, 4);
-         TestScale(root, Scale.Major, Note.ParseArray("C,D,E,F,G,A,B"));
-         TestScale(root, Scale.NaturalMinor, Note.ParseArray("C,D,Eb,F,G,Ab,Bb"));
-         TestScale(root, Scale.HarmonicMinor, Note.ParseArray("C,D,Eb,F,G,Ab,B"));
-         TestScale(root, Scale.MelodicMinor, Note.ParseArray("C,D,Eb,F,G,A,B"));
-         TestScale(root, Scale.Diminished, Note.ParseArray("C,D,Eb,F,Gb,G#,A,B"));
-         TestScale(root, Scale.Polytonal, Note.ParseArray("C,Db,Eb,Fb,F#,G,A,Bb"));
-         TestScale(root, Scale.Pentatonic, Note.ParseArray("C,D,E,G,A"));
-         TestScale(root, Scale.Blues, Note.ParseArray("C,Eb,F,Gb,G,Bb"));
-         TestScale(root, Scale.Gospel, Note.ParseArray("C,D,Eb,E,G,A"));
+         TestScale(root, ScaleFormula.Major, Note.ParseArray("C,D,E,F,G,A,B"));
+         TestScale(root, ScaleFormula.NaturalMinor, Note.ParseArray("C,D,Eb,F,G,Ab,Bb"));
+         TestScale(root, ScaleFormula.HarmonicMinor, Note.ParseArray("C,D,Eb,F,G,Ab,B"));
+         TestScale(root, ScaleFormula.MelodicMinor, Note.ParseArray("C,D,Eb,F,G,A,B"));
+         TestScale(root, ScaleFormula.Diminished, Note.ParseArray("C,D,Eb,F,Gb,G#,A,B"));
+         TestScale(root, ScaleFormula.Polytonal, Note.ParseArray("C,Db,Eb,Fb,F#,G,A,Bb"));
+         TestScale(root, ScaleFormula.Pentatonic, Note.ParseArray("C,D,E,G,A"));
+         TestScale(root, ScaleFormula.Blues, Note.ParseArray("C,Eb,F,Gb,G,Bb"));
+         TestScale(root, ScaleFormula.Gospel, Note.ParseArray("C,D,Eb,E,G,A"));
       }
 
       #endregion
