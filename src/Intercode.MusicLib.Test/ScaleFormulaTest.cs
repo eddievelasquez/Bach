@@ -25,7 +25,7 @@ namespace Intercode.MusicLib.Test
       {
          Assert.IsNotNull(formula);
 
-         var actualNotes = formula.GetNotes(root).GetEnumerator();
+         var actualNotes = formula.GenerateScale(root).GetEnumerator();
          foreach( var expectedNote in expectedNotes )
          {
             Assert.IsTrue(actualNotes.MoveNext());
