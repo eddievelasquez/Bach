@@ -46,7 +46,7 @@ namespace Intercode.MusicLib.Test
       }
 
       [ TestMethod ]
-      public void GetNotesTest()
+      public void GenerateScaleTest()
       {
          var root = Note.Create(Tone.C, Accidental.Natural, 4);
          TestScale(root, ScaleFormula.Major, Note.ParseArray("C,D,E,F,G,A,B"));

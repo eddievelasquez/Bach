@@ -71,13 +71,13 @@ namespace Intercode.MusicLib
 
       #region Public Methods
 
-      public IEnumerable<Note> GenerateScale(Note root, AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+      public IEnumerable<Note> GenerateScale(Note root)
       {
          Contract.Requires<ArgumentNullException>(root != null, "root");
-         return GenerateScaleImpl(root, accidentalMode);
+         return GenerateScaleImpl(root);
       }
 
-      private IEnumerable<Note> GenerateScaleImpl(Note root, AccidentalMode accidentalMode)
+      private IEnumerable<Note> GenerateScaleImpl(Note root)
       {
          int index = 0;
          Note current = root;
@@ -85,8 +85,6 @@ namespace Intercode.MusicLib
          while( true )
          {
             yield return current;
-
-            Note previous = current;
 
             index %= Intervals.Length;
             current += Intervals[index++];
