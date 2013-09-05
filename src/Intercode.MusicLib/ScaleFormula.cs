@@ -17,30 +17,27 @@ namespace Intercode.MusicLib
    using System.Collections.Generic;
    using System.Diagnostics.Contracts;
    using System.Linq;
-   using System.Text.RegularExpressions;
 
-   public class ScaleFormula
+   public class Scale
    {
       #region Constants
 
-      private static readonly Regex s_formulaRx = new Regex("(\\d\\d?)(bb?|##?)?(?:,)?", RegexOptions.Singleline);
-
-      public static readonly ScaleFormula Major = new ScaleFormula("Major", 2, 2, 1, 2, 2, 2, 1);
-      public static readonly ScaleFormula NaturalMinor = new ScaleFormula("Natural Minor", "1,2,3b,4,5,6b,7b");
-      public static readonly ScaleFormula HarmonicMinor = new ScaleFormula("Harmonic Minor", "1,2,3b,4,5,6b,7");
-      public static readonly ScaleFormula MelodicMinor = new ScaleFormula("Melodic Minor", "1,2,3b,4,5,6,7");
-      public static readonly ScaleFormula Diminished = new ScaleFormula("Diminished", "1,2,3b,4,5b,5#,6,7");
-      public static readonly ScaleFormula Polytonal = new ScaleFormula("Polytonal", "1,2b,3b,4b,4#,5,6,7b");
-      public static readonly ScaleFormula Pentatonic = new ScaleFormula("Pentatonic", "1,2,3,5,6");
-      public static readonly ScaleFormula MinorPentatonic = new ScaleFormula("Minor Pentatonic", "1,3b,4,5,7b");
-      public static readonly ScaleFormula Blues = new ScaleFormula("Blues", "1,3b,4,5b,5,7b");
-      public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,3b,3,6bb,6");
+      public static readonly Scale Major = new Scale("Major", 2, 2, 1, 2, 2, 2, 1);
+      public static readonly Scale NaturalMinor = new Scale("Natural Minor", "1,2,3b,4,5,6b,7b");
+      public static readonly Scale HarmonicMinor = new Scale("Harmonic Minor", "1,2,3b,4,5,6b,7");
+      public static readonly Scale MelodicMinor = new Scale("Melodic Minor", "1,2,3b,4,5,6,7");
+      public static readonly Scale Diminished = new Scale("Diminished", "1,2,3b,4,5b,5#,6,7");
+      public static readonly Scale Polytonal = new Scale("Polytonal", "1,2b,3b,4b,4#,5,6,7b");
+      public static readonly Scale Pentatonic = new Scale("Pentatonic", "1,2,3,5,6");
+      public static readonly Scale MinorPentatonic = new Scale("Minor Pentatonic", "1,3b,4,5,7b");
+      public static readonly Scale Blues = new Scale("Blues", "1,3b,4,5b,5,7b");
+      public static readonly Scale Gospel = new Scale("Gospel", "1,2,3b,3,6bb,6");
 
       #endregion
 
       #region Construction
 
-      public ScaleFormula(string name, params int[] intervals)
+      public Scale(string name, params int[] intervals)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
@@ -50,23 +47,23 @@ namespace Intercode.MusicLib
          Intervals = intervals;
       }
 
-      public ScaleFormula(string name, string formula)
+      public Scale(string name, string formula)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
 
          Name = name;
-         Values = Parse(formula);
+         Formula = Formula.Parse(formula);
       }
 
-      public ScaleFormula(string name, params ScaleFormulaValue[] values)
+      public Scale(string name, Formula formula)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
-         Contract.Requires<ArgumentException>(values.Length > 0, "values");
+         Contract.Requires<ArgumentNullException>(formula != null, "formula");
 
          Name = name;
-         Values = values;
+         Formula = formula;
       }
 
       #endregion
@@ -77,11 +74,11 @@ namespace Intercode.MusicLib
 
       public Int32 Count
       {
-         get { return Intervals.Length; }
+         get { return Formula != null ? Formula.Count : Intervals.Length; }
       }
 
       public Int32[] Intervals { get; private set; }
-      public ScaleFormulaValue[] Values { get; private set; }
+      public Formula Formula { get; private set; }
 
       #endregion
 
@@ -90,6 +87,20 @@ namespace Intercode.MusicLib
       public override string ToString()
       {
          return Name;
+      }
+
+      #endregion
+
+      #region Public Methods
+
+      public IEnumerable<Note> GenerateScale(Note root)
+      {
+         Contract.Requires<ArgumentNullException>(root != null, "root");
+
+         if( Intervals != null )
+            return GenerateScaleWithIntervals(root);
+
+         return GenerateScaleWithValues(root);
       }
 
       #endregion
@@ -113,41 +124,17 @@ namespace Intercode.MusicLib
       private IEnumerable<Note> GenerateScaleWithValues(Note root)
       {
          var majorScale = Major.GenerateScale(root);
-         foreach( var value in Values )
+         foreach( var step in Formula )
          {
-            var note = majorScale.ElementAt(value.Number - 1);
+            var note = majorScale.ElementAt(step.Interval - 1);
 
-            if( value.Accidental != Accidental.Natural )
-               note = note.ApplyAccidental(value.Accidental);
+            if( step.Accidental != Accidental.Natural )
+               note = note.ApplyAccidental(step.Accidental);
 
             yield return note;
          }
       }
 
       #endregion
-
-      public IEnumerable<Note> GenerateScale(Note root)
-      {
-         Contract.Requires<ArgumentNullException>(root != null, "root");
-
-         if( Intervals != null )
-            return GenerateScaleWithIntervals(root);
-
-         return GenerateScaleWithValues(root);
-      }
-
-      private static ScaleFormulaValue[] Parse(string s)
-      {
-         Contract.Requires<ArgumentNullException>(s != null, "s");
-         Contract.Requires<ArgumentException>(s.Length > 0, "s");
-
-         var matches = s_formulaRx.Matches(s);
-         var values = new List<ScaleFormulaValue>(matches.Count);
-         values.AddRange(from Match match in matches
-            select
-               new ScaleFormulaValue(int.Parse(match.Groups[1].Value), AccidentalExtensions.Parse(match.Groups[2].Value)));
-
-         return values.ToArray();
-      }
    }
 }

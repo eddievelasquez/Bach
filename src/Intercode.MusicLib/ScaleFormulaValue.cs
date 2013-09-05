@@ -1,5 +1,5 @@
 ﻿// 
-//   ScaleFormulaValue.cs: 
+//   FormulaStep.cs: 
 // 
 //   Author: Eddie Velasquez
 // 
@@ -13,20 +13,28 @@
 
 namespace Intercode.MusicLib
 {
-   public struct ScaleFormulaValue
+   using System;
+   using System.Diagnostics.Contracts;
+
+   public struct FormulaStep
    {
       #region Data Members
 
+      private readonly int _interval;
       private readonly Accidental _accidental;
-      private readonly int _number;
 
       #endregion
 
       #region Construction
 
-      public ScaleFormulaValue(int number, Accidental accidental = Accidental.Natural)
+      public FormulaStep(int interval, Accidental accidental = Accidental.Natural)
       {
-         _number = number;
+         Contract.Requires<ArgumentOutOfRangeException>(interval > 0, "interval");
+         Contract.Requires<ArgumentOutOfRangeException>(interval < 16, "interval");
+         Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat, "accidental");
+         Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.DoubleSharp, "accidental");
+
+         _interval = interval;
          _accidental = accidental;
       }
 
@@ -34,9 +42,9 @@ namespace Intercode.MusicLib
 
       #region Properties
 
-      public int Number
+      public int Interval
       {
-         get { return _number; }
+         get { return _interval; }
       }
 
       public Accidental Accidental
