@@ -21,6 +21,32 @@ namespace Intercode.MusicLib
 
    public class Note: IEquatable<Note>, IComparable<Note>
    {
+      #region CoreNote struct
+
+      private struct CoreNote
+      {
+         private readonly Tone _tone;
+         private readonly Accidental _accidental;
+
+         public CoreNote(Tone tone, Accidental accidental = Accidental.Natural)
+         {
+            _tone = tone;
+            _accidental = accidental;
+         }
+
+         public Tone Tone
+         {
+            get { return _tone; }
+         }
+
+         public Accidental Accidental
+         {
+            get { return _accidental; }
+         }
+      }
+
+      #endregion
+
       #region Constants
 
       private const int INTERVALS_PER_OCTAVE = 12;
@@ -41,6 +67,22 @@ namespace Intercode.MusicLib
 
       private static readonly int s_minAbsoluteValue = CalcAbsoluteValue(Tone.C, Accidental.Natural, MIN_OCTAVE);
       private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue(Tone.B, Accidental.Natural, MAX_OCTAVE);
+
+      private static readonly CoreNote[] s_sharps =
+      {
+         new CoreNote(Tone.C), new CoreNote(Tone.C, Accidental.Sharp),
+         new CoreNote(Tone.D), new CoreNote(Tone.D, Accidental.Sharp), new CoreNote(Tone.E), new CoreNote(Tone.F),
+         new CoreNote(Tone.F, Accidental.Sharp), new CoreNote(Tone.G), new CoreNote(Tone.G, Accidental.Sharp),
+         new CoreNote(Tone.A), new CoreNote(Tone.A, Accidental.Sharp), new CoreNote(Tone.B),
+      };
+
+      private static readonly CoreNote[] s_flats =
+      {
+         new CoreNote(Tone.C), new CoreNote(Tone.D, Accidental.Flat),
+         new CoreNote(Tone.D), new CoreNote(Tone.E, Accidental.Flat), new CoreNote(Tone.E), new CoreNote(Tone.F),
+         new CoreNote(Tone.G, Accidental.Flat), new CoreNote(Tone.G), new CoreNote(Tone.A, Accidental.Flat),
+         new CoreNote(Tone.A), new CoreNote(Tone.B, Accidental.Flat), new CoreNote(Tone.B),
+      };
 
       #endregion
 
@@ -86,7 +128,10 @@ namespace Intercode.MusicLib
          }
 
          if( abs > s_maxAbsoluteValue )
-            throw new ArgumentException(String.Format("Must be equal to or less than {0}", new Note(s_maxAbsoluteValue, AccidentalMode)));
+         {
+            throw new ArgumentException(String.Format("Must be equal to or less than {0}",
+               new Note(s_maxAbsoluteValue, AccidentalMode)));
+         }
 
          return new Note(tone, accidental, octave, abs);
       }
@@ -116,6 +161,21 @@ namespace Intercode.MusicLib
       }
 
       public static AccidentalMode AccidentalMode { get; set; }
+
+      #endregion
+
+      #region Public Methods
+
+      public Note ApplyAccidental(Accidental accidental)
+      {
+         Tone tone;
+         int octave;
+         CalcNote(AbsoluteValue + (int)accidental, out tone, out accidental, out octave,
+            accidental < Accidental.Natural ? AccidentalMode.FavorFlats : AccidentalMode.FavorSharps);
+
+         Note note = Create(tone, accidental, octave);
+         return note;
+      }
 
       #endregion
 
@@ -230,13 +290,13 @@ namespace Intercode.MusicLib
       public Note Add(int interval, AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
       {
          var result = new Note(AbsoluteValue + interval, accidentalMode);
-         return result;         
+         return result;
       }
 
       public Note Subtract(int interval, AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
       {
          var result = new Note(AbsoluteValue - interval, accidentalMode);
-         return result;         
+         return result;
       }
 
       public static Note operator +(Note note, int interval)
@@ -336,47 +396,11 @@ namespace Intercode.MusicLib
          int remainder;
          octave = Math.DivRem(absoluteValue, INTERVALS_PER_OCTAVE, out remainder) + 1;
 
-         tone = Tone.C;
-         foreach( var interval in s_intervals )
-         {
-            if( remainder - interval - accidentalMode <= 0 )
-            {
-               remainder -= interval;
-               break;
-            }
+         CoreNote[] notes = accidentalMode == AccidentalMode.FavorFlats ? s_flats : s_sharps;
+         CoreNote coreNote = notes[remainder];
 
-            ++tone;
-         }
-
-         accidental = (Accidental)remainder;
-
-         // Special cases
-         if (accidental == Accidental.Sharp)
-         {
-            if( tone == Tone.E)
-            {
-               tone = Tone.F;
-               accidental = Accidental.Natural;
-            }
-            else if( tone == Tone.B )
-            {
-               tone = Tone.C;
-               accidental = Accidental.Natural;
-            }               
-         }
-         else if( accidental == Accidental.Flat )
-         {
-            if( tone == Tone.C )
-            {
-               tone = Tone.B;
-               accidental = Accidental.Natural;
-            }
-            else if( tone == Tone.F)
-            {
-               tone = Tone.E;
-               accidental = Accidental.Natural;
-            }
-         }
+         tone = coreNote.Tone;
+         accidental = coreNote.Accidental;
       }
 
       private static void TryGetAccidental(string value, ref int index, out Accidental accidental)
