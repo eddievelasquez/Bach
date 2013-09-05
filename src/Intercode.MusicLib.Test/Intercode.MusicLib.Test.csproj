@@ -54,7 +54,7 @@
     <Compile Include="AccidentalExtensionsTest.cs" />
     <Compile Include="NoteTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScaleFormulaTest.cs" />
+    <Compile Include="ScaleTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intercode.MusicLib\Intercode.MusicLib.csproj">

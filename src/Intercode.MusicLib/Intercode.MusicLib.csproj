@@ -70,12 +70,12 @@
     <Compile Include="AccidentalExtensions.cs" />
     <Compile Include="AccidentalMode.cs" />
     <Compile Include="Formula.cs" />
-    <Compile Include="ScaleFormulaValue.cs" />
+    <Compile Include="FormulaStep.cs" />
     <Compile Include="Note.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScaleFormula.cs" />
+    <Compile Include="Scale.cs" />
     <Compile Include="Tone.cs" />
     <Compile Include="ToneExtensions.cs" />
   </ItemGroup>
