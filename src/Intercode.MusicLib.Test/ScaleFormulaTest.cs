@@ -14,6 +14,7 @@
 namespace Intercode.MusicLib.Test
 {
    using System.Collections.Generic;
+   using System.Text;
    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
    [ TestClass ]
@@ -25,12 +26,33 @@ namespace Intercode.MusicLib.Test
       {
          Assert.IsNotNull(formula);
 
+         var actualScale = new StringBuilder();
+         actualScale.AppendFormat("{0}: ", formula.Name);
+
+         var expectedScale = new StringBuilder();
+         expectedScale.AppendFormat("{0}: ", formula.Name);
+
          var actualNotes = formula.GenerateScale(root).GetEnumerator();
+         bool needComma = false;
+
          foreach( var expectedNote in expectedNotes )
          {
             Assert.IsTrue(actualNotes.MoveNext());
             Assert.AreEqual(expectedNote, actualNotes.Current);
+
+            if( needComma )
+            {
+               actualScale.Append(',');
+               expectedScale.Append(',');
+            }
+            else
+               needComma = true;
+
+            actualScale.Append(actualNotes.Current);
+            expectedScale.Append(expectedNote);
          }
+
+         Assert.AreEqual(expectedScale.ToString(), actualScale.ToString());
       }
 
       #endregion
@@ -54,7 +76,7 @@ namespace Intercode.MusicLib.Test
          TestScale(root, ScaleFormula.HarmonicMinor, Note.ParseArray("C,D,Eb,F,G,Ab,B"));
          TestScale(root, ScaleFormula.MelodicMinor, Note.ParseArray("C,D,Eb,F,G,A,B"));
          TestScale(root, ScaleFormula.Diminished, Note.ParseArray("C,D,Eb,F,Gb,G#,A,B"));
-         TestScale(root, ScaleFormula.Polytonal, Note.ParseArray("C,Db,Eb,Fb,F#,G,A,Bb"));
+         TestScale(root, ScaleFormula.Polytonal, Note.ParseArray("C,Db,Eb,E,F#,G,A,Bb"));
          TestScale(root, ScaleFormula.Pentatonic, Note.ParseArray("C,D,E,G,A"));
          TestScale(root, ScaleFormula.Blues, Note.ParseArray("C,Eb,F,Gb,G,Bb"));
          TestScale(root, ScaleFormula.Gospel, Note.ParseArray("C,D,Eb,E,G,A"));
