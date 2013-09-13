@@ -100,7 +100,7 @@ namespace Intercode.MusicLib
          if( Intervals != null )
             return GenerateScaleWithIntervals(root);
 
-         return GenerateScaleWithValues(root);
+         return GenerateScaleWithFormula(root);
       }
 
       #endregion
@@ -121,12 +121,14 @@ namespace Intercode.MusicLib
          }
       }
 
-      private IEnumerable<Note> GenerateScaleWithValues(Note root)
+      private IEnumerable<Note> GenerateScaleWithFormula(Note root)
       {
-         var majorScale = Major.GenerateScale(root);
+         int highestInterval = Formula.Last().Interval;
+         var majorScale = Major.GenerateScale(root).Take(highestInterval).ToArray();
+
          foreach( var step in Formula )
          {
-            var note = majorScale.ElementAt(step.Interval - 1);
+            var note = majorScale[step.Interval - 1];
 
             if( step.Accidental != Accidental.Natural )
                note = note.ApplyAccidental(step.Accidental);
