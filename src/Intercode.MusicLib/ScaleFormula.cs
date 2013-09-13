@@ -14,7 +14,6 @@
 namespace Intercode.MusicLib
 {
    using System;
-   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
 
    public class ScaleFormula
@@ -86,37 +85,6 @@ namespace Intercode.MusicLib
       public override string ToString()
       {
          return Name;
-      }
-
-      #endregion
-
-      #region Public Methods
-
-      public IEnumerable<Note> Generate(Note root)
-      {
-         Contract.Requires<ArgumentNullException>(root != null, "root");
-
-         if( Intervals != null )
-            return Generate(root, Intervals);
-
-         return Formula.Generate(root);
-      }
-
-      public static IEnumerable<Note> Generate(Note root, Int32[] intervals)
-      {
-         Contract.Requires<ArgumentNullException>(root != null, "root");
-         Contract.Requires<ArgumentNullException>(intervals != null, "intervals");
-
-         int index = 0;
-         Note current = root;
-
-         while( true )
-         {
-            yield return current;
-
-            index %= intervals.Length;
-            current += intervals[index++];
-         }
       }
 
       #endregion

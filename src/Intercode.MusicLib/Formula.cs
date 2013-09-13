@@ -178,12 +178,12 @@ namespace Intercode.MusicLib
       {
          Contract.Requires<ArgumentNullException>(root != null, "root");
 
-         int highestInterval = _steps.Last().Interval;
-         var majorScale = ScaleFormula.Major.Generate(root).Take(highestInterval).ToArray();
+         var majorScale = new Scale(root, ScaleFormula.Major).Notes;
+         var length = majorScale.Length;
 
          foreach( var step in _steps )
          {
-            var note = majorScale[step.Interval - 1];
+            var note = majorScale[(step.Interval - 1) % length];
 
             if( step.Accidental != Accidental.Natural )
                note = note.ApplyAccidental(step.Accidental);

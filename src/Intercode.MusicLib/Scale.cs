@@ -1,5 +1,5 @@
 ﻿// 
-//   Chord.cs: 
+//   Scale.cs: 
 // 
 //   Author: Eddie Velasquez
 // 
@@ -14,15 +14,16 @@
 namespace Intercode.MusicLib
 {
    using System;
+   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
    using System.Linq;
    using System.Text;
 
-   public class Chord: IEquatable<Chord>
+   public class Scale: IEquatable<Scale>
    {
       #region Construction
 
-      public Chord(Note root, ChordFormula formula)
+      public Scale(Note root, ScaleFormula formula)
       {
          Contract.Requires<ArgumentNullException>(root != null, "root");
          Contract.Requires<ArgumentNullException>(formula != null, "formula");
@@ -33,12 +34,17 @@ namespace Intercode.MusicLib
          var buf = new StringBuilder();
          buf.Append(root.Tone);
          buf.Append(root.Accidental.ToSymbol());
-         buf.Append(formula.Symbol);
+         buf.Append(' ');
+         buf.Append(formula.Name);
 
          Name = buf.ToString();
 
-         int highestInterval = formula.Formula.Last().Interval;
-         Notes = formula.Formula.Generate(root).Take(highestInterval).ToArray();
+         if( formula.Formula != null )
+         {
+            Notes = formula.Formula.Generate(root).Take(formula.Formula.Count).ToArray();
+         }
+         else
+            Notes = Generate(root, formula.Intervals).Take(formula.Intervals.Length).ToArray();
       }
 
       #endregion
@@ -47,14 +53,14 @@ namespace Intercode.MusicLib
 
       public Note Root { get; private set; }
       public string Name { get; private set; }
-      public ChordFormula Formula { get; private set; }
+      public ScaleFormula Formula { get; private set; }
       public Note[] Notes { get; private set; }
 
       #endregion
 
-      #region IEquatable<Chord> Implementation
+      #region IEquatable<Scale> Members
 
-      public bool Equals(Chord other)
+      public bool Equals(Scale other)
       {
          if( ReferenceEquals(other, this) )
             return true;
@@ -65,6 +71,10 @@ namespace Intercode.MusicLib
          return Root.Equals(other.Root) && Formula.Equals(other.Formula);
       }
 
+      #endregion
+
+      #region Overrides
+
       public override bool Equals(object other)
       {
          if( ReferenceEquals(other, this) )
@@ -73,7 +83,7 @@ namespace Intercode.MusicLib
          if( ReferenceEquals(other, null) || other.GetType() != GetType() )
             return false;
 
-         return Equals((Chord)other);
+         return Equals((Scale)other);
       }
 
       public override int GetHashCode()
@@ -81,10 +91,6 @@ namespace Intercode.MusicLib
          int hashCode = Root.GetHashCode() ^ Formula.GetHashCode();
          return hashCode;
       }
-
-      #endregion
-
-      #region Overrides
 
       public override string ToString()
       {
@@ -102,6 +108,27 @@ namespace Intercode.MusicLib
          }
 
          return buf.ToString();
+      }
+
+      #endregion
+
+      #region Implementation
+
+      private static IEnumerable<Note> Generate(Note root, IList<int> intervals)
+      {
+         Contract.Requires<ArgumentNullException>(root != null, "root");
+         Contract.Requires<ArgumentNullException>(intervals != null, "intervals");
+
+         int index = 0;
+         Note current = root;
+
+         while( true )
+         {
+            yield return current;
+
+            index %= intervals.Count;
+            current += intervals[index++];
+         }
       }
 
       #endregion
