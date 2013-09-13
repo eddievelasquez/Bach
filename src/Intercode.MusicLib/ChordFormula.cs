@@ -14,6 +14,7 @@
 namespace Intercode.MusicLib
 {
    using System;
+   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
 
    public class ChordFormula: IEquatable<ChordFormula>
@@ -70,6 +71,15 @@ namespace Intercode.MusicLib
       public string Name { get; private set; }
       public string Symbol { get; private set; }
       public Formula Formula { get; private set; }
+
+      #endregion
+
+      #region Public Methods
+
+      public IEnumerable<Note> Generate(Note note)
+      {
+         return Formula.Generate(note);
+      }
 
       #endregion
 

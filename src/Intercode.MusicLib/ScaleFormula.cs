@@ -14,6 +14,7 @@
 namespace Intercode.MusicLib
 {
    using System;
+   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
 
    public class ScaleFormula
@@ -80,11 +81,44 @@ namespace Intercode.MusicLib
 
       #endregion
 
+      #region Public Methods
+
+      public IEnumerable<Note> Generate(Note root)
+      {
+         if( Formula != null )
+            return Formula.Generate(root);
+
+         return GenerateWithIntervals(root, Intervals);
+      }
+
+      #endregion
+
       #region Overrides
 
       public override string ToString()
       {
          return Name;
+      }
+
+      #endregion
+
+      #region Implementation
+
+      private static IEnumerable<Note> GenerateWithIntervals(Note root, IList<int> intervals)
+      {
+         Contract.Requires<ArgumentNullException>(root != null, "root");
+         Contract.Requires<ArgumentNullException>(intervals != null, "intervals");
+
+         int index = 0;
+         Note current = root;
+
+         while( true )
+         {
+            yield return current;
+
+            index %= intervals.Count;
+            current += intervals[index++];
+         }
       }
 
       #endregion

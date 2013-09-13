@@ -38,13 +38,7 @@ namespace Intercode.MusicLib
          buf.Append(formula.Name);
 
          Name = buf.ToString();
-
-         if( formula.Formula != null )
-         {
-            Notes = formula.Formula.Generate(root).Take(formula.Formula.Count).ToArray();
-         }
-         else
-            Notes = Generate(root, formula.Intervals).Take(formula.Intervals.Length).ToArray();
+         Notes = formula.Generate(root).Take(formula.Count).ToArray();
       }
 
       #endregion
@@ -108,27 +102,6 @@ namespace Intercode.MusicLib
          }
 
          return buf.ToString();
-      }
-
-      #endregion
-
-      #region Implementation
-
-      private static IEnumerable<Note> Generate(Note root, IList<int> intervals)
-      {
-         Contract.Requires<ArgumentNullException>(root != null, "root");
-         Contract.Requires<ArgumentNullException>(intervals != null, "intervals");
-
-         int index = 0;
-         Note current = root;
-
-         while( true )
-         {
-            yield return current;
-
-            index %= intervals.Count;
-            current += intervals[index++];
-         }
       }
 
       #endregion
