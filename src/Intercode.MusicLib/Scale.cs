@@ -93,40 +93,25 @@ namespace Intercode.MusicLib
 
       #region Public Methods
 
-      public IEnumerable<Note> GenerateScale(Note root)
+      public IEnumerable<Note> Generate(Note root)
       {
          Contract.Requires<ArgumentNullException>(root != null, "root");
 
          if( Intervals != null )
-            return GenerateScaleWithIntervals(root);
+            return Generate(root, Intervals);
 
-         return GenerateScaleWithFormula(root);
+         return Generate(root, Formula);
       }
 
-      #endregion
-
-      #region Implementation
-
-      private IEnumerable<Note> GenerateScaleWithIntervals(Note root)
+      public static IEnumerable<Note> Generate(Note root, Formula formula)
       {
-         int index = 0;
-         Note current = root;
+         Contract.Requires<ArgumentNullException>(root != null, "root");
+         Contract.Requires<ArgumentNullException>(formula != null, "formula");
 
-         while( true )
-         {
-            yield return current;
+         int highestInterval = formula.Last().Interval;
+         var majorScale = Major.Generate(root).Take(highestInterval).ToArray();
 
-            index %= Intervals.Length;
-            current += Intervals[index++];
-         }
-      }
-
-      private IEnumerable<Note> GenerateScaleWithFormula(Note root)
-      {
-         int highestInterval = Formula.Last().Interval;
-         var majorScale = Major.GenerateScale(root).Take(highestInterval).ToArray();
-
-         foreach( var step in Formula )
+         foreach( var step in formula )
          {
             var note = majorScale[step.Interval - 1];
 
@@ -134,6 +119,23 @@ namespace Intercode.MusicLib
                note = note.ApplyAccidental(step.Accidental);
 
             yield return note;
+         }
+      }
+
+      public static IEnumerable<Note> Generate(Note root, Int32[] intervals)
+      {
+         Contract.Requires<ArgumentNullException>(root != null, "root");
+         Contract.Requires<ArgumentNullException>(intervals != null, "intervals");
+
+         int index = 0;
+         Note current = root;
+
+         while( true )
+         {
+            yield return current;
+
+            index %= intervals.Length;
+            current += intervals[index++];
          }
       }
 

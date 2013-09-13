@@ -32,7 +32,7 @@ namespace Intercode.MusicLib.Test
          var expectedScale = new StringBuilder();
          expectedScale.AppendFormat("{0}: ", formula.Name);
 
-         var actualNotes = formula.GenerateScale(root).GetEnumerator();
+         var actualNotes = formula.Generate(root).GetEnumerator();
          bool needComma = false;
 
          foreach( var expectedNote in expectedNotes )
