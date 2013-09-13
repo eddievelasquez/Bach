@@ -17,14 +17,47 @@ namespace Intercode.MusicLib
    using System.Collections;
    using System.Collections.Generic;
    using System.Diagnostics.Contracts;
+   using System.Linq;
+   using System.Text;
    using System.Text.RegularExpressions;
 
    public class Formula: IEnumerable<FormulaStep>
    {
+      #region FormulaStepComparer class
+
+      private class FormulaStepComparer: IComparer<FormulaStep>
+      {
+         public int Compare(FormulaStep x, FormulaStep y)
+         {
+            int result = x.Interval - y.Interval;
+            if( result == 0 )
+               result = x.Accidental - y.Accidental;
+
+            return result;
+         }
+      }
+
+      #endregion
+
       #region Data Members
 
       private static readonly Regex s_formulaRx = new Regex("(\\d\\d?)(bb?|##?)?(?:,)?", RegexOptions.Singleline);
-      private readonly List<FormulaStep> _steps = new List<FormulaStep>();
+      private readonly SortedSet<FormulaStep> _steps;
+
+      #endregion
+
+      #region Construction
+
+      public Formula()
+      {
+         _steps = new SortedSet<FormulaStep>(new FormulaStepComparer());
+      }
+
+      public Formula(IEnumerable<FormulaStep> steps)
+      {
+         Contract.Requires<ArgumentNullException>(steps != null, "steps");
+         _steps = new SortedSet<FormulaStep>(steps, new FormulaStepComparer());
+      }
 
       #endregion
 
@@ -51,10 +84,12 @@ namespace Intercode.MusicLib
          Contract.Requires<ArgumentException>(s.Length > 0, "s");
 
          var matches = s_formulaRx.Matches(s);
-         var formula = new Formula();
-         foreach( Match match in matches )
-            formula.AddStep(Int32.Parse(match.Groups[1].Value), AccidentalExtensions.Parse(match.Groups[2].Value));
+         var steps = new List<FormulaStep>();
 
+         foreach( Match match in matches )
+            steps.Add(new FormulaStep(Int32.Parse(match.Groups[1].Value), AccidentalExtensions.Parse(match.Groups[2].Value)));
+
+         var formula = new Formula(steps);
          return formula;
       }
 
@@ -70,6 +105,69 @@ namespace Intercode.MusicLib
       IEnumerator IEnumerable.GetEnumerator()
       {
          return GetEnumerator();
+      }
+
+      #endregion
+
+      #region IEquatable<Formula> Implementation
+
+      public bool Equals(Formula other)
+      {
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) )
+            return false;
+
+         return _steps.SequenceEqual(other._steps);
+      }
+
+      public override bool Equals(object other)
+      {
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+            return false;
+
+         return Equals((Formula)other);
+      }
+
+      public override int GetHashCode()
+      {
+         const int MULTIPLIER = 89;
+
+         var first = _steps.FirstOrDefault();
+         var last = _steps.LastOrDefault();
+         var length = _steps.Count;
+
+         unchecked
+         {
+            int result = ((first.GetHashCode() + length) * MULTIPLIER) + (last.GetHashCode() + length);
+            return result;
+         }
+      }
+
+      #endregion
+
+      #region Overrides
+
+      public override string ToString()
+      {
+         var buf = new StringBuilder();
+         bool needsComma = false;
+
+         foreach( var step in _steps )
+         {
+            if( needsComma )
+               buf.Append(',');
+            else
+               needsComma = true;
+
+            buf.Append(step);
+         }
+
+         return buf.ToString();
       }
 
       #endregion
