@@ -14,11 +14,12 @@
 namespace Intercode.MusicLib
 {
    using System;
+   using System.Collections;
+   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
-   using System.Linq;
    using System.Text;
 
-   public class Chord: IEquatable<Chord>
+   public class Chord: IEquatable<Chord>, IEnumerable<Note>
    {
       #region Construction
 
@@ -36,9 +37,6 @@ namespace Intercode.MusicLib
          buf.Append(formula.Symbol);
 
          Name = buf.ToString();
-
-         int highestInterval = formula.Formula.Last().Interval;
-         Notes = formula.Formula.Generate(root).Take(highestInterval).ToArray();
       }
 
       #endregion
@@ -48,7 +46,6 @@ namespace Intercode.MusicLib
       public Note Root { get; private set; }
       public string Name { get; private set; }
       public ChordFormula Formula { get; private set; }
-      public Note[] Notes { get; private set; }
 
       #endregion
 
@@ -84,6 +81,20 @@ namespace Intercode.MusicLib
 
       #endregion
 
+      #region IEnumerable<Note> Implementation
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+         return GetEnumerator();
+      }
+
+      public IEnumerator<Note> GetEnumerator()
+      {
+         return Formula.Generate(Root).GetEnumerator();
+      }
+
+      #endregion
+
       #region Overrides
 
       public override string ToString()
@@ -91,7 +102,7 @@ namespace Intercode.MusicLib
          var buf = new StringBuilder();
          bool needsComma = false;
 
-         foreach( var note in Notes )
+         foreach( var note in this )
          {
             if( needsComma )
                buf.Append(',');

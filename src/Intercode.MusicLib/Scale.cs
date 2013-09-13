@@ -14,12 +14,12 @@
 namespace Intercode.MusicLib
 {
    using System;
+   using System.Collections;
    using System.Collections.Generic;
    using System.Diagnostics.Contracts;
-   using System.Linq;
    using System.Text;
 
-   public class Scale: IEquatable<Scale>
+   public class Scale: IEquatable<Scale>, IEnumerable<Note>
    {
       #region Construction
 
@@ -38,7 +38,6 @@ namespace Intercode.MusicLib
          buf.Append(formula.Name);
 
          Name = buf.ToString();
-         Notes = formula.Generate(root).Take(formula.Count).ToArray();
       }
 
       #endregion
@@ -48,7 +47,6 @@ namespace Intercode.MusicLib
       public Note Root { get; private set; }
       public string Name { get; private set; }
       public ScaleFormula Formula { get; private set; }
-      public Note[] Notes { get; private set; }
 
       #endregion
 
@@ -91,7 +89,7 @@ namespace Intercode.MusicLib
          var buf = new StringBuilder();
          bool needsComma = false;
 
-         foreach( var note in Notes )
+         foreach( var note in this )
          {
             if( needsComma )
                buf.Append(',');
@@ -102,6 +100,20 @@ namespace Intercode.MusicLib
          }
 
          return buf.ToString();
+      }
+
+      #endregion
+
+      #region IEnumerable<Note> Implementation
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+         return GetEnumerator();
+      }
+
+      public IEnumerator<Note> GetEnumerator()
+      {
+         return Formula.Generate(Root).GetEnumerator();
       }
 
       #endregion

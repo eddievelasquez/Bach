@@ -47,7 +47,7 @@ namespace Intercode.MusicLib.Test
          Assert.AreEqual(root, target.Root);
          Assert.AreEqual(formula, target.Formula);
          Assert.AreEqual("Cm", target.Name);
-         CollectionAssert.AreEqual(Note.ParseArray("C,Eb,G").ToArray(), target.Notes);
+         CollectionAssert.AreEqual(Note.ParseArray("C,Eb,G").ToArray(), target.ToArray());
       }
 
       [ TestMethod ]

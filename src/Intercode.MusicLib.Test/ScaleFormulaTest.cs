@@ -32,7 +32,7 @@ namespace Intercode.MusicLib.Test
          var expectedScale = new StringBuilder();
          expectedScale.AppendFormat("{0}: ", formula.Name);
 
-         var actualNotes = new Scale(root, formula).Notes;
+         var actualNotes = new Scale(root, formula).Take(expectedNotes.Length).ToArray();
 
          Assert.AreEqual(expectedNotes.Length, actualNotes.Length);
 
