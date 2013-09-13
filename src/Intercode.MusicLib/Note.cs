@@ -50,8 +50,8 @@ namespace Intercode.MusicLib
       #region Constants
 
       private const int INTERVALS_PER_OCTAVE = 12;
-      private const int MIN_OCTAVE = 1;
-      private const int MAX_OCTAVE = 8;
+      public const int MIN_OCTAVE = 1;
+      public const int MAX_OCTAVE = 8;
 
       private static readonly int[] s_intervals =
       {
@@ -117,8 +117,8 @@ namespace Intercode.MusicLib
          Contract.Requires<ArgumentOutOfRangeException>(tone <= Tone.B, "tone");
          Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat, "accidental");
          Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.DoubleSharp, "accidental");
-         Contract.Requires<ArgumentOutOfRangeException>(octave >= 1, "octave");
-         Contract.Requires<ArgumentOutOfRangeException>(octave <= 8, "octave");
+         Contract.Requires<ArgumentOutOfRangeException>(octave >= MIN_OCTAVE, "octave");
+         Contract.Requires<ArgumentOutOfRangeException>(octave <= MAX_OCTAVE, "octave");
 
          int abs = CalcAbsoluteValue(tone, accidental, octave);
          if( abs < s_minAbsoluteValue )
