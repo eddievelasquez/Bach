@@ -69,6 +69,7 @@
     <Compile Include="Accidental.cs" />
     <Compile Include="AccidentalExtensions.cs" />
     <Compile Include="AccidentalMode.cs" />
+    <Compile Include="ChordFormula.cs" />
     <Compile Include="Formula.cs" />
     <Compile Include="FormulaStep.cs" />
     <Compile Include="Note.cs">
