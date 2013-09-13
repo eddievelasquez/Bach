@@ -36,7 +36,7 @@ namespace Intercode.MusicLib
          buf.Append(formula.Symbol);
 
          Name = buf.ToString();
-         Notes = Scale.Generate(root, formula.Formula).ToArray();
+         Notes = formula.Formula.Generate(root).ToArray();
       }
 
       #endregion

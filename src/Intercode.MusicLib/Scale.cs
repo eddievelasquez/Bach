@@ -100,26 +100,7 @@ namespace Intercode.MusicLib
          if( Intervals != null )
             return Generate(root, Intervals);
 
-         return Generate(root, Formula);
-      }
-
-      public static IEnumerable<Note> Generate(Note root, Formula formula)
-      {
-         Contract.Requires<ArgumentNullException>(root != null, "root");
-         Contract.Requires<ArgumentNullException>(formula != null, "formula");
-
-         int highestInterval = formula.Last().Interval;
-         var majorScale = Major.Generate(root).Take(highestInterval).ToArray();
-
-         foreach( var step in formula )
-         {
-            var note = majorScale[step.Interval - 1];
-
-            if( step.Accidental != Accidental.Natural )
-               note = note.ApplyAccidental(step.Accidental);
-
-            yield return note;
-         }
+         return Formula.Generate(root);
       }
 
       public static IEnumerable<Note> Generate(Note root, Int32[] intervals)

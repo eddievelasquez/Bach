@@ -171,5 +171,27 @@ namespace Intercode.MusicLib
       }
 
       #endregion
+
+      #region Public Methods
+
+      public IEnumerable<Note> Generate(Note root)
+      {
+         Contract.Requires<ArgumentNullException>(root != null, "root");
+
+         int highestInterval = _steps.Last().Interval;
+         var majorScale = Scale.Major.Generate(root).Take(highestInterval).ToArray();
+
+         foreach( var step in _steps )
+         {
+            var note = majorScale[step.Interval - 1];
+
+            if( step.Accidental != Accidental.Natural )
+               note = note.ApplyAccidental(step.Accidental);
+
+            yield return note;
+         }
+      }
+
+      #endregion
    }
 }
