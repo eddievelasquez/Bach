@@ -16,7 +16,7 @@ namespace Intercode.MusicLib
    using System;
    using System.Diagnostics.Contracts;
 
-   public struct FormulaStep
+   public struct FormulaStep: IEquatable<FormulaStep>
    {
       #region Data Members
 
@@ -50,6 +50,38 @@ namespace Intercode.MusicLib
       public Accidental Accidental
       {
          get { return _accidental; }
+      }
+
+      #endregion
+
+      #region IEquatable<FormulaStep> Implementation
+
+      public bool Equals(FormulaStep obj)
+      {
+         return Interval == obj.Interval && Accidental == obj.Accidental;
+      }
+
+      public override bool Equals(object obj)
+      {
+         if( ReferenceEquals(obj, null) || obj.GetType() != GetType() )
+            return false;
+
+         return Equals((FormulaStep)obj);
+      }
+
+      public override int GetHashCode()
+      {
+         int hashCode = ((short)(Accidental + 2) << 16) | Interval;
+         return hashCode;
+      }
+
+      #endregion
+
+      #region Overrides
+
+      public override string ToString()
+      {
+         return String.Format("{0}{1}", Interval, Accidental.ToSymbol());
       }
 
       #endregion
