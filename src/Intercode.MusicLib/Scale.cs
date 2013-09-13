@@ -16,28 +16,27 @@ namespace Intercode.MusicLib
    using System;
    using System.Collections.Generic;
    using System.Diagnostics.Contracts;
-   using System.Linq;
 
-   public class Scale
+   public class ScaleFormula
    {
       #region Constants
 
-      public static readonly Scale Major = new Scale("Major", 2, 2, 1, 2, 2, 2, 1);
-      public static readonly Scale NaturalMinor = new Scale("Natural Minor", "1,2,3b,4,5,6b,7b");
-      public static readonly Scale HarmonicMinor = new Scale("Harmonic Minor", "1,2,3b,4,5,6b,7");
-      public static readonly Scale MelodicMinor = new Scale("Melodic Minor", "1,2,3b,4,5,6,7");
-      public static readonly Scale Diminished = new Scale("Diminished", "1,2,3b,4,5b,5#,6,7");
-      public static readonly Scale Polytonal = new Scale("Polytonal", "1,2b,3b,4b,4#,5,6,7b");
-      public static readonly Scale Pentatonic = new Scale("Pentatonic", "1,2,3,5,6");
-      public static readonly Scale MinorPentatonic = new Scale("Minor Pentatonic", "1,3b,4,5,7b");
-      public static readonly Scale Blues = new Scale("Blues", "1,3b,4,5b,5,7b");
-      public static readonly Scale Gospel = new Scale("Gospel", "1,2,3b,3,6bb,6");
+      public static readonly ScaleFormula Major = new ScaleFormula("Major", 2, 2, 1, 2, 2, 2, 1);
+      public static readonly ScaleFormula NaturalMinor = new ScaleFormula("Natural Minor", "1,2,3b,4,5,6b,7b");
+      public static readonly ScaleFormula HarmonicMinor = new ScaleFormula("Harmonic Minor", "1,2,3b,4,5,6b,7");
+      public static readonly ScaleFormula MelodicMinor = new ScaleFormula("Melodic Minor", "1,2,3b,4,5,6,7");
+      public static readonly ScaleFormula Diminished = new ScaleFormula("Diminished", "1,2,3b,4,5b,5#,6,7");
+      public static readonly ScaleFormula Polytonal = new ScaleFormula("Polytonal", "1,2b,3b,4b,4#,5,6,7b");
+      public static readonly ScaleFormula Pentatonic = new ScaleFormula("Pentatonic", "1,2,3,5,6");
+      public static readonly ScaleFormula MinorPentatonic = new ScaleFormula("Minor Pentatonic", "1,3b,4,5,7b");
+      public static readonly ScaleFormula Blues = new ScaleFormula("Blues", "1,3b,4,5b,5,7b");
+      public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,3b,3,6bb,6");
 
       #endregion
 
       #region Construction
 
-      public Scale(string name, params int[] intervals)
+      public ScaleFormula(string name, params int[] intervals)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
@@ -47,7 +46,7 @@ namespace Intercode.MusicLib
          Intervals = intervals;
       }
 
-      public Scale(string name, string formula)
+      public ScaleFormula(string name, string formula)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
@@ -56,7 +55,7 @@ namespace Intercode.MusicLib
          Formula = Formula.Parse(formula);
       }
 
-      public Scale(string name, Formula formula)
+      public ScaleFormula(string name, Formula formula)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");

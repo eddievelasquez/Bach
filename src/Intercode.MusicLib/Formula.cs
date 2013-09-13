@@ -179,7 +179,7 @@ namespace Intercode.MusicLib
          Contract.Requires<ArgumentNullException>(root != null, "root");
 
          int highestInterval = _steps.Last().Interval;
-         var majorScale = Scale.Major.Generate(root).Take(highestInterval).ToArray();
+         var majorScale = ScaleFormula.Major.Generate(root).Take(highestInterval).ToArray();
 
          foreach( var step in _steps )
          {
