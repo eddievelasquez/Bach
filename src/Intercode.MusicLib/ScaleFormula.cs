@@ -31,7 +31,7 @@ namespace Intercode.MusicLib
       public static readonly ScaleFormula MinorPentatonic = new ScaleFormula("Minor Pentatonic", "1,b3,4,5,b7");
       public static readonly ScaleFormula Blues = new ScaleFormula("Blues", "1,b3,4,b5,5,b7");
       public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,b3,3,bb6,6");
-      private static readonly StringComparer s_comparer = StringComparer.CurrentCulture;
+      private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
 
       #endregion
 

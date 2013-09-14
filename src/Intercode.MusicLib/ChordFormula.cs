@@ -41,7 +41,7 @@ namespace Intercode.MusicLib
       public static readonly ChordFormula Diminished7 = new ChordFormula("Diminished Seventh", "dim7", "1,b3,b5,bb7");
       public static readonly ChordFormula HalfDiminished = new ChordFormula("Half Diminished", "7dim5", "1,b3,b5,b7");
       public static readonly ChordFormula Augmented = new ChordFormula("Augmented", "aug", "1,3,5#");
-      private static readonly StringComparer s_comparer = StringComparer.CurrentCulture;
+      private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
 
       #endregion
 
