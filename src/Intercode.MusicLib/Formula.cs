@@ -19,7 +19,6 @@ namespace Intercode.MusicLib
    using System.Diagnostics.Contracts;
    using System.Linq;
    using System.Text;
-   using System.Text.RegularExpressions;
 
    public class Formula: IEnumerable<FormulaStep>
    {
@@ -41,7 +40,6 @@ namespace Intercode.MusicLib
 
       #region Data Members
 
-      private static readonly Regex s_formulaRx = new Regex("(\\d\\d?)(bb?|##?)?(?:,)?", RegexOptions.Singleline);
       private readonly SortedSet<FormulaStep> _steps;
 
       #endregion
