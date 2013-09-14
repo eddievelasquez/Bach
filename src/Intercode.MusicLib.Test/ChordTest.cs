@@ -52,7 +52,8 @@ namespace Intercode.MusicLib.Test
 
       private static void TestChord(string expectedNotes, Note root, ChordFormula formula)
       {
-         CollectionAssert.AreEqual(Note.ParseArray(expectedNotes).ToArray(), new Chord(root, formula).ToArray());
+         var expected = Note.ParseArray(expectedNotes).ToArray();
+         CollectionAssert.AreEqual(expected, new Chord(root, formula).Take(expected.Length).ToArray());
       }
 
       [ TestMethod ]
