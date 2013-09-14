@@ -50,6 +50,37 @@ namespace Intercode.MusicLib.Test
          CollectionAssert.AreEqual(Note.ParseArray("C,Eb,G").ToArray(), target.ToArray());
       }
 
+      private static void TestChord(string expectedNotes, Note root, ChordFormula formula)
+      {
+         CollectionAssert.AreEqual(Note.ParseArray(expectedNotes).ToArray(), new Chord(root, formula).ToArray());
+      }
+
+      [ TestMethod ]
+      public void ChordsTest()
+      {
+         Note root = Note.Parse("C4");
+         TestChord("C,E,G", root, ChordFormula.Major);
+         TestChord("C,E,G,B", root, ChordFormula.Major7);
+         TestChord("C,E,G,B,D", root, ChordFormula.Major9);
+         TestChord("C,E,G,B,D,F", root, ChordFormula.Major11);
+         TestChord("C,E,G,B,D,F,A", root, ChordFormula.Major13);
+         TestChord("C,Eb,G", root, ChordFormula.Minor);
+         TestChord("C,Eb,G,Bb", root, ChordFormula.Minor7);
+         TestChord("C,Eb,G,Bb,D", root, ChordFormula.Minor9);
+         TestChord("C,Eb,G,Bb,D,F", root, ChordFormula.Minor11);
+         TestChord("C,Eb,G,Bb,D,F,A", root, ChordFormula.Minor13);
+         TestChord("C,E,G,Bb", root, ChordFormula.Dominant7);
+         TestChord("C,E,G,Bb,D", root, ChordFormula.Dominant9);
+         TestChord("C,E,G,Bb,D,F", root, ChordFormula.Dominant11);
+         TestChord("C,E,G,Bb,D,F,A", root, ChordFormula.Dominant13);
+         TestChord("C,E,G,A,D", root, ChordFormula.SixNine);
+         TestChord("C,E,G,D", root, ChordFormula.AddNine);
+         TestChord("C,Eb,Gb", root, ChordFormula.Diminished);
+         TestChord("C,Eb,Gb,Bbb", root, ChordFormula.Diminished7);
+         TestChord("C,Eb,Gb,Bb", root, ChordFormula.HalfDiminished);
+         TestChord("C,E,G#", root, ChordFormula.Augmented);
+      }
+
       [ TestMethod ]
       public void EqualsContractTest()
       {
