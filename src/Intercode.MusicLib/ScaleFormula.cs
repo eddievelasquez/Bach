@@ -22,15 +22,15 @@ namespace Intercode.MusicLib
       #region Constants
 
       public static readonly ScaleFormula Major = new ScaleFormula("Major", 2, 2, 1, 2, 2, 2, 1);
-      public static readonly ScaleFormula NaturalMinor = new ScaleFormula("Natural Minor", "1,2,3b,4,5,6b,7b");
-      public static readonly ScaleFormula HarmonicMinor = new ScaleFormula("Harmonic Minor", "1,2,3b,4,5,6b,7");
-      public static readonly ScaleFormula MelodicMinor = new ScaleFormula("Melodic Minor", "1,2,3b,4,5,6,7");
-      public static readonly ScaleFormula Diminished = new ScaleFormula("Diminished", "1,2,3b,4,5b,5#,6,7");
-      public static readonly ScaleFormula Polytonal = new ScaleFormula("Polytonal", "1,2b,3b,4b,4#,5,6,7b");
+      public static readonly ScaleFormula NaturalMinor = new ScaleFormula("Natural Minor", "1,2,b3,4,5,b6,b7");
+      public static readonly ScaleFormula HarmonicMinor = new ScaleFormula("Harmonic Minor", "1,2,b3,4,5,b6,7");
+      public static readonly ScaleFormula MelodicMinor = new ScaleFormula("Melodic Minor", "1,2,b3,4,5,6,7");
+      public static readonly ScaleFormula Diminished = new ScaleFormula("Diminished", "1,2,b3,4,b5,5#,6,7");
+      public static readonly ScaleFormula Polytonal = new ScaleFormula("Polytonal", "1,b2,b3,b4,4#,5,6,b7");
       public static readonly ScaleFormula Pentatonic = new ScaleFormula("Pentatonic", "1,2,3,5,6");
-      public static readonly ScaleFormula MinorPentatonic = new ScaleFormula("Minor Pentatonic", "1,3b,4,5,7b");
-      public static readonly ScaleFormula Blues = new ScaleFormula("Blues", "1,3b,4,5b,5,7b");
-      public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,3b,3,6bb,6");
+      public static readonly ScaleFormula MinorPentatonic = new ScaleFormula("Minor Pentatonic", "1,b3,4,5,b7");
+      public static readonly ScaleFormula Blues = new ScaleFormula("Blues", "1,b3,4,b5,5,b7");
+      public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,b3,3,bb6,6");
       private static readonly StringComparer s_comparer = StringComparer.CurrentCulture;
 
       #endregion

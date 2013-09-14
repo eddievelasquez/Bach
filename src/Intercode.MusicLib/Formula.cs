@@ -78,19 +78,86 @@ namespace Intercode.MusicLib
          get { return _steps.Count; }
       }
 
+      private enum ParseState
+      {
+         Start,
+         Flat,
+         Interval,
+         Sharp
+      }
+
       public static Formula Parse(string s)
       {
          Contract.Requires<ArgumentNullException>(s != null, "s");
          Contract.Requires<ArgumentException>(s.Length > 0, "s");
 
-         var matches = s_formulaRx.Matches(s);
          var steps = new List<FormulaStep>();
 
-         foreach( Match match in matches )
-            steps.Add(new FormulaStep(Int32.Parse(match.Groups[1].Value), AccidentalExtensions.Parse(match.Groups[2].Value)));
+         var state = ParseState.Start;
+         var accidental = Accidental.Natural;
+         Int32 interval = 0;
+
+         foreach( char c in s )
+         {
+            if( Char.IsWhiteSpace(c) )
+               continue;
+
+            if( state == ParseState.Start )
+            {
+               accidental = Accidental.Natural;
+               interval = 0;
+            }
+
+            if( c == 'b' || c == 'B' )
+            {
+               if( state != ParseState.Start && state != ParseState.Flat )
+                  goto InvalidFormula;
+
+               state = ParseState.Flat;
+               --accidental;
+               continue;
+            }
+
+            if( c >= '0' && c <= '9' )
+            {
+               if( state == ParseState.Sharp )
+                  goto InvalidFormula;
+
+               state = ParseState.Interval;
+               interval = (interval * 10) + c - '0';
+               continue;
+            }
+
+            if( c == '#' )
+            {
+               if( (state != ParseState.Interval && state != ParseState.Sharp) || accidental != Accidental.Natural )
+                  goto InvalidFormula;
+
+               state = ParseState.Sharp;
+               ++accidental;
+               continue;
+            }
+
+            if( c == ',' || c == '-' )
+            {
+               if( state != ParseState.Interval && state != ParseState.Sharp )
+                  goto InvalidFormula;
+
+               steps.Add(new FormulaStep(interval, accidental));
+               state = ParseState.Start;
+            }
+            else
+               goto InvalidFormula;
+         }
+
+         // Add last step 
+         steps.Add(new FormulaStep(interval, accidental));
 
          var formula = new Formula(steps);
          return formula;
+
+         InvalidFormula:
+         throw new FormatException(String.Format("{0} is not a valid formula", s));
       }
 
       #endregion
