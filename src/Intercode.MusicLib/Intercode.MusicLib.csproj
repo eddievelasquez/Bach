@@ -73,6 +73,7 @@
     <Compile Include="ChordFormula.cs" />
     <Compile Include="Formula.cs" />
     <Compile Include="FormulaStep.cs" />
+    <Compile Include="ModeFormula.cs" />
     <Compile Include="Note.cs">
       <SubType>Code</SubType>
     </Compile>
