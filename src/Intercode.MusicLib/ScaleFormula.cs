@@ -17,7 +17,7 @@ namespace Intercode.MusicLib
    using System.Collections.Generic;
    using System.Diagnostics.Contracts;
 
-   public class ScaleFormula
+   public class ScaleFormula: IEquatable<ScaleFormula>
    {
       #region Constants
 
@@ -31,6 +31,7 @@ namespace Intercode.MusicLib
       public static readonly ScaleFormula MinorPentatonic = new ScaleFormula("Minor Pentatonic", "1,3b,4,5,7b");
       public static readonly ScaleFormula Blues = new ScaleFormula("Blues", "1,3b,4,5b,5,7b");
       public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,3b,3,6bb,6");
+      private static readonly StringComparer s_comparer = StringComparer.CurrentCulture;
 
       #endregion
 
@@ -98,6 +99,37 @@ namespace Intercode.MusicLib
       public override string ToString()
       {
          return Name;
+      }
+
+      #endregion
+
+      #region IEquatable<ScaleFormula> Implementation
+
+      public bool Equals(ScaleFormula other)
+      {
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) )
+            return false;
+
+         return s_comparer.Equals(Name, other.Name) && Formula.Equals(other.Formula);
+      }
+
+      public override bool Equals(object other)
+      {
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+            return false;
+
+         return Equals((ScaleFormula)other);
+      }
+
+      public override int GetHashCode()
+      {
+         return Name.GetHashCode();
       }
 
       #endregion
