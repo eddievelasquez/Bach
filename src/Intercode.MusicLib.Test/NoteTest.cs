@@ -415,5 +415,15 @@ namespace Intercode.MusicLib.Test
          Assert.IsFalse(Note.TryParse("Cb#2", out actual));
          Assert.IsNull(actual);
       }
+
+      [ TestMethod ]
+      public void FrequencyTest()
+      {
+         Assert.AreEqual(440.0, Math.Round(Note.Parse("A4").Frequency, 2));
+         Assert.AreEqual(523.25, Math.Round(Note.Parse("C5").Frequency, 2));
+         Assert.AreEqual(349.23, Math.Round(Note.Parse("F4").Frequency, 2));
+         Assert.AreEqual(880.0, Math.Round(Note.Parse("A5").Frequency, 2));
+      }
+
    }
 }

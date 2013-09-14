@@ -84,6 +84,8 @@ namespace Intercode.MusicLib
          new CoreNote(Tone.A), new CoreNote(Tone.B, Accidental.Flat), new CoreNote(Tone.B),
       };
 
+      private static readonly Note A4 = Create(Tone.A, Accidental.Natural, 4);
+
       #endregion
 
       #region Data Members
@@ -158,6 +160,16 @@ namespace Intercode.MusicLib
       public int AbsoluteValue
       {
          get { return _absoluteValue; }
+      }
+
+      public double Frequency
+      {
+         get
+         {
+            int interval = AbsoluteValue - A4.AbsoluteValue;
+            double freq = Math.Pow(2, interval / 12.0) * 440.0;
+            return freq;
+         }
       }
 
       public static AccidentalMode AccidentalMode { get; set; }
