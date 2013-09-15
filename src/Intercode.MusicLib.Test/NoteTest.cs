@@ -124,7 +124,6 @@ namespace Bach.Model.Test
       {
          {
             var a = Note.Create(Tone.A, Accidental.Natural, 1);
-            Assert.IsTrue(a.CompareTo(null) > 0);
             Assert.IsTrue(a.CompareTo(a) == 0);
 
             var b = Note.Create(Tone.A, Accidental.Natural, 1);
@@ -293,20 +292,19 @@ namespace Bach.Model.Test
       [ TestMethod ]
       public void op_AdditionIntTest()
       {
-         var c2 = Note.Create (Tone.C, Accidental.Natural, 2);
-            
+         var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
+
          Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 2), c2 + 1);
          Assert.AreEqual(Note.Create(Tone.B, Accidental.Natural, 1), c2 + -1);
          Assert.AreEqual(Note.Create(Tone.D, Accidental.Natural, 2), c2 + 2);
          Assert.AreEqual(Note.Create(Tone.A, Accidental.Sharp, 1), c2 + -2);
-
       }
 
       [ TestMethod ]
       public void op_IncrementTest()
       {
-         var c2 = Note.Create (Tone.C, Accidental.Natural, 2);
-            
+         var c2 = Note.Create(Tone.C, Accidental.Natural, 2);
+
          Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 2), ++c2);
          Assert.AreEqual(Note.Create(Tone.D, Accidental.Natural, 2), ++c2);
       }
@@ -362,7 +360,7 @@ namespace Bach.Model.Test
       }
 
       [ TestMethod ]
-      [ ExpectedException(typeof(ArgumentException), "Must be equal to or less than G9")]
+      [ ExpectedException(typeof( ArgumentException ), "Must be equal to or less than G9") ]
       public void MaxNoteTest()
       {
          Assert.IsNotNull(Note.Parse("G9"));
@@ -404,22 +402,22 @@ namespace Bach.Model.Test
          Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleFlat, 2), actual);
 
          Assert.IsFalse(Note.TryParse("H", out actual));
-         Assert.IsNull(actual);
+         Assert.IsFalse(actual.IsValid);
 
          Assert.IsFalse(Note.TryParse("C!", out actual));
-         Assert.IsNull(actual);
+         Assert.IsFalse(actual.IsValid);
 
          Assert.IsFalse(Note.TryParse("C#-1", out actual));
-         Assert.IsNull(actual);
+         Assert.IsFalse(actual.IsValid);
 
          Assert.IsFalse(Note.TryParse("C#10", out actual));
-         Assert.IsNull(actual);
+         Assert.IsFalse(actual.IsValid);
 
          Assert.IsFalse(Note.TryParse("C#b2", out actual));
-         Assert.IsNull(actual);
+         Assert.IsFalse(actual.IsValid);
 
          Assert.IsFalse(Note.TryParse("Cb#2", out actual));
-         Assert.IsNull(actual);
+         Assert.IsFalse(actual.IsValid);
       }
 
       [ TestMethod ]
@@ -446,6 +444,5 @@ namespace Bach.Model.Test
          Assert.AreEqual(120, Note.Parse("C9").Midi);
          Assert.AreEqual(127, Note.Parse("G9").Midi);
       }
-
    }
 }
