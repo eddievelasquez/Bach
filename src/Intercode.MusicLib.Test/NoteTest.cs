@@ -362,6 +362,14 @@ namespace Bach.Model.Test
       }
 
       [ TestMethod ]
+      [ ExpectedException(typeof(ArgumentException), "Must be equal to or less than G9")]
+      public void MaxNoteTest()
+      {
+         Assert.IsNotNull(Note.Parse("G9"));
+         Note.Parse("A9");
+      }
+
+      [ TestMethod ]
       public void TryParseTest()
       {
          Note actual;
@@ -436,6 +444,7 @@ namespace Bach.Model.Test
          Assert.AreEqual(96, Note.Parse("C7").Midi);
          Assert.AreEqual(108, Note.Parse("C8").Midi);
          Assert.AreEqual(120, Note.Parse("C9").Midi);
+         Assert.AreEqual(127, Note.Parse("G9").Midi);
       }
 
    }

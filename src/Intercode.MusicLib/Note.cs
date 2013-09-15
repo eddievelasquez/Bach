@@ -66,8 +66,11 @@ namespace Bach.Model
          12 // C
       };
 
+      // Midi supports C-1, but we only support C0 and above
       private static readonly int s_minAbsoluteValue = CalcAbsoluteValue(Tone.C, Accidental.Natural, MIN_OCTAVE);
-      private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue(Tone.B, Accidental.Natural, MAX_OCTAVE);
+      
+      // G9 is the highest note supported by MIDI
+      private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue(Tone.G, Accidental.Natural, MAX_OCTAVE);
 
       private static readonly CoreNote[] s_sharps =
       {
@@ -102,12 +105,18 @@ namespace Bach.Model
 
       private Note(int absoluteValue, AccidentalMode accidentalMode)
       {
+         Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0, "absoluteValue");
+         Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128, "absoluteValue");
+
          _absoluteValue = absoluteValue;
          CalcNote(absoluteValue, out _tone, out _accidental, out _octave, accidentalMode);
       }
 
       private Note(Tone tone, Accidental accidental, int octave, int absoluteValue)
       {
+         Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0, "absoluteValue");
+         Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128, "absoluteValue");
+
          _tone = tone;
          _accidental = accidental;
          _octave = octave;
