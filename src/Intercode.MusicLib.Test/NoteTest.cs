@@ -423,5 +423,20 @@ namespace Intercode.MusicLib.Test
          Assert.AreEqual(880.0, Math.Round(Note.Parse("A5").Frequency, 2));
       }
 
+      [ TestMethod ]
+      public void MidiTest()
+      {
+         Assert.AreEqual(12, Note.Parse("C0").Midi);
+         Assert.AreEqual(24, Note.Parse("C1").Midi);
+         Assert.AreEqual(36, Note.Parse("C2").Midi);
+         Assert.AreEqual(48, Note.Parse("C3").Midi);
+         Assert.AreEqual(60, Note.Parse("C4").Midi);
+         Assert.AreEqual(72, Note.Parse("C5").Midi);
+         Assert.AreEqual(84, Note.Parse("C6").Midi);
+         Assert.AreEqual(96, Note.Parse("C7").Midi);
+         Assert.AreEqual(108, Note.Parse("C8").Midi);
+         Assert.AreEqual(120, Note.Parse("C9").Midi);
+      }
+
    }
 }

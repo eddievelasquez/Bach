@@ -49,9 +49,10 @@ namespace Intercode.MusicLib
 
       #region Constants
 
-      private const int INTERVALS_PER_OCTAVE = 12;
       public const int MIN_OCTAVE = 0;
       public const int MAX_OCTAVE = 9;
+      public const double A4_FREQUENCY = 440.0;
+      private const int INTERVALS_PER_OCTAVE = 12;
 
       private static readonly int[] s_intervals =
       {
@@ -167,8 +168,20 @@ namespace Intercode.MusicLib
          get
          {
             int interval = AbsoluteValue - A4.AbsoluteValue;
-            double freq = Math.Pow(2, interval / 12.0) * 440.0;
+            double freq = Math.Pow(2, interval / 12.0) * A4_FREQUENCY;
             return freq;
+         }
+      }
+
+      public int Midi
+      {
+         get
+         {
+            // The formula to convert a note to MIDI (according to http://en.wikipedia.org/wiki/Note)
+            // is p = 69 + 12 x log2(freq / 440). As it happens, our AbsoluteValue almost 
+            // matches, but we don't support the -1 octave we must add 12 to obtain the 
+            // MIDI number.
+            return AbsoluteValue + 12;
          }
       }
 
