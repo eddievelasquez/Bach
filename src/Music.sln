@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Music", "Music\Music.csproj", "{71F9A300-6C07-46C6-88D7-09879078BE82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intercode.MusicLib", "Intercode.MusicLib\Intercode.MusicLib.csproj", "{F5009FAD-2B82-4D27-A310-50BD5027D59C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bach.Model", "Intercode.MusicLib\Bach.Model.csproj", "{F5009FAD-2B82-4D27-A310-50BD5027D59C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intercode.MusicLib.Test", "Intercode.MusicLib.Test\Intercode.MusicLib.Test.csproj", "{EF6DBE87-F7E6-4AFD-B87E-104B04B61215}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bach.Model.Test", "Intercode.MusicLib.Test\Bach.Model.Test.csproj", "{EF6DBE87-F7E6-4AFD-B87E-104B04B61215}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{88ABF13E-9932-42F1-B410-C862FCA7E6ED}"
 	ProjectSection(SolutionItems) = preProject
