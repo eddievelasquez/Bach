@@ -11,7 +11,7 @@
 //   http://www.intercodeconsulting.com
 // 
 
-namespace Intercode.MusicLib
+namespace Bach.Model
 {
    public static class ToneExtensions
    {

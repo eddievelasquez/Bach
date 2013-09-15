@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[ assembly: AssemblyTitle( "Intercode.MusicLib" ) ]
+[assembly: AssemblyTitle("Bach.Model")]
 [ assembly: AssemblyDescription( "" ) ]
 [ assembly: AssemblyConfiguration( "" ) ]
 [ assembly: AssemblyCompany( "" ) ]
-[ assembly: AssemblyProduct( "Intercode.MusicLib" ) ]
+[assembly: AssemblyProduct("Bach")]
 [assembly: AssemblyCopyright("Copyright (c) 2012-2013, Intercode Consulting")]
 [ assembly: AssemblyTrademark( "" ) ]
 [ assembly: AssemblyCulture( "" ) ]

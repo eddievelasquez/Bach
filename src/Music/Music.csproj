@@ -53,7 +53,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Intercode.MusicLib\Intercode.MusicLib.csproj">
       <Project>{F5009FAD-2B82-4D27-A310-50BD5027D59C}</Project>
-      <Name>Intercode.MusicLib</Name>
+      <Name>Bach.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

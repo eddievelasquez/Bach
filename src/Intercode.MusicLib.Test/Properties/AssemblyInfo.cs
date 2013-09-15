@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Intercode.MusicLib.Test")]
+[assembly: AssemblyTitle("Bach.Model.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Intercode.MusicLib.Test")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
+[assembly: AssemblyProduct("Bach.Model.Test")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2013 Intercode Consulting")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

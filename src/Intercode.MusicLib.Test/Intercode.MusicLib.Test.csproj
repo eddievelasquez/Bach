@@ -9,8 +9,8 @@
     <ProjectGuid>{EF6DBE87-F7E6-4AFD-B87E-104B04B61215}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Intercode.MusicLib.Test</RootNamespace>
-    <AssemblyName>Intercode.MusicLib.Test</AssemblyName>
+    <RootNamespace>Bach.Model.Test</RootNamespace>
+    <AssemblyName>Bach.Model.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -64,7 +64,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Intercode.MusicLib\Intercode.MusicLib.csproj">
       <Project>{F5009FAD-2B82-4D27-A310-50BD5027D59C}</Project>
-      <Name>Intercode.MusicLib</Name>
+      <Name>Bach.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

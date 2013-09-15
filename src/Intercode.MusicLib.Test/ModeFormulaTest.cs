@@ -1,4 +1,4 @@
-﻿namespace Intercode.MusicLib.Test
+﻿namespace Bach.Model.Test
 {
    using System;
    using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,4 +1,4 @@
-﻿namespace Intercode.Music
+﻿namespace Bach.Music
 {
     internal class Program
     {

@@ -11,7 +11,7 @@
 //   http://www.intercodeconsulting.com
 // 
 
-namespace Intercode.MusicLib.Test
+namespace Bach.Model.Test
 {
    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
