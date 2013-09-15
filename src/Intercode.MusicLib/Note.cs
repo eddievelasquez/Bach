@@ -50,8 +50,8 @@ namespace Intercode.MusicLib
       #region Constants
 
       private const int INTERVALS_PER_OCTAVE = 12;
-      public const int MIN_OCTAVE = 1;
-      public const int MAX_OCTAVE = 8;
+      public const int MIN_OCTAVE = 0;
+      public const int MAX_OCTAVE = 9;
 
       private static readonly int[] s_intervals =
       {
@@ -398,7 +398,7 @@ namespace Intercode.MusicLib
 
       private static int CalcAbsoluteValue(Tone tone, Accidental accidental, int octave)
       {
-         int value = ((octave - 1) * INTERVALS_PER_OCTAVE) + s_intervals[(int)tone] + (int)accidental;
+         int value = (octave * INTERVALS_PER_OCTAVE) + s_intervals[(int)tone] + (int)accidental;
          return value;
       }
 
@@ -406,7 +406,7 @@ namespace Intercode.MusicLib
          AccidentalMode accidentalMode)
       {
          int remainder;
-         octave = Math.DivRem(absoluteValue, INTERVALS_PER_OCTAVE, out remainder) + 1;
+         octave = Math.DivRem(absoluteValue, INTERVALS_PER_OCTAVE, out remainder);
 
          CoreNote[] notes = accidentalMode == AccidentalMode.FavorFlats ? s_flats : s_sharps;
          CoreNote coreNote = notes[remainder];

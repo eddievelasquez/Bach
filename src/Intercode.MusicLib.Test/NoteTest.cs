@@ -229,42 +229,40 @@ namespace Intercode.MusicLib.Test
       [ ExpectedException(typeof( ArgumentException )) ]
       public void C1DoubleFlatThrowsTest()
       {
-         Note.Create(Tone.C, Accidental.DoubleFlat, 1);
+         Note.Create(Tone.C, Accidental.DoubleFlat, 0);
       }
 
       [ TestMethod ]
       [ ExpectedException(typeof( ArgumentException )) ]
       public void C1FlatThrowsTest()
       {
-         Note.Create(Tone.C, Accidental.Flat, 1);
+         Note.Create(Tone.C, Accidental.Flat, 0);
       }
 
       [ TestMethod ]
       [ ExpectedException(typeof( ArgumentException )) ]
       public void B8SharpThrowsTest()
       {
-         Note.Create(Tone.B, Accidental.Sharp, 8);
+         Note.Create(Tone.B, Accidental.Sharp, 9);
       }
 
       [ TestMethod ]
       [ ExpectedException(typeof( ArgumentException )) ]
       public void B8DoubleSharpThrowsTest()
       {
-         Note.Create(Tone.B, Accidental.DoubleSharp, 8);
+         Note.Create(Tone.B, Accidental.DoubleSharp, 9);
       }
 
       [ TestMethod ]
       public void AbsoluteValueTest()
       {
-         Assert.AreEqual(Note.Create(Tone.C, Accidental.Natural, 1).AbsoluteValue, 0);
-         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 1).AbsoluteValue, 1);
-         Assert.AreEqual(Note.Create(Tone.C, Accidental.DoubleSharp, 1).AbsoluteValue, 2);
-         Assert.AreEqual(Note.Create(Tone.B, Accidental.Natural, 1).AbsoluteValue, 11);
-         Assert.AreEqual(Note.Create(Tone.C, Accidental.Natural, 2).AbsoluteValue, 12);
-         Assert.AreEqual(Note.Create(Tone.C, Accidental.Sharp, 1).AbsoluteValue,
-            Note.Create(Tone.D, Accidental.Flat, 1).AbsoluteValue);
-         Assert.AreEqual(Note.Create(Tone.B, Accidental.Sharp, 1).AbsoluteValue,
-            Note.Create(Tone.C, Accidental.Natural, 2).AbsoluteValue);
+         Assert.AreEqual(0, Note.Parse("C0").AbsoluteValue);
+         Assert.AreEqual(1, Note.Parse("C#0").AbsoluteValue);
+         Assert.AreEqual(2, Note.Parse("C##0").AbsoluteValue);
+         Assert.AreEqual(11, Note.Parse("B0").AbsoluteValue);
+         Assert.AreEqual(12, Note.Parse("C1").AbsoluteValue);
+         Assert.AreEqual(Note.Parse("Db1").AbsoluteValue, Note.Parse("C#1").AbsoluteValue);
+         Assert.AreEqual(Note.Parse("C2").AbsoluteValue, Note.Parse("B#1").AbsoluteValue);
       }
 
       [ TestMethod ]
@@ -403,10 +401,10 @@ namespace Intercode.MusicLib.Test
          Assert.IsFalse(Note.TryParse("C!", out actual));
          Assert.IsNull(actual);
 
-         Assert.IsFalse(Note.TryParse("C#0", out actual));
+         Assert.IsFalse(Note.TryParse("C#-1", out actual));
          Assert.IsNull(actual);
 
-         Assert.IsFalse(Note.TryParse("C#9", out actual));
+         Assert.IsFalse(Note.TryParse("C#10", out actual));
          Assert.IsNull(actual);
 
          Assert.IsFalse(Note.TryParse("C#b2", out actual));
