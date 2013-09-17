@@ -79,6 +79,7 @@
     <Compile Include="Note.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="NoteCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scale.cs" />
     <Compile Include="ScaleFormula.cs" />

@@ -14,9 +14,7 @@
 namespace Bach.Model
 {
    using System;
-   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
-   using System.Linq;
    using System.Text;
 
    public struct Note: IEquatable<Note>, IComparable<Note>
@@ -377,17 +375,6 @@ namespace Bach.Model
          return result;
       }
 
-      public static IEnumerable<Note> ParseArray(string value, int defaultOctave = 4)
-      {
-         Contract.Requires<ArgumentNullException>(value != null, "value");
-         Contract.Requires<ArgumentException>(value.Length > 0, "value");
-         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= MIN_OCTAVE, "defaultOctave");
-         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= MAX_OCTAVE, "defaultOctave");
-
-         string[] values = value.Split(',');
-         return values.Select(s => Parse(s, defaultOctave));
-      }
-
       #endregion
 
       #region Implementation
@@ -402,14 +389,14 @@ namespace Bach.Model
          return (byte)(accidental + 2);
       }
 
-
       private static byte CalcAbsoluteValue(Tone tone, Accidental accidental, int octave)
       {
          int value = (octave * INTERVALS_PER_OCTAVE) + s_intervals[(int)tone] + (int)accidental;
          return (byte)value;
       }
 
-      private static void CalcNote(byte absoluteValue, out byte tone, out byte accidental, out byte octave, AccidentalMode accidentalMode)
+      private static void CalcNote(byte absoluteValue, out byte tone, out byte accidental, out byte octave,
+         AccidentalMode accidentalMode)
       {
          int remainder;
          octave = (byte)Math.DivRem(absoluteValue, INTERVALS_PER_OCTAVE, out remainder);

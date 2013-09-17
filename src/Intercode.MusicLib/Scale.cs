@@ -86,20 +86,7 @@ namespace Bach.Model
 
       public override string ToString()
       {
-         var buf = new StringBuilder();
-         bool needsComma = false;
-
-         foreach( var note in this )
-         {
-            if( needsComma )
-               buf.Append(',');
-            else
-               needsComma = true;
-
-            buf.Append(note);
-         }
-
-         return buf.ToString();
+         return NoteCollection.ToString(this);
       }
 
       #endregion

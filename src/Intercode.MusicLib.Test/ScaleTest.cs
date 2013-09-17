@@ -30,8 +30,8 @@ namespace Bach.Model.Test
 
       private static void TestScale(string expectedNotes, Note root, ScaleFormula formula)
       {
-         var expected = Note.ParseArray(expectedNotes).ToArray();
-         CollectionAssert.AreEqual(expected, new Scale(root, formula).Take(expected.Length).ToArray());
+         var expected = NoteCollection.Parse(expectedNotes);
+         CollectionAssert.AreEqual(expected, new Scale(root, formula).Take(expected.Count).ToArray());
       }
 
       [ TestMethod ]

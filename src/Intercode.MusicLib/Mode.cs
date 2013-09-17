@@ -22,6 +22,12 @@ namespace Bach.Model
 
    public class Mode: IEquatable<Mode>, IEnumerable<Note>
    {
+      #region Data Members
+
+      private readonly NoteCollection _notes;
+
+      #endregion
+
       #region Construction
 
       public Mode(Note root, ModeFormula formula)
@@ -39,6 +45,9 @@ namespace Bach.Model
          buf.Append(formula.Name);
 
          Name = buf.ToString();
+
+         var major = ScaleFormula.Major;
+         _notes = new NoteCollection(new Scale(Root, major).Skip(Formula.Tonic - 1).Take(major.Count).ToArray());
       }
 
       #endregion
@@ -92,10 +101,7 @@ namespace Bach.Model
 
       public IEnumerator<Note> GetEnumerator()
       {
-         var major = ScaleFormula.Major;
-         var count = major.Count;
-         Note[] notes = new Scale(Root, major).Skip(Formula.Tonic - 1).Take(count).ToArray();
-         return ((IEnumerable<Note>)notes).GetEnumerator();
+         return _notes.GetEnumerator();
       }
 
       #endregion
@@ -104,20 +110,7 @@ namespace Bach.Model
 
       public override string ToString()
       {
-         var buf = new StringBuilder();
-         bool needsComma = false;
-
-         foreach( var note in this )
-         {
-            if( needsComma )
-               buf.Append(',');
-            else
-               needsComma = true;
-
-            buf.Append(note);
-         }
-
-         return buf.ToString();
+         return _notes.ToString();
       }
 
       #endregion

@@ -47,13 +47,13 @@ namespace Bach.Model.Test
          Assert.AreEqual(root, target.Root);
          Assert.AreEqual(formula, target.Formula);
          Assert.AreEqual("Cm", target.Name);
-         CollectionAssert.AreEqual(Note.ParseArray("C,Eb,G").ToArray(), target.ToArray());
+         CollectionAssert.AreEqual(target.Notes, NoteCollection.Parse("C,Eb,G"));
       }
 
       private static void TestChord(string expectedNotes, Note root, ChordFormula formula)
       {
-         var expected = Note.ParseArray(expectedNotes).ToArray();
-         CollectionAssert.AreEqual(expected, new Chord(root, formula).Take(expected.Length).ToArray());
+         var expected = NoteCollection.Parse(expectedNotes);
+         CollectionAssert.AreEqual(expected, new Chord(root, formula).Take(expected.Count).ToArray());
       }
 
       [ TestMethod ]

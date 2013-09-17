@@ -34,13 +34,13 @@
          Assert.AreEqual(root, target.Root);
          Assert.AreEqual(formula, target.Formula);
          Assert.AreEqual("C Phrygian", target.Name);
-         CollectionAssert.AreEqual(Note.ParseArray("E4,F4,G4,A4,B4,C5,D5").ToArray(), target.ToArray());
+         CollectionAssert.AreEqual(target.ToArray(), NoteCollection.Parse("E4,F4,G4,A4,B4,C5,D5"));
       }
 
       private static void TestMode(string expectedNotes, Note root, ModeFormula formula)
       {
-         var expected = Note.ParseArray(expectedNotes).ToArray();
-         CollectionAssert.AreEqual(expected, new Mode(root, formula).Take(expected.Length).ToArray());
+         var expected = NoteCollection.Parse(expectedNotes);
+         CollectionAssert.AreEqual(expected, new Mode(root, formula).Take(expected.Count).ToArray());
       }
 
       [ TestMethod ]

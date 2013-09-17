@@ -16,11 +16,19 @@ namespace Bach.Model
    using System;
    using System.Collections;
    using System.Collections.Generic;
+   using System.Collections.ObjectModel;
    using System.Diagnostics.Contracts;
+   using System.Linq;
    using System.Text;
 
    public class Chord: IEquatable<Chord>, IEnumerable<Note>
    {
+      #region Data Members
+
+      private readonly NoteCollection _notes;
+
+      #endregion
+
       #region Construction
 
       public Chord(Note root, ChordFormula formula)
@@ -37,6 +45,8 @@ namespace Bach.Model
          buf.Append(formula.Symbol);
 
          Name = buf.ToString();
+
+         _notes = new NoteCollection(Formula.Generate(Root).ToArray());
       }
 
       #endregion
@@ -46,6 +56,11 @@ namespace Bach.Model
       public Note Root { get; private set; }
       public string Name { get; private set; }
       public ChordFormula Formula { get; private set; }
+
+      public ReadOnlyCollection<Note> Notes
+      {
+         get { return new ReadOnlyCollection<Note>(_notes); }
+      }
 
       #endregion
 
@@ -90,7 +105,7 @@ namespace Bach.Model
 
       public IEnumerator<Note> GetEnumerator()
       {
-         return Formula.Generate(Root).GetEnumerator();
+         return _notes.GetEnumerator();
       }
 
       #endregion
@@ -99,20 +114,7 @@ namespace Bach.Model
 
       public override string ToString()
       {
-         var buf = new StringBuilder();
-         bool needsComma = false;
-
-         foreach( var note in this )
-         {
-            if( needsComma )
-               buf.Append(',');
-            else
-               needsComma = true;
-
-            buf.Append(note);
-         }
-
-         return buf.ToString();
+         return _notes.ToString();
       }
 
       #endregion
