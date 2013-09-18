@@ -77,6 +77,20 @@ namespace Bach.Model
 
       #endregion
 
+      #region Operators
+
+      public static bool operator ==(FormulaStep lhs, FormulaStep rhs)
+      {
+         return Equals(lhs, rhs);
+      }
+
+      public static bool operator !=(FormulaStep lhs, FormulaStep rhs)
+      {
+         return !Equals(lhs, rhs);
+      }
+
+      #endregion
+
       #region Overrides
 
       public override string ToString()
