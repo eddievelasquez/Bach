@@ -19,8 +19,6 @@ namespace Bach.Model
 
    public class ScaleFormula: IEquatable<ScaleFormula>
    {
-      #region Constants
-
       public static readonly ScaleFormula Major = new ScaleFormula("Major", 2, 2, 1, 2, 2, 2, 1);
       public static readonly ScaleFormula NaturalMinor = new ScaleFormula("Natural Minor", "1,2,b3,4,5,b6,b7");
       public static readonly ScaleFormula HarmonicMinor = new ScaleFormula("Harmonic Minor", "1,2,b3,4,5,b6,7");
@@ -33,30 +31,19 @@ namespace Bach.Model
       public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,b3,3,bb6,6");
       private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
 
-      #endregion
-
       #region Construction
 
       public ScaleFormula(string name, params int[] intervals)
+         : this(name, new AbsoluteFormula(intervals))
       {
-         Contract.Requires<ArgumentNullException>(name != null, "name");
-         Contract.Requires<ArgumentException>(name.Length > 0, "name");
-         Contract.Requires<ArgumentException>(intervals.Length > 0, "intervals");
-
-         Name = name;
-         Intervals = intervals;
       }
 
       public ScaleFormula(string name, string formula)
+         : this(name, RelativeFormula.Parse(formula))
       {
-         Contract.Requires<ArgumentNullException>(name != null, "name");
-         Contract.Requires<ArgumentException>(name.Length > 0, "name");
-
-         Name = name;
-         Formula = Formula.Parse(formula);
       }
 
-      public ScaleFormula(string name, Formula formula)
+      public ScaleFormula(string name, IFormula formula)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
@@ -74,36 +61,14 @@ namespace Bach.Model
 
       public Int32 Count
       {
-         get { return Formula != null ? Formula.Count : Intervals.Length; }
+         get { return Formula.Count; }
       }
 
-      public Int32[] Intervals { get; private set; }
-      public Formula Formula { get; private set; }
+      public IFormula Formula { get; private set; }
 
       #endregion
 
-      #region Public Methods
-
-      public IEnumerable<Note> Generate(Note root)
-      {
-         if( Formula != null )
-            return Formula.Generate(root);
-
-         return GenerateWithIntervals(root, Intervals);
-      }
-
-      #endregion
-
-      #region Overrides
-
-      public override string ToString()
-      {
-         return Name;
-      }
-
-      #endregion
-
-      #region IEquatable<ScaleFormula> Implementation
+      #region IEquatable<ScaleFormula> Members
 
       public bool Equals(ScaleFormula other)
       {
@@ -114,6 +79,15 @@ namespace Bach.Model
             return false;
 
          return s_comparer.Equals(Name, other.Name) && Formula.Equals(other.Formula);
+      }
+
+      #endregion
+
+      #region Overrides
+
+      public override string ToString()
+      {
+         return Name;
       }
 
       public override bool Equals(object other)
@@ -134,25 +108,9 @@ namespace Bach.Model
 
       #endregion
 
-      #region Implementation
-
-      private static IEnumerable<Note> GenerateWithIntervals(Note root, IList<int> intervals)
+      public IEnumerable<Note> Generate(Note root)
       {
-         Contract.Requires<ArgumentNullException>(root != null, "root");
-         Contract.Requires<ArgumentNullException>(intervals != null, "intervals");
-
-         int index = 0;
-         Note current = root;
-
-         while( true )
-         {
-            yield return current;
-
-            index %= intervals.Count;
-            current += intervals[index++];
-         }
+         return Formula.Generate(root);
       }
-
-      #endregion
    }
 }

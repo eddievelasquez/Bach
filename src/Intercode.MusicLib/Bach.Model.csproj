@@ -110,6 +110,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbsoluteFormula.cs" />
     <Compile Include="Accidental.cs" />
     <Compile Include="AccidentalExtensions.cs" />
     <Compile Include="AccidentalMode.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="ChordFormula.cs" />
     <Compile Include="Formula.cs" />
     <Compile Include="FormulaStep.cs" />
+    <Compile Include="IFormula.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="ModeFormula.cs" />
     <Compile Include="Note.cs">
