@@ -92,6 +92,7 @@ namespace Bach.Model
 
       #region Data Members
 
+      public static readonly Note Empty = new Note();
       private readonly byte _tone;
       private readonly byte _accidental;
       private readonly byte _octave;
