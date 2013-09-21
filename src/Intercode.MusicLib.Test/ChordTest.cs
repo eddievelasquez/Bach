@@ -155,5 +155,25 @@ namespace Bach.Model.Test
          Assert.IsTrue(expected.Equals(actual));
          Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
       }
+
+      [ TestMethod ]
+      public void InvertTest()
+      {
+         var c4 = new Chord(Note.Parse("C4"), ChordFormula.Major);
+         var firstInversion = NoteCollection.Parse("E4,G4,C5");
+         var actual = c4.Invert(1);
+         Assert.IsNotNull(actual);
+         CollectionAssert.AreEqual(firstInversion, actual.Notes);
+
+         var secondInversion = NoteCollection.Parse("G4,C5,E5");
+         actual = c4.Invert(2);
+         Assert.IsNotNull(actual);
+         CollectionAssert.AreEqual(secondInversion, actual.Notes);
+
+         var thirdInversion = NoteCollection.Parse("C5,E5,G5");
+         actual = c4.Invert(3);
+         Assert.IsNotNull(actual);
+         CollectionAssert.AreEqual(thirdInversion, actual.Notes);
+      }
    }
 }

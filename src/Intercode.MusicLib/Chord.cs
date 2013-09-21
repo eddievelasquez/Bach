@@ -31,6 +31,21 @@ namespace Bach.Model
 
       #region Construction
 
+      private Chord(Note root, ChordFormula formula, string name, IList<Note> notes)
+      {
+         Contract.Requires<ArgumentException>(root.IsValid, "root.IsValid");
+         Contract.Requires<ArgumentNullException>(formula != null, "formula");
+         Contract.Requires<ArgumentNullException>(name != null, "name");
+         Contract.Requires<ArgumentException>(name.Length > 0, "name");
+         Contract.Requires<ArgumentNullException>(notes != null, "notes");
+         Contract.Requires<ArgumentException>(notes.Count > 0, "notes");
+
+         Root = root;
+         Formula = formula;
+         Name = name;
+         _notes = new NoteCollection(notes);
+      }
+
       public Chord(Note root, ChordFormula formula)
       {
          Contract.Requires<ArgumentNullException>(root != null, "root");
@@ -60,6 +75,28 @@ namespace Bach.Model
       public ReadOnlyCollection<Note> Notes
       {
          get { return new ReadOnlyCollection<Note>(_notes); }
+      }
+
+      #endregion
+
+      #region Public Methods
+
+      public Chord Invert(int inversion = 1)
+      {
+         Contract.Requires<ArgumentOutOfRangeException>(inversion > 0, "inversion");
+
+         var notes = Notes.ToList();
+         while( inversion > 0 )
+         {
+            Note bass = notes[0] + Note.INTERVALS_PER_OCTAVE;
+            notes.RemoveAt(0);
+            notes.Add(bass);
+
+            --inversion;
+         }
+
+         var inv = new Chord(Root, Formula, Name, notes);
+         return inv;
       }
 
       #endregion
