@@ -61,6 +61,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScaleFormulaTest.cs" />
     <Compile Include="ScaleTest.cs" />
+    <Compile Include="AbsoluteFormulaTest.cs" />
+    <Compile Include="ToneExtensionsTest.cs" />
+    <Compile Include="NoteCollectionTest.cs" />
+    <Compile Include="RelativeFormulaTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intercode.MusicLib\Bach.Model.csproj">
