@@ -13,13 +13,14 @@
 
 namespace Bach.Model.Test
 {
+   using System;
    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
    /// <summary>
    ///    This is a test class for AccidentalExtensionsTest and is intended
    ///    to contain all AccidentalExtensionsTest Unit Tests
    /// </summary>
-   [ TestClass() ]
+   [ TestClass ]
    public class AccidentalExtensionsTest
    {
       #region Properties
@@ -43,6 +44,23 @@ namespace Bach.Model.Test
          Assert.AreEqual(Accidental.Natural.ToSymbol(), "");
          Assert.AreEqual(Accidental.Sharp.ToSymbol(), "#");
          Assert.AreEqual(Accidental.DoubleSharp.ToSymbol(), "##");
+      }
+
+      [ TestMethod ]
+      public void ParseTest()
+      {
+         Assert.AreEqual(Accidental.DoubleFlat, AccidentalExtensions.Parse("bb"));
+         Assert.AreEqual(Accidental.Flat, AccidentalExtensions.Parse("b"));
+         Assert.AreEqual(Accidental.Natural, AccidentalExtensions.Parse(""));
+         Assert.AreEqual(Accidental.Sharp, AccidentalExtensions.Parse("#"));
+         Assert.AreEqual(Accidental.DoubleSharp, AccidentalExtensions.Parse("##"));
+      }
+
+      [ TestMethod ]
+      [ ExpectedException(typeof( ArgumentException )) ]
+      public void ParseThrowsWithInvalidAccidentalSymbolTest()
+      {
+         AccidentalExtensions.Parse("&");
       }
    }
 }
