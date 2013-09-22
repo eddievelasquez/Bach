@@ -17,9 +17,10 @@ namespace Bach.Model
    using System.Collections.Generic;
    using System.Collections.ObjectModel;
    using System.Diagnostics.Contracts;
+   using System.Linq;
    using System.Text;
 
-   public class NoteCollection: Collection<Note>
+   public class NoteCollection: Collection<Note>, IEquatable<IEnumerable<Note>>
    {
       #region Construction
 
@@ -101,6 +102,46 @@ namespace Bach.Model
       public override string ToString()
       {
          return ToString(this);
+      }
+
+      #endregion
+
+      #region IEquatable<IEnumerable<Note>> Implementation
+
+      public bool Equals(IEnumerable<Note> other)
+      {
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) )
+            return false;
+
+         return this.SequenceEqual(other);
+      }
+
+      public override bool Equals(object other)
+      {
+         if( ReferenceEquals(other, this) )
+            return true;
+
+         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+            return false;
+
+         return Equals((NoteCollection)other);
+      }
+
+      public override int GetHashCode()
+      {
+         const int MULTIPLIER = 89;
+
+         var first = this.FirstOrDefault();
+         var last = this.LastOrDefault();
+
+         unchecked
+         {
+            int result = ((first.GetHashCode() + Count) * MULTIPLIER) + (last.GetHashCode() + Count);
+            return result;
+         }
       }
 
       #endregion
