@@ -116,6 +116,8 @@
     <Compile Include="AccidentalMode.cs" />
     <Compile Include="Chord.cs" />
     <Compile Include="ChordFormula.cs" />
+    <Compile Include="Interval.cs" />
+    <Compile Include="IntervalQuality.cs" />
     <Compile Include="RelativeFormula.cs" />
     <Compile Include="FormulaStep.cs" />
     <Compile Include="IFormula.cs" />

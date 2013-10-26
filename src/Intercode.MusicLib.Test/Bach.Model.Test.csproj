@@ -55,6 +55,7 @@
     <Compile Include="ChordFormulaTest.cs" />
     <Compile Include="ChordTest.cs" />
     <Compile Include="FormulaStepTest.cs" />
+    <Compile Include="IntervalTest.cs" />
     <Compile Include="ModeFormulaTest.cs" />
     <Compile Include="ModeTest.cs" />
     <Compile Include="NoteTest.cs" />
