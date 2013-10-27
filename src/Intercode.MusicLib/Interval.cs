@@ -21,20 +21,26 @@ namespace Bach.Model
    {
       #region Constants
 
-      private const int QUALITY_COUNT = IntervalQuality.Augmented - IntervalQuality.Diminished + 1;
-      private const int NAME_COUNT = 8 - 1 + 1;
+      private const int MIN_INTERVAL = 1;
+      private const int MAX_INTERVAL = 15;
 
-      private static readonly int[,] s_steps = new int[NAME_COUNT, QUALITY_COUNT]
-      {
+      private static readonly int[,] s_steps = {
          // Diminished, Minor, Perfect, Major, Augmented
-         { -1, -1,  0, -1, 1 }, // First
-         {  0,  1, -1,  2, 3 }, // Second
-         {  2,  3, -1,  4, 5 }, // Third
-         {  4, -1,  5, -1, 6 }, // Fourth
-         {  6, -1,  7, -1, 8 }, // Fifth
+         { -1, -1,  0, -1,  1 }, // First
+         {  0,  1, -1,  2,  3 }, // Second
+         {  2,  3, -1,  4,  5 }, // Third
+         {  4, -1,  5, -1,  6 }, // Fourth
+         {  6, -1,  7, -1,  8 }, // Fifth
          {  7,  8, -1,  9, 10 }, // Sixth
          {  9, 10, -1, 11, 12 }, // Seventh
-         { 11, -1, 12, -1, 13 } // Eighth
+         { 11, -1, 12, -1, 13 }, // Eighth
+         { 12, 13, -1, 14, 15 }, // Ninth (Second)
+         { 14, 15, -1, 16, 17 }, // Tenth (Third)
+         { 16, -1, 17, -1, 18 }, // Eleventh (Fourth)
+         { 18, -1, 19, -1, 20 }, // Twelfth (Fifth)
+         { 19, 20, -1, 21, 22 }, // Thirteenth (Sixth)
+         { 21, 22, -1, 23, 24 }, // Forteenth (Seventh)
+         { 23, -1, 24, -1, 25 }, // Fifteenth (Eighth)
       };
 
       public static readonly Interval Perfect1 = new Interval(1, IntervalQuality.Perfect);
@@ -118,7 +124,7 @@ namespace Bach.Model
 
       public static bool IsValid(int number, IntervalQuality quality)
       {
-         if( number < 1 || number > 8 )
+         if( number < MIN_INTERVAL || number > MAX_INTERVAL )
             return false;
 
          if( quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented )
@@ -130,8 +136,8 @@ namespace Bach.Model
 
       public static int GetSteps(int number, IntervalQuality quality)
       {
-         Contract.Requires<ArgumentOutOfRangeException>(number >= 1, "number");
-         Contract.Requires<ArgumentOutOfRangeException>(number <= 8, "number");
+         Contract.Requires<ArgumentOutOfRangeException>(number >= MIN_INTERVAL, "number");
+         Contract.Requires<ArgumentOutOfRangeException>(number <= MAX_INTERVAL, "number");
          Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished, "quality");
          Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented, "quality");
 
@@ -196,12 +202,10 @@ namespace Bach.Model
          if( !Int32.TryParse(value.Substring(i), out number) )
             return false;
 
-         if( number < 1 || number > 8 )
-            return false;
-
          if( quality == IntervalQuality.Unknown )
          {
-            if( number == 1 || number == 4 || number == 5 || number == 8 )
+            int temp = ((number - 1) % 7) + 1;
+            if( temp == 1 || temp == 4 || temp == 5 )
                quality = IntervalQuality.Perfect;
             else
                quality = IntervalQuality.Major;
