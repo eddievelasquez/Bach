@@ -53,33 +53,34 @@ namespace Bach.Model.Test
       private static void TestChord(string expectedNotes, Note root, ChordFormula formula)
       {
          var expected = NoteCollection.Parse(expectedNotes);
-         CollectionAssert.AreEqual(expected, new Chord(root, formula).Take(expected.Count).ToArray());
+         var actual = new Chord(root, formula).Take(expected.Count).ToArray();
+         CollectionAssert.AreEqual(expected, actual);
       }
 
       [ TestMethod ]
       public void ChordsTest()
       {
          Note root = Note.Parse("C4");
-         TestChord("C,E,G", root, ChordFormula.Major);
-         TestChord("C,E,G,B", root, ChordFormula.Major7);
-         TestChord("C,E,G,B,D", root, ChordFormula.Major9);
-         TestChord("C,E,G,B,D,F", root, ChordFormula.Major11);
-         TestChord("C,E,G,B,D,F,A", root, ChordFormula.Major13);
-         TestChord("C,Eb,G", root, ChordFormula.Minor);
-         TestChord("C,Eb,G,Bb", root, ChordFormula.Minor7);
-         TestChord("C,Eb,G,Bb,D", root, ChordFormula.Minor9);
-         TestChord("C,Eb,G,Bb,D,F", root, ChordFormula.Minor11);
-         TestChord("C,Eb,G,Bb,D,F,A", root, ChordFormula.Minor13);
-         TestChord("C,E,G,Bb", root, ChordFormula.Dominant7);
-         TestChord("C,E,G,Bb,D", root, ChordFormula.Dominant9);
-         TestChord("C,E,G,Bb,D,F", root, ChordFormula.Dominant11);
-         TestChord("C,E,G,Bb,D,F,A", root, ChordFormula.Dominant13);
-         TestChord("C,E,G,A,D", root, ChordFormula.SixNine);
-         TestChord("C,E,G,D", root, ChordFormula.AddNine);
-         TestChord("C,Eb,Gb", root, ChordFormula.Diminished);
-         TestChord("C,Eb,Gb,Bbb", root, ChordFormula.Diminished7);
-         TestChord("C,Eb,Gb,Bb", root, ChordFormula.HalfDiminished);
-         TestChord("C,E,G#", root, ChordFormula.Augmented);
+         TestChord("C4,E4,G4", root, ChordFormula.Major);
+         TestChord("C4,E4,G4,B4", root, ChordFormula.Major7);
+         TestChord("C4,E4,G4,B4,D5", root, ChordFormula.Major9);
+         TestChord("C4,E4,G4,B4,D5,F5", root, ChordFormula.Major11);
+         TestChord("C4,E4,G4,B4,D5,F5,A5", root, ChordFormula.Major13);
+         TestChord("C4,Eb4,G4", root, ChordFormula.Minor);
+         TestChord("C4,Eb4,G4,Bb4", root, ChordFormula.Minor7);
+         TestChord("C4,Eb4,G4,Bb4,D5", root, ChordFormula.Minor9);
+         TestChord("C4,Eb4,G4,Bb4,D5,F5", root, ChordFormula.Minor11);
+         TestChord("C4,Eb4,G4,Bb4,D5,F5,A5", root, ChordFormula.Minor13);
+         TestChord("C4,E4,G4,Bb4", root, ChordFormula.Dominant7);
+         TestChord("C4,E4,G4,Bb4,D5", root, ChordFormula.Dominant9);
+         TestChord("C4,E4,G4,Bb4,D5,F5", root, ChordFormula.Dominant11);
+         TestChord("C4,E4,G4,Bb4,D5,F5,A5", root, ChordFormula.Dominant13);
+         TestChord("C4,E4,G4,A4,D5", root, ChordFormula.SixNine);
+         TestChord("C4,E4,G4,D5", root, ChordFormula.AddNine);
+         TestChord("C4,Eb4,Gb4", root, ChordFormula.Diminished);
+         TestChord("C4,Eb4,Gb4,Bbb4", root, ChordFormula.Diminished7);
+         TestChord("C4,Eb4,Gb4,Bb4", root, ChordFormula.HalfDiminished);
+         TestChord("C4,E4,G#4", root, ChordFormula.Augmented);
       }
 
       [ TestMethod ]

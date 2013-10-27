@@ -61,7 +61,7 @@ namespace Bach.Model
 
          Name = buf.ToString();
 
-         _notes = new NoteCollection(Formula.Generate(Root).ToArray());
+         _notes = new NoteCollection(Formula.Generate(Root).Take(formula.Formula.Count).ToArray());
       }
 
       #endregion
