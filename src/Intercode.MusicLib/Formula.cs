@@ -22,19 +22,11 @@ namespace Bach.Model
 
    public class Formula: IEquatable<Formula>
    {
-      public static readonly Formula Major = new Formula("Major", "1,2,3,4,5,6,7");
-      public static readonly Formula NaturalMinor = new Formula("Natural Minor", "1,2,m3,4,5,m6,m7");
-      public static readonly Formula HarmonicMinor = new Formula("Harmonic Minor", "1,2,m3,4,5,m6,7");
-      public static readonly Formula MelodicMinor = new Formula("Melodic Minor", "1,2,m3,4,5,6,7");
-      public static readonly Formula Diminished = new Formula("Diminished", "1,2,m3,4,d5,A5,6,7");
-      public static readonly Formula Polytonal = new Formula("Polytonal", "1,m2,m3,d4,A4,5,6,m7");
-      public static readonly Formula WholeTone = new Formula("Whole Tone", "1,2,3,A4,A5,A6");
-      public static readonly Formula Pentatonic = new Formula("Pentatonic", "1,2,3,5,6");
-      public static readonly Formula MinorPentatonic = new Formula("Minor Pentatonic", "1,m3,4,5,m7");
-      public static readonly Formula Blues = new Formula("Blues", "1,m3,4,d5,5,m7");
-      public static readonly Formula Gospel = new Formula("Gospel", "1,2,m3,3,5,6");
-      private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
+      #region Data Members
+
       private readonly Interval[] _intervals;
+
+      #endregion
 
       #region Construction
 
@@ -81,7 +73,7 @@ namespace Bach.Model
          if( ReferenceEquals(other, null) )
             return false;
 
-         return s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
+         return StringComparer.CurrentCultureIgnoreCase.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
       }
 
       #endregion

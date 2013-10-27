@@ -46,8 +46,7 @@ namespace Bach.Model.Test
 
          Assert.AreEqual(NAME, target.Name);
          Assert.AreEqual(SYMBOL, target.Symbol);
-         Assert.IsNotNull(target.Formula);
-         Assert.AreEqual("Name: P1,M2,M3", target.Formula.ToString());
+         Assert.AreEqual("Name: P1,M2,M3", target.ToString());
       }
 
       [ TestMethod ]

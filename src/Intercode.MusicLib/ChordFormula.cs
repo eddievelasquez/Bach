@@ -14,11 +14,9 @@
 namespace Bach.Model
 {
    using System;
-   using System.Collections.Generic;
    using System.Diagnostics.Contracts;
-   using System.Linq;
 
-   public class ChordFormula: IEquatable<ChordFormula>
+   public class ChordFormula: Formula
    {
       #region Constants
 
@@ -48,80 +46,18 @@ namespace Bach.Model
 
       #region Construction
 
-      public ChordFormula(string name, string symbol, Formula formula)
-      {
-         Contract.Requires<ArgumentNullException>(name != null, "name");
-         Contract.Requires<ArgumentException>(name.Length > 0, "name");
-         Contract.Requires<ArgumentNullException>(symbol != null, "symbol");
-         Contract.Requires<ArgumentNullException>(formula != null, "formula");
-
-         Name = name;
-         Symbol = symbol;
-         Formula = formula;
-      }
-
       public ChordFormula(string name, string symbol, string formula)
-         : this(name, symbol, new Formula(name, formula))
+         : base(name, formula)
       {
+         Contract.Requires<ArgumentNullException>(symbol != null, "symbol");
+         Symbol = symbol;
       }
 
       #endregion
 
       #region Properties
 
-      public string Name { get; private set; }
       public string Symbol { get; private set; }
-      public Formula Formula { get; private set; }
-
-      #endregion
-
-      #region Public Methods
-
-      public IEnumerable<Note> Generate(Note note)
-      {
-         return Formula.Generate(note);
-      }
-
-      #endregion
-
-      #region IEquatable<ChordFormula> Implementation
-
-      public bool Equals(ChordFormula other)
-      {
-         if( ReferenceEquals(other, this) )
-            return true;
-
-         if( ReferenceEquals(other, null) )
-            return false;
-
-         return s_comparer.Equals(Name, other.Name) && s_comparer.Equals(Symbol, other.Symbol)
-                && Formula.Equals(other.Formula);
-      }
-
-      public override bool Equals(object other)
-      {
-         if( ReferenceEquals(other, this) )
-            return true;
-
-         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-            return false;
-
-         return Equals((ChordFormula)other);
-      }
-
-      public override int GetHashCode()
-      {
-         return Name.GetHashCode();
-      }
-
-      #endregion
-
-      #region Overrides
-
-      public override string ToString()
-      {
-         return Name;
-      }
 
       #endregion
    }
