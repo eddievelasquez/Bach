@@ -22,7 +22,8 @@ namespace Bach.Model.Test
       [ TestMethod ]
       public void ConstructorTest()
       {
-         var major = new ScaleFormula("Major", 2, 2, 1, 2, 2, 2, 2);
+         var major = new ScaleFormula("Major", Interval.Perfect1, Interval.Major2, Interval.Major3, Interval.Perfect4,
+            Interval.Perfect5, Interval.Major6, Interval.Major7);
          Assert.AreEqual("Major", major.Name);
          Assert.AreEqual(7, major.Count);
       }

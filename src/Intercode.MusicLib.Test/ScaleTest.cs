@@ -23,7 +23,8 @@ namespace Bach.Model.Test
       [ TestMethod ]
       public void ConstructorTest()
       {
-         var major = new ScaleFormula("Major", 2, 2, 1, 2, 2, 2, 2);
+         var major = new ScaleFormula("Major", Interval.Perfect1, Interval.Major2, Interval.Major3, Interval.Perfect4,
+            Interval.Perfect5, Interval.Major6, Interval.Major7);
          Assert.AreEqual("Major", major.Name);
          Assert.AreEqual(7, major.Count);
       }
@@ -31,22 +32,23 @@ namespace Bach.Model.Test
       private static void TestScale(string expectedNotes, Note root, ScaleFormula formula)
       {
          var expected = NoteCollection.Parse(expectedNotes);
-         CollectionAssert.AreEqual(expected, new Scale(root, formula).Take(expected.Count).ToArray());
+         var actual = new NoteCollection(new Scale(root, formula).Take(expected.Count).ToArray());
+         CollectionAssert.AreEqual(expected, actual);
       }
 
       [ TestMethod ]
       public void GenerateScaleTest()
       {
          Note root = Note.Parse("C4");
-         TestScale("C,D,E,F,G,A,B", root, ScaleFormula.Major);
-         TestScale("C,D,Eb,F,G,Ab,Bb", root, ScaleFormula.NaturalMinor);
-         TestScale("C,D,Eb,F,G,Ab,B", root, ScaleFormula.HarmonicMinor);
-         TestScale("C,D,Eb,F,G,A,B", root, ScaleFormula.MelodicMinor);
-         TestScale("C,D,Eb,F,Gb,G#,A,B", root, ScaleFormula.Diminished);
-         TestScale("C,Db,Eb,E,F#,G,A,Bb", root, ScaleFormula.Polytonal);
-         TestScale("C,D,E,G,A", root, ScaleFormula.Pentatonic);
-         TestScale("C,Eb,F,Gb,G,Bb", root, ScaleFormula.Blues);
-         TestScale("C,D,Eb,E,G,A", root, ScaleFormula.Gospel);
+         TestScale("C4,D4,E4,F4,G4,A4,B4", root, ScaleFormula.Major);
+         TestScale("C4,D4,Eb4,F4,G4,Ab4,Bb4", root, ScaleFormula.NaturalMinor);
+         TestScale("C4,D4,Eb4,F4,G4,Ab4,B4", root, ScaleFormula.HarmonicMinor);
+         TestScale("C4,D4,Eb4,F4,G4,A4,B4", root, ScaleFormula.MelodicMinor);
+         TestScale("C4,D4,Eb4,F4,Gb4,G#4,A4,B4", root, ScaleFormula.Diminished);
+         TestScale("C4,Db4,Eb4,Fb4,F#4,G4,A4,Bb4", root, ScaleFormula.Polytonal);
+         TestScale("C4,D4,E4,G4,A4", root, ScaleFormula.Pentatonic);
+         TestScale("C4,Eb4,F4,Gb4,G4,Bb4", root, ScaleFormula.Blues);
+         TestScale("C4,D4,Eb4,E4,G4,A4", root, ScaleFormula.Gospel);
       }
 
       [ TestMethod ]
