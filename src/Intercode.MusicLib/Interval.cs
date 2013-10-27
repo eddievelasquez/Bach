@@ -27,13 +27,13 @@ namespace Bach.Model
       private static readonly int[,] s_steps = new int[NAME_COUNT, QUALITY_COUNT]
       {
          // Diminished, Minor, Perfect, Major, Augmented
-         { -1, -1, 0, -1, 1 }, // First
-         { 0, 1, -1, 2, 3 }, // Second
-         { 2, 3, -1, 4, 5 }, // Third
-         { 4, -1, 5, -1, 6 }, // Fourth
-         { 6, -1, 7, -1, 8 }, // Fifth
-         { 7, 8, -1, 9, 10 }, // Sixth
-         { 9, 10, -1, 11, 12 }, // Seventh
+         { -1, -1,  0, -1, 1 }, // First
+         {  0,  1, -1,  2, 3 }, // Second
+         {  2,  3, -1,  4, 5 }, // Third
+         {  4, -1,  5, -1, 6 }, // Fourth
+         {  6, -1,  7, -1, 8 }, // Fifth
+         {  7,  8, -1,  9, 10 }, // Sixth
+         {  9, 10, -1, 11, 12 }, // Seventh
          { 11, -1, 12, -1, 13 } // Eighth
       };
 
@@ -103,7 +103,13 @@ namespace Bach.Model
 
       public Int32 Steps
       {
-         get { return GetSteps(Number, Quality); }
+         get
+         {
+            if( Number == 0 )
+               return 0;
+
+            return GetSteps(Number, Quality);
+         }
       }
 
       #endregion
@@ -138,6 +144,9 @@ namespace Bach.Model
 
       public override string ToString()
       {
+         if( Number == 0 )
+            return String.Empty;
+
          return ToString(Number, Quality);
       }
 
