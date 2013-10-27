@@ -59,7 +59,7 @@
     <Compile Include="ModeTest.cs" />
     <Compile Include="NoteTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScaleFormulaTest.cs" />
+    <Compile Include="FormulaTest.cs" />
     <Compile Include="ScaleTest.cs" />
     <Compile Include="ToneExtensionsTest.cs" />
     <Compile Include="NoteCollectionTest.cs" />
