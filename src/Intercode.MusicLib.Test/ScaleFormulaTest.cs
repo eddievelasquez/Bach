@@ -1,5 +1,5 @@
 ﻿// 
-//   ScaleFormulaTest.cs: 
+//   FormulaTest.cs: 
 // 
 //   Author: Eddie Velasquez
 // 
@@ -17,12 +17,12 @@ namespace Bach.Model.Test
    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
    [ TestClass ]
-   public class ScaleFormulaTest
+   public class FormulaTest
    {
       [ TestMethod ]
       public void ConstructorTest()
       {
-         var major = new ScaleFormula("Major", Interval.Perfect1, Interval.Major2, Interval.Major3, Interval.Perfect4,
+         var major = new Formula("Major", Interval.Perfect1, Interval.Major2, Interval.Major3, Interval.Perfect4,
             Interval.Perfect5, Interval.Major6, Interval.Major7);
          Assert.AreEqual("Major", major.Name);
          Assert.AreEqual(7, major.Count);
@@ -31,9 +31,9 @@ namespace Bach.Model.Test
       [ TestMethod ]
       public void EqualsContractTest()
       {
-         object x = new ScaleFormula("Test", "1,2,3");
-         object y = new ScaleFormula("Test", "1,2,3");
-         object z = new ScaleFormula("Test", "1,2,3");
+         object x = new Formula("Test", "1,2,3");
+         object y = new Formula("Test", "1,2,3");
+         object z = new Formula("Test", "1,2,3");
 
          Assert.IsTrue(x.Equals(x)); // Reflexive
          Assert.IsTrue(x.Equals(y)); // Symetric
@@ -46,9 +46,9 @@ namespace Bach.Model.Test
       [ TestMethod ]
       public void TypeSafeEqualsContractTest()
       {
-         var x = new ScaleFormula("Test", "1,2,3");
-         var y = new ScaleFormula("Test", "1,2,3");
-         var z = new ScaleFormula("Test", "1,2,3");
+         var x = new Formula("Test", "1,2,3");
+         var y = new Formula("Test", "1,2,3");
+         var z = new Formula("Test", "1,2,3");
 
          Assert.IsTrue(x.Equals(x)); // Reflexive
          Assert.IsTrue(x.Equals(y)); // Symetric
@@ -61,43 +61,43 @@ namespace Bach.Model.Test
       [ TestMethod ]
       public void EqualsFailsWithDifferentTypeTest()
       {
-         object actual = new ScaleFormula("Test", "1,2,3");
+         object actual = new Formula("Test", "1,2,3");
          Assert.IsFalse(actual.Equals(Int32.MinValue));
       }
 
       [ TestMethod ]
       public void TypeSafeEqualsFailsWithDifferentTypeTest()
       {
-         var actual = new ScaleFormula("Test", "1,2,3");
+         var actual = new Formula("Test", "1,2,3");
          Assert.IsFalse(actual.Equals(Int32.MinValue));
       }
 
       [ TestMethod ]
       public void EqualsFailsWithNullTest()
       {
-         object actual = new ScaleFormula("Test", "1,2,3");
+         object actual = new Formula("Test", "1,2,3");
          Assert.IsFalse(actual.Equals(null));
       }
 
       [ TestMethod ]
       public void TypeSafeEqualsFailsWithNullTest()
       {
-         var actual = new ScaleFormula("Test", "1,2,3");
+         var actual = new Formula("Test", "1,2,3");
          Assert.IsFalse(actual.Equals(null));
       }
 
       [ TestMethod ]
       public void EqualsSucceedsWithSameObjectTest()
       {
-         var actual = new ScaleFormula("Test", "1,2,3");
+         var actual = new Formula("Test", "1,2,3");
          Assert.IsTrue(actual.Equals(actual));
       }
 
       [ TestMethod ]
       public void GetHashcodeTest()
       {
-         var actual = new ScaleFormula("Test", "1,2,3");
-         var expected = new ScaleFormula("Test", "1,2,3");
+         var actual = new Formula("Test", "1,2,3");
+         var expected = new Formula("Test", "1,2,3");
          Assert.IsTrue(expected.Equals(actual));
          Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
       }

@@ -23,7 +23,7 @@ namespace Bach.Model
    {
       #region Construction
 
-      public Scale(Note root, ScaleFormula formula)
+      public Scale(Note root, Formula formula)
       {
          Contract.Requires<ArgumentNullException>(root != null, "root");
          Contract.Requires<ArgumentNullException>(formula != null, "formula");
@@ -46,7 +46,7 @@ namespace Bach.Model
 
       public Note Root { get; private set; }
       public string Name { get; private set; }
-      public ScaleFormula Formula { get; private set; }
+      public Formula Formula { get; private set; }
 
       #endregion
 

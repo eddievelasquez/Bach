@@ -46,7 +46,7 @@ namespace Bach.Model
 
          Name = buf.ToString();
 
-         var major = ScaleFormula.Major;
+         var major = Model.Formula.Major;
          _notes = new NoteCollection(new Scale(Root, major).Skip(Formula.Tonic - 1).Take(major.Count).ToArray());
       }
 

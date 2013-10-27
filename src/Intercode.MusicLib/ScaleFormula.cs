@@ -1,5 +1,5 @@
 ﻿// 
-//   ScaleFormula.cs: 
+//   Formula.cs: 
 // 
 //   Author: Eddie Velasquez
 // 
@@ -20,25 +20,25 @@ namespace Bach.Model
    using System.Linq;
    using System.Text;
 
-   public class ScaleFormula: IEquatable<ScaleFormula>
+   public class Formula: IEquatable<Formula>
    {
-      public static readonly ScaleFormula Major = new ScaleFormula("Major", "1,2,3,4,5,6,7");
-      public static readonly ScaleFormula NaturalMinor = new ScaleFormula("Natural Minor", "1,2,m3,4,5,m6,m7");
-      public static readonly ScaleFormula HarmonicMinor = new ScaleFormula("Harmonic Minor", "1,2,m3,4,5,m6,7");
-      public static readonly ScaleFormula MelodicMinor = new ScaleFormula("Melodic Minor", "1,2,m3,4,5,6,7");
-      public static readonly ScaleFormula Diminished = new ScaleFormula("Diminished", "1,2,m3,4,d5,A5,6,7");
-      public static readonly ScaleFormula Polytonal = new ScaleFormula("Polytonal", "1,m2,m3,d4,A4,5,6,m7");
-      public static readonly ScaleFormula WholeTone = new ScaleFormula("Whole Tone", "1,2,3,A4,A5,A6");
-      public static readonly ScaleFormula Pentatonic = new ScaleFormula("Pentatonic", "1,2,3,5,6");
-      public static readonly ScaleFormula MinorPentatonic = new ScaleFormula("Minor Pentatonic", "1,m3,4,5,m7");
-      public static readonly ScaleFormula Blues = new ScaleFormula("Blues", "1,m3,4,d5,5,m7");
-      public static readonly ScaleFormula Gospel = new ScaleFormula("Gospel", "1,2,m3,3,5,6");
+      public static readonly Formula Major = new Formula("Major", "1,2,3,4,5,6,7");
+      public static readonly Formula NaturalMinor = new Formula("Natural Minor", "1,2,m3,4,5,m6,m7");
+      public static readonly Formula HarmonicMinor = new Formula("Harmonic Minor", "1,2,m3,4,5,m6,7");
+      public static readonly Formula MelodicMinor = new Formula("Melodic Minor", "1,2,m3,4,5,6,7");
+      public static readonly Formula Diminished = new Formula("Diminished", "1,2,m3,4,d5,A5,6,7");
+      public static readonly Formula Polytonal = new Formula("Polytonal", "1,m2,m3,d4,A4,5,6,m7");
+      public static readonly Formula WholeTone = new Formula("Whole Tone", "1,2,3,A4,A5,A6");
+      public static readonly Formula Pentatonic = new Formula("Pentatonic", "1,2,3,5,6");
+      public static readonly Formula MinorPentatonic = new Formula("Minor Pentatonic", "1,m3,4,5,m7");
+      public static readonly Formula Blues = new Formula("Blues", "1,m3,4,d5,5,m7");
+      public static readonly Formula Gospel = new Formula("Gospel", "1,2,m3,3,5,6");
       private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
       private readonly Interval[] _intervals;
 
       #region Construction
 
-      public ScaleFormula(string name, params Interval[] intervals)
+      public Formula(string name, params Interval[] intervals)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
@@ -48,7 +48,7 @@ namespace Bach.Model
          _intervals = intervals;
       }
 
-      public ScaleFormula(string name, string formula)
+      public Formula(string name, string formula)
          : this(name, ParseIntervals(formula))
       {
       }
@@ -71,9 +71,9 @@ namespace Bach.Model
 
       #endregion
 
-      #region IEquatable<ScaleFormula> Members
+      #region IEquatable<Formula> Members
 
-      public bool Equals(ScaleFormula other)
+      public bool Equals(Formula other)
       {
          if( ReferenceEquals(other, this) )
             return true;
@@ -117,7 +117,7 @@ namespace Bach.Model
          if( ReferenceEquals(other, null) || other.GetType() != GetType() )
             return false;
 
-         return Equals((ScaleFormula)other);
+         return Equals((Formula)other);
       }
 
       public override int GetHashCode()

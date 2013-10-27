@@ -48,7 +48,7 @@ namespace Bach.Model
 
       #region Construction
 
-      public ChordFormula(string name, string symbol, ScaleFormula formula)
+      public ChordFormula(string name, string symbol, Formula formula)
       {
          Contract.Requires<ArgumentNullException>(name != null, "name");
          Contract.Requires<ArgumentException>(name.Length > 0, "name");
@@ -61,7 +61,7 @@ namespace Bach.Model
       }
 
       public ChordFormula(string name, string symbol, string formula)
-         : this(name, symbol, new ScaleFormula(name, formula))
+         : this(name, symbol, new Formula(name, formula))
       {
       }
 
@@ -71,7 +71,7 @@ namespace Bach.Model
 
       public string Name { get; private set; }
       public string Symbol { get; private set; }
-      public ScaleFormula Formula { get; private set; }
+      public Formula Formula { get; private set; }
 
       #endregion
 
