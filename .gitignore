@@ -1,1 +1,18 @@
+syntax: glob
+*.dll
+*.exp
+*.ilk
+*.pdb
+*.lib
+*.ncb
+*.opt
+*.plg
+*.user
+*.suo
+*.sdf
+*.opensdf
 *.tss
+obj\
+bin\
+TestResults\
+
