@@ -115,8 +115,15 @@
     <Compile Include="AccidentalMode.cs" />
     <Compile Include="Chord.cs" />
     <Compile Include="ChordFormula.cs" />
+    <Compile Include="Instruments\Bass.cs" />
+    <Compile Include="Instruments\Guitar.cs" />
+    <Compile Include="Instruments\InstrumentCollection.cs" />
+    <Compile Include="Instruments\StringedInstrument.cs" />
+    <Compile Include="Instruments\Tuning.cs" />
+    <Compile Include="Instruments\TuningCollection.cs" />
     <Compile Include="Interval.cs" />
     <Compile Include="IntervalQuality.cs" />
+    <Compile Include="Instruments\Instrument.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="ModeFormula.cs" />
     <Compile Include="Note.cs">

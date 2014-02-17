@@ -54,6 +54,9 @@
     <Compile Include="AccidentalExtensionsTest.cs" />
     <Compile Include="ChordFormulaTest.cs" />
     <Compile Include="ChordTest.cs" />
+    <Compile Include="Instruments\GuitarTest.cs" />
+    <Compile Include="Instruments\BassTest.cs" />
+    <Compile Include="Instruments\TuningTest.cs" />
     <Compile Include="IntervalTest.cs" />
     <Compile Include="ModeFormulaTest.cs" />
     <Compile Include="ModeTest.cs" />
