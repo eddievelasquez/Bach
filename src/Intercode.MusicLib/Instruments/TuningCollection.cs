@@ -21,6 +21,7 @@ namespace Bach.Model.Instruments
       #region Construction
 
       public TuningCollection(StringedInstrument instrument)
+         : base(StringComparer.CurrentCultureIgnoreCase)
       {
          Contract.Requires<ArgumentNullException>(instrument != null, "instrument");
          Instrument = instrument;
