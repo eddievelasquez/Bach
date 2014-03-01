@@ -34,7 +34,7 @@ namespace Bach.Model.Test.Instruments
       {
          var guitar = new Guitar();
          int tuningCount = guitar.Tunings.Count;
-         guitar.Tunings.Add(new Tuning(guitar, "Drop D", NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
+         guitar.Tunings.Add(new Tuning(guitar, "Drop D Test", NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
          Assert.AreEqual(tuningCount + 1, guitar.Tunings.Count);
       }
 
