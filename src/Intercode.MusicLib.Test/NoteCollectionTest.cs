@@ -21,10 +21,18 @@ namespace Bach.Model.Test
    public class NoteCollectionTest
    {
       [ TestMethod ]
-      public void ParseTest()
+      public void ParseWithNotesTest()
       {
          var expected = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
          var actual = NoteCollection.Parse("C4,C5");
+         Assert.IsTrue(actual.SequenceEqual(expected));
+      }
+
+      [ TestMethod ]
+      public void ParseWithMidiTest()
+      {
+         var expected = new NoteCollection(new[] { Note.FromMidi(60), Note.FromMidi(70) });
+         var actual = NoteCollection.Parse("60,70");
          Assert.IsTrue(actual.SequenceEqual(expected));
       }
 
