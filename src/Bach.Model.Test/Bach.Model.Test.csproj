@@ -68,7 +68,7 @@
     <Compile Include="NoteCollectionTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Intercode.MusicLib\Bach.Model.csproj">
+    <ProjectReference Include="..\Bach.Model\Bach.Model.csproj">
       <Project>{F5009FAD-2B82-4D27-A310-50BD5027D59C}</Project>
       <Name>Bach.Model</Name>
     </ProjectReference>
