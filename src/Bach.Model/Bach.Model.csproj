@@ -127,6 +127,7 @@
     <Compile Include="IntervalQualityExtensions.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="ModeFormula.cs" />
+    <Compile Include="Notation.cs" />
     <Compile Include="Note.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -142,6 +143,7 @@
     <Compile Include="Scale.cs" />
     <Compile Include="Formula.cs" />
     <Compile Include="ScaleFormula.cs" />
+    <Compile Include="Tablature.cs" />
     <Compile Include="Tone.cs" />
     <Compile Include="ToneExtensions.cs" />
   </ItemGroup>
