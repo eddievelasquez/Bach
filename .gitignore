@@ -12,7 +12,6 @@ syntax: glob
 *.sdf
 *.opensdf
 *.tss
-obj\
-bin\
-TestResults\
-
+obj/
+bin/
+TestResults/
