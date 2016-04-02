@@ -1,154 +1,179 @@
-﻿// 
-//   Formula.cs: 
+﻿//  
+// Module Name: Formula.cs
+// Project:     Bach.Model
+// Copyright (c) 2013  Eddie Velasquez.
 // 
-//   Author: Eddie Velasquez
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
 // 
-//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
 // 
-//      Unauthorized use, duplication or distribution of this software, 
-//      or any portion of it, is prohibited.  
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
 // 
-//   http://www.intercodeconsulting.com
-// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model
 {
-   using System;
-   using System.Collections.Generic;
-   using System.Collections.ObjectModel;
-   using System.Diagnostics.Contracts;
-   using System.Linq;
-   using System.Text;
+  using System;
+  using System.Collections.Generic;
+  using System.Collections.ObjectModel;
+  using System.Diagnostics.Contracts;
+  using System.Linq;
+  using System.Text;
 
-   public class Formula: IEquatable<Formula>
-   {
-      #region Data Members
+  public class Formula: IEquatable<Formula>
+  {
+    #region Data Members
 
-      private readonly Interval[] _intervals;
+    private readonly Interval[] _intervals;
 
-      #endregion
+    #endregion
 
-      #region Construction
+    #region Construction/Destruction
 
-      public Formula(string name, params Interval[] intervals)
+    public Formula(string name, params Interval[] intervals)
+    {
+      Contract.Requires<ArgumentNullException>(name != null);
+      Contract.Requires<ArgumentException>(name.Length > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0);
+
+      Name = name;
+      _intervals = intervals;
+    }
+
+    public Formula(string name, string formula)
+      : this(name, ParseIntervals(formula))
+    {
+    }
+
+    #endregion
+
+    #region Properties
+
+    public string Name { get; }
+
+    public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
+
+    public int Count => _intervals.Length;
+
+    #endregion
+
+    #region IEquatable<Formula> Members
+
+    public bool Equals(Formula other)
+    {
+      if( ReferenceEquals(other, this) )
       {
-         Contract.Requires<ArgumentNullException>(name != null, "name");
-         Contract.Requires<ArgumentException>(name.Length > 0, "name");
-         Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0, "intervals");
-
-         Name = name;
-         _intervals = intervals;
+        return true;
       }
 
-      public Formula(string name, string formula)
-         : this(name, ParseIntervals(formula))
+      if( ReferenceEquals(other, null) )
       {
+        return false;
       }
 
-      #endregion
+      return StringComparer.CurrentCultureIgnoreCase.Equals(Name, other.Name)
+             && _intervals.SequenceEqual(other.Intervals);
+    }
 
-      #region Properties
+    #endregion
 
-      public String Name { get; private set; }
+    #region Public Methods
 
-      public ReadOnlyCollection<Interval> Intervals
+    public override string ToString()
+    {
+      var buf = new StringBuilder();
+      buf.Append(Name);
+      buf.Append(": ");
+
+      var needComma = false;
+
+      foreach( Interval interval in _intervals )
       {
-         get { return new ReadOnlyCollection<Interval>(_intervals); }
+        if( needComma )
+        {
+          buf.Append(',');
+        }
+        else
+        {
+          needComma = true;
+        }
+
+        buf.Append(interval);
       }
 
-      public Int32 Count
+      return buf.ToString();
+    }
+
+    public override bool Equals(object other)
+    {
+      if( ReferenceEquals(other, this) )
       {
-         get { return _intervals.Length; }
+        return true;
       }
 
-      #endregion
-
-      #region IEquatable<Formula> Members
-
-      public bool Equals(Formula other)
+      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
       {
-         if( ReferenceEquals(other, this) )
-            return true;
-
-         if( ReferenceEquals(other, null) )
-            return false;
-
-         return StringComparer.CurrentCultureIgnoreCase.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
+        return false;
       }
 
-      #endregion
+      return Equals((Formula) other);
+    }
 
-      #region Overrides
+    public override int GetHashCode()
+    {
+      return Name.GetHashCode();
+    }
 
-      public override string ToString()
+    public IEnumerable<Note> Generate(Note root)
+    {
+      int intervalCount = _intervals.Length;
+      var index = 0;
+
+      while( true )
       {
-         var buf = new StringBuilder();
-         buf.Append(Name);
-         buf.Append(": ");
+        Interval interval = _intervals[index % intervalCount];
 
-         bool needComma = false;
+        var accidentalMode = AccidentalMode.FavorSharps;
+        if( interval.Quality == IntervalQuality.Diminished || interval.Quality == IntervalQuality.Minor )
+        {
+          accidentalMode = AccidentalMode.FavorFlats;
+        }
 
-         foreach( var interval in _intervals )
-         {
-            if( needComma )
-               buf.Append(',');
-            else
-               needComma = true;
+        int octaveAdd = index / intervalCount;
 
-            buf.Append(interval);
-         }
+        // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
+        Note note = root.Add(interval.Steps + octaveAdd * Note.IntervalsPerOctave, accidentalMode);
+        yield return note;
 
-         return buf.ToString();
+        ++index;
       }
+    }
 
-      public override bool Equals(object other)
-      {
-         if( ReferenceEquals(other, this) )
-            return true;
+    #endregion
 
-         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-            return false;
+    #region Implementation
 
-         return Equals((Formula)other);
-      }
+    private static Interval[] ParseIntervals(string formula)
+    {
+      Contract.Requires<ArgumentNullException>(formula != null);
+      Contract.Requires<ArgumentException>(formula.Length > 0);
 
-      public override int GetHashCode()
-      {
-         return Name.GetHashCode();
-      }
+      var values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+      return values.Select(Interval.Parse).ToArray();
+    }
 
-      #endregion
-
-      public IEnumerable<Note> Generate(Note root)
-      {
-         int intervalCount = _intervals.Length;
-         int index = 0;
-
-         while( true )
-         {
-            Interval interval = _intervals[index % intervalCount];
-
-            var accidentalMode = AccidentalMode.FavorSharps;
-            if(interval.Quality == IntervalQuality.Diminished || interval.Quality == IntervalQuality.Minor)
-               accidentalMode = AccidentalMode.FavorFlats;
-
-            int octaveAdd = index / intervalCount;
-
-            // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
-            Note note = root.Add(interval.Steps + octaveAdd * Note.INTERVALS_PER_OCTAVE, accidentalMode);
-            yield return note;
-
-            ++index;
-         }
-      }
-
-      private static Interval[] ParseIntervals(string formula)
-      {
-         Contract.Requires<ArgumentNullException>(formula != null, "formula");
-         Contract.Requires<ArgumentException>(formula.Length > 0, "formula");
-
-         var values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-         return values.Select(Interval.Parse).ToArray();
-      }
-   }
+    #endregion
+  }
 }

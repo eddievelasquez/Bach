@@ -1,149 +1,172 @@
-﻿// 
-//   NoteCollection.cs: 
+﻿//  
+// Module Name: NoteCollection.cs
+// Project:     Bach.Model
+// Copyright (c) 2013  Eddie Velasquez.
 // 
-//   Author: Eddie Velasquez
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
 // 
-//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
 // 
-//      Unauthorized use, duplication or distribution of this software, 
-//      or any portion of it, is prohibited.  
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
 // 
-//   http://www.intercodeconsulting.com
-// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model
 {
-   using System;
-   using System.Collections.Generic;
-   using System.Collections.ObjectModel;
-   using System.Diagnostics.Contracts;
-   using System.Linq;
-   using System.Text;
+  using System;
+  using System.Collections.Generic;
+  using System.Collections.ObjectModel;
+  using System.Diagnostics.Contracts;
+  using System.Linq;
+  using System.Text;
 
-   public class NoteCollection: Collection<Note>, IEquatable<IEnumerable<Note>>
-   {
-      #region Construction
+  public class NoteCollection: Collection<Note>,
+                               IEquatable<IEnumerable<Note>>
+  {
+    #region Construction/Destruction
 
-      public NoteCollection()
+    public NoteCollection()
+    {
+    }
+
+    public NoteCollection(IList<Note> list)
+      : base(list)
+    {
+    }
+
+    #endregion
+
+    #region IEquatable<IEnumerable<Note>> Members
+
+    public bool Equals(IEnumerable<Note> other)
+    {
+      if( ReferenceEquals(other, this) )
       {
+        return true;
       }
 
-      public NoteCollection(IList<Note> list)
-         : base(list)
+      if( ReferenceEquals(other, null) )
       {
+        return false;
       }
 
-      #endregion
+      return this.SequenceEqual(other);
+    }
 
-      #region Public Methods
+    #endregion
 
-      public static bool TryParse(string value, out NoteCollection notes, int defaultOctave = 4)
+    #region Public Methods
+
+    public static bool TryParse(string value, out NoteCollection notes, int defaultOctave = 4)
+    {
+      Contract.Requires<ArgumentNullException>(value != null);
+      Contract.Requires<ArgumentException>(value.Length > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
+
+      notes = new NoteCollection();
+
+      foreach( string s in value.Split(',') )
       {
-         Contract.Requires<ArgumentNullException>(value != null, "value");
-         Contract.Requires<ArgumentException>(value.Length > 0, "value");
-         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MIN_OCTAVE, "defaultOctave");
-         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MAX_OCTAVE, "defaultOctave");
+        Note note;
+        if( !Note.TryParse(s, out note, defaultOctave) )
+        {
+          notes = null;
+          return false;
+        }
 
-         notes = new NoteCollection();
-
-         foreach( var s in value.Split(',') )
-         {
-            Note note;
-            if( !Note.TryParse(s, out note, defaultOctave) )
-            {
-               notes = null;
-               return false;
-            }
-
-            notes.Add(note);
-         }
-
-         return true;
+        notes.Add(note);
       }
 
-      public static NoteCollection Parse(string value, int defaultOctave = 4)
+      return true;
+    }
+
+    public static NoteCollection Parse(string value, int defaultOctave = 4)
+    {
+      Contract.Requires<ArgumentNullException>(value != null);
+      Contract.Requires<ArgumentException>(value.Length > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
+
+      NoteCollection notes;
+      if( !TryParse(value, out notes, defaultOctave) )
       {
-         Contract.Requires<ArgumentNullException>(value != null, "value");
-         Contract.Requires<ArgumentException>(value.Length > 0, "value");
-         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MIN_OCTAVE, "defaultOctave");
-         Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MAX_OCTAVE, "defaultOctave");
-
-         NoteCollection notes;
-         if( !TryParse(value, out notes, defaultOctave) )
-            throw new FormatException(String.Format("{0} contains invalid notes", value));
-
-         return notes;
+        throw new FormatException($"{value} contains invalid notes");
       }
 
-      public static string ToString(IEnumerable<Note> notes)
+      return notes;
+    }
+
+    public static string ToString(IEnumerable<Note> notes)
+    {
+      Contract.Requires<ArgumentNullException>(notes != null);
+
+      var buf = new StringBuilder();
+      var needsComma = false;
+
+      foreach( Note note in notes )
       {
-         Contract.Requires<ArgumentNullException>(notes != null, "notes");
+        if( needsComma )
+        {
+          buf.Append(',');
+        }
+        else
+        {
+          needsComma = true;
+        }
 
-         var buf = new StringBuilder();
-         bool needsComma = false;
-
-         foreach( var note in notes )
-         {
-            if( needsComma )
-               buf.Append(',');
-            else
-               needsComma = true;
-
-            buf.Append(note);
-         }
-
-         return buf.ToString();
+        buf.Append(note);
       }
 
-      #endregion
+      return buf.ToString();
+    }
 
-      #region Overrides
+    public override string ToString()
+    {
+      return ToString(this);
+    }
 
-      public override string ToString()
+    public override bool Equals(object other)
+    {
+      if( ReferenceEquals(other, this) )
       {
-         return ToString(this);
+        return true;
       }
 
-      #endregion
-
-      #region IEquatable<IEnumerable<Note>> Implementation
-
-      public bool Equals(IEnumerable<Note> other)
+      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
       {
-         if( ReferenceEquals(other, this) )
-            return true;
-
-         if( ReferenceEquals(other, null) )
-            return false;
-
-         return this.SequenceEqual(other);
+        return false;
       }
 
-      public override bool Equals(object other)
+      return Equals((NoteCollection) other);
+    }
+
+    public override int GetHashCode()
+    {
+      const int MULTIPLIER = 89;
+
+      Note first = this.FirstOrDefault();
+      Note last = this.LastOrDefault();
+
+      unchecked
       {
-         if( ReferenceEquals(other, this) )
-            return true;
-
-         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-            return false;
-
-         return Equals((NoteCollection)other);
+        int result = (first.GetHashCode() + Count) * MULTIPLIER + last.GetHashCode() + Count;
+        return result;
       }
+    }
 
-      public override int GetHashCode()
-      {
-         const int MULTIPLIER = 89;
-
-         var first = this.FirstOrDefault();
-         var last = this.LastOrDefault();
-
-         unchecked
-         {
-            int result = ((first.GetHashCode() + Count) * MULTIPLIER) + (last.GetHashCode() + Count);
-            return result;
-         }
-      }
-
-      #endregion
-   }
+    #endregion
+  }
 }

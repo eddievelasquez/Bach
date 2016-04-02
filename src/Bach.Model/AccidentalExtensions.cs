@@ -1,62 +1,94 @@
+//  
+// Module Name: AccidentalExtensions.cs
+// Project:     Bach.Model
+// Copyright (c) 2013  Eddie Velasquez.
 // 
-//   AccidentalExtensions.cs: 
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
 // 
-//   Author: Eddie Velasquez
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
 // 
-//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
 // 
-//      Unauthorized use, duplication or distribution of this software, 
-//      or any portion of it, is prohibited.  
-// 
-//   http://www.intercodeconsulting.com
-// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model
 {
-   using System;
-   using System.Diagnostics.Contracts;
+  using System;
+  using System.Diagnostics.Contracts;
 
-   public static class AccidentalExtensions
-   {
-      private static readonly String[] s_symbols = { "bb", "b", "", "#", "##" };
-      private static readonly int s_doubleFlatOffset = Math.Abs((int)Accidental.DoubleFlat);
+  public static class AccidentalExtensions
+  {
+    #region Data Members
 
-      public static String ToSymbol(this Accidental accidental)
+    private static readonly string[] s_symbols = { "bb", "b", "", "#", "##" };
+    private static readonly int s_doubleFlatOffset = Math.Abs((int) Accidental.DoubleFlat);
+
+    #endregion
+
+    #region Public Methods
+
+    public static string ToSymbol(this Accidental accidental)
+    {
+      Contract.Requires(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
+      return s_symbols[(int) accidental + s_doubleFlatOffset];
+    }
+
+    public static bool TryParse(string value, out Accidental accidental)
+    {
+      accidental = Accidental.Natural;
+      if( string.IsNullOrEmpty(value) )
       {
-         Contract.Requires(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-         return s_symbols[(int)accidental + s_doubleFlatOffset];
+        return true;
       }
 
-      public static bool TryParse(string value, out Accidental accidental)
+      if( value.Length > 2 )
       {
-         accidental = Accidental.Natural;
-         if( String.IsNullOrEmpty(value) )
-            return true;
-
-         if( value.Length > 2 )
-            return false;
-
-         foreach( char c in value )
-         {
-            if( c == 'b' || c == 'B' )
-               --accidental;
-            else if( c == '#' )
-               ++accidental;
-            else
-               return false;
-         }
-
-         // Cannot be natural unless the "b#" or "#b" combinations are found
-         return accidental != Accidental.Natural;
+        return false;
       }
 
-      public static Accidental Parse(string value)
+      foreach( char c in value )
       {
-         Accidental accidental;
-         if( !TryParse(value, out accidental) )
-            throw new ArgumentException(String.Format("{0} is not a valid accidental", value));
-
-         return accidental;
+        if( c == 'b' || c == 'B' )
+        {
+          --accidental;
+        }
+        else if( c == '#' )
+        {
+          ++accidental;
+        }
+        else
+        {
+          return false;
+        }
       }
-   }
+
+      // Cannot be natural unless the "b#" or "#b" combinations are found
+      return accidental != Accidental.Natural;
+    }
+
+    public static Accidental Parse(string value)
+    {
+      Accidental accidental;
+      if( !TryParse(value, out accidental) )
+      {
+        throw new ArgumentException($"{value} is not a valid accidental");
+      }
+
+      return accidental;
+    }
+
+    #endregion
+  }
 }

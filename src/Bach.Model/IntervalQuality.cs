@@ -1,94 +1,37 @@
-﻿// 
-//   IntervalQuality.cs: 
+﻿//  
+// Module Name: IntervalQuality.cs
+// Project:     Bach.Model
+// Copyright (c) 2013  Eddie Velasquez.
 // 
-//   Author: Eddie Velasquez
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
 // 
-//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
 // 
-//      Unauthorized use, duplication or distribution of this software, 
-//      or any portion of it, is prohibited.  
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
 // 
-//   http://www.intercodeconsulting.com
-// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model
 {
-   using System;
-   using System.Diagnostics.Contracts;
-
-   public enum IntervalQuality
-   {
-      Unknown = -1,
-      Diminished,
-      Minor,
-      Perfect,
-      Major,
-      Augmented
-   }
-
-   public static class IntervalQualityExtensions
-   {
-      #region Constants
-
-      private static readonly string[] s_symbols = { "d", "m", "P", "M", "A" };
-      private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
-      private static readonly string[] s_long = { "diminished", "minor", "perfect", "major", "augmented" };
-
-      #endregion
-
-      #region Public Methods
-
-      public static IntervalQuality Parse(string value)
-      {
-         IntervalQuality quality;
-         if( !TryParse(value, out quality) )
-            throw new FormatException(string.Format("\"{0}\" is not a valid interval quality", value));
-
-         return quality;
-      }
-
-      public static bool TryParse(string value, out IntervalQuality quality)
-      {
-         if( !string.IsNullOrEmpty(value) )
-         {
-            for( int i = 0; i < s_symbols.Length; i++ )
-            {
-               if( s_symbols[i].Equals(value) )
-               {
-                  quality = (IntervalQuality)i;
-                  return true;
-               }
-            }
-         }
-
-         quality = IntervalQuality.Unknown;
-         return false;
-      }
-
-      public static string Symbol(this IntervalQuality quality)
-      {
-         Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished, "quality");
-         Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented, "quality");
-
-         return s_symbols[(int)quality];
-      }
-
-      public static string ShortName(this IntervalQuality quality)
-      {
-         Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished, "quality");
-         Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented, "quality");
-
-         return s_short[(int)quality];
-      }
-
-      public static string LongName(this IntervalQuality quality)
-      {
-         Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished, "quality");
-         Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented, "quality");
-
-         return s_long[(int)quality];
-      }
-
-      #endregion
-   }
+  public enum IntervalQuality
+  {
+    Unknown = -1,
+    Diminished,
+    Minor,
+    Perfect,
+    Major,
+    Augmented
+  }
 }

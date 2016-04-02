@@ -1,7 +1,7 @@
-﻿//  
-// Module Name: Bass.cs
+//  
+// Module Name: Chord.cs
 // Project:     Bach.Model
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -23,18 +23,9 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+namespace Bach.Model.Player
 {
-  public class Bass: StringedInstrument
+  public class Chord: IPlayable
   {
-    #region Construction/Destruction
-
-    public Bass()
-      : base("Bass", 4)
-    {
-      Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("G2,D2,A1,E1")));
-    }
-
-    #endregion
   }
 }

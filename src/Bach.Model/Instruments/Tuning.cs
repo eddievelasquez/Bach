@@ -1,98 +1,123 @@
+//  
+// Module Name: Tuning.cs
+// Project:     Bach.Model
+// Copyright (c) 2014  Eddie Velasquez.
 // 
-// Tuning.cs: 
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
 // 
-// Author: evelasquez
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
 // 
-// Copyright (c) 2014  Intercode Consulting, LLC.  All Rights Reserved.
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
 // 
-// Unauthorized use, duplication or distribution of this software, 
-// or any portion of it, is prohibited.  
-// 
-// http://www.intercodeconsulting.com
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model.Instruments
 {
-   using System;
-   using System.Diagnostics.Contracts;
-   using System.Linq;
+  using System;
+  using System.Diagnostics.Contracts;
+  using System.Linq;
 
-   public class Tuning: IEquatable<Tuning>
-   {
-      private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
+  public class Tuning: IEquatable<Tuning>
+  {
+    #region Data Members
 
-      #region Construction
+    private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
 
-      public Tuning(StringedInstrument instrument, string name, params Note[] notes)
+    #endregion
+
+    #region Construction/Destruction
+
+    public Tuning(StringedInstrument instrument, string name, params Note[] notes)
+    {
+      Contract.Requires<ArgumentNullException>(instrument != null);
+      Contract.Requires<ArgumentNullException>(name != null);
+      Contract.Requires<ArgumentException>(name.Length > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(notes.Length == instrument.StringCount);
+
+      Instrument = instrument;
+      Name = name;
+      Notes = notes;
+    }
+
+    public Tuning(StringedInstrument instrument, string name, NoteCollection notes)
+    {
+      Contract.Requires<ArgumentNullException>(instrument != null);
+      Contract.Requires<ArgumentNullException>(name != null);
+      Contract.Requires<ArgumentException>(name.Length > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrument.StringCount);
+
+      Instrument = instrument;
+      Name = name;
+      Notes = notes.ToArray();
+    }
+
+    #endregion
+
+    #region Properties
+
+    public StringedInstrument Instrument { get; }
+    public string Name { get; }
+    public Note[] Notes { get; }
+
+    #endregion
+
+    #region IEquatable<Tuning> Members
+
+    public bool Equals(Tuning other)
+    {
+      if( ReferenceEquals(null, other) )
       {
-         Contract.Requires<ArgumentNullException>(instrument != null, "instrument");
-         Contract.Requires<ArgumentNullException>(name != null, "name");
-         Contract.Requires<ArgumentException>(name.Length > 0, "name");
-         Contract.Requires<ArgumentOutOfRangeException>(notes.Length == instrument.StringCount, "notes.Length");
-
-         Instrument = instrument;
-         Name = name;
-         Notes = notes;
+        return false;
       }
 
-      public Tuning(StringedInstrument instrument, string name, NoteCollection notes)
+      if( ReferenceEquals(this, other) )
       {
-         Contract.Requires<ArgumentNullException>(instrument != null, "instrument");
-         Contract.Requires<ArgumentNullException>(name != null, "name");
-         Contract.Requires<ArgumentException>(name.Length > 0, "name");
-         Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrument.StringCount, "notes.Length");
-
-         Instrument = instrument;
-         Name = name;
-         Notes = notes.ToArray();
+        return true;
       }
 
-      #endregion
+      return Instrument.Equals(other.Instrument) && s_nameComparer.Equals(Name, other.Name)
+             && Notes.SequenceEqual(other.Notes);
+    }
 
-      #region Properties
+    #endregion
 
-      public StringedInstrument Instrument { get; private set; }
-      public string Name { get; private set; }
-      public Note[] Notes { get; private set; }
+    #region Public Methods
 
-      #endregion
-
-      #region IEquatable<Tuning> Members
-
-      public bool Equals(Tuning other)
+    public override bool Equals(object obj)
+    {
+      if( ReferenceEquals(null, obj) )
       {
-         if( ReferenceEquals(null, other) )
-            return false;
-
-         if( ReferenceEquals(this, other) )
-            return true;
-
-         return Instrument.Equals(other.Instrument) && s_nameComparer.Equals(Name, other.Name)
-                && Notes.SequenceEqual(other.Notes);
+        return false;
       }
 
-      #endregion
-
-      #region Overrides
-
-      public override bool Equals(object obj)
+      if( ReferenceEquals(this, obj) )
       {
-         if( ReferenceEquals(null, obj) )
-            return false;
-
-         if( ReferenceEquals(this, obj) )
-            return true;
-
-         return obj.GetType() == GetType() && Equals((Tuning)obj);
+        return true;
       }
 
-      public override int GetHashCode()
-      {
-         int hash = 17;
-         hash = hash * 23 + Instrument.GetHashCode();
-         hash = hash * 23 + s_nameComparer.GetHashCode(Name);
-         return hash;
-      }
+      return obj.GetType() == GetType() && Equals((Tuning) obj);
+    }
 
-      #endregion
-   }
+    public override int GetHashCode()
+    {
+      var hash = 17;
+      hash = hash * 23 + Instrument.GetHashCode();
+      hash = hash * 23 + s_nameComparer.GetHashCode(Name);
+      return hash;
+    }
+
+    #endregion
+  }
 }

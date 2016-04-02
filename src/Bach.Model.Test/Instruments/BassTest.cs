@@ -1,114 +1,130 @@
-﻿// 
-// BassTest.cs: 
+﻿//  
+// Module Name: BassTest.cs
+// Project:     Bach.Model.Test
+// Copyright (c) 2014  Eddie Velasquez.
 // 
-// Author: evelasquez
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
 // 
-// Copyright (c) 2014  Intercode Consulting, LLC.  All Rights Reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
 // 
-// Unauthorized use, duplication or distribution of this software, 
-// or any portion of it, is prohibited.  
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
 // 
-// http://www.intercodeconsulting.com
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model.Test.Instruments
 {
-   using System;
-   using Bach.Model.Instruments;
-   using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Bach.Model.Instruments;
+  using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-   [ TestClass ]
-   public class BassTest
-   {
-      [ TestMethod ]
-      public void TestConstructor()
-      {
-         var bass = new Bass();
-         Assert.AreEqual(bass.Name, "Bass");
-         Assert.AreEqual(bass.StringCount, 4);
-         Assert.IsNotNull(bass.Tunings);
-         Assert.AreNotEqual(bass.Tunings.Count, 0);
-      }
+  [TestClass]
+  public class BassTest
+  {
+    #region Public Methods
 
-      [ TestMethod ]
-      public void EqualsContractTest()
-      {
-         object x = new Bass();
-         object y = new Bass();
-         object z = new Bass();
+    [TestMethod]
+    public void TestConstructor()
+    {
+      var bass = new Bass();
+      Assert.AreEqual(bass.Name, "Bass");
+      Assert.AreEqual(bass.StringCount, 4);
+      Assert.IsNotNull(bass.Tunings);
+      Assert.AreNotEqual(bass.Tunings.Count, 0);
+    }
 
-         Assert.IsTrue(x.Equals(x)); // Reflexive
-         Assert.IsTrue(x.Equals(y)); // Symetric
-         Assert.IsTrue(y.Equals(x));
-         Assert.IsTrue(y.Equals(z)); // Transitive
-         Assert.IsTrue(x.Equals(z));
-         Assert.IsFalse(x.Equals(null)); // Never equal to null
-      }
+    [TestMethod]
+    public void EqualsContractTest()
+    {
+      object x = new Bass();
+      object y = new Bass();
+      object z = new Bass();
 
-      [ TestMethod ]
-      public void TypeSafeEqualsContractTest()
-      {
-         var x = new Bass();
-         var y = new Bass();
-         var z = new Bass();
+      Assert.IsTrue(x.Equals(x)); // Reflexive
+      Assert.IsTrue(x.Equals(y)); // Symetric
+      Assert.IsTrue(y.Equals(x));
+      Assert.IsTrue(y.Equals(z)); // Transitive
+      Assert.IsTrue(x.Equals(z));
+      Assert.IsFalse(x.Equals(null)); // Never equal to null
+    }
 
-         Assert.IsTrue(x.Equals(x)); // Reflexive
-         Assert.IsTrue(x.Equals(y)); // Symetric
-         Assert.IsTrue(y.Equals(x));
-         Assert.IsTrue(y.Equals(z)); // Transitive
-         Assert.IsTrue(x.Equals(z));
-         Assert.IsFalse(x.Equals(null)); // Never equal to null
-      }
+    [TestMethod]
+    public void TypeSafeEqualsContractTest()
+    {
+      var x = new Bass();
+      var y = new Bass();
+      var z = new Bass();
 
-      [ TestMethod ]
-      public void EqualsFailsWithDifferentTypeTest()
-      {
-         object a = new Bass();
-         object b = new Guitar();
-         Assert.IsFalse(a.Equals(b));
-         Assert.IsFalse(b.Equals(a));
-         Assert.IsFalse(Equals(a, b));
-         Assert.IsFalse(Equals(b, a));
-      }
+      Assert.IsTrue(x.Equals(x)); // Reflexive
+      Assert.IsTrue(x.Equals(y)); // Symetric
+      Assert.IsTrue(y.Equals(x));
+      Assert.IsTrue(y.Equals(z)); // Transitive
+      Assert.IsTrue(x.Equals(z));
+      Assert.IsFalse(x.Equals(null)); // Never equal to null
+    }
 
-      [ TestMethod ]
-      public void TypeSafeEqualsFailsWithDifferentTypeTest()
-      {
-         StringedInstrument a = new Bass();
-         StringedInstrument b = new Guitar();
-         Assert.IsFalse(a.Equals(b));
-         Assert.IsFalse(b.Equals(a));
-         Assert.IsFalse(Equals(a, b));
-         Assert.IsFalse(Equals(b, a));
-      }
+    [TestMethod]
+    public void EqualsFailsWithDifferentTypeTest()
+    {
+      object a = new Bass();
+      object b = new Guitar();
+      Assert.IsFalse(a.Equals(b));
+      Assert.IsFalse(b.Equals(a));
+      Assert.IsFalse(Equals(a, b));
+      Assert.IsFalse(Equals(b, a));
+    }
 
-      [ TestMethod ]
-      public void EqualsFailsWithNullTest()
-      {
-         object actual = new Bass();
-         Assert.IsFalse(actual.Equals(null));
-      }
+    [TestMethod]
+    public void TypeSafeEqualsFailsWithDifferentTypeTest()
+    {
+      StringedInstrument a = new Bass();
+      StringedInstrument b = new Guitar();
+      Assert.IsFalse(a.Equals(b));
+      Assert.IsFalse(b.Equals(a));
+      Assert.IsFalse(Equals(a, b));
+      Assert.IsFalse(Equals(b, a));
+    }
 
-      [ TestMethod ]
-      public void TypeSafeEqualsFailsWithNullTest()
-      {
-         var actual = new Bass();
-         Assert.IsFalse(actual.Equals(null));
-      }
+    [TestMethod]
+    public void EqualsFailsWithNullTest()
+    {
+      object actual = new Bass();
+      Assert.IsFalse(actual.Equals(null));
+    }
 
-      [ TestMethod ]
-      public void EqualsSucceedsWithSameObjectTest()
-      {
-         var actual = new Bass();
-         Assert.IsTrue(actual.Equals(actual));
-      }
+    [TestMethod]
+    public void TypeSafeEqualsFailsWithNullTest()
+    {
+      var actual = new Bass();
+      Assert.IsFalse(actual.Equals(null));
+    }
 
-      [ TestMethod ]
-      public void GetHashcodeTest()
-      {
-         var actual = new Bass();
-         var expected = new Bass();
-         Assert.IsTrue(expected.Equals(actual));
-         Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
-      }
-   }
+    [TestMethod]
+    public void EqualsSucceedsWithSameObjectTest()
+    {
+      var actual = new Bass();
+      Assert.IsTrue(actual.Equals(actual));
+    }
+
+    [TestMethod]
+    public void GetHashcodeTest()
+    {
+      var actual = new Bass();
+      var expected = new Bass();
+      Assert.IsTrue(expected.Equals(actual));
+      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+    }
+
+    #endregion
+  }
 }

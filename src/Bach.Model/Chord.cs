@@ -1,159 +1,173 @@
-﻿// 
-//   Chord.cs: 
+﻿//  
+// Module Name: Chord.cs
+// Project:     Bach.Model
+// Copyright (c) 2013  Eddie Velasquez.
 // 
-//   Author: Eddie Velasquez
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
 // 
-//   Copyright (c) 2013  Intercode Consulting, LLC.  All Rights Reserved.
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
 // 
-//      Unauthorized use, duplication or distribution of this software, 
-//      or any portion of it, is prohibited.  
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
 // 
-//   http://www.intercodeconsulting.com
-// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model
 {
-   using System;
-   using System.Collections;
-   using System.Collections.Generic;
-   using System.Collections.ObjectModel;
-   using System.Diagnostics.Contracts;
-   using System.Linq;
-   using System.Text;
+  using System;
+  using System.Collections;
+  using System.Collections.Generic;
+  using System.Collections.ObjectModel;
+  using System.Diagnostics.Contracts;
+  using System.Linq;
+  using System.Text;
 
-   public class Chord: IEquatable<Chord>, IEnumerable<Note>
-   {
-      #region Data Members
+  public class Chord: IEquatable<Chord>,
+                      IEnumerable<Note>
+  {
+    #region Data Members
 
-      private readonly NoteCollection _notes;
+    private readonly NoteCollection _notes;
 
-      #endregion
+    #endregion
 
-      #region Construction
+    #region Construction/Destruction
 
-      private Chord(Note root, ChordFormula formula, string name, IList<Note> notes)
+    private Chord(Note root, ChordFormula formula, string name, IList<Note> notes)
+    {
+      Contract.Requires<ArgumentException>(root.IsValid);
+      Contract.Requires<ArgumentNullException>(formula != null);
+      Contract.Requires<ArgumentNullException>(name != null);
+      Contract.Requires<ArgumentException>(name.Length > 0);
+      Contract.Requires<ArgumentNullException>(notes != null);
+      Contract.Requires<ArgumentException>(notes.Count > 0);
+
+      Root = root;
+      Formula = formula;
+      Name = name;
+      _notes = new NoteCollection(notes);
+    }
+
+    public Chord(Note root, ChordFormula formula)
+    {
+      Contract.Requires<ArgumentNullException>(root != null);
+      Contract.Requires<ArgumentNullException>(formula != null);
+
+      Root = root;
+      Formula = formula;
+
+      var buf = new StringBuilder();
+      buf.Append(root.Tone);
+      buf.Append(root.Accidental.ToSymbol());
+      buf.Append(formula.Symbol);
+
+      Name = buf.ToString();
+
+      _notes = new NoteCollection(Formula.Generate(Root).Take(formula.Count).ToArray());
+    }
+
+    #endregion
+
+    #region Properties
+
+    public Note Root { get; }
+    public string Name { get; }
+    public ChordFormula Formula { get; }
+
+    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
+
+    #endregion
+
+    #region IEnumerable<Note> Members
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public IEnumerator<Note> GetEnumerator()
+    {
+      return _notes.GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEquatable<Chord> Members
+
+    public bool Equals(Chord other)
+    {
+      if( ReferenceEquals(other, this) )
       {
-         Contract.Requires<ArgumentException>(root.IsValid, "root.IsValid");
-         Contract.Requires<ArgumentNullException>(formula != null, "formula");
-         Contract.Requires<ArgumentNullException>(name != null, "name");
-         Contract.Requires<ArgumentException>(name.Length > 0, "name");
-         Contract.Requires<ArgumentNullException>(notes != null, "notes");
-         Contract.Requires<ArgumentException>(notes.Count > 0, "notes");
-
-         Root = root;
-         Formula = formula;
-         Name = name;
-         _notes = new NoteCollection(notes);
+        return true;
       }
 
-      public Chord(Note root, ChordFormula formula)
+      if( ReferenceEquals(other, null) )
       {
-         Contract.Requires<ArgumentNullException>(root != null, "root");
-         Contract.Requires<ArgumentNullException>(formula != null, "formula");
-
-         Root = root;
-         Formula = formula;
-
-         var buf = new StringBuilder();
-         buf.Append(root.Tone);
-         buf.Append(root.Accidental.ToSymbol());
-         buf.Append(formula.Symbol);
-
-         Name = buf.ToString();
-
-         _notes = new NoteCollection(Formula.Generate(Root).Take(formula.Count).ToArray());
+        return false;
       }
 
-      #endregion
+      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
+    }
 
-      #region Properties
+    #endregion
 
-      public Note Root { get; private set; }
-      public string Name { get; private set; }
-      public ChordFormula Formula { get; private set; }
+    #region Public Methods
 
-      public ReadOnlyCollection<Note> Notes
+    public Chord Invert(int inversion = 1)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(inversion > 0);
+
+      var notes = Notes.ToList();
+      while( inversion > 0 )
       {
-         get { return new ReadOnlyCollection<Note>(_notes); }
+        Note bass = notes[0] + Note.IntervalsPerOctave;
+        notes.RemoveAt(0);
+        notes.Add(bass);
+
+        --inversion;
       }
 
-      #endregion
+      var inv = new Chord(Root, Formula, Name, notes);
+      return inv;
+    }
 
-      #region Public Methods
-
-      public Chord Invert(int inversion = 1)
+    public override bool Equals(object other)
+    {
+      if( ReferenceEquals(other, this) )
       {
-         Contract.Requires<ArgumentOutOfRangeException>(inversion > 0, "inversion");
-
-         var notes = Notes.ToList();
-         while( inversion > 0 )
-         {
-            Note bass = notes[0] + Note.INTERVALS_PER_OCTAVE;
-            notes.RemoveAt(0);
-            notes.Add(bass);
-
-            --inversion;
-         }
-
-         var inv = new Chord(Root, Formula, Name, notes);
-         return inv;
+        return true;
       }
 
-      #endregion
-
-      #region IEquatable<Chord> Implementation
-
-      public bool Equals(Chord other)
+      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
       {
-         if( ReferenceEquals(other, this) )
-            return true;
-
-         if( ReferenceEquals(other, null) )
-            return false;
-
-         return Root.Equals(other.Root) && Formula.Equals(other.Formula);
+        return false;
       }
 
-      public override bool Equals(object other)
-      {
-         if( ReferenceEquals(other, this) )
-            return true;
+      return Equals((Chord) other);
+    }
 
-         if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-            return false;
+    public override int GetHashCode()
+    {
+      int hashCode = Root.GetHashCode() ^ Formula.GetHashCode();
+      return hashCode;
+    }
 
-         return Equals((Chord)other);
-      }
+    public override string ToString()
+    {
+      return _notes.ToString();
+    }
 
-      public override int GetHashCode()
-      {
-         int hashCode = Root.GetHashCode() ^ Formula.GetHashCode();
-         return hashCode;
-      }
-
-      #endregion
-
-      #region IEnumerable<Note> Implementation
-
-      IEnumerator IEnumerable.GetEnumerator()
-      {
-         return GetEnumerator();
-      }
-
-      public IEnumerator<Note> GetEnumerator()
-      {
-         return _notes.GetEnumerator();
-      }
-
-      #endregion
-
-      #region Overrides
-
-      public override string ToString()
-      {
-         return _notes.ToString();
-      }
-
-      #endregion
-   }
+    #endregion
+  }
 }
