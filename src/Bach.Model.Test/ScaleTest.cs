@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: ScaleTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,23 +26,22 @@
 namespace Bach.Model.Test
 {
   using System.Linq;
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  [TestClass]
   public class ScaleTest
   {
     #region Public Methods
 
-    [TestMethod]
+    [Fact]
     public void ConstructorTest()
     {
       var major = new ScaleFormula("Major", Interval.Perfect1, Interval.Major2, Interval.Major3, Interval.Perfect4,
                                    Interval.Perfect5, Interval.Major6, Interval.Major7);
-      Assert.AreEqual("Major", major.Name);
-      Assert.AreEqual(7, major.Count);
+      Assert.Equal("Major", major.Name);
+      Assert.Equal(7, major.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void GenerateScaleTest()
     {
       Note root = Note.Parse("C4");
@@ -57,78 +56,78 @@ namespace Bach.Model.Test
       TestScale("C4,D4,Eb4,E4,G4,A4", root, ScaleFormula.Gospel);
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new Scale(Note.Parse("C4"), ScaleFormula.Major);
       object y = new Scale(Note.Parse("C4"), ScaleFormula.Major);
       object z = new Scale(Note.Parse("C4"), ScaleFormula.Major);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new Scale(Note.Parse("C4"), ScaleFormula.Major);
       var y = new Scale(Note.Parse("C4"), ScaleFormula.Major);
       var z = new Scale(Note.Parse("C4"), ScaleFormula.Major);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object actual = new Scale(Note.Parse("C4"), ScaleFormula.Major);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       var actual = new Scale(Note.Parse("C4"), ScaleFormula.Major);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new Scale(Note.Parse("C4"), ScaleFormula.Major);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new Scale(Note.Parse("C4"), ScaleFormula.Major);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new Scale(Note.Parse("C4"), ScaleFormula.Major);
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new Scale(Note.Parse("C4"), ScaleFormula.Major);
       var expected = new Scale(Note.Parse("C4"), ScaleFormula.Major);
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     #endregion
@@ -139,7 +138,7 @@ namespace Bach.Model.Test
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
       var actual = new NoteCollection(new Scale(root, formula).Take(expected.Count).ToArray());
-      CollectionAssert.AreEqual(expected, actual);
+      Assert.Equal(expected, actual);
     }
 
     #endregion

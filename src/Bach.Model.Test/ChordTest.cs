@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: ChordTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,44 +26,26 @@
 namespace Bach.Model.Test
 {
   using System.Linq;
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  /// <summary>
-  ///    This is a test class for ChordTest and is intended
-  ///    to contain all ChordTest Unit Tests
-  /// </summary>
-  [TestClass]
   public class ChordTest
   {
-    #region Properties
-
-    /// <summary>
-    ///    Gets or sets the test context which provides
-    ///    information about and functionality for the current test run.
-    /// </summary>
-    public TestContext TestContext { get; set; }
-
-    #endregion
-
     #region Public Methods
 
-    /// <summary>
-    ///    A test for Chord Constructor
-    /// </summary>
-    [TestMethod]
+    [Fact]
     public void ChordConstructorTest()
     {
       Note root = Note.Parse("C4");
       ChordFormula formula = ChordFormula.Minor;
       var target = new Chord(root, formula);
 
-      Assert.AreEqual(root, target.Root);
-      Assert.AreEqual(formula, target.Formula);
-      Assert.AreEqual("Cm", target.Name);
-      CollectionAssert.AreEqual(target.Notes, NoteCollection.Parse("C,Eb,G"));
+      Assert.Equal(root, target.Root);
+      Assert.Equal(formula, target.Formula);
+      Assert.Equal("Cm", target.Name);
+      Assert.Equal(target.Notes, NoteCollection.Parse("C,Eb,G"));
     }
 
-    [TestMethod]
+    [Fact]
     public void ChordsTest()
     {
       Note root = Note.Parse("C4");
@@ -89,98 +71,98 @@ namespace Bach.Model.Test
       TestChord("C4,E4,G#4", root, ChordFormula.Augmented);
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new Chord(Note.Parse("C4"), ChordFormula.Major);
       object y = new Chord(Note.Parse("C4"), ChordFormula.Major);
       object z = new Chord(Note.Parse("C4"), ChordFormula.Major);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new Chord(Note.Parse("C4"), ChordFormula.Major);
       var y = new Chord(Note.Parse("C4"), ChordFormula.Major);
       var z = new Chord(Note.Parse("C4"), ChordFormula.Major);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
       var expected = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
-    [TestMethod]
+    [Fact]
     public void InvertTest()
     {
       var c4 = new Chord(Note.Parse("C4"), ChordFormula.Major);
       NoteCollection firstInversion = NoteCollection.Parse("E4,G4,C5");
       Chord actual = c4.Invert(1);
-      Assert.IsNotNull(actual);
-      CollectionAssert.AreEqual(firstInversion, actual.Notes);
+      Assert.NotNull(actual);
+      Assert.Equal(firstInversion, actual.Notes);
 
       NoteCollection secondInversion = NoteCollection.Parse("G4,C5,E5");
       actual = c4.Invert(2);
-      Assert.IsNotNull(actual);
-      CollectionAssert.AreEqual(secondInversion, actual.Notes);
+      Assert.NotNull(actual);
+      Assert.Equal(secondInversion, actual.Notes);
 
       NoteCollection thirdInversion = NoteCollection.Parse("C5,E5,G5");
       actual = c4.Invert(3);
-      Assert.IsNotNull(actual);
-      CollectionAssert.AreEqual(thirdInversion, actual.Notes);
+      Assert.NotNull(actual);
+      Assert.Equal(thirdInversion, actual.Notes);
     }
 
     #endregion
@@ -191,7 +173,7 @@ namespace Bach.Model.Test
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
       var actual = new Chord(root, formula).Take(expected.Count).ToArray();
-      CollectionAssert.AreEqual(expected, actual);
+      Assert.Equal(expected, actual);
     }
 
     #endregion

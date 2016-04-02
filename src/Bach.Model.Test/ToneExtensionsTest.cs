@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: ToneExtensionsTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,25 +25,24 @@
 
 namespace Bach.Model.Test
 {
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  [TestClass]
   public class ToneExtensionsTest
   {
     #region Public Methods
 
-    [TestMethod]
+    [Fact]
     public void NextTest()
     {
-      Assert.AreEqual(Tone.D, Tone.C.Next());
-      Assert.AreEqual(Tone.C, Tone.B.Next());
+      Assert.Equal(Tone.D, Tone.C.Next());
+      Assert.Equal(Tone.C, Tone.B.Next());
     }
 
-    [TestMethod]
+    [Fact]
     public void PreviousTest()
     {
-      Assert.AreEqual(Tone.C, Tone.D.Previous());
-      Assert.AreEqual(Tone.B, Tone.C.Previous());
+      Assert.Equal(Tone.C, Tone.D.Previous());
+      Assert.Equal(Tone.B, Tone.C.Previous());
     }
 
     #endregion

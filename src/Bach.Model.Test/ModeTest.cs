@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: ModeTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,44 +26,26 @@
 namespace Bach.Model.Test
 {
   using System.Linq;
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  /// <summary>
-  ///    This is a test class for ChordTest and is intended
-  ///    to contain all ChordTest Unit Tests
-  /// </summary>
-  [TestClass]
   public class ModeTest
   {
-    #region Properties
-
-    /// <summary>
-    ///    Gets or sets the test context which provides
-    ///    information about and functionality for the current test run.
-    /// </summary>
-    public TestContext TestContext { get; set; }
-
-    #endregion
-
     #region Public Methods
 
-    /// <summary>
-    ///    A test for Mode Constructor
-    /// </summary>
-    [TestMethod]
+    [Fact]
     public void ModeConstructorTest()
     {
       Note root = Note.Parse("C4");
       ModeFormula formula = ModeFormula.Phrygian;
       var target = new Mode(root, formula);
 
-      Assert.AreEqual(root, target.Root);
-      Assert.AreEqual(formula, target.Formula);
-      Assert.AreEqual("C Phrygian", target.Name);
-      CollectionAssert.AreEqual(target.ToArray(), NoteCollection.Parse("E4,F4,G4,A4,B4,C5,D5"));
+      Assert.Equal(root, target.Root);
+      Assert.Equal(formula, target.Formula);
+      Assert.Equal("C Phrygian", target.Name);
+      Assert.Equal(target.ToArray(), NoteCollection.Parse("E4,F4,G4,A4,B4,C5,D5"));
     }
 
-    [TestMethod]
+    [Fact]
     public void ModesTest()
     {
       Note root = Note.Parse("C4");
@@ -76,78 +58,78 @@ namespace Bach.Model.Test
       TestMode("B4,C5,D5,E5,F5,G5,A5", root, ModeFormula.Locrian);
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
       object y = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
       object z = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
       var y = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
       var z = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
       var expected = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     #endregion
@@ -157,7 +139,7 @@ namespace Bach.Model.Test
     private static void TestMode(string expectedNotes, Note root, ModeFormula formula)
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
-      CollectionAssert.AreEqual(expected, new Mode(root, formula).Take(expected.Count).ToArray());
+      Assert.Equal(expected, new Mode(root, formula).Take(expected.Count).ToArray());
     }
 
     #endregion

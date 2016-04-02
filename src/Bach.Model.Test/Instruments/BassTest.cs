@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: BassTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,103 +26,102 @@
 namespace Bach.Model.Test.Instruments
 {
   using Bach.Model.Instruments;
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  [TestClass]
   public class BassTest
   {
     #region Public Methods
 
-    [TestMethod]
+    [Fact]
     public void TestConstructor()
     {
       var bass = new Bass();
-      Assert.AreEqual(bass.Name, "Bass");
-      Assert.AreEqual(bass.StringCount, 4);
-      Assert.IsNotNull(bass.Tunings);
-      Assert.AreNotEqual(bass.Tunings.Count, 0);
+      Assert.Equal(bass.Name, "Bass");
+      Assert.Equal(bass.StringCount, 4);
+      Assert.NotNull(bass.Tunings);
+      Assert.NotEqual(bass.Tunings.Count, 0);
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new Bass();
       object y = new Bass();
       object z = new Bass();
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new Bass();
       var y = new Bass();
       var z = new Bass();
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object a = new Bass();
       object b = new Guitar();
-      Assert.IsFalse(a.Equals(b));
-      Assert.IsFalse(b.Equals(a));
-      Assert.IsFalse(Equals(a, b));
-      Assert.IsFalse(Equals(b, a));
+      Assert.False(a.Equals(b));
+      Assert.False(b.Equals(a));
+      Assert.False(Equals(a, b));
+      Assert.False(Equals(b, a));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       StringedInstrument a = new Bass();
       StringedInstrument b = new Guitar();
-      Assert.IsFalse(a.Equals(b));
-      Assert.IsFalse(b.Equals(a));
-      Assert.IsFalse(Equals(a, b));
-      Assert.IsFalse(Equals(b, a));
+      Assert.False(a.Equals(b));
+      Assert.False(b.Equals(a));
+      Assert.False(Equals(a, b));
+      Assert.False(Equals(b, a));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new Bass();
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new Bass();
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new Bass();
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new Bass();
       var expected = new Bass();
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     #endregion

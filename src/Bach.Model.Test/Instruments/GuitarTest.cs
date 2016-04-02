@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: GuitarTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -27,120 +27,122 @@ namespace Bach.Model.Test.Instruments
 {
   using System;
   using Bach.Model.Instruments;
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  [TestClass]
   public class GuitarTest
   {
     #region Public Methods
 
-    [TestMethod]
+    [Fact]
     public void TestConstructor()
     {
       var guitar = new Guitar();
-      Assert.AreEqual(guitar.Name, "Guitar");
-      Assert.AreEqual(guitar.StringCount, 6);
-      Assert.IsNotNull(guitar.Tunings);
-      Assert.AreNotEqual(guitar.Tunings.Count, 0);
+      Assert.Equal(guitar.Name, "Guitar");
+      Assert.Equal(guitar.StringCount, 6);
+      Assert.NotNull(guitar.Tunings);
+      Assert.NotEqual(guitar.Tunings.Count, 0);
     }
 
-    [TestMethod]
+    [Fact]
     public void AddTuningTest()
     {
       var guitar = new Guitar();
       int tuningCount = guitar.Tunings.Count;
       guitar.Tunings.Add(new Tuning(guitar, "Drop D Test", NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
-      Assert.AreEqual(tuningCount + 1, guitar.Tunings.Count);
+      Assert.Equal(tuningCount + 1, guitar.Tunings.Count);
     }
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [Fact]
     public void AddTuningFailsWithDifferentInstrumentTuningTest()
     {
-      var guitar = new Guitar();
-      guitar.Tunings.Add(new Tuning(new Bass(), "Drop D", NoteCollection.Parse("G2,D2,A1,D1")));
+      Assert.Throws<ArgumentException>(() =>
+                                       {
+                                         var guitar = new Guitar();
+                                         guitar.Tunings.Add(new Tuning(new Bass(), "Drop D",
+                                                                       NoteCollection.Parse("G2,D2,A1,D1")));
+                                       });
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new Guitar();
       object y = new Guitar();
       object z = new Guitar();
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new Guitar();
       var y = new Guitar();
       var z = new Guitar();
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object a = new Guitar();
       object b = new Bass();
-      Assert.IsFalse(a.Equals(b));
-      Assert.IsFalse(b.Equals(a));
-      Assert.IsFalse(Equals(a, b));
-      Assert.IsFalse(Equals(b, a));
+      Assert.False(a.Equals(b));
+      Assert.False(b.Equals(a));
+      Assert.False(Equals(a, b));
+      Assert.False(Equals(b, a));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       var a = new Guitar();
       var b = new Bass();
-      Assert.IsFalse(a.Equals(b));
-      Assert.IsFalse(b.Equals(a));
-      Assert.IsFalse(Equals(a, b));
-      Assert.IsFalse(Equals(b, a));
+      Assert.False(a.Equals(b));
+      Assert.False(b.Equals(a));
+      Assert.False(Equals(a, b));
+      Assert.False(Equals(b, a));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new Guitar();
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new Guitar();
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new Guitar();
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new Guitar();
       var expected = new Guitar();
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     #endregion

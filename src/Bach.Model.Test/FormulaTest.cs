@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: FormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,94 +25,93 @@
 
 namespace Bach.Model.Test
 {
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  [TestClass]
   public class FormulaTest
   {
     #region Public Methods
 
-    [TestMethod]
+    [Fact]
     public void ConstructorTest()
     {
       var major = new Formula("Major", Interval.Perfect1, Interval.Major2, Interval.Major3, Interval.Perfect4,
                               Interval.Perfect5, Interval.Major6, Interval.Major7);
-      Assert.AreEqual("Major", major.Name);
-      Assert.AreEqual(7, major.Count);
+      Assert.Equal("Major", major.Name);
+      Assert.Equal(7, major.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new Formula("Test", "1,2,3");
       object y = new Formula("Test", "1,2,3");
       object z = new Formula("Test", "1,2,3");
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new Formula("Test", "1,2,3");
       var y = new Formula("Test", "1,2,3");
       var z = new Formula("Test", "1,2,3");
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object actual = new Formula("Test", "1,2,3");
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       var actual = new Formula("Test", "1,2,3");
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new Formula("Test", "1,2,3");
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new Formula("Test", "1,2,3");
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new Formula("Test", "1,2,3");
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new Formula("Test", "1,2,3");
       var expected = new Formula("Test", "1,2,3");
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     #endregion

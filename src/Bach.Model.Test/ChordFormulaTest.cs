@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: ChordFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,31 +25,13 @@
 
 namespace Bach.Model.Test
 {
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  /// <summary>
-  ///    This is a test class for ChordFormulaTest and is intended
-  ///    to contain all ChordFormulaTest Unit Tests
-  /// </summary>
-  [TestClass]
   public class ChordFormulaTest
   {
-    #region Properties
-
-    /// <summary>
-    ///    Gets or sets the test context which provides
-    ///    information about and functionality for the current test run.
-    /// </summary>
-    public TestContext TestContext { get; set; }
-
-    #endregion
-
     #region Public Methods
 
-    /// <summary>
-    ///    A test for ChordFormula Constructor
-    /// </summary>
-    [TestMethod]
+    [Fact]
     public void ChordFormulaConstructorTest()
     {
       const string NAME = "Name";
@@ -57,83 +39,83 @@ namespace Bach.Model.Test
       const string FORMULA = "1,2,3";
       var target = new ChordFormula(NAME, SYMBOL, FORMULA);
 
-      Assert.AreEqual(NAME, target.Name);
-      Assert.AreEqual(SYMBOL, target.Symbol);
-      Assert.AreEqual("Name: P1,M2,M3", target.ToString());
+      Assert.Equal(NAME, target.Name);
+      Assert.Equal(SYMBOL, target.Symbol);
+      Assert.Equal("Name: P1,M2,M3", target.ToString());
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new ChordFormula("Name", "Symbol", "1,2,3");
       object y = new ChordFormula("Name", "Symbol", "1,2,3");
       object z = new ChordFormula("Name", "Symbol", "1,2,3");
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new ChordFormula("Name", "Symbol", "1,2,3");
       var y = new ChordFormula("Name", "Symbol", "1,2,3");
       var z = new ChordFormula("Name", "Symbol", "1,2,3");
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object actual = new ChordFormula("Name", "Symbol", "1,2,3");
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       var actual = new ChordFormula("Name", "Symbol", "1,2,3");
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new ChordFormula("Name", "Symbol", "1,2,3");
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new ChordFormula("Name", "Symbol", "1,2,3");
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new ChordFormula("Name", "Symbol", "1,2,3");
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new ChordFormula("Name", "Symbol", "1,2,3");
       var expected = new ChordFormula("Name", "Symbol", "1,2,3");
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     #endregion

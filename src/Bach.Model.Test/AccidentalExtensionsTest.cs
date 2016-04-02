@@ -1,7 +1,7 @@
 //  
 // Module Name: AccidentalExtensionsTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,55 +26,36 @@
 namespace Bach.Model.Test
 {
   using System;
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  /// <summary>
-  ///    This is a test class for AccidentalExtensionsTest and is intended
-  ///    to contain all AccidentalExtensionsTest Unit Tests
-  /// </summary>
-  [TestClass]
   public class AccidentalExtensionsTest
   {
-    #region Properties
-
-    /// <summary>
-    ///    Gets or sets the test context which provides
-    ///    information about and functionality for the current test run.
-    /// </summary>
-    public TestContext TestContext { get; set; }
-
-    #endregion
-
     #region Public Methods
 
-    /// <summary>
-    ///    A test for ToSymbol
-    /// </summary>
-    [TestMethod]
+    [Fact]
     public void ToSymbolTest()
     {
-      Assert.AreEqual(Accidental.DoubleFlat.ToSymbol(), "bb");
-      Assert.AreEqual(Accidental.Flat.ToSymbol(), "b");
-      Assert.AreEqual(Accidental.Natural.ToSymbol(), "");
-      Assert.AreEqual(Accidental.Sharp.ToSymbol(), "#");
-      Assert.AreEqual(Accidental.DoubleSharp.ToSymbol(), "##");
+      Assert.Equal(Accidental.DoubleFlat.ToSymbol(), "bb");
+      Assert.Equal(Accidental.Flat.ToSymbol(), "b");
+      Assert.Equal(Accidental.Natural.ToSymbol(), "");
+      Assert.Equal(Accidental.Sharp.ToSymbol(), "#");
+      Assert.Equal(Accidental.DoubleSharp.ToSymbol(), "##");
     }
 
-    [TestMethod]
+    [Fact]
     public void ParseTest()
     {
-      Assert.AreEqual(Accidental.DoubleFlat, AccidentalExtensions.Parse("bb"));
-      Assert.AreEqual(Accidental.Flat, AccidentalExtensions.Parse("b"));
-      Assert.AreEqual(Accidental.Natural, AccidentalExtensions.Parse(""));
-      Assert.AreEqual(Accidental.Sharp, AccidentalExtensions.Parse("#"));
-      Assert.AreEqual(Accidental.DoubleSharp, AccidentalExtensions.Parse("##"));
+      Assert.Equal(Accidental.DoubleFlat, AccidentalExtensions.Parse("bb"));
+      Assert.Equal(Accidental.Flat, AccidentalExtensions.Parse("b"));
+      Assert.Equal(Accidental.Natural, AccidentalExtensions.Parse(""));
+      Assert.Equal(Accidental.Sharp, AccidentalExtensions.Parse("#"));
+      Assert.Equal(Accidental.DoubleSharp, AccidentalExtensions.Parse("##"));
     }
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [Fact]
     public void ParseThrowsWithInvalidAccidentalSymbolTest()
     {
-      AccidentalExtensions.Parse("&");
+      Assert.Throws<ArgumentException>(() => { AccidentalExtensions.Parse("&"); });
     }
 
     #endregion

@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: ModeFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,113 +25,95 @@
 
 namespace Bach.Model.Test
 {
-  using Microsoft.VisualStudio.TestTools.UnitTesting;
+  using Xunit;
 
-  /// <summary>
-  ///    This is a test class for ChordFormulaTest and is intended
-  ///    to contain all ChordFormulaTest Unit Tests
-  /// </summary>
-  [TestClass]
   public class ModeFormulaTest
   {
-    #region Properties
-
-    /// <summary>
-    ///    Gets or sets the test context which provides
-    ///    information about and functionality for the current test run.
-    /// </summary>
-    public TestContext TestContext { get; set; }
-
-    #endregion
-
     #region Public Methods
 
-    /// <summary>
-    ///    A test for ModeFormula Constructor
-    /// </summary>
-    [TestMethod]
+    [Fact]
     public void ChordFormulaConstructorTest()
     {
       const string NAME = "Name";
       const int TONIC = 2;
       var target = new ModeFormula(NAME, TONIC);
 
-      Assert.AreEqual(NAME, target.Name);
-      Assert.AreEqual(TONIC, target.Tonic);
+      Assert.Equal(NAME, target.Name);
+      Assert.Equal(TONIC, target.Tonic);
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new ModeFormula("Name", 2);
       object y = new ModeFormula("Name", 2);
       object z = new ModeFormula("Name", 2);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsContractTest()
     {
       var x = new ModeFormula("Name", 2);
       var y = new ModeFormula("Name", 2);
       var z = new ModeFormula("Name", 2);
 
-      Assert.IsTrue(x.Equals(x)); // Reflexive
-      Assert.IsTrue(x.Equals(y)); // Symetric
-      Assert.IsTrue(y.Equals(x));
-      Assert.IsTrue(y.Equals(z)); // Transitive
-      Assert.IsTrue(x.Equals(z));
-      Assert.IsFalse(x.Equals(null)); // Never equal to null
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
       object actual = new ModeFormula("Name", 2);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       var actual = new ModeFormula("Name", 2);
-      Assert.IsFalse(actual.Equals(int.MinValue));
+      Assert.False(actual.Equals(int.MinValue));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsFailsWithNullTest()
     {
       object actual = new ModeFormula("Name", 2);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
       var actual = new ModeFormula("Name", 2);
-      Assert.IsFalse(actual.Equals(null));
+      Assert.False(actual.Equals(null));
     }
 
-    [TestMethod]
+    [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
       var actual = new ModeFormula("Name", 2);
-      Assert.IsTrue(actual.Equals(actual));
+      Assert.True(actual.Equals(actual));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetHashcodeTest()
     {
       var actual = new ModeFormula("Name", 2);
       var expected = new ModeFormula("Name", 2);
-      Assert.IsTrue(expected.Equals(actual));
-      Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     #endregion
