@@ -33,12 +33,14 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    protected StringedInstrument(string name, int stringCount)
+    protected StringedInstrument(string name, int stringCount, int fretCount)
       : base(name)
     {
       Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(fretCount > 0);
 
       StringCount = stringCount;
+      FretCount = fretCount;
       Tunings = new TuningCollection(this);
     }
 
@@ -47,6 +49,9 @@ namespace Bach.Model.Instruments
     #region Properties
 
     public int StringCount { get; }
+
+    public int FretCount { get; }
+
     public TuningCollection Tunings { get; }
 
     #endregion

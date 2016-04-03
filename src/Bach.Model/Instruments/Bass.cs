@@ -29,8 +29,8 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    public Bass()
-      : base("Bass", 4)
+    public Bass(int fretCount = 22)
+      : base("Bass", 4, fretCount)
     {
       Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("G2,D2,A1,E1")));
     }

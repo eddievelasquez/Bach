@@ -29,8 +29,8 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    public Guitar()
-      : base("Guitar", 6)
+    public Guitar(int fretCount = 22)
+      : base("Guitar", 6, fretCount)
     {
       Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("E4,B3,G3,D3,A2,E2")));
       Tunings.Add(new Tuning(this, "Drop D", NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
