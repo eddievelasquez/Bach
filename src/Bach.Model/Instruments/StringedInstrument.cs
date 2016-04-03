@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: StringedInstrument.cs
 // Project:     Bach.Model
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,33 +26,46 @@
 namespace Bach.Model.Instruments
 {
   using System;
+  using System.Collections.Generic;
   using System.Diagnostics.Contracts;
 
-  public abstract class StringedInstrument: Instrument,
-                                            IEquatable<StringedInstrument>
+  public class StringedInstrument: Instrument,
+                                   IEquatable<StringedInstrument>
   {
     #region Construction/Destruction
 
-    protected StringedInstrument(string name, int stringCount, int fretCount)
-      : base(name)
+    private StringedInstrument(StringedInstrumentDefinition definition, Tuning tuning, int fretCount)
+      : base(definition)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0);
+      Contract.Requires<ArgumentNullException>(tuning != null);
       Contract.Requires<ArgumentOutOfRangeException>(fretCount > 0);
 
-      StringCount = stringCount;
+      Tuning = tuning;
       FretCount = fretCount;
-      Tunings = new TuningCollection(this);
+    }
+
+    #endregion
+
+    #region Factories
+
+    public static StringedInstrument Create(StringedInstrumentDefinition definition, int fretCount, Tuning tuning = null)
+    {
+      Contract.Requires<ArgumentNullException>(definition != null);
+      Contract.Ensures(Contract.Result<StringedInstrument>() != null);
+
+      return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard, fretCount);
     }
 
     #endregion
 
     #region Properties
 
-    public int StringCount { get; }
+    public new StringedInstrumentDefinition Definition
+      => (StringedInstrumentDefinition) base.Definition;
 
     public int FretCount { get; }
 
-    public TuningCollection Tunings { get; }
+    public Tuning Tuning { get; }
 
     #endregion
 
@@ -70,7 +83,7 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      return StringCount == other.StringCount && base.Equals(other);
+      return Equals(Tuning, other.Tuning) && FretCount == other.FretCount && base.Equals(other);
     }
 
     #endregion
@@ -96,7 +109,8 @@ namespace Bach.Model.Instruments
     {
       var hash = 17;
       hash = hash * 23 + base.GetHashCode();
-      hash = hash * 23 + StringCount;
+      hash = hash * 23 + Tuning.GetHashCode();
+      hash = hash * 23 + FretCount.GetHashCode();
       return hash;
     }
 

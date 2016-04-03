@@ -1,5 +1,5 @@
 ﻿//  
-// Module Name: GuitarTest.cs
+// Module Name: BassDefinitionTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -25,50 +25,29 @@
 
 namespace Bach.Model.Test.Instruments
 {
-  using System;
   using Bach.Model.Instruments;
   using Xunit;
 
-  public class GuitarTest
+  public class BassDefinitionTest
   {
     #region Public Methods
 
     [Fact]
     public void TestConstructor()
     {
-      var guitar = new Guitar();
-      Assert.Equal(guitar.Name, "Guitar");
-      Assert.Equal(guitar.StringCount, 6);
-      Assert.NotNull(guitar.Tunings);
-      Assert.NotEqual(guitar.Tunings.Count, 0);
-    }
-
-    [Fact]
-    public void AddTuningTest()
-    {
-      var guitar = new Guitar();
-      int tuningCount = guitar.Tunings.Count;
-      guitar.Tunings.Add(new Tuning(guitar, "Drop D Test", NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
-      Assert.Equal(tuningCount + 1, guitar.Tunings.Count);
-    }
-
-    [Fact]
-    public void AddTuningFailsWithDifferentInstrumentTuningTest()
-    {
-      Assert.Throws<ArgumentException>(() =>
-                                       {
-                                         var guitar = new Guitar();
-                                         guitar.Tunings.Add(new Tuning(new Bass(), "Drop D",
-                                                                       NoteCollection.Parse("G2,D2,A1,D1")));
-                                       });
+      var definition = new BassDefinition();
+      Assert.Equal(definition.Name, "Bass");
+      Assert.Equal(definition.StringCount, 4);
+      Assert.NotNull(definition.Tunings);
+      Assert.NotEqual(definition.Tunings.Count, 0);
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Guitar();
-      object y = new Guitar();
-      object z = new Guitar();
+      object x = new BassDefinition();
+      object y = new BassDefinition();
+      object z = new BassDefinition();
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -81,9 +60,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Guitar();
-      var y = new Guitar();
-      var z = new Guitar();
+      var x = new BassDefinition();
+      var y = new BassDefinition();
+      var z = new BassDefinition();
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -96,8 +75,8 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object a = new Guitar();
-      object b = new Bass();
+      object a = new BassDefinition();
+      object b = new GuitarDefinition();
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
       Assert.False(Equals(a, b));
@@ -107,8 +86,8 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var a = new Guitar();
-      var b = new Bass();
+      StringedInstrumentDefinition a = new BassDefinition();
+      StringedInstrumentDefinition b = new GuitarDefinition();
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
       Assert.False(Equals(a, b));
@@ -118,29 +97,29 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Guitar();
+      object actual = new BassDefinition();
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Guitar();
+      var actual = new BassDefinition();
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Guitar();
+      var actual = new BassDefinition();
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Guitar();
-      var expected = new Guitar();
+      var actual = new BassDefinition();
+      var expected = new BassDefinition();
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

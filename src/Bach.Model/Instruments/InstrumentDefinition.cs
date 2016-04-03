@@ -1,5 +1,5 @@
 //  
-// Module Name: TuningCollection.cs
+// Module Name: InstrumentDefinition.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -26,66 +26,85 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Collections.ObjectModel;
   using System.Diagnostics.Contracts;
 
-  public class TuningCollection: KeyedCollection<string, Tuning>
+  public abstract class InstrumentDefinition: IEquatable<InstrumentDefinition>
   {
+    #region Data Members
+
+    private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
+
+    #endregion
+
     #region Construction/Destruction
 
-    public TuningCollection(StringedInstrumentDefinition instrumentDefinition)
-      : base(StringComparer.CurrentCultureIgnoreCase)
+    static InstrumentDefinition()
     {
-      Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
-      InstrumentDefinition = instrumentDefinition;
+      InstrumentDefinitions = new InstrumentDefinitionCollection { new GuitarDefinition(), new BassDefinition() };
+    }
+
+    protected InstrumentDefinition(string name)
+    {
+      Contract.Requires<ArgumentNullException>(name != null);
+      Contract.Requires<ArgumentException>(name.Length > 0);
+
+      Name = name;
     }
 
     #endregion
 
     #region Properties
 
-    public StringedInstrumentDefinition InstrumentDefinition { get; }
+    public string Name { get; }
 
-    public Tuning Standard
+    public static InstrumentDefinitionCollection InstrumentDefinitions { get; }
+
+    #endregion
+
+    #region IEquatable<InstrumentDefinition> Members
+
+    public bool Equals(InstrumentDefinition other)
     {
-      get
+      if( ReferenceEquals(null, other) )
       {
-        Contract.Requires<ArgumentOutOfRangeException>(Count > 0);
-        return this[0];
+        return false;
       }
+
+      if( ReferenceEquals(this, other) )
+      {
+        return true;
+      }
+
+      return s_nameComparer.Equals(Name, other.Name);
     }
 
     #endregion
 
-    #region Overrides
+    #region Public Methods
 
-    protected override void InsertItem(int index, Tuning item)
+    public override bool Equals(object obj)
     {
-      VerifyInstrument(item);
-      base.InsertItem(index, item);
-    }
-
-    protected override void SetItem(int index, Tuning item)
-    {
-      VerifyInstrument(item);
-      base.SetItem(index, item);
-    }
-
-    protected override string GetKeyForItem(Tuning item)
-    {
-      return item.Name;
-    }
-
-    #endregion
-
-    #region Implementation
-
-    private void VerifyInstrument(Tuning tuning)
-    {
-      if( !InstrumentDefinition.Equals(tuning.InstrumentDefinition) )
+      if( ReferenceEquals(null, obj) )
       {
-        throw new ArgumentException($"\"{tuning.Name}\" is not a \"{InstrumentDefinition.Name}\" tuning");
+        return false;
       }
+
+      if( ReferenceEquals(this, obj) )
+      {
+        return true;
+      }
+
+      if( obj.GetType() != GetType() )
+      {
+        return false;
+      }
+
+      return Equals((Instrument) obj);
+    }
+
+    public override int GetHashCode()
+    {
+      return s_nameComparer.GetHashCode(Name);
     }
 
     #endregion

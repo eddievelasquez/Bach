@@ -1,7 +1,7 @@
 //  
 // Module Name: Tuning.cs
 // Project:     Bach.Model
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -39,26 +39,26 @@ namespace Bach.Model.Instruments
 
     #region Construction/Destruction
 
-    public Tuning(StringedInstrument instrument, string name, params Note[] notes)
+    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, params Note[] notes)
     {
-      Contract.Requires<ArgumentNullException>(instrument != null);
+      Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
       Contract.Requires<ArgumentNullException>(name != null);
       Contract.Requires<ArgumentException>(name.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(notes.Length == instrument.StringCount);
+      Contract.Requires<ArgumentOutOfRangeException>(notes.Length == instrumentDefinition.StringCount);
 
-      Instrument = instrument;
+      InstrumentDefinition = instrumentDefinition;
       Name = name;
       Notes = notes;
     }
 
-    public Tuning(StringedInstrument instrument, string name, NoteCollection notes)
+    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, NoteCollection notes)
     {
-      Contract.Requires<ArgumentNullException>(instrument != null);
+      Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
       Contract.Requires<ArgumentNullException>(name != null);
       Contract.Requires<ArgumentException>(name.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrument.StringCount);
+      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrumentDefinition.StringCount);
 
-      Instrument = instrument;
+      InstrumentDefinition = instrumentDefinition;
       Name = name;
       Notes = notes.ToArray();
     }
@@ -67,7 +67,7 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
-    public StringedInstrument Instrument { get; }
+    public StringedInstrumentDefinition InstrumentDefinition { get; }
     public string Name { get; }
     public Note[] Notes { get; }
 
@@ -87,7 +87,7 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      return Instrument.Equals(other.Instrument) && s_nameComparer.Equals(Name, other.Name)
+      return InstrumentDefinition.Equals(other.InstrumentDefinition) && s_nameComparer.Equals(Name, other.Name)
              && Notes.SequenceEqual(other.Notes);
     }
 
@@ -113,7 +113,7 @@ namespace Bach.Model.Instruments
     public override int GetHashCode()
     {
       var hash = 17;
-      hash = hash * 23 + Instrument.GetHashCode();
+      hash = hash * 23 + InstrumentDefinition.GetHashCode();
       hash = hash * 23 + s_nameComparer.GetHashCode(Name);
       return hash;
     }

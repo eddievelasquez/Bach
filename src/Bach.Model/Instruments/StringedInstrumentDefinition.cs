@@ -1,5 +1,5 @@
 //  
-// Module Name: TuningCollection.cs
+// Module Name: StringedInstrumentDefinition.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -26,66 +26,86 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Collections.ObjectModel;
   using System.Diagnostics.Contracts;
 
-  public class TuningCollection: KeyedCollection<string, Tuning>
+  public abstract class StringedInstrumentDefinition: InstrumentDefinition,
+                                                      IEquatable<StringedInstrumentDefinition>
   {
     #region Construction/Destruction
 
-    public TuningCollection(StringedInstrumentDefinition instrumentDefinition)
-      : base(StringComparer.CurrentCultureIgnoreCase)
+    protected StringedInstrumentDefinition(string name, int stringCount)
+      : base(name)
     {
-      Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
-      InstrumentDefinition = instrumentDefinition;
+      Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0);
+
+      StringCount = stringCount;
+      Tunings = new TuningCollection(this);
     }
 
     #endregion
 
     #region Properties
 
-    public StringedInstrumentDefinition InstrumentDefinition { get; }
+    public int StringCount { get; }
 
-    public Tuning Standard
+    public TuningCollection Tunings { get; }
+
+    #endregion
+
+    #region IEquatable<StringedInstrumentDefinition> Members
+
+    public bool Equals(StringedInstrumentDefinition other)
     {
-      get
+      if( ReferenceEquals(null, other) )
       {
-        Contract.Requires<ArgumentOutOfRangeException>(Count > 0);
-        return this[0];
+        return false;
       }
+
+      if( ReferenceEquals(this, other) )
+      {
+        return true;
+      }
+
+      return StringCount == other.StringCount && base.Equals(other);
     }
 
     #endregion
 
-    #region Overrides
+    #region Public Methods
 
-    protected override void InsertItem(int index, Tuning item)
+    public override bool Equals(object obj)
     {
-      VerifyInstrument(item);
-      base.InsertItem(index, item);
+      if( ReferenceEquals(null, obj) )
+      {
+        return false;
+      }
+
+      if( ReferenceEquals(this, obj) )
+      {
+        return true;
+      }
+
+      return obj.GetType() == GetType() && Equals((StringedInstrumentDefinition) obj);
     }
 
-    protected override void SetItem(int index, Tuning item)
+    public override int GetHashCode()
     {
-      VerifyInstrument(item);
-      base.SetItem(index, item);
-    }
-
-    protected override string GetKeyForItem(Tuning item)
-    {
-      return item.Name;
+      var hash = 17;
+      hash = hash * 23 + base.GetHashCode();
+      hash = hash * 23 + StringCount;
+      return hash;
     }
 
     #endregion
 
-    #region Implementation
+    #region Invariants
 
-    private void VerifyInstrument(Tuning tuning)
+    [ContractInvariantMethod]
+    private void ObjectInvariant()
     {
-      if( !InstrumentDefinition.Equals(tuning.InstrumentDefinition) )
-      {
-        throw new ArgumentException($"\"{tuning.Name}\" is not a \"{InstrumentDefinition.Name}\" tuning");
-      }
+      Contract.Invariant(StringCount > 0);
+      Contract.Invariant(Tunings != null);
+      Contract.Invariant(Tunings.Count > 0);
     }
 
     #endregion

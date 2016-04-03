@@ -1,7 +1,7 @@
-//  
-// Module Name: Guitar.cs
+﻿//  
+// Module Name: InstrumentDefinitionCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,18 +25,25 @@
 
 namespace Bach.Model.Instruments
 {
-  public class Guitar: StringedInstrument
+  using System;
+  using System.Collections.ObjectModel;
+
+  public class InstrumentDefinitionCollection: KeyedCollection<string, InstrumentDefinition>
   {
     #region Construction/Destruction
 
-    public Guitar(int fretCount = 22)
-      : base("Guitar", 6, fretCount)
+    public InstrumentDefinitionCollection()
+      : base(StringComparer.CurrentCultureIgnoreCase)
     {
-      Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("E4,B3,G3,D3,A2,E2")));
-      Tunings.Add(new Tuning(this, "Drop D", NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
-      Tunings.Add(new Tuning(this, "Open D", NoteCollection.Parse("D4,A3,F#3,D3,A2,D2")));
-      Tunings.Add(new Tuning(this, "Open G", NoteCollection.Parse("D4,B3,G2,D2,G2,D2")));
-      Tunings.Add(new Tuning(this, "Open A", NoteCollection.Parse("E4,C#4,A3,E3,A2,E2")));
+    }
+
+    #endregion
+
+    #region Overrides
+
+    protected override string GetKeyForItem(InstrumentDefinition item)
+    {
+      return item.Name;
     }
 
     #endregion

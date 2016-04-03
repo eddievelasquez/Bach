@@ -1,7 +1,7 @@
-﻿//  
-// Module Name: InstrumentCollection.cs
+//  
+// Module Name: BassDefinition.cs
 // Project:     Bach.Model
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,25 +25,14 @@
 
 namespace Bach.Model.Instruments
 {
-  using System;
-  using System.Collections.ObjectModel;
-
-  public class InstrumentCollection: KeyedCollection<string, Instrument>
+  public class BassDefinition: StringedInstrumentDefinition
   {
     #region Construction/Destruction
 
-    public InstrumentCollection()
-      : base(StringComparer.CurrentCultureIgnoreCase)
+    public BassDefinition()
+      : base("Bass", 4)
     {
-    }
-
-    #endregion
-
-    #region Overrides
-
-    protected override string GetKeyForItem(Instrument item)
-    {
-      return item.Name;
+      Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("G2,D2,A1,E1")));
     }
 
     #endregion

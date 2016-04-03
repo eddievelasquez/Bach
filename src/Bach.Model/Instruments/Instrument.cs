@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: Instrument.cs
 // Project:     Bach.Model
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -30,34 +30,19 @@ namespace Bach.Model.Instruments
 
   public abstract class Instrument: IEquatable<Instrument>
   {
-    #region Data Members
-
-    private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
-
-    #endregion
-
     #region Construction/Destruction
 
-    static Instrument()
+    protected Instrument(InstrumentDefinition definition)
     {
-      Instruments = new InstrumentCollection { new Guitar(), new Bass() };
-    }
-
-    protected Instrument(string name)
-    {
-      Contract.Requires<ArgumentNullException>(name != null);
-      Contract.Requires<ArgumentException>(name.Length > 0);
-
-      Name = name;
+      Contract.Requires<ArgumentNullException>(definition != null);
+      Definition = definition;
     }
 
     #endregion
 
     #region Properties
 
-    public string Name { get; }
-
-    public static InstrumentCollection Instruments { get; }
+    public InstrumentDefinition Definition { get; }
 
     #endregion
 
@@ -75,7 +60,7 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      return s_nameComparer.Equals(Name, other.Name);
+      return Definition.Equals(other.Definition);
     }
 
     #endregion
@@ -94,17 +79,12 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      if( obj.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Instrument) obj);
+      return obj.GetType() == GetType() && Equals((Instrument) obj);
     }
 
     public override int GetHashCode()
     {
-      return s_nameComparer.GetHashCode(Name);
+      return Definition.GetHashCode();
     }
 
     #endregion

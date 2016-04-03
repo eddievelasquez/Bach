@@ -1,7 +1,7 @@
-﻿//  
-// Module Name: Bass.cs
+//  
+// Module Name: GuitarDefinition.cs
 // Project:     Bach.Model
-// Copyright (c) 2014  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,14 +25,18 @@
 
 namespace Bach.Model.Instruments
 {
-  public class Bass: StringedInstrument
+  public class GuitarDefinition: StringedInstrumentDefinition
   {
     #region Construction/Destruction
 
-    public Bass(int fretCount = 22)
-      : base("Bass", 4, fretCount)
+    public GuitarDefinition()
+      : base("Guitar", 6)
     {
-      Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("G2,D2,A1,E1")));
+      Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("E4,B3,G3,D3,A2,E2")));
+      Tunings.Add(new Tuning(this, "Drop D", NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
+      Tunings.Add(new Tuning(this, "Open D", NoteCollection.Parse("D4,A3,F#3,D3,A2,D2")));
+      Tunings.Add(new Tuning(this, "Open G", NoteCollection.Parse("D4,B3,G2,D2,G2,D2")));
+      Tunings.Add(new Tuning(this, "Open A", NoteCollection.Parse("E4,C#4,A3,E3,A2,E2")));
     }
 
     #endregion
