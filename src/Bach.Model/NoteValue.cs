@@ -27,7 +27,6 @@ namespace Bach.Model
 {
   using System;
   using System.Diagnostics.Contracts;
-  using System.Text;
 
   public sealed class NoteValue: IEquatable<NoteValue>,
                                  IComparable<NoteValue>
@@ -143,42 +142,6 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public static bool operator ==(NoteValue left, NoteValue right) => Equals(left, right);
-
-    public static bool operator !=(NoteValue left, NoteValue right) => !Equals(left, right);
-
-    public static bool operator >(NoteValue left, NoteValue right) => left.CompareTo(right) > 0;
-
-    public static bool operator <(NoteValue left, NoteValue right) => left.CompareTo(right) < 0;
-
-    public static bool operator >=(NoteValue left, NoteValue right) => left.CompareTo(right) >= 0;
-
-    public static bool operator <=(NoteValue left, NoteValue right) => left.CompareTo(right) <= 0;
-
-    public static NoteValue operator +(NoteValue note, int interval)
-    {
-      Contract.Requires<ArgumentNullException>(note != null);
-      return note.Add(interval, AccidentalMode);
-    }
-
-    public static NoteValue operator ++(NoteValue note)
-    {
-      Contract.Requires<ArgumentNullException>(note != null);
-      return note.Add(1, AccidentalMode);
-    }
-
-    public static NoteValue operator -(NoteValue note, int interval)
-    {
-      Contract.Requires<ArgumentNullException>(note != null);
-      return note.Subtract(interval, AccidentalMode);
-    }
-
-    public static NoteValue operator --(NoteValue note)
-    {
-      Contract.Requires<ArgumentNullException>(note != null);
-      return note.Subtract(1, AccidentalMode);
-    }
-
     public static bool TryParse(string value, out NoteValue note)
     {
       if( string.IsNullOrEmpty(value) )
@@ -293,38 +256,42 @@ namespace Bach.Model
 
     #endregion
 
-    #region Implementation
+    #region Operators
 
-    private static void TryGetAccidental(string value, ref int index, out Accidental accidental)
+    public static bool operator ==(NoteValue left, NoteValue right) => Equals(left, right);
+
+    public static bool operator !=(NoteValue left, NoteValue right) => !Equals(left, right);
+
+    public static bool operator >(NoteValue left, NoteValue right) => left.CompareTo(right) > 0;
+
+    public static bool operator <(NoteValue left, NoteValue right) => left.CompareTo(right) < 0;
+
+    public static bool operator >=(NoteValue left, NoteValue right) => left.CompareTo(right) >= 0;
+
+    public static bool operator <=(NoteValue left, NoteValue right) => left.CompareTo(right) <= 0;
+
+    public static NoteValue operator +(NoteValue note, int interval)
     {
-      accidental = Accidental.Natural;
+      Contract.Requires<ArgumentNullException>(note != null);
+      return note.Add(interval, AccidentalMode);
+    }
 
-      var buf = new StringBuilder();
-      for( int i = index; i < value.Length; ++i )
-      {
-        char ch = value[i];
-        if( ch != '#' && ch != 'b' && ch != 'B' )
-        {
-          if( buf.Length > 0 )
-          {
-            break;
-          }
+    public static NoteValue operator ++(NoteValue note)
+    {
+      Contract.Requires<ArgumentNullException>(note != null);
+      return note.Add(1, AccidentalMode);
+    }
 
-          return;
-        }
+    public static NoteValue operator -(NoteValue note, int interval)
+    {
+      Contract.Requires<ArgumentNullException>(note != null);
+      return note.Subtract(interval, AccidentalMode);
+    }
 
-        buf.Append(ch);
-      }
-
-      if( buf.Length == 0 )
-      {
-        return;
-      }
-
-      if( AccidentalExtensions.TryParse(buf.ToString(), out accidental) )
-      {
-        index += buf.Length;
-      }
+    public static NoteValue operator --(NoteValue note)
+    {
+      Contract.Requires<ArgumentNullException>(note != null);
+      return note.Subtract(1, AccidentalMode);
     }
 
     #endregion
