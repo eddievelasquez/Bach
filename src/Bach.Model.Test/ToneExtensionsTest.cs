@@ -45,6 +45,26 @@ namespace Bach.Model.Test
       Assert.Equal(Tone.B, Tone.C.Previous());
     }
 
+    [Fact]
+    public void IntervalBetweenTest()
+    {
+      Assert.Equal(2, Tone.C.IntervalBetween(Tone.D));
+      Assert.Equal(2, Tone.D.IntervalBetween(Tone.E));
+      Assert.Equal(1, Tone.E.IntervalBetween(Tone.F));
+      Assert.Equal(2, Tone.F.IntervalBetween(Tone.G));
+      Assert.Equal(2, Tone.G.IntervalBetween(Tone.A));
+      Assert.Equal(2, Tone.A.IntervalBetween(Tone.B));
+      Assert.Equal(1, Tone.B.IntervalBetween(Tone.C));
+
+      Assert.Equal(0, Tone.C.IntervalBetween(Tone.C));
+      Assert.Equal(2, Tone.C.IntervalBetween(Tone.D));
+      Assert.Equal(4, Tone.C.IntervalBetween(Tone.E));
+      Assert.Equal(5, Tone.C.IntervalBetween(Tone.F));
+      Assert.Equal(7, Tone.C.IntervalBetween(Tone.G));
+      Assert.Equal(9, Tone.C.IntervalBetween(Tone.A));
+      Assert.Equal(11, Tone.C.IntervalBetween(Tone.B));
+    }
+
     #endregion
   }
 }

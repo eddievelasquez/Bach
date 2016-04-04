@@ -1,7 +1,7 @@
 //  
 // Module Name: ToneExtensions.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -27,6 +27,19 @@ namespace Bach.Model
 {
   public static class ToneExtensions
   {
+    #region Data Members
+
+    private static readonly int[] s_intervals = { 2, // C-D
+      2, // D-E
+      1, // E-F
+      2, // F-G
+      2, // G-A
+      2, // A-B
+      1 // B-C
+    };
+
+    #endregion
+
     #region Public Methods
 
     public static Tone Next(this Tone tone)
@@ -47,6 +60,23 @@ namespace Bach.Model
       }
 
       return tone - 1;
+    }
+
+    public static int IntervalBetween(this Tone tone, Tone end)
+    {
+      if( tone == end )
+      {
+        return 0;
+      }
+
+      var interval = 0;
+      while( tone != end )
+      {
+        interval += s_intervals[(int) tone];
+        tone = (Tone) (((int) tone + 1) % s_intervals.Length);
+      }
+
+      return interval;
     }
 
     #endregion
