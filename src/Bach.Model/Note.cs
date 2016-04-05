@@ -1,5 +1,5 @@
 //  
-// Module Name: NoteValue.cs
+// Module Name: Note.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -28,55 +28,55 @@ namespace Bach.Model
   using System;
   using System.Diagnostics.Contracts;
 
-  public sealed class NoteValue: IEquatable<NoteValue>,
-                                 IComparable<NoteValue>
+  public sealed class Note: IEquatable<Note>,
+                            IComparable<Note>
   {
     #region Data Members
 
     private static readonly Link[] s_links;
 
-    public static NoteValue C;
-    public static NoteValue CSharp;
-    public static NoteValue DFlat;
-    public static NoteValue D;
-    public static NoteValue DSharp;
-    public static NoteValue EFlat;
-    public static NoteValue E;
-    public static NoteValue F;
-    public static NoteValue FSharp;
-    public static NoteValue GFlat;
-    public static NoteValue G;
-    public static NoteValue GSharp;
-    public static NoteValue AFlat;
-    public static NoteValue A;
-    public static NoteValue ASharp;
-    public static NoteValue BFlat;
-    public static NoteValue B;
+    public static Note C;
+    public static Note CSharp;
+    public static Note DFlat;
+    public static Note D;
+    public static Note DSharp;
+    public static Note EFlat;
+    public static Note E;
+    public static Note F;
+    public static Note FSharp;
+    public static Note GFlat;
+    public static Note G;
+    public static Note GSharp;
+    public static Note AFlat;
+    public static Note A;
+    public static Note ASharp;
+    public static Note BFlat;
+    public static Note B;
 
     #endregion
 
     #region Construction/Destruction
 
-    static NoteValue()
+    static Note()
     {
       // Create notes
-      C = new NoteValue(0, Tone.C, Accidental.Natural);
-      CSharp = new NoteValue(1, Tone.C, Accidental.Sharp);
-      DFlat = new NoteValue(1, Tone.D, Accidental.Flat);
-      D = new NoteValue(2, Tone.D, Accidental.Natural);
-      DSharp = new NoteValue(3, Tone.D, Accidental.Sharp);
-      EFlat = new NoteValue(3, Tone.E, Accidental.Flat);
-      E = new NoteValue(4, Tone.E, Accidental.Natural);
-      F = new NoteValue(5, Tone.F, Accidental.Natural);
-      FSharp = new NoteValue(6, Tone.F, Accidental.Sharp);
-      GFlat = new NoteValue(6, Tone.G, Accidental.Flat);
-      G = new NoteValue(7, Tone.G, Accidental.Natural);
-      GSharp = new NoteValue(8, Tone.G, Accidental.Sharp);
-      AFlat = new NoteValue(8, Tone.A, Accidental.Flat);
-      A = new NoteValue(9, Tone.A, Accidental.Natural);
-      ASharp = new NoteValue(10, Tone.A, Accidental.Sharp);
-      BFlat = new NoteValue(10, Tone.B, Accidental.Flat);
-      B = new NoteValue(11, Tone.B, Accidental.Natural);
+      C = new Note(0, Tone.C, Accidental.Natural);
+      CSharp = new Note(1, Tone.C, Accidental.Sharp);
+      DFlat = new Note(1, Tone.D, Accidental.Flat);
+      D = new Note(2, Tone.D, Accidental.Natural);
+      DSharp = new Note(3, Tone.D, Accidental.Sharp);
+      EFlat = new Note(3, Tone.E, Accidental.Flat);
+      E = new Note(4, Tone.E, Accidental.Natural);
+      F = new Note(5, Tone.F, Accidental.Natural);
+      FSharp = new Note(6, Tone.F, Accidental.Sharp);
+      GFlat = new Note(6, Tone.G, Accidental.Flat);
+      G = new Note(7, Tone.G, Accidental.Natural);
+      GSharp = new Note(8, Tone.G, Accidental.Sharp);
+      AFlat = new Note(8, Tone.A, Accidental.Flat);
+      A = new Note(9, Tone.A, Accidental.Natural);
+      ASharp = new Note(10, Tone.A, Accidental.Sharp);
+      BFlat = new Note(10, Tone.B, Accidental.Flat);
+      B = new Note(11, Tone.B, Accidental.Natural);
 
       // Link all notes
       s_links = new Link[12];
@@ -96,7 +96,7 @@ namespace Bach.Model
       AccidentalMode = AccidentalMode.FavorSharps;
     }
 
-    private NoteValue(int value, Tone tone, Accidental accidental)
+    private Note(int value, Tone tone, Accidental accidental)
     {
       NumericValue = value;
       Tone = tone;
@@ -114,18 +114,18 @@ namespace Bach.Model
 
     #endregion
 
-    #region IComparable<NoteValue> Members
+    #region IComparable<Note> Members
 
-    public int CompareTo(NoteValue other)
+    public int CompareTo(Note other)
     {
       return NumericValue - other.NumericValue;
     }
 
     #endregion
 
-    #region IEquatable<NoteValue> Members
+    #region IEquatable<Note> Members
 
-    public bool Equals(NoteValue other)
+    public bool Equals(Note other)
     {
       if( ReferenceEquals(null, other) )
       {
@@ -142,7 +142,7 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public static bool TryParse(string value, out NoteValue note)
+    public static bool TryParse(string value, out Note note)
     {
       if( string.IsNullOrEmpty(value) )
       {
@@ -168,9 +168,9 @@ namespace Bach.Model
       return true;
     }
 
-    public static NoteValue Parse(string value)
+    public static Note Parse(string value)
     {
-      NoteValue result;
+      Note result;
       if( !TryParse(value, out result) )
       {
         throw new ArgumentException($"{value} is not a valid note");
@@ -179,7 +179,7 @@ namespace Bach.Model
       return result;
     }
 
-    public static NoteValue Get(Tone tone, Accidental accidental = Accidental.Natural)
+    public static Note Get(Tone tone, Accidental accidental = Accidental.Natural)
     {
       int index = (Tone.C.IntervalBetween(tone) + (int) accidental) % s_links.Length;
       if( index < 0 )
@@ -197,7 +197,7 @@ namespace Bach.Model
       return accidental < Accidental.Natural ? link.Flat : link.Sharp;
     }
 
-    public NoteValue Add(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
+    public Note Add(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       int index = (NumericValue + interval) % s_links.Length;
       Link link = s_links[index];
@@ -210,7 +210,7 @@ namespace Bach.Model
       return mode == AccidentalMode.FavorSharps ? link.Sharp : link.Flat;
     }
 
-    public NoteValue Subtract(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
+    public Note Subtract(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       interval %= s_links.Length;
       int index = NumericValue - interval;
@@ -241,7 +241,7 @@ namespace Bach.Model
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals((NoteValue) obj);
+      return obj.GetType() == GetType() && Equals((Note) obj);
     }
 
     public override int GetHashCode()
@@ -258,37 +258,37 @@ namespace Bach.Model
 
     #region Operators
 
-    public static bool operator ==(NoteValue left, NoteValue right) => Equals(left, right);
+    public static bool operator ==(Note left, Note right) => Equals(left, right);
 
-    public static bool operator !=(NoteValue left, NoteValue right) => !Equals(left, right);
+    public static bool operator !=(Note left, Note right) => !Equals(left, right);
 
-    public static bool operator >(NoteValue left, NoteValue right) => left.CompareTo(right) > 0;
+    public static bool operator >(Note left, Note right) => left.CompareTo(right) > 0;
 
-    public static bool operator <(NoteValue left, NoteValue right) => left.CompareTo(right) < 0;
+    public static bool operator <(Note left, Note right) => left.CompareTo(right) < 0;
 
-    public static bool operator >=(NoteValue left, NoteValue right) => left.CompareTo(right) >= 0;
+    public static bool operator >=(Note left, Note right) => left.CompareTo(right) >= 0;
 
-    public static bool operator <=(NoteValue left, NoteValue right) => left.CompareTo(right) <= 0;
+    public static bool operator <=(Note left, Note right) => left.CompareTo(right) <= 0;
 
-    public static NoteValue operator +(NoteValue note, int interval)
+    public static Note operator +(Note note, int interval)
     {
       Contract.Requires<ArgumentNullException>(note != null);
       return note.Add(interval, AccidentalMode);
     }
 
-    public static NoteValue operator ++(NoteValue note)
+    public static Note operator ++(Note note)
     {
       Contract.Requires<ArgumentNullException>(note != null);
       return note.Add(1, AccidentalMode);
     }
 
-    public static NoteValue operator -(NoteValue note, int interval)
+    public static Note operator -(Note note, int interval)
     {
       Contract.Requires<ArgumentNullException>(note != null);
       return note.Subtract(interval, AccidentalMode);
     }
 
-    public static NoteValue operator --(NoteValue note)
+    public static Note operator --(Note note)
     {
       Contract.Requires<ArgumentNullException>(note != null);
       return note.Subtract(1, AccidentalMode);
@@ -302,12 +302,12 @@ namespace Bach.Model
     {
       #region Construction/Destruction
 
-      public Link(NoteValue natural)
+      public Link(Note natural)
       {
         Natural = natural;
       }
 
-      public Link(NoteValue flat, NoteValue sharp)
+      public Link(Note flat, Note sharp)
       {
         Flat = flat;
         Sharp = sharp;
@@ -317,9 +317,9 @@ namespace Bach.Model
 
       #region Properties
 
-      public NoteValue Natural { get; }
-      public NoteValue Sharp { get; }
-      public NoteValue Flat { get; }
+      public Note Natural { get; }
+      public Note Sharp { get; }
+      public Note Flat { get; }
 
       #endregion
     }

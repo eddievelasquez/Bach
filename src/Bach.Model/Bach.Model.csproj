@@ -137,7 +137,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AbsoluteNoteCollection.cs" />
-    <Compile Include="NoteValue.cs" />
+    <Compile Include="Note.cs" />
     <Compile Include="Player\Chord.cs" />
     <Compile Include="Player\Duration.cs" />
     <Compile Include="Player\IPlayable.cs" />
