@@ -51,9 +51,9 @@ namespace Bach.Model.Test
       TestScale("C4,D4,Eb4,F4,G4,A4,B4", root, ScaleFormula.MelodicMinor);
       TestScale("C4,D4,Eb4,F4,Gb4,G#4,A4,B4", root, ScaleFormula.Diminished);
       TestScale("C4,Db4,Eb4,Fb4,F#4,G4,A4,Bb4", root, ScaleFormula.Polytonal);
-      TestScale("C4,Db4,Eb4,Fb4,F#4,G4,A4,Bb4", root, ScaleFormula.WholeTone);
+      TestScale("C4,D4,E4,F#4,G#4", root, ScaleFormula.WholeTone);
       TestScale("C4,D4,E4,G4,A4", root, ScaleFormula.Pentatonic);
-      TestScale("C4,D4,E4,G4,A4", root, ScaleFormula.MinorPentatonic);
+      TestScale("C4,Eb4,F4,G4,Bb4", root, ScaleFormula.MinorPentatonic);
       TestScale("C4,Eb4,F4,Gb4,G4,Bb4", root, ScaleFormula.Blues);
       TestScale("C4,D4,Eb4,E4,G4,A4", root, ScaleFormula.Gospel);
     }
