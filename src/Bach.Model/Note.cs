@@ -35,23 +35,23 @@ namespace Bach.Model
 
     private static readonly Link[] s_links;
 
-    public static Note C;
-    public static Note CSharp;
-    public static Note DFlat;
-    public static Note D;
-    public static Note DSharp;
-    public static Note EFlat;
-    public static Note E;
-    public static Note F;
-    public static Note FSharp;
-    public static Note GFlat;
-    public static Note G;
-    public static Note GSharp;
-    public static Note AFlat;
-    public static Note A;
-    public static Note ASharp;
-    public static Note BFlat;
-    public static Note B;
+    public static readonly Note C;
+    public static readonly Note CSharp;
+    public static readonly Note DFlat;
+    public static readonly Note D;
+    public static readonly Note DSharp;
+    public static readonly Note EFlat;
+    public static readonly Note E;
+    public static readonly Note F;
+    public static readonly Note FSharp;
+    public static readonly Note GFlat;
+    public static readonly Note G;
+    public static readonly Note GSharp;
+    public static readonly Note AFlat;
+    public static readonly Note A;
+    public static readonly Note ASharp;
+    public static readonly Note BFlat;
+    public static readonly Note B;
 
     #endregion
 
