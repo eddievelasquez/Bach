@@ -32,8 +32,8 @@ namespace Bach.Model
   {
     #region Constants
 
-    private const int MIN_TONIC = 1;
-    private const int MAX_TONIC = 7;
+    public const int MinTonic = 1;
+    public const int MaxTonic = 7;
 
     #endregion
 
@@ -55,8 +55,8 @@ namespace Bach.Model
     {
       Contract.Requires<ArgumentNullException>(name != null);
       Contract.Requires<ArgumentException>(name.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(tonic >= MIN_TONIC);
-      Contract.Requires<ArgumentOutOfRangeException>(tonic <= MAX_TONIC);
+      Contract.Requires<ArgumentOutOfRangeException>(tonic >= MinTonic);
+      Contract.Requires<ArgumentOutOfRangeException>(tonic <= MaxTonic);
 
       Name = name;
       Tonic = tonic;

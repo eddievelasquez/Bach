@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: Mode.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -33,17 +33,17 @@ namespace Bach.Model
   using System.Text;
 
   public class Mode: IEquatable<Mode>,
-                     IEnumerable<Note>
+                     IEnumerable<AbsoluteNote>
   {
     #region Data Members
 
-    private readonly NoteCollection _notes;
+    private readonly AbsoluteNoteCollection _notes;
 
     #endregion
 
     #region Construction/Destruction
 
-    public Mode(Note root, ModeFormula formula)
+    public Mode(AbsoluteNote root, ModeFormula formula)
     {
       Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -60,27 +60,27 @@ namespace Bach.Model
       Name = buf.ToString();
 
       ScaleFormula major = ScaleFormula.Major;
-      _notes = new NoteCollection(new Scale(Root, major).Skip(Formula.Tonic - 1).Take(major.Count).ToArray());
+      _notes = new AbsoluteNoteCollection(new Scale(Root, major).Skip(Formula.Tonic - 1).Take(major.Count).ToArray());
     }
 
     #endregion
 
     #region Properties
 
-    public Note Root { get; }
+    public AbsoluteNote Root { get; }
     public string Name { get; }
     public ModeFormula Formula { get; }
 
     #endregion
 
-    #region IEnumerable<Note> Members
+    #region IEnumerable<AbsoluteNote> Members
 
     IEnumerator IEnumerable.GetEnumerator()
     {
       return GetEnumerator();
     }
 
-    public IEnumerator<Note> GetEnumerator()
+    public IEnumerator<AbsoluteNote> GetEnumerator()
     {
       return _notes.GetEnumerator();
     }

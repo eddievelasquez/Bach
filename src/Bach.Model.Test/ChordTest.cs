@@ -35,20 +35,20 @@ namespace Bach.Model.Test
     [Fact]
     public void ChordConstructorTest()
     {
-      Note root = Note.Parse("C4");
+      AbsoluteNote root = AbsoluteNote.Parse("C4");
       ChordFormula formula = ChordFormula.Minor;
       var target = new Chord(root, formula);
 
       Assert.Equal(root, target.Root);
       Assert.Equal(formula, target.Formula);
       Assert.Equal("Cm", target.Name);
-      Assert.Equal(target.Notes, NoteCollection.Parse("C,Eb,G"));
+      Assert.Equal(target.Notes, AbsoluteNoteCollection.Parse("C,Eb,G"));
     }
 
     [Fact]
     public void ChordsTest()
     {
-      Note root = Note.Parse("C4");
+      AbsoluteNote root = AbsoluteNote.Parse("C4");
       TestChord("C4,E4,G4", root, ChordFormula.Major);
       TestChord("C4,E4,G4,B4", root, ChordFormula.Major7);
       TestChord("C4,E4,G4,B4,D5", root, ChordFormula.Major9);
@@ -74,9 +74,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      object y = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      object z = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      object x = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      object y = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      object z = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -89,9 +89,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      var y = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      var z = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      var x = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var y = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var z = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -104,43 +104,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      object actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      object actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      var expected = new Chord(Note.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var expected = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -148,18 +148,18 @@ namespace Bach.Model.Test
     [Fact]
     public void InvertTest()
     {
-      var c4 = new Chord(Note.Parse("C4"), ChordFormula.Major);
-      NoteCollection firstInversion = NoteCollection.Parse("E4,G4,C5");
+      var c4 = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      AbsoluteNoteCollection firstInversion = AbsoluteNoteCollection.Parse("E4,G4,C5");
       Chord actual = c4.Invert(1);
       Assert.NotNull(actual);
       Assert.Equal(firstInversion, actual.Notes);
 
-      NoteCollection secondInversion = NoteCollection.Parse("G4,C5,E5");
+      AbsoluteNoteCollection secondInversion = AbsoluteNoteCollection.Parse("G4,C5,E5");
       actual = c4.Invert(2);
       Assert.NotNull(actual);
       Assert.Equal(secondInversion, actual.Notes);
 
-      NoteCollection thirdInversion = NoteCollection.Parse("C5,E5,G5");
+      AbsoluteNoteCollection thirdInversion = AbsoluteNoteCollection.Parse("C5,E5,G5");
       actual = c4.Invert(3);
       Assert.NotNull(actual);
       Assert.Equal(thirdInversion, actual.Notes);
@@ -169,9 +169,9 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void TestChord(string expectedNotes, Note root, ChordFormula formula)
+    private static void TestChord(string expectedNotes, AbsoluteNote root, ChordFormula formula)
     {
-      NoteCollection expected = NoteCollection.Parse(expectedNotes);
+      AbsoluteNoteCollection expected = AbsoluteNoteCollection.Parse(expectedNotes);
       var actual = new Chord(root, formula).Take(expected.Count).ToArray();
       Assert.Equal(expected, actual);
     }

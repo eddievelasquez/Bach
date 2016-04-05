@@ -39,7 +39,7 @@ namespace Bach.Model.Instruments
 
     #region Construction/Destruction
 
-    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, params Note[] notes)
+    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, params AbsoluteNote[] notes)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
       Contract.Requires<ArgumentNullException>(name != null);
@@ -51,7 +51,7 @@ namespace Bach.Model.Instruments
       Notes = notes;
     }
 
-    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, NoteCollection notes)
+    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, AbsoluteNoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
       Contract.Requires<ArgumentNullException>(name != null);
@@ -69,7 +69,7 @@ namespace Bach.Model.Instruments
 
     public StringedInstrumentDefinition InstrumentDefinition { get; }
     public string Name { get; }
-    public Note[] Notes { get; }
+    public AbsoluteNote[] Notes { get; }
 
     #endregion
 

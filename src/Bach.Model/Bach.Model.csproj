@@ -133,10 +133,10 @@
     <Compile Include="Mode.cs" />
     <Compile Include="ModeFormula.cs" />
     <Compile Include="Notation.cs" />
-    <Compile Include="Note.cs">
+    <Compile Include="AbsoluteNote.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="NoteCollection.cs" />
+    <Compile Include="AbsoluteNoteCollection.cs" />
     <Compile Include="NoteValue.cs" />
     <Compile Include="Player\Chord.cs" />
     <Compile Include="Player\Duration.cs" />

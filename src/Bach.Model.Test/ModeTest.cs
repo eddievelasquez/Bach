@@ -35,20 +35,20 @@ namespace Bach.Model.Test
     [Fact]
     public void ModeConstructorTest()
     {
-      Note root = Note.Parse("C4");
+      AbsoluteNote root = AbsoluteNote.Parse("C4");
       ModeFormula formula = ModeFormula.Phrygian;
       var target = new Mode(root, formula);
 
       Assert.Equal(root, target.Root);
       Assert.Equal(formula, target.Formula);
       Assert.Equal("C Phrygian", target.Name);
-      Assert.Equal(target.ToArray(), NoteCollection.Parse("E4,F4,G4,A4,B4,C5,D5"));
+      Assert.Equal(target.ToArray(), AbsoluteNoteCollection.Parse("E4,F4,G4,A4,B4,C5,D5"));
     }
 
     [Fact]
     public void ModesTest()
     {
-      Note root = Note.Parse("C4");
+      AbsoluteNote root = AbsoluteNote.Parse("C4");
       TestMode("C4,D4,E4,F4,G4,A4,B4", root, ModeFormula.Ionian);
       TestMode("D4,E4,F4,G4,A4,B4,C5", root, ModeFormula.Dorian);
       TestMode("E4,F4,G4,A4,B4,C5,D5", root, ModeFormula.Phrygian);
@@ -61,9 +61,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      object y = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      object z = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      object x = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
+      object y = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
+      object z = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -76,9 +76,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      var y = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      var z = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      var x = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
+      var y = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
+      var z = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -91,43 +91,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      object actual = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      var actual = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      object actual = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      var actual = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      var actual = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
-      var expected = new Mode(Note.Parse("C4"), ModeFormula.Dorian);
+      var actual = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
+      var expected = new Mode(AbsoluteNote.Parse("C4"), ModeFormula.Dorian);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -136,9 +136,9 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void TestMode(string expectedNotes, Note root, ModeFormula formula)
+    private static void TestMode(string expectedNotes, AbsoluteNote root, ModeFormula formula)
     {
-      NoteCollection expected = NoteCollection.Parse(expectedNotes);
+      AbsoluteNoteCollection expected = AbsoluteNoteCollection.Parse(expectedNotes);
       Assert.Equal(expected, new Mode(root, formula).Take(expected.Count).ToArray());
     }
 

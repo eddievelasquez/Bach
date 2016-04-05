@@ -1,5 +1,5 @@
 ﻿//  
-// Module Name: NoteCollectionTest.cs
+// Module Name: AbsoluteNoteCollectionTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -28,39 +28,39 @@ namespace Bach.Model.Test
   using System.Linq;
   using Xunit;
 
-  public class NoteCollectionTest
+  public class AbsoluteNoteCollectionTest
   {
     #region Public Methods
 
     [Fact]
     public void ParseWithNotesTest()
     {
-      var expected = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      NoteCollection actual = NoteCollection.Parse("C4,C5");
+      var expected = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
+      AbsoluteNoteCollection actual = AbsoluteNoteCollection.Parse("C4,C5");
       Assert.True(actual.SequenceEqual(expected));
     }
 
     [Fact]
     public void ParseWithMidiTest()
     {
-      var expected = new NoteCollection(new[] { Note.FromMidi(60), Note.FromMidi(70) });
-      NoteCollection actual = NoteCollection.Parse("60,70");
+      var expected = new AbsoluteNoteCollection(new[] { AbsoluteNote.FromMidi(60), AbsoluteNote.FromMidi(70) });
+      AbsoluteNoteCollection actual = AbsoluteNoteCollection.Parse("60,70");
       Assert.True(actual.SequenceEqual(expected));
     }
 
     [Fact]
     public void ToStringTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.Equal("C4,C5", actual.ToString());
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      object y = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      object z = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      object x = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
+      object y = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
+      object z = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -73,9 +73,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      var y = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      var z = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var x = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
+      var y = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
+      var z = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -88,43 +88,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      object actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      object actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      var expected = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
+      var expected = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

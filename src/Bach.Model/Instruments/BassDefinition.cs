@@ -32,7 +32,7 @@ namespace Bach.Model.Instruments
     public BassDefinition()
       : base("Bass", 4)
     {
-      Tunings.Add(new Tuning(this, "Standard", NoteCollection.Parse("G2,D2,A1,E1")));
+      Tunings.Add(new Tuning(this, "Standard", AbsoluteNoteCollection.Parse("G2,D2,A1,E1")));
     }
 
     #endregion

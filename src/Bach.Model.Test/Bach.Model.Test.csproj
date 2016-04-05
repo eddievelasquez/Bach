@@ -78,13 +78,13 @@
     <Compile Include="IntervalTest.cs" />
     <Compile Include="ModeFormulaTest.cs" />
     <Compile Include="ModeTest.cs" />
-    <Compile Include="NoteTest.cs" />
+    <Compile Include="AbsoluteNoteTest.cs" />
     <Compile Include="NoteValueTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FormulaTest.cs" />
     <Compile Include="ScaleTest.cs" />
     <Compile Include="ToneExtensionsTest.cs" />
-    <Compile Include="NoteCollectionTest.cs" />
+    <Compile Include="AbsoluteNoteCollectionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bach.Model\Bach.Model.csproj">

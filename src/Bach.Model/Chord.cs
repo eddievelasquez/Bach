@@ -34,17 +34,17 @@ namespace Bach.Model
   using System.Text;
 
   public class Chord: IEquatable<Chord>,
-                      IEnumerable<Note>
+                      IEnumerable<AbsoluteNote>
   {
     #region Data Members
 
-    private readonly NoteCollection _notes;
+    private readonly AbsoluteNoteCollection _notes;
 
     #endregion
 
     #region Construction/Destruction
 
-    private Chord(Note root, ChordFormula formula, string name, IList<Note> notes)
+    private Chord(AbsoluteNote root, ChordFormula formula, string name, IList<AbsoluteNote> notes)
     {
       Contract.Requires<ArgumentException>(root.IsValid);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -56,10 +56,10 @@ namespace Bach.Model
       Root = root;
       Formula = formula;
       Name = name;
-      _notes = new NoteCollection(notes);
+      _notes = new AbsoluteNoteCollection(notes);
     }
 
-    public Chord(Note root, ChordFormula formula)
+    public Chord(AbsoluteNote root, ChordFormula formula)
     {
       Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -74,18 +74,18 @@ namespace Bach.Model
 
       Name = buf.ToString();
 
-      _notes = new NoteCollection(Formula.Generate(Root).Take(formula.Count).ToArray());
+      _notes = new AbsoluteNoteCollection(Formula.Generate(Root).Take(formula.Count).ToArray());
     }
 
     #endregion
 
     #region Properties
 
-    public Note Root { get; }
+    public AbsoluteNote Root { get; }
     public string Name { get; }
     public ChordFormula Formula { get; }
 
-    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
+    public ReadOnlyCollection<AbsoluteNote> Notes => new ReadOnlyCollection<AbsoluteNote>(_notes);
 
     #endregion
 
@@ -96,7 +96,7 @@ namespace Bach.Model
       return GetEnumerator();
     }
 
-    public IEnumerator<Note> GetEnumerator()
+    public IEnumerator<AbsoluteNote> GetEnumerator()
     {
       return _notes.GetEnumerator();
     }
@@ -131,7 +131,7 @@ namespace Bach.Model
       var notes = Notes.ToList();
       while( inversion > 0 )
       {
-        Note bass = notes[0] + Note.IntervalsPerOctave;
+        AbsoluteNote bass = notes[0] + AbsoluteNote.IntervalsPerOctave;
         notes.RemoveAt(0);
         notes.Add(bass);
 

@@ -32,25 +32,25 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class NoteCollection: Collection<Note>,
-                               IEquatable<IEnumerable<Note>>
+  public class AbsoluteNoteCollection: Collection<AbsoluteNote>,
+                                       IEquatable<IEnumerable<AbsoluteNote>>
   {
     #region Construction/Destruction
 
-    public NoteCollection()
+    public AbsoluteNoteCollection()
     {
     }
 
-    public NoteCollection(IList<Note> list)
+    public AbsoluteNoteCollection(IList<AbsoluteNote> list)
       : base(list)
     {
     }
 
     #endregion
 
-    #region IEquatable<IEnumerable<Note>> Members
+    #region IEquatable<IEnumerable<AbsoluteNote>> Members
 
-    public bool Equals(IEnumerable<Note> other)
+    public bool Equals(IEnumerable<AbsoluteNote> other)
     {
       if( ReferenceEquals(other, this) )
       {
@@ -69,19 +69,19 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public static bool TryParse(string value, out NoteCollection notes, int defaultOctave = 4)
+    public static bool TryParse(string value, out AbsoluteNoteCollection notes, int defaultOctave = 4)
     {
       Contract.Requires<ArgumentNullException>(value != null);
       Contract.Requires<ArgumentException>(value.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= AbsoluteNote.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= AbsoluteNote.MaxOctave);
 
-      notes = new NoteCollection();
+      notes = new AbsoluteNoteCollection();
 
       foreach( string s in value.Split(',') )
       {
-        Note note;
-        if( !Note.TryParse(s, out note, defaultOctave) )
+        AbsoluteNote note;
+        if( !AbsoluteNote.TryParse(s, out note, defaultOctave) )
         {
           notes = null;
           return false;
@@ -93,14 +93,14 @@ namespace Bach.Model
       return true;
     }
 
-    public static NoteCollection Parse(string value, int defaultOctave = 4)
+    public static AbsoluteNoteCollection Parse(string value, int defaultOctave = 4)
     {
       Contract.Requires<ArgumentNullException>(value != null);
       Contract.Requires<ArgumentException>(value.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= AbsoluteNote.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= AbsoluteNote.MaxOctave);
 
-      NoteCollection notes;
+      AbsoluteNoteCollection notes;
       if( !TryParse(value, out notes, defaultOctave) )
       {
         throw new FormatException($"{value} contains invalid notes");
@@ -109,14 +109,14 @@ namespace Bach.Model
       return notes;
     }
 
-    public static string ToString(IEnumerable<Note> notes)
+    public static string ToString(IEnumerable<AbsoluteNote> notes)
     {
       Contract.Requires<ArgumentNullException>(notes != null);
 
       var buf = new StringBuilder();
       var needsComma = false;
 
-      foreach( Note note in notes )
+      foreach( AbsoluteNote note in notes )
       {
         if( needsComma )
         {
@@ -150,15 +150,15 @@ namespace Bach.Model
         return false;
       }
 
-      return Equals((NoteCollection) other);
+      return Equals((AbsoluteNoteCollection) other);
     }
 
     public override int GetHashCode()
     {
       const int MULTIPLIER = 89;
 
-      Note first = this.FirstOrDefault();
-      Note last = this.LastOrDefault();
+      AbsoluteNote first = this.FirstOrDefault();
+      AbsoluteNote last = this.LastOrDefault();
 
       unchecked
       {

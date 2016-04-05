@@ -136,7 +136,7 @@ namespace Bach.Model
       return Name.GetHashCode();
     }
 
-    public IEnumerable<Note> Generate(Note root)
+    public IEnumerable<AbsoluteNote> Generate(AbsoluteNote root)
     {
       int intervalCount = _intervals.Length;
       var index = 0;
@@ -154,7 +154,7 @@ namespace Bach.Model
         int octaveAdd = index / intervalCount;
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
-        Note note = root.Add(interval.Steps + octaveAdd * Note.IntervalsPerOctave, accidentalMode);
+        AbsoluteNote note = root.Add(interval.Steps + octaveAdd * AbsoluteNote.IntervalsPerOctave, accidentalMode);
         yield return note;
 
         ++index;
