@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: Formula.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -155,6 +155,29 @@ namespace Bach.Model
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
         AbsoluteNote note = root.Add(interval.Steps + octaveAdd * AbsoluteNote.IntervalsPerOctave, accidentalMode);
+        yield return note;
+
+        ++index;
+      }
+    }
+
+    public IEnumerable<Note> Generate(Note root)
+    {
+      int intervalCount = _intervals.Length;
+      var index = 0;
+
+      while( true )
+      {
+        Interval interval = _intervals[index % intervalCount];
+
+        var accidentalMode = AccidentalMode.FavorSharps;
+        if( interval.Quality == IntervalQuality.Diminished || interval.Quality == IntervalQuality.Minor )
+        {
+          accidentalMode = AccidentalMode.FavorFlats;
+        }
+
+        // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
+        Note note = root.Add(interval.Steps, accidentalMode);
         yield return note;
 
         ++index;

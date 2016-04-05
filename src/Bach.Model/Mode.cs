@@ -33,17 +33,17 @@ namespace Bach.Model
   using System.Text;
 
   public class Mode: IEquatable<Mode>,
-                     IEnumerable<AbsoluteNote>
+                     IEnumerable<Note>
   {
     #region Data Members
 
-    private readonly AbsoluteNoteCollection _notes;
+    private readonly NoteCollection _notes;
 
     #endregion
 
     #region Construction/Destruction
 
-    public Mode(AbsoluteNote root, ModeFormula formula)
+    public Mode(Note root, ModeFormula formula)
     {
       Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -60,27 +60,27 @@ namespace Bach.Model
       Name = buf.ToString();
 
       ScaleFormula major = ScaleFormula.Major;
-      _notes = new AbsoluteNoteCollection(new Scale(Root, major).Skip(Formula.Tonic - 1).Take(major.Count).ToArray());
+      _notes = new NoteCollection(new Scale(Root, major).Skip(Formula.Tonic - 1).Take(major.Count).ToArray());
     }
 
     #endregion
 
     #region Properties
 
-    public AbsoluteNote Root { get; }
+    public Note Root { get; }
     public string Name { get; }
     public ModeFormula Formula { get; }
 
     #endregion
 
-    #region IEnumerable<AbsoluteNote> Members
+    #region IEnumerable<Note> Members
 
     IEnumerator IEnumerable.GetEnumerator()
     {
       return GetEnumerator();
     }
 
-    public IEnumerator<AbsoluteNote> GetEnumerator()
+    public IEnumerator<Note> GetEnumerator()
     {
       return _notes.GetEnumerator();
     }

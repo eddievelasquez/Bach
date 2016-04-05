@@ -44,26 +44,26 @@ namespace Bach.Model.Test
     [Fact]
     public void GenerateScaleTest()
     {
-      AbsoluteNote root = AbsoluteNote.Parse("C4");
-      TestScale("C4,D4,E4,F4,G4,A4,B4", root, ScaleFormula.Major);
-      TestScale("C4,D4,Eb4,F4,G4,Ab4,Bb4", root, ScaleFormula.NaturalMinor);
-      TestScale("C4,D4,Eb4,F4,G4,Ab4,B4", root, ScaleFormula.HarmonicMinor);
-      TestScale("C4,D4,Eb4,F4,G4,A4,B4", root, ScaleFormula.MelodicMinor);
-      TestScale("C4,D4,Eb4,F4,Gb4,G#4,A4,B4", root, ScaleFormula.Diminished);
-      TestScale("C4,Db4,Eb4,Fb4,F#4,G4,A4,Bb4", root, ScaleFormula.Polytonal);
-      TestScale("C4,D4,E4,F#4,G#4", root, ScaleFormula.WholeTone);
-      TestScale("C4,D4,E4,G4,A4", root, ScaleFormula.Pentatonic);
-      TestScale("C4,Eb4,F4,G4,Bb4", root, ScaleFormula.MinorPentatonic);
-      TestScale("C4,Eb4,F4,Gb4,G4,Bb4", root, ScaleFormula.Blues);
-      TestScale("C4,D4,Eb4,E4,G4,A4", root, ScaleFormula.Gospel);
+      Note root = Note.C;
+      TestScale("C,D,E,F,G,A,B", root, ScaleFormula.Major);
+      TestScale("C,D,Eb,F,G,Ab,Bb", root, ScaleFormula.NaturalMinor);
+      TestScale("C,D,Eb,F,G,Ab,B", root, ScaleFormula.HarmonicMinor);
+      TestScale("C,D,Eb,F,G,A,B", root, ScaleFormula.MelodicMinor);
+      TestScale("C,D,Eb,F,Gb,G#,A,B", root, ScaleFormula.Diminished);
+      TestScale("C,Db,Eb,Fb,F#,G,A,Bb", root, ScaleFormula.Polytonal);
+      TestScale("C,D,E,F#,G#", root, ScaleFormula.WholeTone);
+      TestScale("C,D,E,G,A", root, ScaleFormula.Pentatonic);
+      TestScale("C,Eb,F,G,Bb", root, ScaleFormula.MinorPentatonic);
+      TestScale("C,Eb,F,Gb,G,Bb", root, ScaleFormula.Blues);
+      TestScale("C,D,Eb,E,G,A", root, ScaleFormula.Gospel);
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
-      object y = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
-      object z = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      object x = new Scale(Note.C, ScaleFormula.Major);
+      object y = new Scale(Note.C, ScaleFormula.Major);
+      object z = new Scale(Note.C, ScaleFormula.Major);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -76,9 +76,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
-      var y = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
-      var z = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      var x = new Scale(Note.C, ScaleFormula.Major);
+      var y = new Scale(Note.C, ScaleFormula.Major);
+      var z = new Scale(Note.C, ScaleFormula.Major);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -91,43 +91,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      object actual = new Scale(Note.C, ScaleFormula.Major);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      var actual = new Scale(Note.C, ScaleFormula.Major);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      object actual = new Scale(Note.C, ScaleFormula.Major);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      var actual = new Scale(Note.C, ScaleFormula.Major);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      var actual = new Scale(Note.C, ScaleFormula.Major);
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
-      var expected = new Scale(AbsoluteNote.Parse("C4"), ScaleFormula.Major);
+      var actual = new Scale(Note.C, ScaleFormula.Major);
+      var expected = new Scale(Note.C, ScaleFormula.Major);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -136,10 +136,10 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void TestScale(string expectedNotes, AbsoluteNote root, ScaleFormula formula)
+    private static void TestScale(string expectedNotes, Note root, ScaleFormula formula)
     {
-      AbsoluteNoteCollection expected = AbsoluteNoteCollection.Parse(expectedNotes);
-      var actual = new AbsoluteNoteCollection(new Scale(root, formula).Take(expected.Count).ToArray());
+      NoteCollection expected = NoteCollection.Parse(expectedNotes);
+      var actual = new NoteCollection(new Scale(root, formula).Take(expected.Count).ToArray());
       Assert.Equal(expected, actual);
     }
 

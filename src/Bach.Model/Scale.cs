@@ -32,11 +32,11 @@ namespace Bach.Model
   using System.Text;
 
   public class Scale: IEquatable<Scale>,
-                      IEnumerable<AbsoluteNote>
+                      IEnumerable<Note>
   {
     #region Construction/Destruction
 
-    public Scale(AbsoluteNote root, Formula formula)
+    public Scale(Note root, Formula formula)
     {
       Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -57,20 +57,20 @@ namespace Bach.Model
 
     #region Properties
 
-    public AbsoluteNote Root { get; }
+    public Note Root { get; }
     public string Name { get; }
     public Formula Formula { get; }
 
     #endregion
 
-    #region IEnumerable<AbsoluteNote> Members
+    #region IEnumerable<Note> Members
 
     IEnumerator IEnumerable.GetEnumerator()
     {
       return GetEnumerator();
     }
 
-    public IEnumerator<AbsoluteNote> GetEnumerator()
+    public IEnumerator<Note> GetEnumerator()
     {
       return Formula.Generate(Root).GetEnumerator();
     }
@@ -121,7 +121,7 @@ namespace Bach.Model
 
     public override string ToString()
     {
-      return AbsoluteNoteCollection.ToString(this);
+      return NoteCollection.ToString(this);
     }
 
     #endregion
