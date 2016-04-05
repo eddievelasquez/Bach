@@ -154,23 +154,23 @@ namespace Bach.Model.Test
       Assert.Equal(expected, actual);
     }
 
-    private static void TestNext(Note note, Note expectedSharp, Note expectedFlat = null)
+    private static void TestNext(Note note, Note expectedSharp, Note? expectedFlat = null)
     {
       TestAdd(note, 1, expectedSharp, expectedFlat);
     }
 
-    private static void TestPrevious(Note note, Note expectedSharp, Note expectedFlat = null)
+    private static void TestPrevious(Note note, Note expectedSharp, Note? expectedFlat = null)
     {
       TestSubtract(note, 1, expectedSharp, expectedFlat);
     }
 
-    private static void TestAdd(Note note, int interval, Note expectedSharp, Note expectedFlat = null)
+    private static void TestAdd(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
     {
       Assert.Equal(expectedSharp, note.Add(interval, AccidentalMode.FavorSharps));
       Assert.Equal(expectedFlat ?? expectedSharp, note.Add(interval, AccidentalMode.FavorFlats));
     }
 
-    private static void TestSubtract(Note note, int interval, Note expectedSharp, Note expectedFlat = null)
+    private static void TestSubtract(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
     {
       Assert.Equal(expectedSharp, note.Subtract(interval, AccidentalMode.FavorSharps));
       Assert.Equal(expectedFlat ?? expectedSharp, note.Subtract(interval, AccidentalMode.FavorFlats));

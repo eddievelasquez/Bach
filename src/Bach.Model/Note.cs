@@ -28,8 +28,8 @@ namespace Bach.Model
   using System;
   using System.Diagnostics.Contracts;
 
-  public sealed class Note: IEquatable<Note>,
-                            IComparable<Note>
+  public struct Note: IEquatable<Note>,
+                      IComparable<Note>
   {
     #region Data Members
 
@@ -52,6 +52,11 @@ namespace Bach.Model
     public static readonly Note ASharp;
     public static readonly Note BFlat;
     public static readonly Note B;
+
+    private readonly sbyte _tone;
+    private readonly sbyte _accidental;
+    private readonly sbyte _value;
+    private sbyte _reserved;
 
     #endregion
 
@@ -98,9 +103,10 @@ namespace Bach.Model
 
     private Note(int value, Tone tone, Accidental accidental)
     {
-      NumericValue = value;
-      Tone = tone;
-      Accidental = accidental;
+      _value = (sbyte) value;
+      _tone = (sbyte) tone;
+      _accidental = (sbyte) accidental;
+      _reserved = 0;
     }
 
     #endregion
@@ -108,9 +114,10 @@ namespace Bach.Model
     #region Properties
 
     public static AccidentalMode AccidentalMode { get; set; }
-    public int NumericValue { get; }
-    public Tone Tone { get; }
-    public Accidental Accidental { get; }
+
+    public int NumericValue => _value;
+    public Tone Tone => (Tone) _tone;
+    public Accidental Accidental => (Accidental) _accidental;
 
     #endregion
 
@@ -127,14 +134,6 @@ namespace Bach.Model
 
     public bool Equals(Note other)
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
       return NumericValue == other.NumericValue;
     }
 
@@ -146,21 +145,21 @@ namespace Bach.Model
     {
       if( string.IsNullOrEmpty(value) )
       {
-        note = null;
+        note = C;
         return false;
       }
 
       Tone tone;
       if( !Enum.TryParse(value.Substring(0, 1), true, out tone) )
       {
-        note = null;
+        note = C;
         return false;
       }
 
       var accidental = Accidental.Natural;
       if( value.Length > 1 && !AccidentalExtensions.TryParse(value.Substring(1), out accidental) )
       {
-        note = null;
+        note = C;
         return false;
       }
 
@@ -179,6 +178,18 @@ namespace Bach.Model
       return result;
     }
 
+    private static Note GetNote(int index, bool favorSharps)
+    {
+      Link link = s_links[index];
+
+      if( link.Natural != null )
+      {
+        return link.Natural.Value;
+      }
+
+      return favorSharps ? link.Sharp.Value : link.Flat.Value;
+    }
+
     public static Note Get(Tone tone, Accidental accidental = Accidental.Natural)
     {
       int index = (Tone.C.IntervalBetween(tone) + (int) accidental) % s_links.Length;
@@ -187,27 +198,13 @@ namespace Bach.Model
         index = s_links.Length + index;
       }
 
-      Link link = s_links[index];
-
-      if( link.Natural != null )
-      {
-        return link.Natural;
-      }
-
-      return accidental < Accidental.Natural ? link.Flat : link.Sharp;
+      return GetNote(index, accidental >= Accidental.Natural);
     }
 
     public Note Add(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       int index = (NumericValue + interval) % s_links.Length;
-      Link link = s_links[index];
-
-      if( link.Natural != null )
-      {
-        return link.Natural;
-      }
-
-      return mode == AccidentalMode.FavorSharps ? link.Sharp : link.Flat;
+      return GetNote(index, mode == AccidentalMode.FavorSharps);
     }
 
     public Note Subtract(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
@@ -219,14 +216,7 @@ namespace Bach.Model
         index = s_links.Length - interval;
       }
 
-      Link link = s_links[index];
-
-      if( link.Natural != null )
-      {
-        return link.Natural;
-      }
-
-      return mode == AccidentalMode.FavorSharps ? link.Sharp : link.Flat;
+      return GetNote(index, mode == AccidentalMode.FavorSharps);
     }
 
     public override bool Equals(object obj)
@@ -234,11 +224,6 @@ namespace Bach.Model
       if( ReferenceEquals(null, obj) )
       {
         return false;
-      }
-
-      if( ReferenceEquals(this, obj) )
-      {
-        return true;
       }
 
       return obj.GetType() == GetType() && Equals((Note) obj);
@@ -317,9 +302,9 @@ namespace Bach.Model
 
       #region Properties
 
-      public Note Natural { get; }
-      public Note Sharp { get; }
-      public Note Flat { get; }
+      public Note? Natural { get; }
+      public Note? Sharp { get; }
+      public Note? Flat { get; }
 
       #endregion
     }
