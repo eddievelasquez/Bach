@@ -138,6 +138,7 @@
     </Compile>
     <Compile Include="AbsoluteNoteCollection.cs" />
     <Compile Include="Note.cs" />
+    <Compile Include="NoteCollection.cs" />
     <Compile Include="Player\Chord.cs" />
     <Compile Include="Player\Duration.cs" />
     <Compile Include="Player\IPlayable.cs" />
