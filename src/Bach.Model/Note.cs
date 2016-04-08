@@ -167,7 +167,7 @@ namespace Bach.Model
         return false;
       }
 
-      note = Get(tone, accidental);
+      note = Lookup(tone, accidental);
       return true;
     }
 
@@ -194,7 +194,7 @@ namespace Bach.Model
       return favorSharps ? link.Sharp.Value : link.Flat.Value;
     }
 
-    public static Note Get(Tone tone, Accidental accidental = Accidental.Natural)
+    public static Note Lookup(Tone tone, Accidental accidental = Accidental.Natural)
     {
       int index = (Tone.C.IntervalBetween(tone) + (int) accidental) % s_links.Length;
       if( index < 0 )
