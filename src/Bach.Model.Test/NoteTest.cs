@@ -32,6 +32,28 @@ namespace Bach.Model.Test
     #region Public Methods
 
     [Fact]
+    public void NoteMemberTest()
+    {
+      TestNote(Note.C, 0, Tone.C, Accidental.Natural);
+      TestNote(Note.CSharp, 1, Tone.C, Accidental.Sharp);
+      TestNote(Note.DFlat, 1, Tone.D, Accidental.Flat);
+      TestNote(Note.D, 2, Tone.D, Accidental.Natural);
+      TestNote(Note.DSharp, 3, Tone.D, Accidental.Sharp);
+      TestNote(Note.EFlat, 3, Tone.E, Accidental.Flat);
+      TestNote(Note.E, 4, Tone.E, Accidental.Natural);
+      TestNote(Note.F, 5, Tone.F, Accidental.Natural);
+      TestNote(Note.FSharp, 6, Tone.F, Accidental.Sharp);
+      TestNote(Note.GFlat, 6, Tone.G, Accidental.Flat);
+      TestNote(Note.G, 7, Tone.G, Accidental.Natural);
+      TestNote(Note.GSharp, 8, Tone.G, Accidental.Sharp);
+      TestNote(Note.AFlat, 8, Tone.A, Accidental.Flat);
+      TestNote(Note.A, 9, Tone.A, Accidental.Natural);
+      TestNote(Note.ASharp, 10, Tone.A, Accidental.Sharp);
+      TestNote(Note.BFlat, 10, Tone.B, Accidental.Flat);
+      TestNote(Note.B, 11, Tone.B, Accidental.Natural);
+    }
+
+    [Fact]
     public void NextTest()
     {
       TestNext(Note.C, Note.CSharp, Note.DFlat);
@@ -146,6 +168,13 @@ namespace Bach.Model.Test
     #endregion
 
     #region Implementation
+
+    private static void TestNote(Note note, int expectedValue, Tone expectedTone, Accidental expectedAccidental)
+    {
+      Assert.Equal(expectedValue, note.NumericValue);
+      Assert.Equal(expectedTone, note.Tone);
+      Assert.Equal(expectedAccidental, note.Accidental);
+    }
 
     private static void TestTryParse(string value, Note expected)
     {

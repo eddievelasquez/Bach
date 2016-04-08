@@ -31,6 +31,16 @@ namespace Bach.Model
   public struct Note: IEquatable<Note>,
                       IComparable<Note>
   {
+    #region Constants
+
+    private const ushort TONE_MASK = 7;
+    private const ushort TONE_SHIFT = 7;
+    private const ushort ACCIDENTAL_MASK = 7;
+    private const ushort ACCIDENTAL_SHIFT = 4;
+    private const ushort VALUE_MASK = 0x0F;
+
+    #endregion
+
     #region Data Members
 
     private static readonly Link[] s_links;
@@ -53,10 +63,7 @@ namespace Bach.Model
     public static readonly Note BFlat;
     public static readonly Note B;
 
-    private readonly sbyte _tone;
-    private readonly sbyte _accidental;
-    private readonly sbyte _value;
-    private sbyte _reserved;
+    private readonly ushort _encoded;
 
     #endregion
 
@@ -103,10 +110,7 @@ namespace Bach.Model
 
     private Note(int value, Tone tone, Accidental accidental)
     {
-      _value = (sbyte) value;
-      _tone = (sbyte) tone;
-      _accidental = (sbyte) accidental;
-      _reserved = 0;
+      _encoded = Encode(value, tone, accidental);
     }
 
     #endregion
@@ -115,9 +119,9 @@ namespace Bach.Model
 
     public static AccidentalMode AccidentalMode { get; set; }
 
-    public int NumericValue => _value;
-    public Tone Tone => (Tone) _tone;
-    public Accidental Accidental => (Accidental) _accidental;
+    public int NumericValue => DecodeValue(_encoded);
+    public Tone Tone => DecodeTone(_encoded);
+    public Accidental Accidental => DecodeAccidental(_encoded);
 
     #endregion
 
@@ -277,6 +281,41 @@ namespace Bach.Model
     {
       Contract.Requires<ArgumentNullException>(note != null);
       return note.Subtract(1, AccidentalMode);
+    }
+
+    #endregion
+
+    #region Implementation
+
+    private static ushort Encode(int value, Tone tone, Accidental accidental)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
+      Contract.Requires<ArgumentOutOfRangeException>(tone >= Tone.C && tone <= Tone.B);
+      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat
+                                                     && accidental <= Accidental.DoubleSharp);
+      var encoded =
+        (ushort)
+          ((((ushort) tone & TONE_MASK) << TONE_SHIFT) | (((ushort) (accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT)
+           | ((ushort) value & VALUE_MASK));
+      return encoded;
+    }
+
+    private static int DecodeValue(ushort encoded)
+    {
+      int result = encoded & VALUE_MASK;
+      return result;
+    }
+
+    private static Tone DecodeTone(ushort encoded)
+    {
+      int result = (encoded >> TONE_SHIFT) & TONE_MASK;
+      return (Tone) result;
+    }
+
+    private static Accidental DecodeAccidental(ushort encoded)
+    {
+      int result = ((encoded >> ACCIDENTAL_SHIFT) & ACCIDENTAL_MASK) - 2;
+      return (Accidental) result;
     }
 
     #endregion
