@@ -83,7 +83,7 @@ namespace Bach.Model
       Accidental accidental;
       if( !TryParse(value, out accidental) )
       {
-        throw new ArgumentException($"{value} is not a valid accidental");
+        throw new FormatException($"{value} is not a valid accidental");
       }
 
       return accidental;

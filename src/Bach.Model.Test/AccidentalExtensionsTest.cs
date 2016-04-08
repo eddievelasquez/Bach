@@ -55,7 +55,7 @@ namespace Bach.Model.Test
     [Fact]
     public void ParseThrowsWithInvalidAccidentalSymbolTest()
     {
-      Assert.Throws<ArgumentException>(() => { AccidentalExtensions.Parse("&"); });
+      Assert.Throws<FormatException>(() => { AccidentalExtensions.Parse("&"); });
     }
 
     #endregion
