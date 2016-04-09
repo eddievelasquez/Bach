@@ -71,8 +71,11 @@ namespace Bach.Model
 
     public static bool TryParse(string value, out NoteCollection notes)
     {
-      Contract.Requires<ArgumentNullException>(value != null);
-      Contract.Requires<ArgumentException>(value.Length > 0);
+      if( string.IsNullOrEmpty(value) )
+      {
+        notes = null;
+        return false;
+      }
 
       notes = new NoteCollection();
 

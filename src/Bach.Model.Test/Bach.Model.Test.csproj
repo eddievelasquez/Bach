@@ -79,6 +79,7 @@
     <Compile Include="ModeFormulaTest.cs" />
     <Compile Include="ModeTest.cs" />
     <Compile Include="AbsoluteNoteTest.cs" />
+    <Compile Include="NoteCollectionTest.cs" />
     <Compile Include="NoteTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FormulaTest.cs" />
