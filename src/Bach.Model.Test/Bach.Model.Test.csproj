@@ -75,6 +75,7 @@
     <Compile Include="Instruments\BassDefinitionTest.cs" />
     <Compile Include="Instruments\StringedInstrumentTest.cs" />
     <Compile Include="Instruments\TuningTest.cs" />
+    <Compile Include="IntervalQualityExtensionsTest.cs" />
     <Compile Include="IntervalTest.cs" />
     <Compile Include="ModeFormulaTest.cs" />
     <Compile Include="ModeTest.cs" />
