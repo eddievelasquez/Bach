@@ -189,21 +189,26 @@ namespace Bach.Model
 
     public static Note Parse(string value)
     {
+      Contract.Requires<ArgumentNullException>(value != null);
+      Contract.Requires<ArgumentException>(value.Length > 0);
+
       Note result;
       if( !TryParse(value, out result) )
       {
-        throw new ArgumentException($"{value} is not a valid note");
+        throw new FormatException($"{value} is not a valid note");
       }
 
       return result;
     }
 
+    [Pure]
     public Note Add(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       int newInterval = (Interval + interval) % INTERVAL_COUNT;
       return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
     }
 
+    [Pure]
     public Note Subtract(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       interval %= INTERVAL_COUNT;

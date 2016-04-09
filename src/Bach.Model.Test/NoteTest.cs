@@ -25,6 +25,7 @@
 
 namespace Bach.Model.Test
 {
+  using System;
   using Xunit;
 
   public class NoteTest
@@ -209,6 +210,82 @@ namespace Bach.Model.Test
       Assert.False(Note.TryParse("", out note));
       Assert.False(Note.TryParse("J", out note));
       Assert.False(Note.TryParse("C$", out note));
+    }
+
+    [Fact]
+    public void ParseTest()
+    {
+      Assert.Equal(new Note(Tone.C, Accidental.DoubleFlat) , Note.Parse("Cbb"));
+      Assert.Equal(new Note(Tone.C, Accidental.Flat) , Note.Parse("CB"));
+      Assert.Equal(Note.C, Note.Parse("C"));
+      Assert.Equal(Note.CSharp, Note.Parse("c#"));
+      Assert.Equal(new Note(Tone.C, Accidental.DoubleSharp), Note.Parse("c##"));
+    }
+
+    [Fact]
+    public void ParseRejectsInvalidStringsTest()
+    {
+      Assert.Throws<ArgumentNullException>(() => Note.Parse(null));
+      Assert.Throws<ArgumentException>(() => Note.Parse(""));
+      Assert.Throws<FormatException>(() => Note.Parse("J"));
+      Assert.Throws<FormatException>(() => Note.Parse("C$"));
+    }
+
+    [Fact]
+    public void EqualsTest()
+    {
+      object actual = new Note(Tone.C);
+      Assert.True(Note.C.Equals(actual));
+      Assert.False(Note.C.Equals(null));
+    }
+
+    [Fact]
+    public void AccidentalModeTest()
+    {
+      Note.AccidentalMode = AccidentalMode.FavorFlats;
+      Assert.Equal(AccidentalMode.FavorFlats, Note.AccidentalMode);
+      Note.AccidentalMode = AccidentalMode.FavorSharps;
+      Assert.Equal(AccidentalMode.FavorSharps, Note.AccidentalMode);
+    }
+
+    [Fact]
+    public void LogicalOperatorsTest()
+    {
+      Assert.True(Note.C == new Note(Tone.B, Accidental.Sharp));
+      Assert.True(Note.C != Note.B);
+      Assert.True(Note.C < Note.B);
+      Assert.True(Note.C <= Note.B);
+      Assert.True(Note.D > Note.C);
+      Assert.True(Note.D >= Note.C);
+    }
+
+    [Fact]
+    public void ArithmeticOperatorsTest()
+    {
+      Assert.Equal(Note.C, Note.B + 1);
+      Assert.Equal(Note.C, Note.C + 12);
+      Assert.Equal(Note.B, Note.C - 1);
+      Assert.Equal(Note.C, Note.C - 12);
+
+      Note note = Note.B;
+      Assert.Equal(Note.B, note++);
+      Assert.Equal(Note.C, note);
+      Assert.Equal(Note.CSharp, ++note);
+
+      note = Note.C;
+      Assert.Equal(Note.C, note--);
+      Assert.Equal(Note.B, note);
+      Assert.Equal(Note.BFlat, --note);
+    }
+
+    [Fact]
+    public void ToStringTest()
+    {
+      Assert.Equal("Cbb", new Note(Tone.C, Accidental.DoubleFlat).ToString());
+      Assert.Equal("Cb", new Note(Tone.C, Accidental.Flat).ToString());
+      Assert.Equal("C", new Note(Tone.C).ToString());
+      Assert.Equal("C#", new Note(Tone.C, Accidental.Sharp).ToString());
+      Assert.Equal("C##", new Note(Tone.C, Accidental.DoubleSharp).ToString());
     }
 
     #endregion
