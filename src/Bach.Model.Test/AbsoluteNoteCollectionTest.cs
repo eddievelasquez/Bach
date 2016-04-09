@@ -25,6 +25,7 @@
 
 namespace Bach.Model.Test
 {
+  using System;
   using System.Linq;
   using Xunit;
 
@@ -33,19 +34,16 @@ namespace Bach.Model.Test
     #region Public Methods
 
     [Fact]
-    public void ParseWithNotesTest()
+    public void ParseTest()
     {
       var expected = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
-      AbsoluteNoteCollection actual = AbsoluteNoteCollection.Parse("C4,C5");
-      Assert.True(actual.SequenceEqual(expected));
-    }
-
-    [Fact]
-    public void ParseWithMidiTest()
-    {
-      var expected = new AbsoluteNoteCollection(new[] { AbsoluteNote.FromMidi(60), AbsoluteNote.FromMidi(70) });
-      AbsoluteNoteCollection actual = AbsoluteNoteCollection.Parse("60,70");
-      Assert.True(actual.SequenceEqual(expected));
+      Assert.Equal(expected, AbsoluteNoteCollection.Parse("C4,C5")); // Using notes
+      Assert.Equal(expected, AbsoluteNoteCollection.Parse("60,72")); // Using midi
+      Assert.Throws<ArgumentNullException>(() => AbsoluteNoteCollection.Parse(null));
+      Assert.Throws<ArgumentException>(() => AbsoluteNoteCollection.Parse(""));
+      Assert.Throws<ArgumentOutOfRangeException>(() => AbsoluteNoteCollection.Parse("C4,C5", Int32.MinValue));
+      Assert.Throws<ArgumentOutOfRangeException>(() => AbsoluteNoteCollection.Parse("C4,C5", Int32.MaxValue));
+      Assert.Throws<FormatException>(() => AbsoluteNoteCollection.Parse("C$4,Z5"));
     }
 
     [Fact]
@@ -53,6 +51,21 @@ namespace Bach.Model.Test
     {
       var actual = new AbsoluteNoteCollection(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("C5") });
       Assert.Equal("C4,C5", actual.ToString());
+    }
+
+    [Fact]
+    public void TryParseTest()
+    {
+      AbsoluteNoteCollection collection;
+      Assert.True(AbsoluteNoteCollection.TryParse("C4,E4", out collection));
+      Assert.Equal(new[] { AbsoluteNote.Parse("C4"), AbsoluteNote.Parse("E4") }, collection);
+      Assert.False(AbsoluteNoteCollection.TryParse(null, out collection));
+      Assert.Null(collection);
+      Assert.False(AbsoluteNoteCollection.TryParse("", out collection));
+      Assert.Null(collection);
+      Assert.Throws<ArgumentOutOfRangeException>(() => AbsoluteNoteCollection.TryParse("C4", out collection, int.MaxValue));
+      Assert.Throws<ArgumentOutOfRangeException>(() => AbsoluteNoteCollection.TryParse("C4", out collection, int.MinValue));
+      Assert.False(AbsoluteNoteCollection.TryParse("C$4,Z5", out collection));
     }
 
     [Fact]

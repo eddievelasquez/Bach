@@ -71,11 +71,15 @@ namespace Bach.Model
 
     public static bool TryParse(string value, out AbsoluteNoteCollection notes, int defaultOctave = 4)
     {
-      Contract.Requires<ArgumentNullException>(value != null);
-      Contract.Requires<ArgumentException>(value.Length > 0);
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= AbsoluteNote.MinOctave);
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= AbsoluteNote.MaxOctave);
 
+      if ( string.IsNullOrEmpty(value) )
+      {
+        notes = null;
+        return false;
+      }
+     
       notes = new AbsoluteNoteCollection();
 
       foreach( string s in value.Split(',') )
