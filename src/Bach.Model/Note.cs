@@ -37,7 +37,8 @@ namespace Bach.Model
     private const ushort TONE_SHIFT = 7;
     private const ushort ACCIDENTAL_MASK = 7;
     private const ushort ACCIDENTAL_SHIFT = 4;
-    private const ushort VALUE_MASK = 0x0F;
+    private const ushort INTERVAL_MASK = 0x0F;
+    private const int INTERVAL_COUNT = 12;
 
     #endregion
 
@@ -71,46 +72,61 @@ namespace Bach.Model
 
     static Note()
     {
-      // Create notes
-      C = new Note(0, Tone.C, Accidental.Natural);
-      CSharp = new Note(1, Tone.C, Accidental.Sharp);
-      DFlat = new Note(1, Tone.D, Accidental.Flat);
-      D = new Note(2, Tone.D, Accidental.Natural);
-      DSharp = new Note(3, Tone.D, Accidental.Sharp);
-      EFlat = new Note(3, Tone.E, Accidental.Flat);
-      E = new Note(4, Tone.E, Accidental.Natural);
-      F = new Note(5, Tone.F, Accidental.Natural);
-      FSharp = new Note(6, Tone.F, Accidental.Sharp);
-      GFlat = new Note(6, Tone.G, Accidental.Flat);
-      G = new Note(7, Tone.G, Accidental.Natural);
-      GSharp = new Note(8, Tone.G, Accidental.Sharp);
-      AFlat = new Note(8, Tone.A, Accidental.Flat);
-      A = new Note(9, Tone.A, Accidental.Natural);
-      ASharp = new Note(10, Tone.A, Accidental.Sharp);
-      BFlat = new Note(10, Tone.B, Accidental.Flat);
-      B = new Note(11, Tone.B, Accidental.Natural);
+      s_links = new Link[INTERVAL_COUNT];
 
-      // Link all notes
-      s_links = new Link[12];
-      s_links[0] = new Link(C);
-      s_links[1] = new Link(DFlat, CSharp);
-      s_links[2] = new Link(D);
-      s_links[3] = new Link(EFlat, DSharp);
-      s_links[4] = new Link(E);
-      s_links[5] = new Link(F);
-      s_links[6] = new Link(GFlat, FSharp);
-      s_links[7] = new Link(G);
-      s_links[8] = new Link(AFlat, GSharp);
-      s_links[9] = new Link(A);
-      s_links[10] = new Link(BFlat, ASharp);
-      s_links[11] = new Link(B);
+      C = Create(Tone.C);
+      CSharp = Create(Tone.C, Accidental.Sharp);
+      DFlat = Create(Tone.D, Accidental.Flat);
+      D = Create(Tone.D);
+      DSharp = Create(Tone.D, Accidental.Sharp);
+      EFlat = Create(Tone.E, Accidental.Flat);
+      E = Create(Tone.E);
+      F = Create(Tone.F);
+      FSharp = Create(Tone.F, Accidental.Sharp);
+      GFlat = Create(Tone.G, Accidental.Flat);
+      G = Create(Tone.G);
+      GSharp = Create(Tone.G, Accidental.Sharp);
+      AFlat = Create(Tone.A, Accidental.Flat);
+      A = Create(Tone.A);
+      ASharp = Create(Tone.A, Accidental.Sharp);
+      BFlat = Create(Tone.B, Accidental.Flat);
+      B = Create(Tone.B);
 
       AccidentalMode = AccidentalMode.FavorSharps;
     }
 
-    private Note(int value, Tone tone, Accidental accidental)
+    public Note(Tone tone, Accidental accidental = Accidental.Natural)
     {
-      _encoded = Encode(value, tone, accidental);
+      int interval = CalcInterval(tone, accidental);
+      _encoded = Encode(interval, tone, accidental);
+    }
+
+    private static Note Create(Tone tone, Accidental accidental = Accidental.Natural)
+    {
+      var note = new Note(tone, accidental);
+      Link link = s_links[note.Interval];
+      if( link == null )
+      {
+        link = new Link();
+        s_links[note.Interval] = link;
+      }
+
+      switch( accidental )
+      {
+        case Accidental.Flat:
+          link.Flat = note;
+          break;
+
+        case Accidental.Natural:
+          link.Natural = note;
+          break;
+
+        case Accidental.Sharp:
+          link.Sharp = note;
+          break;
+      }
+
+      return note;
     }
 
     #endregion
@@ -119,7 +135,7 @@ namespace Bach.Model
 
     public static AccidentalMode AccidentalMode { get; set; }
 
-    public int NumericValue => DecodeValue(_encoded);
+    public int Interval => DecodeInterval(_encoded);
     public Tone Tone => DecodeTone(_encoded);
     public Accidental Accidental => DecodeAccidental(_encoded);
 
@@ -129,7 +145,7 @@ namespace Bach.Model
 
     public int CompareTo(Note other)
     {
-      return NumericValue - other.NumericValue;
+      return Interval - other.Interval;
     }
 
     #endregion
@@ -138,7 +154,7 @@ namespace Bach.Model
 
     public bool Equals(Note other)
     {
-      return NumericValue == other.NumericValue;
+      return Interval == other.Interval;
     }
 
     #endregion
@@ -167,7 +183,7 @@ namespace Bach.Model
         return false;
       }
 
-      note = Lookup(tone, accidental);
+      note = new Note(tone, accidental);
       return true;
     }
 
@@ -182,45 +198,22 @@ namespace Bach.Model
       return result;
     }
 
-    private static Note GetNote(int index, bool favorSharps)
-    {
-      Link link = s_links[index];
-
-      if( link.Natural != null )
-      {
-        return link.Natural.Value;
-      }
-
-      return favorSharps ? link.Sharp.Value : link.Flat.Value;
-    }
-
-    public static Note Lookup(Tone tone, Accidental accidental = Accidental.Natural)
-    {
-      int index = (Tone.C.IntervalBetween(tone) + (int) accidental) % s_links.Length;
-      if( index < 0 )
-      {
-        index = s_links.Length + index;
-      }
-
-      return GetNote(index, accidental >= Accidental.Natural);
-    }
-
     public Note Add(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      int index = (NumericValue + interval) % s_links.Length;
-      return GetNote(index, mode == AccidentalMode.FavorSharps);
+      int newInterval = (Interval + interval) % INTERVAL_COUNT;
+      return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
     }
 
     public Note Subtract(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      interval %= s_links.Length;
-      int index = NumericValue - interval;
-      if( index < 0 )
+      interval %= INTERVAL_COUNT;
+      int newInterval = Interval - interval;
+      if( newInterval < 0 )
       {
-        index = s_links.Length - interval;
+        newInterval = INTERVAL_COUNT - interval;
       }
 
-      return GetNote(index, mode == AccidentalMode.FavorSharps);
+      return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
     }
 
     public override bool Equals(object obj)
@@ -235,7 +228,7 @@ namespace Bach.Model
 
     public override int GetHashCode()
     {
-      return NumericValue;
+      return Interval;
     }
 
     public override string ToString()
@@ -287,6 +280,29 @@ namespace Bach.Model
 
     #region Implementation
 
+    private static int CalcInterval(Tone tone, Accidental accidental)
+    {
+      int interval = (Tone.C.IntervalBetween(tone) + (int)accidental) % INTERVAL_COUNT;
+      if (interval < 0)
+      {
+        interval = INTERVAL_COUNT + interval;
+      }
+
+      return interval;
+    }
+
+    private static Note GetNote(int index, bool favorSharps)
+    {
+      Link link = s_links[index];
+
+      if (link.Natural != null)
+      {
+        return link.Natural.Value;
+      }
+
+      return favorSharps ? link.Sharp.Value : link.Flat.Value;
+    }
+
     private static ushort Encode(int value, Tone tone, Accidental accidental)
     {
       Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
@@ -295,14 +311,14 @@ namespace Bach.Model
                                                      && accidental <= Accidental.DoubleSharp);
       var encoded =
         (ushort)
-          ((((ushort) tone & TONE_MASK) << TONE_SHIFT) | (((ushort) (accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT)
-           | ((ushort) value & VALUE_MASK));
+          ((((ushort) tone & TONE_MASK) << TONE_SHIFT)
+           | (((ushort) (accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT) | ((ushort) value & INTERVAL_MASK));
       return encoded;
     }
 
-    private static int DecodeValue(ushort encoded)
+    private static int DecodeInterval(ushort encoded)
     {
-      int result = encoded & VALUE_MASK;
+      int result = encoded & INTERVAL_MASK;
       return result;
     }
 
@@ -324,26 +340,11 @@ namespace Bach.Model
 
     private class Link
     {
-      #region Construction/Destruction
-
-      public Link(Note natural)
-      {
-        Natural = natural;
-      }
-
-      public Link(Note flat, Note sharp)
-      {
-        Flat = flat;
-        Sharp = sharp;
-      }
-
-      #endregion
-
       #region Properties
 
-      public Note? Natural { get; }
-      public Note? Sharp { get; }
-      public Note? Flat { get; }
+      public Note? Natural { get; set; }
+      public Note? Sharp { get; set; }
+      public Note? Flat { get; set; }
 
       #endregion
     }
