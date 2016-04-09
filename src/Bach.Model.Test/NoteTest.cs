@@ -32,103 +32,149 @@ namespace Bach.Model.Test
     #region Public Methods
 
     [Fact]
-    public void NoteMemberTest()
+    public void ConstructorTest()
     {
-      TestNote(Note.C, 0, Tone.C, Accidental.Natural);
-      TestNote(Note.CSharp, 1, Tone.C, Accidental.Sharp);
-      TestNote(Note.DFlat, 1, Tone.D, Accidental.Flat);
-      TestNote(Note.D, 2, Tone.D, Accidental.Natural);
-      TestNote(Note.DSharp, 3, Tone.D, Accidental.Sharp);
-      TestNote(Note.EFlat, 3, Tone.E, Accidental.Flat);
-      TestNote(Note.E, 4, Tone.E, Accidental.Natural);
-      TestNote(Note.F, 5, Tone.F, Accidental.Natural);
-      TestNote(Note.FSharp, 6, Tone.F, Accidental.Sharp);
-      TestNote(Note.GFlat, 6, Tone.G, Accidental.Flat);
-      TestNote(Note.G, 7, Tone.G, Accidental.Natural);
-      TestNote(Note.GSharp, 8, Tone.G, Accidental.Sharp);
-      TestNote(Note.AFlat, 8, Tone.A, Accidental.Flat);
-      TestNote(Note.A, 9, Tone.A, Accidental.Natural);
-      TestNote(Note.ASharp, 10, Tone.A, Accidental.Sharp);
-      TestNote(Note.BFlat, 10, Tone.B, Accidental.Flat);
-      TestNote(Note.B, 11, Tone.B, Accidental.Natural);
+      ConstructorTestImpl(Tone.C, Accidental.DoubleFlat, 10);
+      ConstructorTestImpl(Tone.C, Accidental.Flat, 11);
+      ConstructorTestImpl(Tone.C, Accidental.Natural, 0);
+      ConstructorTestImpl(Tone.C, Accidental.Sharp, 1);
+      ConstructorTestImpl(Tone.C, Accidental.DoubleSharp, 2);
+
+      ConstructorTestImpl(Tone.D, Accidental.DoubleFlat, 0);
+      ConstructorTestImpl(Tone.D, Accidental.Flat, 1);
+      ConstructorTestImpl(Tone.D, Accidental.Natural, 2);
+      ConstructorTestImpl(Tone.D, Accidental.Sharp, 3);
+      ConstructorTestImpl(Tone.D, Accidental.DoubleSharp, 4);
+
+      ConstructorTestImpl(Tone.E, Accidental.DoubleFlat, 2);
+      ConstructorTestImpl(Tone.E, Accidental.Flat, 3);
+      ConstructorTestImpl(Tone.E, Accidental.Natural, 4);
+      ConstructorTestImpl(Tone.E, Accidental.Sharp, 5);
+      ConstructorTestImpl(Tone.E, Accidental.DoubleSharp, 6);
+
+      ConstructorTestImpl(Tone.F, Accidental.DoubleFlat, 3);
+      ConstructorTestImpl(Tone.F, Accidental.Flat, 4);
+      ConstructorTestImpl(Tone.F, Accidental.Natural, 5);
+      ConstructorTestImpl(Tone.F, Accidental.Sharp, 6);
+      ConstructorTestImpl(Tone.F, Accidental.DoubleSharp, 7);
+
+      ConstructorTestImpl(Tone.G, Accidental.DoubleFlat, 5);
+      ConstructorTestImpl(Tone.G, Accidental.Flat, 6);
+      ConstructorTestImpl(Tone.G, Accidental.Natural, 7);
+      ConstructorTestImpl(Tone.G, Accidental.Sharp, 8);
+      ConstructorTestImpl(Tone.G, Accidental.DoubleSharp, 9);
+
+      ConstructorTestImpl(Tone.A, Accidental.DoubleFlat, 7);
+      ConstructorTestImpl(Tone.A, Accidental.Flat, 8);
+      ConstructorTestImpl(Tone.A, Accidental.Natural, 9);
+      ConstructorTestImpl(Tone.A, Accidental.Sharp, 10);
+      ConstructorTestImpl(Tone.A, Accidental.DoubleSharp, 11);
+
+      ConstructorTestImpl(Tone.B, Accidental.DoubleFlat, 9);
+      ConstructorTestImpl(Tone.B, Accidental.Flat, 10);
+      ConstructorTestImpl(Tone.B, Accidental.Natural, 11);
+      ConstructorTestImpl(Tone.B, Accidental.Sharp, 0);
+      ConstructorTestImpl(Tone.B, Accidental.DoubleSharp, 1);
+    }
+
+    [Fact]
+    public void PredefinedNoteTest()
+    {
+      NoteMemberTestImpl(Note.C, Tone.C, Accidental.Natural, 0);
+      NoteMemberTestImpl(Note.CSharp, Tone.C, Accidental.Sharp, 1);
+      NoteMemberTestImpl(Note.DFlat, Tone.D, Accidental.Flat, 1);
+      NoteMemberTestImpl(Note.D, Tone.D, Accidental.Natural, 2);
+      NoteMemberTestImpl(Note.DSharp, Tone.D, Accidental.Sharp, 3);
+      NoteMemberTestImpl(Note.EFlat, Tone.E, Accidental.Flat, 3);
+      NoteMemberTestImpl(Note.E, Tone.E, Accidental.Natural, 4);
+      NoteMemberTestImpl(Note.F, Tone.F, Accidental.Natural, 5);
+      NoteMemberTestImpl(Note.FSharp, Tone.F, Accidental.Sharp, 6);
+      NoteMemberTestImpl(Note.GFlat, Tone.G, Accidental.Flat, 6);
+      NoteMemberTestImpl(Note.G, Tone.G, Accidental.Natural, 7);
+      NoteMemberTestImpl(Note.GSharp, Tone.G, Accidental.Sharp, 8);
+      NoteMemberTestImpl(Note.AFlat, Tone.A, Accidental.Flat, 8);
+      NoteMemberTestImpl(Note.A, Tone.A, Accidental.Natural, 9);
+      NoteMemberTestImpl(Note.ASharp, Tone.A, Accidental.Sharp, 10);
+      NoteMemberTestImpl(Note.BFlat, Tone.B, Accidental.Flat, 10);
+      NoteMemberTestImpl(Note.B, Tone.B, Accidental.Natural, 11);
     }
 
     [Fact]
     public void NextTest()
     {
-      TestNext(Note.C, Note.CSharp, Note.DFlat);
-      TestNext(Note.CSharp, Note.D);
-      TestNext(Note.DFlat, Note.D);
-      TestNext(Note.D, Note.DSharp, Note.EFlat);
-      TestNext(Note.DSharp, Note.E);
-      TestNext(Note.EFlat, Note.E);
-      TestNext(Note.E, Note.F);
-      TestNext(Note.F, Note.FSharp, Note.GFlat);
-      TestNext(Note.FSharp, Note.G);
-      TestNext(Note.GFlat, Note.G);
-      TestNext(Note.G, Note.GSharp, Note.AFlat);
-      TestNext(Note.GSharp, Note.A);
-      TestNext(Note.AFlat, Note.A);
-      TestNext(Note.A, Note.ASharp, Note.BFlat);
-      TestNext(Note.ASharp, Note.B);
-      TestNext(Note.BFlat, Note.B);
-      TestNext(Note.B, Note.C);
+      NextTestImpl(Note.C, Note.CSharp, Note.DFlat);
+      NextTestImpl(Note.CSharp, Note.D);
+      NextTestImpl(Note.DFlat, Note.D);
+      NextTestImpl(Note.D, Note.DSharp, Note.EFlat);
+      NextTestImpl(Note.DSharp, Note.E);
+      NextTestImpl(Note.EFlat, Note.E);
+      NextTestImpl(Note.E, Note.F);
+      NextTestImpl(Note.F, Note.FSharp, Note.GFlat);
+      NextTestImpl(Note.FSharp, Note.G);
+      NextTestImpl(Note.GFlat, Note.G);
+      NextTestImpl(Note.G, Note.GSharp, Note.AFlat);
+      NextTestImpl(Note.GSharp, Note.A);
+      NextTestImpl(Note.AFlat, Note.A);
+      NextTestImpl(Note.A, Note.ASharp, Note.BFlat);
+      NextTestImpl(Note.ASharp, Note.B);
+      NextTestImpl(Note.BFlat, Note.B);
+      NextTestImpl(Note.B, Note.C);
     }
 
     [Fact]
     public void AddTest()
     {
-      TestAdd(Note.C, 1, Note.CSharp, Note.DFlat);
-      TestAdd(Note.C, 2, Note.D);
-      TestAdd(Note.C, 3, Note.DSharp, Note.EFlat);
-      TestAdd(Note.C, 4, Note.E);
-      TestAdd(Note.C, 5, Note.F);
-      TestAdd(Note.C, 6, Note.FSharp, Note.GFlat);
-      TestAdd(Note.C, 7, Note.G);
-      TestAdd(Note.C, 8, Note.GSharp, Note.AFlat);
-      TestAdd(Note.C, 9, Note.A);
-      TestAdd(Note.C, 10, Note.ASharp, Note.BFlat);
-      TestAdd(Note.C, 11, Note.B);
-      TestAdd(Note.C, 12, Note.C);
+      AddTestImpl(Note.C, 1, Note.CSharp, Note.DFlat);
+      AddTestImpl(Note.C, 2, Note.D);
+      AddTestImpl(Note.C, 3, Note.DSharp, Note.EFlat);
+      AddTestImpl(Note.C, 4, Note.E);
+      AddTestImpl(Note.C, 5, Note.F);
+      AddTestImpl(Note.C, 6, Note.FSharp, Note.GFlat);
+      AddTestImpl(Note.C, 7, Note.G);
+      AddTestImpl(Note.C, 8, Note.GSharp, Note.AFlat);
+      AddTestImpl(Note.C, 9, Note.A);
+      AddTestImpl(Note.C, 10, Note.ASharp, Note.BFlat);
+      AddTestImpl(Note.C, 11, Note.B);
+      AddTestImpl(Note.C, 12, Note.C);
     }
 
     [Fact]
     public void PreviousTest()
     {
-      TestPrevious(Note.C, Note.B);
-      TestPrevious(Note.CSharp, Note.C);
-      TestPrevious(Note.DFlat, Note.C);
-      TestPrevious(Note.D, Note.CSharp, Note.DFlat);
-      TestPrevious(Note.DSharp, Note.D);
-      TestPrevious(Note.EFlat, Note.D);
-      TestPrevious(Note.E, Note.DSharp, Note.EFlat);
-      TestPrevious(Note.F, Note.E);
-      TestPrevious(Note.FSharp, Note.F);
-      TestPrevious(Note.GFlat, Note.F);
-      TestPrevious(Note.G, Note.FSharp, Note.GFlat);
-      TestPrevious(Note.GSharp, Note.G);
-      TestPrevious(Note.AFlat, Note.G);
-      TestPrevious(Note.A, Note.GSharp, Note.AFlat);
-      TestPrevious(Note.ASharp, Note.A);
-      TestPrevious(Note.BFlat, Note.A);
-      TestPrevious(Note.B, Note.ASharp, Note.BFlat);
+      PreviousTestImpl(Note.C, Note.B);
+      PreviousTestImpl(Note.CSharp, Note.C);
+      PreviousTestImpl(Note.DFlat, Note.C);
+      PreviousTestImpl(Note.D, Note.CSharp, Note.DFlat);
+      PreviousTestImpl(Note.DSharp, Note.D);
+      PreviousTestImpl(Note.EFlat, Note.D);
+      PreviousTestImpl(Note.E, Note.DSharp, Note.EFlat);
+      PreviousTestImpl(Note.F, Note.E);
+      PreviousTestImpl(Note.FSharp, Note.F);
+      PreviousTestImpl(Note.GFlat, Note.F);
+      PreviousTestImpl(Note.G, Note.FSharp, Note.GFlat);
+      PreviousTestImpl(Note.GSharp, Note.G);
+      PreviousTestImpl(Note.AFlat, Note.G);
+      PreviousTestImpl(Note.A, Note.GSharp, Note.AFlat);
+      PreviousTestImpl(Note.ASharp, Note.A);
+      PreviousTestImpl(Note.BFlat, Note.A);
+      PreviousTestImpl(Note.B, Note.ASharp, Note.BFlat);
     }
 
     [Fact]
     public void SubtractTest()
     {
-      TestSubtract(Note.B, 1, Note.BFlat, Note.ASharp);
-      TestSubtract(Note.B, 2, Note.A);
-      TestSubtract(Note.B, 3, Note.GSharp, Note.AFlat);
-      TestSubtract(Note.B, 4, Note.G);
-      TestSubtract(Note.B, 5, Note.FSharp, Note.GFlat);
-      TestSubtract(Note.B, 6, Note.F);
-      TestSubtract(Note.B, 7, Note.E);
-      TestSubtract(Note.B, 8, Note.DSharp, Note.EFlat);
-      TestSubtract(Note.B, 9, Note.D);
-      TestSubtract(Note.B, 10, Note.CSharp, Note.DFlat);
-      TestSubtract(Note.B, 11, Note.C);
-      TestSubtract(Note.B, 12, Note.B);
+      SubtractTestImpl(Note.B, 1, Note.BFlat, Note.ASharp);
+      SubtractTestImpl(Note.B, 2, Note.A);
+      SubtractTestImpl(Note.B, 3, Note.GSharp, Note.AFlat);
+      SubtractTestImpl(Note.B, 4, Note.G);
+      SubtractTestImpl(Note.B, 5, Note.FSharp, Note.GFlat);
+      SubtractTestImpl(Note.B, 6, Note.F);
+      SubtractTestImpl(Note.B, 7, Note.E);
+      SubtractTestImpl(Note.B, 8, Note.DSharp, Note.EFlat);
+      SubtractTestImpl(Note.B, 9, Note.D);
+      SubtractTestImpl(Note.B, 10, Note.CSharp, Note.DFlat);
+      SubtractTestImpl(Note.B, 11, Note.C);
+      SubtractTestImpl(Note.B, 12, Note.B);
     }
 
     [Fact]
@@ -144,19 +190,19 @@ namespace Bach.Model.Test
     [Fact]
     public void TryParseTest()
     {
-      TestTryParse("C", Note.C);
-      TestTryParse("C#", Note.CSharp);
-      TestTryParse("C##", Note.D);
-      TestTryParse("Cb", Note.B);
-      TestTryParse("Cbb", Note.BFlat);
-      TestTryParse("B#", Note.C);
-      TestTryParse("B##", Note.CSharp);
-      TestTryParse("Bb", Note.BFlat);
-      TestTryParse("Bbb", Note.A);
+      TryParseTestImpl("C", Note.C);
+      TryParseTestImpl("C#", Note.CSharp);
+      TryParseTestImpl("C##", Note.D);
+      TryParseTestImpl("Cb", Note.B);
+      TryParseTestImpl("Cbb", Note.BFlat);
+      TryParseTestImpl("B#", Note.C);
+      TryParseTestImpl("B##", Note.CSharp);
+      TryParseTestImpl("Bb", Note.BFlat);
+      TryParseTestImpl("Bbb", Note.A);
     }
 
     [Fact]
-    public void TryParseRejectsInvalidStrings()
+    public void TryParseRejectsInvalidStringsTest()
     {
       Note note;
       Assert.False(Note.TryParse(null, out note));
@@ -169,37 +215,43 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void TestNote(Note note, int expectedValue, Tone expectedTone, Accidental expectedAccidental)
+    private static void ConstructorTestImpl(Tone tone, Accidental accidental, int interval)
     {
-      Assert.Equal(expectedValue, note.NumericValue);
-      Assert.Equal(expectedTone, note.Tone);
-      Assert.Equal(expectedAccidental, note.Accidental);
+      var note = new Note(tone, accidental);
+      NoteMemberTestImpl(note, tone, accidental, interval);
     }
 
-    private static void TestTryParse(string value, Note expected)
+    private static void NoteMemberTestImpl(Note note, Tone tone, Accidental accidental, int interval)
+    {
+      Assert.Equal(interval, note.Interval);
+      Assert.Equal(tone, note.Tone);
+      Assert.Equal(accidental, note.Accidental);
+    }
+
+    private static void TryParseTestImpl(string value, Note expected)
     {
       Note actual;
       Assert.True(Note.TryParse(value, out actual));
       Assert.Equal(expected, actual);
     }
 
-    private static void TestNext(Note note, Note expectedSharp, Note? expectedFlat = null)
+    private static void NextTestImpl(Note note, Note expectedSharp, Note? expectedFlat = null)
     {
-      TestAdd(note, 1, expectedSharp, expectedFlat);
+      AddTestImpl(note, 1, expectedSharp, expectedFlat);
     }
 
-    private static void TestPrevious(Note note, Note expectedSharp, Note? expectedFlat = null)
+    private static void PreviousTestImpl(Note note, Note expectedSharp, Note? expectedFlat = null)
     {
-      TestSubtract(note, 1, expectedSharp, expectedFlat);
+      SubtractTestImpl(note, 1, expectedSharp, expectedFlat);
     }
 
-    private static void TestAdd(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
+    private static void AddTestImpl(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
     {
       Assert.Equal(expectedSharp, note.Add(interval, AccidentalMode.FavorSharps));
       Assert.Equal(expectedFlat ?? expectedSharp, note.Add(interval, AccidentalMode.FavorFlats));
     }
 
-    private static void TestSubtract(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
+    private static void SubtractTestImpl(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
     {
       Assert.Equal(expectedSharp, note.Subtract(interval, AccidentalMode.FavorSharps));
       Assert.Equal(expectedFlat ?? expectedSharp, note.Subtract(interval, AccidentalMode.FavorFlats));
