@@ -43,6 +43,14 @@ namespace Bach.Model.Test
     }
 
     [Fact]
+    public void ToStringTest()
+    {
+      const string EXPECTED = "Name";
+      var formula = new ModeFormula(EXPECTED, 2);
+      Assert.Equal(EXPECTED, formula.ToString());
+    }
+
+    [Fact]
     public void EqualsContractTest()
     {
       object x = new ModeFormula("Name", 2);
