@@ -25,6 +25,7 @@
 
 namespace Bach.Model.Test
 {
+  using System.Collections;
   using System.Linq;
   using Xunit;
 
@@ -132,6 +133,29 @@ namespace Bach.Model.Test
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
+    [Fact]
+    public void EnumeratorTest()
+    {
+      var mode = new Mode(Note.C, ModeFormula.Ionian);
+      var enumerator = ((IEnumerable) mode).GetEnumerator();
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.C, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.D, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.E, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.F, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.G, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.A, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.B, enumerator.Current);
+      Assert.False(enumerator.MoveNext());
+    }
+
+
     #endregion
 
     #region Implementation
@@ -139,7 +163,10 @@ namespace Bach.Model.Test
     private static void TestMode(string expectedNotes, Note root, ModeFormula formula)
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
-      Assert.Equal(expected, new Mode(root, formula).Take(expected.Count).ToArray());
+      var mode = new Mode(root, formula);
+      var actualNotes = mode.Take(expected.Count).ToArray();
+      Assert.Equal(expected, actualNotes);
+      Assert.Equal(expectedNotes, mode.ToString());
     }
 
     #endregion
