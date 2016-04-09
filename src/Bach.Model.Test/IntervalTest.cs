@@ -25,6 +25,7 @@
 
 namespace Bach.Model.Test
 {
+  using System;
   using Xunit;
 
   public class IntervalTest
@@ -194,6 +195,50 @@ namespace Bach.Model.Test
       Assert.Equal(Interval.Invalid, actual);
       Assert.False(Interval.TryParse("P2", out actual));
       Assert.Equal(Interval.Invalid, actual);
+      Assert.False(Interval.TryParse(null, out actual));
+      Assert.False(Interval.TryParse("", out actual));
+      Assert.True(Interval.TryParse("  P1", out actual));
+      Assert.False(Interval.TryParse("L2", out actual));
+      Assert.False(Interval.TryParse("Px", out actual));
+    }
+
+    [Fact]
+    public void ParseTest()
+    {
+      Assert.Equal(Interval.Perfect1, Interval.Parse("P1"));
+      Assert.Throws<FormatException>(() => Interval.Parse("X2"));
+    }
+
+    [Fact]
+    public void GetStepsTest()
+    {
+      Assert.Throws<ArgumentException>(() => Interval.GetSteps(1, IntervalQuality.Diminished));      
+      Assert.Throws<ArgumentException>(() => Interval.GetSteps(1, IntervalQuality.Minor));
+      Assert.Equal(0, Interval.GetSteps(1, IntervalQuality.Perfect));
+      Assert.Throws<ArgumentException>(() => Interval.GetSteps(1, IntervalQuality.Major));
+      Assert.Equal(1, Interval.GetSteps(1, IntervalQuality.Augmented));
+    }
+
+    [Fact]
+    public void IsValidTest()
+    {
+      Assert.False(Interval.IsValid(1, IntervalQuality.Diminished));
+      Assert.False(Interval.IsValid(Interval.MinInterval - 1, IntervalQuality.Perfect));
+      Assert.False(Interval.IsValid(Interval.MaxInterval + 1, IntervalQuality.Perfect));
+      Assert.False(Interval.IsValid(1, IntervalQuality.Diminished - 1));
+      Assert.False(Interval.IsValid(1, IntervalQuality.Augmented + 1));
+    }
+
+    [Fact]
+    public void LogicalOperatorsTest()
+    {
+      Assert.True(Interval.Perfect1 == Interval.Parse("P1"));
+      Assert.True(Interval.Perfect1 != Interval.Perfect4);
+      Assert.True(Interval.Perfect1 < Interval.Perfect4);
+      Assert.True(Interval.Perfect1 <= Interval.Perfect4);
+      Assert.True(Interval.Perfect4 > Interval.Perfect1);
+      Assert.True(Interval.Perfect4 >= Interval.Perfect1);
+      Assert.True(Interval.Minor3 < Interval.Major3);
     }
 
     #endregion

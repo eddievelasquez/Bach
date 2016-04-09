@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: Interval.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -34,8 +34,8 @@ namespace Bach.Model
   {
     #region Constants
 
-    private const int MIN_INTERVAL = 1;
-    private const int MAX_INTERVAL = 15;
+    public const int MinInterval = 1;
+    public const int MaxInterval = 15;
 
     private static readonly int[,] s_steps = { // Diminished, Minor, Perfect, Major, Augmented
       { -1, -1, 0, -1, 1 }, // First
@@ -121,7 +121,7 @@ namespace Bach.Model
 
     public static bool IsValid(int number, IntervalQuality quality)
     {
-      if( number < MIN_INTERVAL || number > MAX_INTERVAL )
+      if( number < MinInterval || number > MaxInterval )
       {
         return false;
       }
@@ -137,8 +137,8 @@ namespace Bach.Model
 
     public static int GetSteps(int number, IntervalQuality quality)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(number >= MIN_INTERVAL);
-      Contract.Requires<ArgumentOutOfRangeException>(number <= MAX_INTERVAL);
+      Contract.Requires<ArgumentOutOfRangeException>(number >= MinInterval);
+      Contract.Requires<ArgumentOutOfRangeException>(number <= MaxInterval);
       Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished);
       Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented);
 
@@ -273,7 +273,7 @@ namespace Bach.Model
         return result;
       }
 
-      result = _quality - _quality;
+      result = _quality - other._quality;
       return result;
     }
 
