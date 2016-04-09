@@ -25,6 +25,8 @@
 
 namespace Bach.Model.Test
 {
+  using System.Collections;
+  using System.Collections.Generic;
   using System.Linq;
   using Xunit;
 
@@ -49,26 +51,26 @@ namespace Bach.Model.Test
     public void ChordsTest()
     {
       AbsoluteNote root = AbsoluteNote.Parse("C4");
-      TestChord("C4,E4,G4", root, ChordFormula.Major);
-      TestChord("C4,E4,G4,B4", root, ChordFormula.Major7);
-      TestChord("C4,E4,G4,B4,D5", root, ChordFormula.Major9);
-      TestChord("C4,E4,G4,B4,D5,F5", root, ChordFormula.Major11);
-      TestChord("C4,E4,G4,B4,D5,F5,A5", root, ChordFormula.Major13);
-      TestChord("C4,Eb4,G4", root, ChordFormula.Minor);
-      TestChord("C4,Eb4,G4,Bb4", root, ChordFormula.Minor7);
-      TestChord("C4,Eb4,G4,Bb4,D5", root, ChordFormula.Minor9);
-      TestChord("C4,Eb4,G4,Bb4,D5,F5", root, ChordFormula.Minor11);
-      TestChord("C4,Eb4,G4,Bb4,D5,F5,A5", root, ChordFormula.Minor13);
-      TestChord("C4,E4,G4,Bb4", root, ChordFormula.Dominant7);
-      TestChord("C4,E4,G4,Bb4,D5", root, ChordFormula.Dominant9);
-      TestChord("C4,E4,G4,Bb4,D5,F5", root, ChordFormula.Dominant11);
-      TestChord("C4,E4,G4,Bb4,D5,F5,A5", root, ChordFormula.Dominant13);
-      TestChord("C4,E4,G4,A4,D5", root, ChordFormula.SixNine);
-      TestChord("C4,E4,G4,D5", root, ChordFormula.AddNine);
-      TestChord("C4,Eb4,Gb4", root, ChordFormula.Diminished);
-      TestChord("C4,Eb4,Gb4,Bbb4", root, ChordFormula.Diminished7);
-      TestChord("C4,Eb4,Gb4,Bb4", root, ChordFormula.HalfDiminished);
-      TestChord("C4,E4,G#4", root, ChordFormula.Augmented);
+      ChordTestImpl("C4,E4,G4", root, ChordFormula.Major);
+      ChordTestImpl("C4,E4,G4,B4", root, ChordFormula.Major7);
+      ChordTestImpl("C4,E4,G4,B4,D5", root, ChordFormula.Major9);
+      ChordTestImpl("C4,E4,G4,B4,D5,F5", root, ChordFormula.Major11);
+      ChordTestImpl("C4,E4,G4,B4,D5,F5,A5", root, ChordFormula.Major13);
+      ChordTestImpl("C4,Eb4,G4", root, ChordFormula.Minor);
+      ChordTestImpl("C4,Eb4,G4,Bb4", root, ChordFormula.Minor7);
+      ChordTestImpl("C4,Eb4,G4,Bb4,D5", root, ChordFormula.Minor9);
+      ChordTestImpl("C4,Eb4,G4,Bb4,D5,F5", root, ChordFormula.Minor11);
+      ChordTestImpl("C4,Eb4,G4,Bb4,D5,F5,A5", root, ChordFormula.Minor13);
+      ChordTestImpl("C4,E4,G4,Bb4", root, ChordFormula.Dominant7);
+      ChordTestImpl("C4,E4,G4,Bb4,D5", root, ChordFormula.Dominant9);
+      ChordTestImpl("C4,E4,G4,Bb4,D5,F5", root, ChordFormula.Dominant11);
+      ChordTestImpl("C4,E4,G4,Bb4,D5,F5,A5", root, ChordFormula.Dominant13);
+      ChordTestImpl("C4,E4,G4,A4,D5", root, ChordFormula.SixNine);
+      ChordTestImpl("C4,E4,G4,D5", root, ChordFormula.AddNine);
+      ChordTestImpl("C4,Eb4,Gb4", root, ChordFormula.Diminished);
+      ChordTestImpl("C4,Eb4,Gb4,A4", root, ChordFormula.Diminished7);
+      ChordTestImpl("C4,Eb4,Gb4,Bb4", root, ChordFormula.HalfDiminished);
+      ChordTestImpl("C4,E4,G#4", root, ChordFormula.Augmented);
     }
 
     [Fact]
@@ -165,15 +167,33 @@ namespace Bach.Model.Test
       Assert.Equal(thirdInversion, actual.Notes);
     }
 
+
+    [Fact]
+    public void EnumeratorTest()
+    {
+      var c4 = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      IEnumerator enumerator = ((IEnumerable) c4).GetEnumerator();
+      Assert.NotNull(enumerator);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(AbsoluteNote.Parse("C4"), enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(AbsoluteNote.Parse("E4"), enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(AbsoluteNote.Parse("G4"), enumerator.Current);
+      Assert.False(enumerator.MoveNext());
+    }
+
     #endregion
 
     #region Implementation
 
-    private static void TestChord(string expectedNotes, AbsoluteNote root, ChordFormula formula)
+    private static void ChordTestImpl(string expectedNotes, AbsoluteNote root, ChordFormula formula)
     {
       AbsoluteNoteCollection expected = AbsoluteNoteCollection.Parse(expectedNotes);
-      var actual = new Chord(root, formula).Take(expected.Count).ToArray();
-      Assert.Equal(expected, actual);
+      var chord = new Chord(root, formula);
+      AbsoluteNote[] actualNotes = chord.Take(expected.Count).ToArray();
+      Assert.Equal(expected, actualNotes);
+      Assert.Equal(expectedNotes, chord.ToString());
     }
 
     #endregion
