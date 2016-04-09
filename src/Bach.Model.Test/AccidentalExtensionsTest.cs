@@ -53,6 +53,27 @@ namespace Bach.Model.Test
     }
 
     [Fact]
+    public void TryParseTest()
+    {
+      Accidental accidental;
+      Assert.True(AccidentalExtensions.TryParse("bb", out accidental));
+      Assert.Equal(Accidental.DoubleFlat, accidental);
+      Assert.True(AccidentalExtensions.TryParse("b", out accidental));
+      Assert.Equal(Accidental.Flat, accidental);
+      Assert.True(AccidentalExtensions.TryParse(null, out accidental));
+      Assert.Equal(Accidental.Natural, accidental);
+      Assert.True(AccidentalExtensions.TryParse("", out accidental));
+      Assert.Equal(Accidental.Natural, accidental);
+      Assert.True(AccidentalExtensions.TryParse("#", out accidental));
+      Assert.Equal(Accidental.Sharp, accidental);
+      Assert.True(AccidentalExtensions.TryParse("##", out accidental));
+      Assert.Equal(Accidental.DoubleSharp, accidental);
+      Assert.False(AccidentalExtensions.TryParse("bbb", out accidental));
+      Assert.False(AccidentalExtensions.TryParse("###", out accidental));
+      Assert.False(AccidentalExtensions.TryParse("$", out accidental));
+    }
+
+    [Fact]
     public void ParseThrowsWithInvalidAccidentalSymbolTest()
     {
       Assert.Throws<FormatException>(() => { AccidentalExtensions.Parse("&"); });
