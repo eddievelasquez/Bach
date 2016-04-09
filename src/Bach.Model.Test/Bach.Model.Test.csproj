@@ -88,6 +88,7 @@
     <Compile Include="ScaleTest.cs" />
     <Compile Include="ToneExtensionsTest.cs" />
     <Compile Include="AbsoluteNoteCollectionTest.cs" />
+    <Compile Include="TuningCollectionTest.cs" />
     <Compile Include="TuningTest.cs" />
   </ItemGroup>
   <ItemGroup>
