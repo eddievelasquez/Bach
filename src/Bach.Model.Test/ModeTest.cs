@@ -162,9 +162,9 @@ namespace Bach.Model.Test
 
     private static void TestMode(string expectedNotes, Note root, ModeFormula formula)
     {
-      NoteCollection expected = NoteCollection.Parse(expectedNotes);
+      var expected = NoteCollection.Parse(expectedNotes).ToArray();
       var mode = new Mode(root, formula);
-      var actualNotes = mode.Take(expected.Count).ToArray();
+      var actualNotes = mode.ToArray();
       Assert.Equal(expected, actualNotes);
       Assert.Equal(expectedNotes, mode.ToString());
     }

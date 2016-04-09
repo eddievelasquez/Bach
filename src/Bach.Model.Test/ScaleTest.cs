@@ -25,6 +25,7 @@
 
 namespace Bach.Model.Test
 {
+  using System.Collections;
   using System.Linq;
   using Xunit;
 
@@ -35,11 +36,35 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorTest()
     {
-      var major = new ScaleFormula("Major", Interval.Perfect1, Interval.Major2, Interval.Major3, Interval.Perfect4,
-                                   Interval.Perfect5, Interval.Major6, Interval.Major7);
-      Assert.Equal("Major", major.Name);
-      Assert.Equal(7, major.Count);
+      var actual = new Scale(Note.C, ScaleFormula.Major);
+      Assert.Equal("C Major", actual.Name);
+      Assert.Equal(Note.C, actual.Root);
+      Assert.Equal(ScaleFormula.Major, actual.Formula);
     }
+
+    [Fact]
+    public void GetEnumeratorTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.Major);
+      var enumerator = ((IEnumerable) scale).GetEnumerator();
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.C, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.D, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.E, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.F, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.G, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.A, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.B, enumerator.Current);
+      Assert.True(enumerator.MoveNext()); // Scale enumerator wraps around infintely
+      Assert.Equal(Note.C, enumerator.Current);
+    }
+
 
     [Fact]
     public void GenerateScaleTest()
@@ -50,8 +75,8 @@ namespace Bach.Model.Test
       TestScale("C,D,Eb,F,G,Ab,B", root, ScaleFormula.HarmonicMinor);
       TestScale("C,D,Eb,F,G,A,B", root, ScaleFormula.MelodicMinor);
       TestScale("C,D,Eb,F,Gb,G#,A,B", root, ScaleFormula.Diminished);
-      TestScale("C,Db,Eb,Fb,F#,G,A,Bb", root, ScaleFormula.Polytonal);
-      TestScale("C,D,E,F#,G#", root, ScaleFormula.WholeTone);
+      TestScale("C,Db,Eb,E,F#,G,A,Bb", root, ScaleFormula.Polytonal);
+      TestScale("C,D,E,F#,G#,A#", root, ScaleFormula.WholeTone);
       TestScale("C,D,E,G,A", root, ScaleFormula.Pentatonic);
       TestScale("C,Eb,F,G,Bb", root, ScaleFormula.MinorPentatonic);
       TestScale("C,Eb,F,Gb,G,Bb", root, ScaleFormula.Blues);
@@ -139,8 +164,10 @@ namespace Bach.Model.Test
     private static void TestScale(string expectedNotes, Note root, ScaleFormula formula)
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
-      var actual = new NoteCollection(new Scale(root, formula).Take(expected.Count).ToArray());
+      var scale = new Scale(root, formula);
+      var actual = scale.Take(expected.Count).ToArray();
       Assert.Equal(expected, actual);
+      Assert.Equal(expectedNotes, scale.ToString());
     }
 
     #endregion

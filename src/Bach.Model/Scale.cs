@@ -29,6 +29,7 @@ namespace Bach.Model
   using System.Collections;
   using System.Collections.Generic;
   using System.Diagnostics.Contracts;
+  using System.Linq;
   using System.Text;
 
   public class Scale: IEquatable<Scale>,
@@ -121,7 +122,7 @@ namespace Bach.Model
 
     public override string ToString()
     {
-      return NoteCollection.ToString(this);
+      return NoteCollection.ToString(this.Take(Formula.Count));
     }
 
     #endregion
