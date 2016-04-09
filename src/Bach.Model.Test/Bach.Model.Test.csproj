@@ -82,6 +82,7 @@
     <Compile Include="NoteTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FormulaTest.cs" />
+    <Compile Include="ScaleFormulaTest.cs" />
     <Compile Include="ScaleTest.cs" />
     <Compile Include="ToneExtensionsTest.cs" />
     <Compile Include="AbsoluteNoteCollectionTest.cs" />
