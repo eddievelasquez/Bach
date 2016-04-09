@@ -33,12 +33,27 @@ namespace Bach.Model.Test
     #region Public Methods
 
     [Fact]
-    public void NoteConstructorTest()
+    public void CreateTest()
     {
       AbsoluteNote target = AbsoluteNote.Create(Tone.A, Accidental.Natural, 1);
       Assert.Equal(target.Tone, Tone.A);
       Assert.Equal(target.Accidental, Accidental.Natural);
       Assert.Equal(target.Octave, 1);
+
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(Tone.C, Accidental.Flat, AbsoluteNote.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(Tone.C, Accidental.DoubleFlat,
+                                                                       AbsoluteNote.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(Tone.B, Accidental.Sharp, AbsoluteNote.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(Tone.B, Accidental.DoubleSharp,
+                                                                       AbsoluteNote.MaxOctave));
     }
 
     [Fact]
@@ -221,30 +236,6 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void C1DoubleFlatThrowsTest()
-    {
-      Assert.Throws<ArgumentException>(() => { AbsoluteNote.Create(Tone.C, Accidental.DoubleFlat, 0); });
-    }
-
-    [Fact]
-    public void C1FlatThrowsTest()
-    {
-      Assert.Throws<ArgumentException>(() => { AbsoluteNote.Create(Tone.C, Accidental.Flat, 0); });
-    }
-
-    [Fact]
-    public void B8SharpThrowsTest()
-    {
-      Assert.Throws<ArgumentException>(() => { AbsoluteNote.Create(Tone.B, Accidental.Sharp, 9); });
-    }
-
-    [Fact]
-    public void B8DoubleSharpThrowsTest()
-    {
-      Assert.Throws<ArgumentException>(() => { AbsoluteNote.Create(Tone.B, Accidental.DoubleSharp, 9); });
-    }
-
-    [Fact]
     public void AbsoluteValueTest()
     {
       Assert.Equal(0, AbsoluteNote.Parse("C0").AbsoluteValue);
@@ -352,13 +343,6 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void MaxNoteTest()
-    {
-      Assert.NotNull(AbsoluteNote.Parse("G9"));
-      Assert.Throws<ArgumentException>(() => { AbsoluteNote.Parse("A9"); });
-    }
-
-    [Fact]
     public void TryParseTest()
     {
       AbsoluteNote actual;
@@ -392,6 +376,9 @@ namespace Bach.Model.Test
       Assert.True(AbsoluteNote.TryParse("Cbb2", out actual));
       Assert.Equal(AbsoluteNote.Create(Tone.C, Accidental.DoubleFlat, 2), actual);
 
+      Assert.True(AbsoluteNote.TryParse("60", out actual));
+      Assert.Equal(AbsoluteNote.Create(Tone.C, Accidental.Natural, 4), actual);
+
       Assert.False(AbsoluteNote.TryParse("H", out actual));
       Assert.False(actual.IsValid);
 
@@ -409,6 +396,20 @@ namespace Bach.Model.Test
 
       Assert.False(AbsoluteNote.TryParse("Cb#2", out actual));
       Assert.False(actual.IsValid);
+
+      Assert.False(AbsoluteNote.TryParse(null, out actual));
+      Assert.False(AbsoluteNote.TryParse("", out actual));
+      Assert.False(AbsoluteNote.TryParse("256", out actual));
+      Assert.False(AbsoluteNote.TryParse("-1", out actual));
+      Assert.False(AbsoluteNote.TryParse("1X", out actual));
+    }
+
+    [Fact]
+    public void ParseTest()
+    {
+      Assert.NotNull(AbsoluteNote.Parse("G9"));
+      Assert.Throws<FormatException>(() => AbsoluteNote.Parse("C$4"));
+      Assert.Throws<ArgumentOutOfRangeException>(() => { AbsoluteNote.Parse("A9"); });
     }
 
     [Fact]
@@ -434,6 +435,18 @@ namespace Bach.Model.Test
       Assert.Equal(108, AbsoluteNote.Parse("C8").Midi);
       Assert.Equal(120, AbsoluteNote.Parse("C9").Midi);
       Assert.Equal(127, AbsoluteNote.Parse("G9").Midi);
+      Assert.Throws<ArgumentOutOfRangeException>(() => AbsoluteNote.FromMidi(11));
+    }
+
+    [Fact]
+    public void ApplyAccidentalTest()
+    {
+      var expected = AbsoluteNote.Parse("C4");
+      Assert.Equal(AbsoluteNote.Parse("Bb3"), expected.ApplyAccidental(Accidental.DoubleFlat));
+      Assert.Equal(AbsoluteNote.Parse("B3"), expected.ApplyAccidental(Accidental.Flat));
+      Assert.Equal(AbsoluteNote.Parse("C4"), expected.ApplyAccidental(Accidental.Natural));
+      Assert.Equal(AbsoluteNote.Parse("C#4"), expected.ApplyAccidental(Accidental.Sharp));
+      Assert.Equal(AbsoluteNote.Parse("C##4"), expected.ApplyAccidental(Accidental.DoubleSharp));
     }
 
     #endregion

@@ -50,10 +50,10 @@ namespace Bach.Model
     };
 
     // Midi supports C-1, but we only support C0 and above
-    private static readonly byte s_minAbsoluteValue = CalcAbsoluteValue(Tone.C, Accidental.Natural, MinOctave);
+    private static readonly byte s_minAbsoluteValue = (byte)CalcAbsoluteValue(Tone.C, Accidental.Natural, MinOctave);
 
     // G9 is the highest note supported by MIDI
-    private static readonly byte s_maxAbsoluteValue = CalcAbsoluteValue(Tone.G, Accidental.Natural, MaxOctave);
+    private static readonly byte s_maxAbsoluteValue = (byte)CalcAbsoluteValue(Tone.G, Accidental.Natural, MaxOctave);
 
     private static readonly CoreNote[] s_sharps =
     {
@@ -244,6 +244,11 @@ namespace Bach.Model
         return false;
       }
 
+      if( midi < 0 || midi > 127 )
+      {
+        return false;
+      }
+
       note = FromMidi(midi);
       return true;
     }
@@ -258,10 +263,10 @@ namespace Bach.Model
       return (byte) (accidental + 2);
     }
 
-    private static byte CalcAbsoluteValue(Tone tone, Accidental accidental, int octave)
+    private static int CalcAbsoluteValue(Tone tone, Accidental accidental, int octave)
     {
       int value = octave * IntervalsPerOctave + s_intervals[(int) tone] + (int) accidental;
-      return (byte) value;
+      return value;
     }
 
     private static void CalcNote(
@@ -338,13 +343,13 @@ namespace Bach.Model
       int abs = CalcAbsoluteValue(tone, accidental, octave);
       if( abs < s_minAbsoluteValue )
       {
-        throw new ArgumentException(
+        throw new ArgumentOutOfRangeException(
           $"Must be equal to or greater than {new AbsoluteNote(s_minAbsoluteValue, AccidentalMode)}");
       }
 
       if( abs > s_maxAbsoluteValue )
       {
-        throw new ArgumentException(
+        throw new ArgumentOutOfRangeException(
           $"Must be equal to or less than {new AbsoluteNote(s_maxAbsoluteValue, AccidentalMode)}");
       }
 
@@ -437,12 +442,12 @@ namespace Bach.Model
     public static bool TryParse(string value, out AbsoluteNote note, int defaultOctave = 4)
     {
       note = new AbsoluteNote();
-      if( string.IsNullOrEmpty(value) )
+      if ( string.IsNullOrEmpty(value) )
       {
         return false;
       }
 
-      if( char.IsDigit(value, 0) )
+      if ( char.IsDigit(value, 0) )
       {
         return TryParseMidi(value, ref note, defaultOctave);
       }
@@ -455,7 +460,7 @@ namespace Bach.Model
       AbsoluteNote result;
       if( !TryParse(value, out result) )
       {
-        throw new ArgumentException($"{value} is not a valid note");
+        throw new FormatException($"{value} is not a valid note");
       }
 
       return result;
