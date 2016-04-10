@@ -28,27 +28,26 @@ namespace Bach.Model.Instruments
   using System;
   using System.Diagnostics.Contracts;
 
-  public abstract class StringedInstrumentDefinition: InstrumentDefinition,
-                                                      IEquatable<StringedInstrumentDefinition>
+  public class StringedInstrumentDefinition: InstrumentDefinition,
+                                             IEquatable<StringedInstrumentDefinition>
   {
     #region Construction/Destruction
 
-    protected StringedInstrumentDefinition(string name, int stringCount)
-      : base(name)
+    internal StringedInstrumentDefinition(StringedInstrumentDefinitionState state)
+      : base(state)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0);
-
-      StringCount = stringCount;
-      Tunings = new TuningCollection(this);
     }
 
     #endregion
 
     #region Properties
 
-    public int StringCount { get; }
+    public int StringCount => State.StringCount;
 
-    public TuningCollection Tunings { get; }
+    // TODO: This has to return a read-only collection
+    public TuningCollection Tunings => State.Tunings;
+
+    private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState) base.State;
 
     #endregion
 
@@ -98,14 +97,13 @@ namespace Bach.Model.Instruments
 
     #endregion
 
-    #region Invariants
+    #region Implementation
 
     [ContractInvariantMethod]
     private void ObjectInvariant()
     {
       Contract.Invariant(StringCount > 0);
       Contract.Invariant(Tunings != null);
-      Contract.Invariant(Tunings.Count > 0);
     }
 
     #endregion

@@ -1,6 +1,6 @@
-﻿//  
-// Module Name: TuningCollectionTest.cs
-// Project:     Bach.Model.Test
+//  
+// Module Name: InstrumentDefinitionState.cs
+// Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
@@ -23,27 +23,38 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test
+namespace Bach.Model.Instruments
 {
-  using Bach.Model.Instruments;
-  using Xunit;
+  using System;
+  using System.Diagnostics.Contracts;
 
-  public class TuningCollectionTest
+  internal abstract class InstrumentDefinitionState
   {
-    #region Public Methods
+    #region Data Members
 
-    [Fact]
-    public void AddSetItemsTest()
+    private readonly Guid _instrumentId;
+    private readonly string _name;
+
+    #endregion
+
+    #region Construction/Destruction
+
+    protected InstrumentDefinitionState(Guid instrumentId, string name)
     {
-      var guitar = new GuitarDefinition();
-      var actual = new TuningCollection(guitar);
-      Assert.Equal(0, actual.Count);
-      actual.Add(guitar.Tunings.Standard);
-      Assert.Equal(1, actual.Count);
-      Assert.Equal(guitar.Tunings.Standard, actual[0]);
-      actual[0] = guitar.Tunings[1];
-      Assert.Equal(guitar.Tunings[1], actual[0]);
+      Contract.Requires<ArgumentException>(instrumentId != Guid.Empty, "Must provide a non-empty instrument id");
+      Contract.Requires<ArgumentNullException>(name != null, "Must provide an instrument name");
+      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide an instrument name");
+
+      _instrumentId = Guid.NewGuid();
+      _name = name;
     }
+
+    #endregion
+
+    #region Properties
+
+    public Guid InstrumentId => _instrumentId;
+    public string Name => _name;
 
     #endregion
   }

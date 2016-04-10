@@ -37,7 +37,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TestConstructor()
     {
-      var guitar = new GuitarDefinition();
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
       var actual = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.Equal(guitar, actual.InstrumentDefinition);
       Assert.Equal("Drop D", actual.Name);
@@ -59,7 +59,9 @@ namespace Bach.Model.Test.Instruments
     {
       Assert.Throws<ArgumentNullException>(() =>
                                            {
-                                             var guitar = new GuitarDefinition();
+                                             var guitar =
+                                               InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>(
+                                                                                                                 "guitar");
                                              new Tuning(guitar, null, AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
                                            });
     }
@@ -69,7 +71,8 @@ namespace Bach.Model.Test.Instruments
     {
       Assert.Throws<ArgumentException>(() =>
                                        {
-                                         var guitar = new GuitarDefinition();
+                                         var guitar =
+                                           InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
                                          new Tuning(guitar, "", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
                                        });
     }
@@ -79,18 +82,9 @@ namespace Bach.Model.Test.Instruments
     {
       Assert.Throws<ArgumentException>(() =>
                                        {
-                                         var guitar = new GuitarDefinition();
+                                         var guitar =
+                                           InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
                                          new Tuning(guitar, "", (AbsoluteNoteCollection) null);
-                                       });
-    }
-
-    [Fact]
-    public void ConstructorFailsWithNullNoteArrayTest()
-    {
-      Assert.Throws<ArgumentException>(() =>
-                                       {
-                                         var guitar = new GuitarDefinition();
-                                         new Tuning(guitar, "", (AbsoluteNote[]) null);
                                        });
     }
 
@@ -99,29 +93,21 @@ namespace Bach.Model.Test.Instruments
     {
       Assert.Throws<ArgumentOutOfRangeException>(() =>
                                                  {
-                                                   var guitar = new GuitarDefinition();
+                                                   var guitar =
+                                                     InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>(
+                                                                                                                       "guitar");
                                                    new Tuning(guitar, "Drop D",
                                                               AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2"));
                                                  });
     }
 
     [Fact]
-    public void ConstructorFailsWithInvalidNoteArrayLengthTest()
-    {
-      Assert.Throws<ArgumentOutOfRangeException>(() =>
-                                                 {
-                                                   var guitar = new GuitarDefinition();
-                                                   new Tuning(guitar, "Drop D",
-                                                              AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2").ToArray());
-                                                 });
-    }
-
-    [Fact]
     public void EqualsContractTest()
     {
-      object x = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      object y = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      object z = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      object x = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      object y = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      object z = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -134,9 +120,10 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      var y = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      var z = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      var x = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var y = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var z = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -149,8 +136,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object a = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      object b = new GuitarDefinition();
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      object a = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      object b = guitar;
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
       Assert.False(Equals(a, b));
@@ -160,8 +148,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var a = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      var b = new GuitarDefinition();
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      var a = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      StringedInstrumentDefinition b = guitar;
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
       Assert.False(Equals(a, b));
@@ -171,29 +160,33 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      object actual = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      var actual = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      var actual = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      var expected = new Tuning(new GuitarDefinition(), "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var guitar = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      var actual = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var expected = new Tuning(guitar, "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

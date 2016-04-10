@@ -39,19 +39,7 @@ namespace Bach.Model.Instruments
 
     #region Construction/Destruction
 
-    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, params AbsoluteNote[] notes)
-    {
-      Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
-      Contract.Requires<ArgumentNullException>(name != null);
-      Contract.Requires<ArgumentException>(name.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(notes.Length == instrumentDefinition.StringCount);
-
-      InstrumentDefinition = instrumentDefinition;
-      Name = name;
-      Notes = notes;
-    }
-
-    public Tuning(StringedInstrumentDefinition instrumentDefinition, string name, AbsoluteNoteCollection notes)
+    internal Tuning(StringedInstrumentDefinition instrumentDefinition, string name, AbsoluteNoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
       Contract.Requires<ArgumentNullException>(name != null);

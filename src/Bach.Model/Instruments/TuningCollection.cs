@@ -26,68 +26,80 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Collections.ObjectModel;
+  using System.Collections;
+  using System.Collections.Generic;
+  using System.Diagnostics;
   using System.Diagnostics.Contracts;
 
-  public class TuningCollection: KeyedCollection<string, Tuning>
+  public class TuningCollection: IReadOnlyDictionary<string, Tuning>
   {
+    #region Data Members
+
+    private Guid _instrumentId;
+
+    private readonly Dictionary<string, Tuning> _tunings =
+      new Dictionary<string, Tuning>(StringComparer.CurrentCultureIgnoreCase);
+
+    #endregion
+
     #region Construction/Destruction
 
-    public TuningCollection(StringedInstrumentDefinition instrumentDefinition)
-      : base(StringComparer.CurrentCultureIgnoreCase)
+    internal TuningCollection(Guid instrumentId)
     {
-      Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
-      InstrumentDefinition = instrumentDefinition;
+      _instrumentId = instrumentId;
     }
 
     #endregion
 
     #region Properties
 
-    public StringedInstrumentDefinition InstrumentDefinition { get; }
-
     public Tuning Standard
     {
       get
       {
         Contract.Requires<ArgumentOutOfRangeException>(Count > 0);
-        return this[0];
+        return this["Standard"];
       }
     }
 
     #endregion
 
-    #region Overrides
+    #region IReadOnlyDictionary<string,Tuning> Members
 
-    protected override void InsertItem(int index, Tuning item)
+    public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator()
     {
-      VerifyInstrument(item);
-      base.InsertItem(index, item);
+      return _tunings.GetEnumerator();
     }
 
-    protected override void SetItem(int index, Tuning item)
+    IEnumerator IEnumerable.GetEnumerator()
     {
-      VerifyInstrument(item);
-      base.SetItem(index, item);
+      return GetEnumerator();
     }
 
-    protected override string GetKeyForItem(Tuning item)
+    public int Count => _tunings.Count;
+
+    public bool ContainsKey(string key)
     {
-      return item.Name;
+      return _tunings.ContainsKey(key);
     }
+
+    public bool TryGetValue(string key, out Tuning value)
+    {
+      return _tunings.TryGetValue(key, out value);
+    }
+
+    public Tuning this[string key] => _tunings[key];
+    public IEnumerable<string> Keys => _tunings.Keys;
+    public IEnumerable<Tuning> Values => _tunings.Values;
 
     #endregion
 
-    #region Implementation
-
-    private void VerifyInstrument(Tuning tuning)
+    internal void Add(Tuning tuning)
     {
-      if( !InstrumentDefinition.Equals(tuning.InstrumentDefinition) )
-      {
-        throw new ArgumentException($"\"{tuning.Name}\" is not a \"{InstrumentDefinition.Name}\" tuning");
-      }
-    }
+      Contract.Requires<ArgumentNullException>(tuning != null);
 
-    #endregion
+      Debug.Assert(_instrumentId.Equals(tuning.InstrumentDefinition.InstrumentId));
+      _tunings.Add(tuning.Name, tuning);
+    }
   }
 }

@@ -71,8 +71,8 @@
     <Compile Include="AccidentalExtensionsTest.cs" />
     <Compile Include="ChordFormulaTest.cs" />
     <Compile Include="ChordTest.cs" />
-    <Compile Include="Instruments\GuitarDefinitionTest.cs" />
-    <Compile Include="Instruments\BassDefinitionTest.cs" />
+    <Compile Include="Instruments\InstrumentDefinitionTest.cs" />
+    <Compile Include="Instruments\InstrumentTest.cs" />
     <Compile Include="Instruments\StringedInstrumentTest.cs" />
     <Compile Include="Instruments\TuningTest.cs" />
     <Compile Include="IntervalQualityExtensionsTest.cs" />
@@ -86,10 +86,11 @@
     <Compile Include="FormulaTest.cs" />
     <Compile Include="ScaleFormulaTest.cs" />
     <Compile Include="ScaleTest.cs" />
+    <Compile Include="Instruments\StringedInstrumentDefinitionBuilderTest.cs" />
+    <Compile Include="Instruments\StringedInstrumentDefinitionTest.cs" />
     <Compile Include="ToneExtensionsTest.cs" />
     <Compile Include="AbsoluteNoteCollectionTest.cs" />
-    <Compile Include="TuningCollectionTest.cs" />
-    <Compile Include="TuningTest.cs" />
+    <Compile Include="Instruments\TuningCollectionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bach.Model\Bach.Model.csproj">

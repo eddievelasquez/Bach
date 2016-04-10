@@ -1,5 +1,5 @@
 ﻿//  
-// Module Name: GuitarDefinitionTest.cs
+// Module Name: InstrumentDefinitionTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -25,50 +25,19 @@
 
 namespace Bach.Model.Test.Instruments
 {
-  using System;
   using Bach.Model.Instruments;
   using Xunit;
 
-  public class GuitarDefinitionTest
+  public class InstrumentDefinitionTest
   {
     #region Public Methods
 
     [Fact]
-    public void TestConstructor()
-    {
-      var guitar = new GuitarDefinition();
-      Assert.Equal(guitar.Name, "Guitar");
-      Assert.Equal(guitar.StringCount, 6);
-      Assert.NotNull(guitar.Tunings);
-      Assert.NotEqual(guitar.Tunings.Count, 0);
-    }
-
-    [Fact]
-    public void AddTuningTest()
-    {
-      var guitar = new GuitarDefinition();
-      int tuningCount = guitar.Tunings.Count;
-      guitar.Tunings.Add(new Tuning(guitar, "Drop D Test", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
-      Assert.Equal(tuningCount + 1, guitar.Tunings.Count);
-    }
-
-    [Fact]
-    public void AddTuningFailsWithDifferentInstrumentTuningTest()
-    {
-      Assert.Throws<ArgumentException>(() =>
-                                       {
-                                         var guitar = new GuitarDefinition();
-                                         guitar.Tunings.Add(new Tuning(new BassDefinition(), "Drop D",
-                                                                       AbsoluteNoteCollection.Parse("G2,D2,A1,D1")));
-                                       });
-    }
-
-    [Fact]
     public void EqualsContractTest()
     {
-      object x = new GuitarDefinition();
-      object y = new GuitarDefinition();
-      object z = new GuitarDefinition();
+      object x = InstrumentDefinitionRegistry.Get("guitar");
+      object y = InstrumentDefinitionRegistry.Get("guitar");
+      object z = InstrumentDefinitionRegistry.Get("guitar");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -81,9 +50,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new GuitarDefinition();
-      var y = new GuitarDefinition();
-      var z = new GuitarDefinition();
+      InstrumentDefinition x = InstrumentDefinitionRegistry.Get("guitar");
+      InstrumentDefinition y = InstrumentDefinitionRegistry.Get("guitar");
+      InstrumentDefinition z = InstrumentDefinitionRegistry.Get("guitar");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -96,54 +65,59 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object a = new GuitarDefinition();
-      object b = new BassDefinition();
-      Assert.False(a.Equals(b));
-      Assert.False(b.Equals(a));
-      Assert.False(Equals(a, b));
-      Assert.False(Equals(b, a));
+      object actual = InstrumentDefinitionRegistry.Get("guitar");
+      Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var a = new GuitarDefinition();
-      var b = new BassDefinition();
-      Assert.False(a.Equals(b));
-      Assert.False(b.Equals(a));
-      Assert.False(Equals(a, b));
-      Assert.False(Equals(b, a));
+      InstrumentDefinition actual = InstrumentDefinitionRegistry.Get("guitar");
+      Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new GuitarDefinition();
+      object actual = InstrumentDefinitionRegistry.Get("guitar");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new GuitarDefinition();
+      InstrumentDefinition actual = InstrumentDefinitionRegistry.Get("guitar");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new GuitarDefinition();
+      InstrumentDefinition actual = InstrumentDefinitionRegistry.Get("guitar");
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new GuitarDefinition();
-      var expected = new GuitarDefinition();
+      InstrumentDefinition actual = InstrumentDefinitionRegistry.Get("guitar");
+      InstrumentDefinition expected = InstrumentDefinitionRegistry.Get("guitar");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
+
+    [Fact]
+    public void EqualsTest()
+    {
+      StringedInstrumentDefinitionBuilder builder = new StringedInstrumentDefinitionBuilder("GuitarX", 6);
+      builder.AddTuning("Standard", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,E2"));
+
+      object a = builder.Build();
+      object b = InstrumentDefinitionRegistry.Get("guitar");
+      Assert.False(a.Equals(b));
+      Assert.False(b.Equals(a));
+    }
+
 
     #endregion
   }

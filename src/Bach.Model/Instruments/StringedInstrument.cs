@@ -26,7 +26,6 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Collections.Generic;
   using System.Diagnostics.Contracts;
 
   public class StringedInstrument: Instrument,
@@ -48,20 +47,35 @@ namespace Bach.Model.Instruments
 
     #region Factories
 
-    public static StringedInstrument Create(StringedInstrumentDefinition definition, int fretCount, Tuning tuning = null)
+    public static StringedInstrument Create(
+      StringedInstrumentDefinition definition,
+      int fretCount,
+      Tuning tuning = null)
     {
       Contract.Requires<ArgumentNullException>(definition != null);
       Contract.Ensures(Contract.Result<StringedInstrument>() != null);
 
-      return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard, fretCount);
+      return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard,  fretCount);
+    }
+
+    public static StringedInstrument Create(string instrumentName, int fretCount, string tuningName = null)
+    {
+      Contract.Ensures(Contract.Result<StringedInstrument>() != null);
+
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>(instrumentName);
+      if( string.IsNullOrEmpty(tuningName) )
+      {
+        tuningName = "Standard";
+      }
+
+      return new StringedInstrument(definition, definition.Tunings[tuningName], fretCount);
     }
 
     #endregion
 
     #region Properties
 
-    public new StringedInstrumentDefinition Definition
-      => (StringedInstrumentDefinition) base.Definition;
+    public new StringedInstrumentDefinition Definition => (StringedInstrumentDefinition) base.Definition;
 
     public int FretCount { get; }
 

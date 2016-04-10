@@ -30,34 +30,21 @@ namespace Bach.Model.Instruments
 
   public abstract class InstrumentDefinition: IEquatable<InstrumentDefinition>
   {
-    #region Data Members
-
-    private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
-
-    #endregion
-
     #region Construction/Destruction
 
-    static InstrumentDefinition()
+    internal InstrumentDefinition(InstrumentDefinitionState state)
     {
-      InstrumentDefinitions = new InstrumentDefinitionCollection { new GuitarDefinition(), new BassDefinition() };
-    }
-
-    protected InstrumentDefinition(string name)
-    {
-      Contract.Requires<ArgumentNullException>(name != null);
-      Contract.Requires<ArgumentException>(name.Length > 0);
-
-      Name = name;
+      Contract.Requires<ArgumentNullException>(state != null);
+      State = state;
     }
 
     #endregion
 
     #region Properties
 
-    public string Name { get; }
-
-    public static InstrumentDefinitionCollection InstrumentDefinitions { get; }
+    internal InstrumentDefinitionState State { get; }
+    public Guid InstrumentId => State.InstrumentId;
+    public string Name => State.Name;
 
     #endregion
 
@@ -75,36 +62,16 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      return s_nameComparer.Equals(Name, other.Name);
+      return InstrumentId.Equals(other.InstrumentId);
     }
 
     #endregion
 
     #region Public Methods
 
-    public override bool Equals(object obj)
-    {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, obj) )
-      {
-        return true;
-      }
-
-      if( obj.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Instrument) obj);
-    }
-
     public override int GetHashCode()
     {
-      return s_nameComparer.GetHashCode(Name);
+      return InstrumentId.GetHashCode();
     }
 
     #endregion

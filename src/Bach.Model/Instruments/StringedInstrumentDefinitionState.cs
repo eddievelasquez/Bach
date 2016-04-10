@@ -1,5 +1,5 @@
-﻿//  
-// Module Name: InstrumentDefinitionCollection.cs
+//  
+// Module Name: StringedInstrumentDefinitionState.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -26,25 +26,34 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Collections.ObjectModel;
+  using System.Diagnostics.Contracts;
 
-  public class InstrumentDefinitionCollection: KeyedCollection<string, InstrumentDefinition>
+  internal class StringedInstrumentDefinitionState: InstrumentDefinitionState
   {
+    #region Data Members
+
+    private readonly int _stringCount;
+    private readonly TuningCollection _tunings;
+
+    #endregion
+
     #region Construction/Destruction
 
-    public InstrumentDefinitionCollection()
-      : base(StringComparer.CurrentCultureIgnoreCase)
+    public StringedInstrumentDefinitionState(Guid instrumentId, string name, int stringCount)
+      : base(instrumentId, name)
     {
+      Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0, "Must provide a string count greater than zero");
+
+      _stringCount = stringCount;
+      _tunings = new TuningCollection(InstrumentId);
     }
 
     #endregion
 
-    #region Overrides
+    #region Properties
 
-    protected override string GetKeyForItem(InstrumentDefinition item)
-    {
-      return item.Name;
-    }
+    public int StringCount => _stringCount;
+    public TuningCollection Tunings => _tunings;
 
     #endregion
   }

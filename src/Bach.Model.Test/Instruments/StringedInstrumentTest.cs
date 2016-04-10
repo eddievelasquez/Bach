@@ -34,22 +34,50 @@ namespace Bach.Model.Test.Instruments
     #region Public Methods
 
     [Fact]
-    public void TestFactory()
+    public void CreateWithDefinitionTest()
     {
-      var definition = new GuitarDefinition();
-      Tuning tuning = definition.Tunings.Standard;
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      Tuning expectedTuning = definition.Tunings.Standard;
 
-      StringedInstrument instrument = StringedInstrument.Create(definition, 22, tuning);
+      StringedInstrument instrument = StringedInstrument.Create(definition, 22, expectedTuning);
       Assert.NotNull(instrument);
       Assert.Equal(definition, instrument.Definition);
       Assert.Equal(22, instrument.FretCount);
-      Assert.Equal(tuning, instrument.Tuning);
+      Assert.Equal(expectedTuning, instrument.Tuning);
+    }
+
+    [Fact]
+    public void CreateWithDefinitionDefaultTuningTest()
+    {
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      Tuning expectedTuning = definition.Tunings.Standard;
+
+      StringedInstrument instrument = StringedInstrument.Create(definition, 22);
+      Assert.NotNull(instrument);
+      Assert.Equal(definition, instrument.Definition);
+      Assert.Equal(22, instrument.FretCount);
+      Assert.Equal(expectedTuning, instrument.Tuning);
+    }
+
+    [Fact]
+    public void CreateWithDefinitionThrowsOnNullDefinitionTest()
+    {
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      Tuning expectedTuning = definition.Tunings.Standard;
+      Assert.Throws<ArgumentNullException>(() => StringedInstrument.Create(null, 22, expectedTuning));
+    }
+
+    [Fact]
+    public void CreateWithDefinitionThrowsOnMismatchedStringCountTest()
+    {
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      Assert.Throws<ArgumentOutOfRangeException>(() => StringedInstrument.Create(definition, 0));
     }
 
     [Fact]
     public void TestFactoryDefaultTuning()
     {
-      var definition = new GuitarDefinition();
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
       StringedInstrument instrument = StringedInstrument.Create(definition, 22);
       Assert.Equal(definition.Tunings.Standard, instrument.Tuning);
     }
@@ -57,19 +85,64 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TestFactoryNullDefinition()
     {
-      Assert.Throws<ArgumentNullException>(() => { StringedInstrument.Create(null, 22); });
+      Assert.Throws<ArgumentNullException>(() => { StringedInstrument.Create((StringedInstrumentDefinition) null, 22); });
     }
 
     [Fact]
     public void TestFactoryInvalidFretCount()
     {
-      Assert.Throws<ArgumentOutOfRangeException>(() => { StringedInstrument.Create(new GuitarDefinition(), 0); });
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                 {
+                                                   StringedInstrument.Create(
+                                                                             InstrumentDefinitionRegistry
+                                                                               .Get<StringedInstrumentDefinition>("bass"),
+                                                                             0);
+                                                 });
+    }
+
+    [Fact]
+    public void CreateWithNamesTest()
+    {
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      Tuning expectedTuning = definition.Tunings.Standard;
+
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22, "standard");
+      Assert.NotNull(instrument);
+      Assert.Equal(definition, instrument.Definition);
+      Assert.Equal(22, instrument.FretCount);
+      Assert.Equal(expectedTuning, instrument.Tuning);
+    }
+
+    [Fact]
+    public void CreateWithNamesDefaultTuningTest()
+    {
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      Tuning expectedTuning = definition.Tunings.Standard;
+
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+      Assert.NotNull(instrument);
+      Assert.Equal(definition, instrument.Definition);
+      Assert.Equal(22, instrument.FretCount);
+      Assert.Equal(expectedTuning, instrument.Tuning);
+    }
+
+    [Fact]
+    public void CreateWithNamesThrowsOnNullDefinitionNameTest()
+    {
+      Assert.Throws<ArgumentNullException>(() => StringedInstrument.Create(null, 22, "standard"));
+    }
+
+    [Fact]
+    public void CreateWithNamesThrowsOnInvalidFretCountTest()
+    {
+      Assert.Throws<ArgumentOutOfRangeException>(() => StringedInstrument.Create("guitar", 0));
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      var definition = new GuitarDefinition();
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
 
       object x = StringedInstrument.Create(definition, 22);
       object y = StringedInstrument.Create(definition, 22);
@@ -86,7 +159,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var definition = new GuitarDefinition();
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
 
       StringedInstrument x = StringedInstrument.Create(definition, 22);
       StringedInstrument y = StringedInstrument.Create(definition, 22);
@@ -103,8 +176,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object a = StringedInstrument.Create(new GuitarDefinition(), 22);
-      object b = StringedInstrument.Create(new BassDefinition(), 22);
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      object a = StringedInstrument.Create(definition, 22);
+      object b = StringedInstrument.Create(InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("bass"), 22);
 
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
@@ -115,8 +189,10 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      StringedInstrument a = StringedInstrument.Create(new GuitarDefinition(), 22);
-      StringedInstrument b = StringedInstrument.Create(new BassDefinition(), 22);
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      StringedInstrument a = StringedInstrument.Create(definition, 22);
+      StringedInstrument b =
+        StringedInstrument.Create(InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("bass"), 22);
 
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
@@ -127,29 +203,33 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = StringedInstrument.Create(new GuitarDefinition(), 22);
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      object actual = StringedInstrument.Create(definition, 22);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      StringedInstrument actual = StringedInstrument.Create(new GuitarDefinition(), 22);
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      StringedInstrument actual = StringedInstrument.Create(definition, 22);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      StringedInstrument actual = StringedInstrument.Create(new GuitarDefinition(), 22);
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      StringedInstrument actual = StringedInstrument.Create(definition, 22);
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      StringedInstrument actual = StringedInstrument.Create(new GuitarDefinition(), 22);
-      StringedInstrument expected = StringedInstrument.Create(new GuitarDefinition(), 22);
+      var definition = InstrumentDefinitionRegistry.Lookup<StringedInstrumentDefinition>("guitar");
+      StringedInstrument actual = StringedInstrument.Create(definition, 22);
+      StringedInstrument expected = StringedInstrument.Create(definition, 22);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
