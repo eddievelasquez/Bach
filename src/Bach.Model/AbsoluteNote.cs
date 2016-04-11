@@ -50,42 +50,10 @@ namespace Bach.Model
     };
 
     // Midi supports C-1, but we only support C0 and above
-    private static readonly byte s_minAbsoluteValue = (byte)CalcAbsoluteValue(Tone.C, Accidental.Natural, MinOctave);
+    private static readonly byte s_minAbsoluteValue = (byte) CalcAbsoluteValue(Tone.C, Accidental.Natural, MinOctave);
 
     // G9 is the highest note supported by MIDI
-    private static readonly byte s_maxAbsoluteValue = (byte)CalcAbsoluteValue(Tone.G, Accidental.Natural, MaxOctave);
-
-    private static readonly CoreNote[] s_sharps =
-    {
-      new CoreNote(Tone.C),
-      new CoreNote(Tone.C, Accidental.Sharp),
-      new CoreNote(Tone.D),
-      new CoreNote(Tone.D, Accidental.Sharp),
-      new CoreNote(Tone.E),
-      new CoreNote(Tone.F),
-      new CoreNote(Tone.F, Accidental.Sharp),
-      new CoreNote(Tone.G),
-      new CoreNote(Tone.G, Accidental.Sharp),
-      new CoreNote(Tone.A),
-      new CoreNote(Tone.A, Accidental.Sharp),
-      new CoreNote(Tone.B)
-    };
-
-    private static readonly CoreNote[] s_flats =
-    {
-      new CoreNote(Tone.C),
-      new CoreNote(Tone.D, Accidental.Flat),
-      new CoreNote(Tone.D),
-      new CoreNote(Tone.E, Accidental.Flat),
-      new CoreNote(Tone.E),
-      new CoreNote(Tone.F),
-      new CoreNote(Tone.G, Accidental.Flat),
-      new CoreNote(Tone.G),
-      new CoreNote(Tone.A, Accidental.Flat),
-      new CoreNote(Tone.A),
-      new CoreNote(Tone.B, Accidental.Flat),
-      new CoreNote(Tone.B)
-    };
+    private static readonly byte s_maxAbsoluteValue = (byte) CalcAbsoluteValue(Tone.G, Accidental.Natural, MaxOctave);
 
     private static readonly AbsoluteNote s_a4 = Create(Tone.A, Accidental.Natural, 4);
 
@@ -94,9 +62,8 @@ namespace Bach.Model
     #region Data Members
 
     private readonly byte _absoluteValue;
-    private readonly byte _accidental;
     private readonly byte _octave;
-    private readonly byte _tone;
+    private readonly Note _note;
 
     #endregion
 
@@ -108,7 +75,17 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
       _absoluteValue = (byte) absoluteValue;
-      CalcNote(_absoluteValue, out _tone, out _accidental, out _octave, accidentalMode);
+      CalcNote(_absoluteValue, out _note, out _octave, accidentalMode);
+    }
+
+    private AbsoluteNote(Note note, int octave, int absoluteValue)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
+      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
+
+      _note = note;
+      _octave = (byte) octave;
+      _absoluteValue = (byte) absoluteValue;
     }
 
     private AbsoluteNote(Tone tone, Accidental accidental, int octave, int absoluteValue)
@@ -116,10 +93,74 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
-      _tone = (byte) tone;
-      _accidental = ToByte(accidental);
+      _note = new Note(tone, accidental);
       _octave = (byte) octave;
       _absoluteValue = (byte) absoluteValue;
+    }
+
+    #endregion
+
+    #region Factories
+
+    public static AbsoluteNote Create(Note note, int octave)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
+
+      int abs = CalcAbsoluteValue(note.Tone, note.Accidental, octave);
+      if( abs < s_minAbsoluteValue )
+      {
+        throw new ArgumentOutOfRangeException(
+          $"Must be equal to or greater than {new AbsoluteNote(s_minAbsoluteValue, AccidentalMode)}");
+      }
+
+      if( abs > s_maxAbsoluteValue )
+      {
+        throw new ArgumentOutOfRangeException(
+          $"Must be equal to or less than {new AbsoluteNote(s_maxAbsoluteValue, AccidentalMode)}");
+      }
+
+      return new AbsoluteNote(note, octave, abs);
+    }
+
+    public static AbsoluteNote Create(Tone tone, Accidental accidental, int octave)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(tone >= Tone.C);
+      Contract.Requires<ArgumentOutOfRangeException>(tone <= Tone.B);
+      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat);
+      Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.DoubleSharp);
+      Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
+
+      int abs = CalcAbsoluteValue(tone, accidental, octave);
+      if( abs < s_minAbsoluteValue )
+      {
+        throw new ArgumentOutOfRangeException(
+          $"Must be equal to or greater than {new AbsoluteNote(s_minAbsoluteValue, AccidentalMode)}");
+      }
+
+      if( abs > s_maxAbsoluteValue )
+      {
+        throw new ArgumentOutOfRangeException(
+          $"Must be equal to or less than {new AbsoluteNote(s_maxAbsoluteValue, AccidentalMode)}");
+      }
+
+      return new AbsoluteNote(tone, accidental, octave, abs);
+    }
+
+    public static AbsoluteNote CreateFromMidi(int midi)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(midi >= 0);
+      Contract.Requires<ArgumentOutOfRangeException>(midi <= 127);
+
+      int absoluteValue = midi - 12;
+      if( absoluteValue < 0 )
+      {
+        throw new ArgumentOutOfRangeException(nameof(midi), "midi is out of range");
+      }
+
+      var note = new AbsoluteNote(absoluteValue, AccidentalMode);
+      return note;
     }
 
     #endregion
@@ -130,15 +171,16 @@ namespace Bach.Model
     {
       get
       {
-        // An absoluteValue of zero corresponds to C0 and an accidental
-        // of 0 is FlatFlat, which cannot be a valid Note.
-        return _absoluteValue != 0 || _accidental != 0;
+        int abs = _absoluteValue + (int) _note.Accidental;
+        return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
       }
     }
 
-    public Tone Tone => (Tone) _tone;
+    public Note Note => _note;
 
-    public Accidental Accidental => ToAccidental(_accidental);
+    public Tone Tone => _note.Tone;
+
+    public Accidental Accidental => _note.Accidental;
 
     public int Octave => _octave;
 
@@ -166,7 +208,11 @@ namespace Bach.Model
       }
     }
 
-    public static AccidentalMode AccidentalMode { get; set; }
+    public static AccidentalMode AccidentalMode
+    {
+      get { return Note.AccidentalMode; }
+      set { Note.AccidentalMode = value; }
+    }
 
     #endregion
 
@@ -207,7 +253,7 @@ namespace Bach.Model
 
     public override string ToString()
     {
-      return $"{Tone}{Accidental.ToSymbol()}{Octave}";
+      return $"{_note}{Octave}";
     }
 
     #endregion
@@ -249,18 +295,8 @@ namespace Bach.Model
         return false;
       }
 
-      note = FromMidi(midi);
+      note = CreateFromMidi(midi);
       return true;
-    }
-
-    private static Accidental ToAccidental(byte b)
-    {
-      return (Accidental) (b - 2);
-    }
-
-    private static byte ToByte(Accidental accidental)
-    {
-      return (byte) (accidental + 2);
     }
 
     private static int CalcAbsoluteValue(Tone tone, Accidental accidental, int octave)
@@ -269,21 +305,11 @@ namespace Bach.Model
       return value;
     }
 
-    private static void CalcNote(
-      byte absoluteValue,
-      out byte tone,
-      out byte accidental,
-      out byte octave,
-      AccidentalMode accidentalMode)
+    private static void CalcNote(byte absoluteValue, out Note note, out byte octave, AccidentalMode accidentalMode)
     {
       int remainder;
       octave = (byte) Math.DivRem(absoluteValue, IntervalsPerOctave, out remainder);
-
-      var notes = accidentalMode == AccidentalMode.FavorFlats ? s_flats : s_sharps;
-      CoreNote coreNote = notes[remainder];
-
-      tone = (byte) coreNote.Tone;
-      accidental = ToByte(coreNote.Accidental);
+      note = Note.GetNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
     }
 
     private static void TryGetAccidental(string value, ref int index, out Accidental accidental)
@@ -331,56 +357,14 @@ namespace Bach.Model
       }
     }
 
-    public static AbsoluteNote Create(Tone tone, Accidental accidental, int octave)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(tone >= Tone.C);
-      Contract.Requires<ArgumentOutOfRangeException>(tone <= Tone.B);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.DoubleSharp);
-      Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
-
-      int abs = CalcAbsoluteValue(tone, accidental, octave);
-      if( abs < s_minAbsoluteValue )
-      {
-        throw new ArgumentOutOfRangeException(
-          $"Must be equal to or greater than {new AbsoluteNote(s_minAbsoluteValue, AccidentalMode)}");
-      }
-
-      if( abs > s_maxAbsoluteValue )
-      {
-        throw new ArgumentOutOfRangeException(
-          $"Must be equal to or less than {new AbsoluteNote(s_maxAbsoluteValue, AccidentalMode)}");
-      }
-
-      return new AbsoluteNote(tone, accidental, octave, abs);
-    }
-
-    public static AbsoluteNote FromMidi(int midi)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(midi >= 0);
-      Contract.Requires<ArgumentOutOfRangeException>(midi <= 127);
-
-      int absoluteValue = midi - 12;
-      if( absoluteValue < 0 )
-      {
-        throw new ArgumentOutOfRangeException(nameof(midi), "midi is out of range");
-      }
-
-      var note = new AbsoluteNote(absoluteValue, AccidentalMode);
-      return note;
-    }
-
     public AbsoluteNote ApplyAccidental(Accidental accidental)
     {
-      byte tone;
       byte octave;
-      byte acc;
-      CalcNote((byte) (AbsoluteValue + accidental), out tone, out acc, out octave,
+      Note note;
+      CalcNote((byte) (AbsoluteValue + accidental), out note, out octave,
                accidental < Accidental.Natural ? AccidentalMode.FavorFlats : AccidentalMode.FavorSharps);
 
-      AbsoluteNote note = Create((Tone) tone, ToAccidental(acc), octave);
-      return note;
+      return Create(note, octave);
     }
 
     public static bool operator ==(AbsoluteNote lhs, AbsoluteNote rhs) => Equals(lhs, rhs);
@@ -442,12 +426,12 @@ namespace Bach.Model
     public static bool TryParse(string value, out AbsoluteNote note, int defaultOctave = 4)
     {
       note = new AbsoluteNote();
-      if ( string.IsNullOrEmpty(value) )
+      if( string.IsNullOrEmpty(value) )
       {
         return false;
       }
 
-      if ( char.IsDigit(value, 0) )
+      if( char.IsDigit(value, 0) )
       {
         return TryParseMidi(value, ref note, defaultOctave);
       }
@@ -465,30 +449,5 @@ namespace Bach.Model
 
       return result;
     }
-
-    #region Nested type: CoreNote
-
-    private struct CoreNote
-    {
-      #region Construction
-
-      public CoreNote(Tone tone, Accidental accidental = Accidental.Natural)
-      {
-        Tone = tone;
-        Accidental = accidental;
-      }
-
-      #endregion
-
-      #region Properties
-
-      public Tone Tone { get; }
-
-      public Accidental Accidental { get; }
-
-      #endregion
-    }
-
-    #endregion
   }
 }

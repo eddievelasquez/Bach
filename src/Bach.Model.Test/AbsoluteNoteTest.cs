@@ -33,12 +33,12 @@ namespace Bach.Model.Test
     #region Public Methods
 
     [Fact]
-    public void CreateTest()
+    public void CreateWithToneAndAccidentalTest()
     {
       AbsoluteNote target = AbsoluteNote.Create(Tone.A, Accidental.Natural, 1);
-      Assert.Equal(target.Tone, Tone.A);
-      Assert.Equal(target.Accidental, Accidental.Natural);
-      Assert.Equal(target.Octave, 1);
+      Assert.Equal(Tone.A, target.Tone);
+      Assert.Equal(Accidental.Natural, target.Accidental);
+      Assert.Equal(1, target.Octave);      
 
       Assert.Throws<ArgumentOutOfRangeException>(
                                                  () =>
@@ -53,6 +53,31 @@ namespace Bach.Model.Test
       Assert.Throws<ArgumentOutOfRangeException>(
                                                  () =>
                                                    AbsoluteNote.Create(Tone.B, Accidental.DoubleSharp,
+                                                                       AbsoluteNote.MaxOctave));
+    }
+
+    [Fact]
+    public void CreateWithNoteTest()
+    {
+      AbsoluteNote target = AbsoluteNote.Create(Note.A, 1);
+      Assert.Equal(Note.A, target.Note);
+      Assert.Equal(1, target.Octave);
+
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(new Note(Tone.C, Accidental.Flat),
+                                                                       AbsoluteNote.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(new Note(Tone.C, Accidental.DoubleFlat),
+                                                                       AbsoluteNote.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(new Note(Tone.B, Accidental.Sharp),
+                                                                       AbsoluteNote.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   AbsoluteNote.Create(new Note(Tone.B, Accidental.DoubleSharp),
                                                                        AbsoluteNote.MaxOctave));
     }
 
@@ -435,13 +460,13 @@ namespace Bach.Model.Test
       Assert.Equal(108, AbsoluteNote.Parse("C8").Midi);
       Assert.Equal(120, AbsoluteNote.Parse("C9").Midi);
       Assert.Equal(127, AbsoluteNote.Parse("G9").Midi);
-      Assert.Throws<ArgumentOutOfRangeException>(() => AbsoluteNote.FromMidi(11));
+      Assert.Throws<ArgumentOutOfRangeException>(() => AbsoluteNote.CreateFromMidi(11));
     }
 
     [Fact]
     public void ApplyAccidentalTest()
     {
-      var expected = AbsoluteNote.Parse("C4");
+      AbsoluteNote expected = AbsoluteNote.Parse("C4");
       Assert.Equal(AbsoluteNote.Parse("Bb3"), expected.ApplyAccidental(Accidental.DoubleFlat));
       Assert.Equal(AbsoluteNote.Parse("B3"), expected.ApplyAccidental(Accidental.Flat));
       Assert.Equal(AbsoluteNote.Parse("C4"), expected.ApplyAccidental(Accidental.Natural));

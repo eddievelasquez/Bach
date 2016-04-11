@@ -287,8 +287,8 @@ namespace Bach.Model
 
     private static int CalcInterval(Tone tone, Accidental accidental)
     {
-      int interval = (Tone.C.IntervalBetween(tone) + (int)accidental) % INTERVAL_COUNT;
-      if (interval < 0)
+      int interval = (Tone.C.IntervalBetween(tone) + (int) accidental) % INTERVAL_COUNT;
+      if( interval < 0 )
       {
         interval = INTERVAL_COUNT + interval;
       }
@@ -296,11 +296,11 @@ namespace Bach.Model
       return interval;
     }
 
-    private static Note GetNote(int index, bool favorSharps)
+    internal static Note GetNote(int index, bool favorSharps)
     {
       Link link = s_links[index];
 
-      if (link.Natural != null)
+      if( link.Natural != null )
       {
         return link.Natural.Value;
       }
