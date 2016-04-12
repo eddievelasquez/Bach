@@ -64,40 +64,12 @@ namespace Bach.Model
 
     #endregion
 
-    #region IEnumerable<Note> Members
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    public IEnumerator<Note> GetEnumerator()
-    {
-      return Formula.Generate(Root).GetEnumerator();
-    }
-
-    #endregion
-
-    #region IEquatable<Scale> Members
-
-    public bool Equals(Scale other)
-    {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
-    }
-
-    #endregion
-
     #region Public Methods
+
+    public Note[] GetNotes(int start = 0)
+    {
+      return this.Skip(start).Take(Formula.Count).ToArray();
+    }
 
     public override bool Equals(object other)
     {
@@ -123,6 +95,39 @@ namespace Bach.Model
     public override string ToString()
     {
       return NoteCollection.ToString(this.Take(Formula.Count));
+    }
+
+    #endregion
+
+    #region IEnumerable<Note> Members
+
+    public IEnumerator<Note> GetEnumerator()
+    {
+      return Formula.Generate(Root).GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEquatable<Scale> Members
+
+    public bool Equals(Scale other)
+    {
+      if( ReferenceEquals(other, this) )
+      {
+        return true;
+      }
+
+      if( ReferenceEquals(other, null) )
+      {
+        return false;
+      }
+
+      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
     }
 
     #endregion

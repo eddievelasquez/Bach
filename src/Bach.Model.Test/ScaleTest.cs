@@ -157,6 +157,18 @@ namespace Bach.Model.Test
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
+    [Fact]
+    public void GetNotesTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.MinorPentatonic);
+      Assert.Equal(new[] { Note.C, Note.EFlat, Note.F, Note.G, Note.BFlat }, scale.GetNotes());
+      Assert.Equal(new[] { Note.EFlat, Note.F, Note.G, Note.BFlat, Note.C }, scale.GetNotes(1));
+      Assert.Equal(new[] { Note.F, Note.G, Note.BFlat, Note.C, Note.EFlat }, scale.GetNotes(2));
+      Assert.Equal(new[] { Note.G, Note.BFlat, Note.C, Note.EFlat, Note.F }, scale.GetNotes(3));
+      Assert.Equal(new[] { Note.BFlat, Note.C, Note.EFlat, Note.F, Note.G }, scale.GetNotes(4));
+      Assert.Equal(new[] { Note.C, Note.EFlat, Note.F, Note.G, Note.BFlat }, scale.GetNotes(5));
+    }
+
     #endregion
 
     #region Implementation
