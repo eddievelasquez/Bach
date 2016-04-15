@@ -136,10 +136,10 @@ namespace Bach.Model
       return Name.GetHashCode();
     }
 
-    public IEnumerable<AbsoluteNote> Generate(AbsoluteNote root)
+    public IEnumerable<AbsoluteNote> Generate(AbsoluteNote root, int skipCount = 0)
     {
       int intervalCount = _intervals.Length;
-      var index = 0;
+      var index = skipCount;
 
       while( true )
       {
