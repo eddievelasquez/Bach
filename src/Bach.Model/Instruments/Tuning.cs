@@ -59,6 +59,16 @@ namespace Bach.Model.Instruments
     public string Name { get; }
     public AbsoluteNote[] Notes { get; }
 
+    public AbsoluteNote this[int stringNumber]
+    {
+      get
+      {
+        Contract.Requires<ArgumentOutOfRangeException>(stringNumber >= 1);
+        Contract.Requires<ArgumentOutOfRangeException>(stringNumber <= InstrumentDefinition.StringCount );
+        return Notes[stringNumber - 1];
+      }
+    }
+
     #endregion
 
     #region IEquatable<Tuning> Members
