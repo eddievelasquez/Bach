@@ -118,6 +118,7 @@
     <Compile Include="AccidentalMode.cs" />
     <Compile Include="Chord.cs" />
     <Compile Include="ChordFormula.cs" />
+    <Compile Include="Instruments\Fingering.cs" />
     <Compile Include="Instruments\InstrumentDefinition.cs" />
     <Compile Include="Instruments\InstrumentDefinitionRegistry.cs" />
     <Compile Include="Instruments\InstrumentDefinitionState.cs" />

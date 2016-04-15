@@ -26,6 +26,7 @@
 namespace Bach.Model.Test.Instruments
 {
   using System;
+  using System.Linq;
   using Bach.Model.Instruments;
   using Xunit;
 
@@ -232,6 +233,69 @@ namespace Bach.Model.Test.Instruments
       StringedInstrument expected = StringedInstrument.Create(definition, 22);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+    }
+
+    [Fact]
+    public void RenderStartOpenFourFretSpanTest()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var scale = new Scale(Note.A, ScaleFormula.MinorPentatonic);
+      Assert.Equal("60 63 50 53 40 42 30 32 21 23 10 13", RenderScale(instrument, scale, 6, 0, 4));
+
+      scale = new Scale(Note.G, ScaleFormula.MinorPentatonic);
+      Assert.Equal("61 63 51 53 40 43 30 33 21 23 11 13", RenderScale(instrument, scale, 6, 0, 4));
+    }
+
+    [Fact]
+    public void RenderStartFifthFretFourFretSpanTest()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var scale = new Scale(Note.A, ScaleFormula.MinorPentatonic);
+      Assert.Equal("65 68 55 57 45 47 35 37 25 28 15 18", RenderScale(instrument, scale, 6, 5, 4));
+
+      scale = new Scale(Note.G, ScaleFormula.MinorPentatonic);
+      Assert.Equal("66 68 55 58 45 48 35 37 26 28 16 18", RenderScale(instrument, scale, 6, 5, 4));
+    }
+
+    [Fact]
+    public void RenderStartOpenThreeNotesPerStringTest()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var scale = new Scale(Note.A, ScaleFormula.MelodicMinor);
+      Assert.Equal("60 62 64 50 52 53 40 42 44 31 32 20 21 23 10 12 14", RenderScale(instrument, scale, 6, 0, 4));
+
+      scale = new Scale(Note.G, ScaleFormula.MelodicMinor);
+      Assert.Equal("60 62 63 50 51 53 40 42 44 30 32 33 21 23 10 12 13", RenderScale(instrument, scale, 6, 0, 4));
+    }
+
+    [Fact]
+    public void RenderStartFifthFretThreeNotesPerStringTest()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var scale = new Scale(Note.A, ScaleFormula.MelodicMinor);
+      Assert.Equal("65 67 68 55 57 59 46 47 49 35 37 25 27 29 15 17 18", RenderScale(instrument, scale, 6, 5, 4));
+
+      scale = new Scale(Note.G, ScaleFormula.MelodicMinor);
+      Assert.Equal("65 66 68 55 57 59 45 47 48 35 37 25 27 28 15 16 18", RenderScale(instrument, scale, 6, 5, 4));
+    }
+
+    #endregion
+
+    #region Implementation
+
+    private static string RenderScale(
+      StringedInstrument instrument,
+      Scale scale,
+      int startString,
+      int startFret,
+      int fretSpan)
+    {
+      string result = string.Join(" ", Array.ConvertAll(instrument.Render(scale, startString, startFret, fretSpan).ToArray(), f => f.ToString()));
+      return result;
     }
 
     #endregion

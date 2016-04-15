@@ -71,6 +71,7 @@
     <Compile Include="AccidentalExtensionsTest.cs" />
     <Compile Include="ChordFormulaTest.cs" />
     <Compile Include="ChordTest.cs" />
+    <Compile Include="Instruments\FingeringTest.cs" />
     <Compile Include="Instruments\InstrumentDefinitionTest.cs" />
     <Compile Include="Instruments\InstrumentTest.cs" />
     <Compile Include="Instruments\StringedInstrumentTest.cs" />
