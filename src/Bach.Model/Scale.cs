@@ -61,15 +61,38 @@ namespace Bach.Model
     public Note Root { get; }
     public string Name { get; }
     public Formula Formula { get; }
+    public int NoteCount => Formula.Count;
+    public Note this[int i] => this.Skip(i).Take(1).Single();
 
     #endregion
 
     #region Public Methods
 
+    public IEnumerable<AbsoluteNote> Render(AbsoluteNote startNote)
+    {
+      int pos = Array.IndexOf(GetNotes(), startNote.Note);
+      if( pos == -1 )
+      {
+        return Enumerable.Empty<AbsoluteNote>();
+      }
+
+      int octave = startNote.Octave;
+      if( startNote.Note < Root )
+      {
+        --octave;
+      }
+
+      AbsoluteNote root = AbsoluteNote.Create(Root, octave);
+      return Formula.Generate(root).Skip(pos);
+    }
+
     public Note[] GetNotes(int start = 0)
     {
       return this.Skip(start).Take(Formula.Count).ToArray();
     }
+
+    public int IndexOf(Note note) => Array.IndexOf(GetNotes(), note);
+    public int IndexOf(AbsoluteNote note) => Array.IndexOf(GetNotes(), note.Note);
 
     public override bool Equals(object other)
     {
@@ -88,13 +111,20 @@ namespace Bach.Model
 
     public override int GetHashCode()
     {
-      int hashCode = Root.GetHashCode() ^ Formula.GetHashCode();
+      var hashCode = 17;
+
+      unchecked
+      {
+        hashCode = hashCode * 23 + Root.GetHashCode();
+        hashCode = hashCode * 23 + Formula.GetHashCode();
+      }
+
       return hashCode;
     }
 
     public override string ToString()
     {
-      return NoteCollection.ToString(this.Take(Formula.Count));
+      return NoteCollection.ToString(this.Take(NoteCount));
     }
 
     #endregion

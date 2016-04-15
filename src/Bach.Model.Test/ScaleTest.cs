@@ -169,9 +169,71 @@ namespace Bach.Model.Test
       Assert.Equal(new[] { Note.C, Note.EFlat, Note.F, Note.G, Note.BFlat }, scale.GetNotes(5));
     }
 
+    [Fact]
+    public void RenderTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.MinorPentatonic);
+      TestRender(scale, "C4", "C4,Eb4,F4,G4,Bb4");
+      TestRender(scale, "Eb4", "Eb4,F4,G4,Bb4,C5");
+      TestRender(scale, "F4", "F4,G4,Bb4,C5,Eb5");
+      TestRender(scale, "G4", "G4,Bb4,C5,Eb5,F5");
+      TestRender(scale, "Bb4", "Bb4,C5,Eb5,F5,G5");
+    }
+
+    [Fact]
+    public void RenderReturnsEmptyIfNotNoteInScaleTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.MinorPentatonic);
+      Assert.Empty(scale.Render(AbsoluteNote.Parse("D4")));
+    }
+
+
+    [Fact]
+    public void NoteCountTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.MinorPentatonic);
+      Assert.Equal(ScaleFormula.MinorPentatonic.Count, scale.NoteCount);
+    }
+
+    [Fact]
+    public void IndexOfTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.MinorPentatonic);
+      Assert.Equal(0, scale.IndexOf(Note.C));
+      Assert.Equal(1, scale.IndexOf(Note.EFlat));
+      Assert.Equal(2, scale.IndexOf(Note.F));
+      Assert.Equal(3, scale.IndexOf(Note.G));
+      Assert.Equal(4, scale.IndexOf(Note.BFlat));
+    }
+
+    [Fact]
+    public void ToStringTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.MinorPentatonic);
+      Assert.Equal("C,Eb,F,G,Bb", scale.ToString());
+    }
+
+    [Fact]
+    public void IndexerTest()
+    {
+      var scale = new Scale(Note.C, ScaleFormula.MinorPentatonic);
+      Assert.Equal(Note.C, scale[0]);
+      Assert.Equal(Note.EFlat, scale[1]);
+      Assert.Equal(Note.F, scale[2]);
+      Assert.Equal(Note.G, scale[3]);
+      Assert.Equal(Note.BFlat, scale[4]);
+    }
+
+  
     #endregion
 
     #region Implementation
+
+    private static void TestRender(Scale scale, string startNote, string expectedNotes)
+    {
+      var actual = scale.Render(AbsoluteNote.Parse(startNote)).Take(scale.Formula.Count).ToArray();
+      Assert.Equal(AbsoluteNoteCollection.Parse(expectedNotes), actual);
+    }
 
     private static void TestScale(string expectedNotes, Note root, ScaleFormula formula)
     {
@@ -179,7 +241,6 @@ namespace Bach.Model.Test
       var scale = new Scale(root, formula);
       var actual = scale.Take(expected.Count).ToArray();
       Assert.Equal(expected, actual);
-      Assert.Equal(expectedNotes, scale.ToString());
     }
 
     #endregion
