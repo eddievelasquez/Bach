@@ -40,6 +40,7 @@ namespace Bach.Model.Test.Instruments
       Fingering actual = Fingering.Create(instrument, 6, 5);
       Assert.Equal(6, actual.String);
       Assert.Equal(5, actual.Fret);
+      Assert.Equal(AbsoluteNote.Parse("A2"), actual.Note);
     }
 
     [Fact]
@@ -139,6 +140,15 @@ namespace Bach.Model.Test.Instruments
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
+
+    [Fact]
+    public void ToStringTest()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+      Assert.Equal("65", Fingering.Create(instrument, 6, 5).ToString());
+      Assert.Equal("612", Fingering.Create(instrument, 6, 12).ToString());
+    }
+
 
     #endregion
   }

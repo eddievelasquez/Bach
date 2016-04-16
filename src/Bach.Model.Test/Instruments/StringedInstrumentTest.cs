@@ -290,9 +290,7 @@ namespace Bach.Model.Test.Instruments
 
       var scale = new Scale(Note.DSharp, ScaleFormula.MinorPentatonic);
       Assert.Equal("62 64 51 54 41 44 31 33 22 24 12 14", RenderScale(instrument, scale, 6, 0, 4));
-
     }
-
 
     #endregion
 
