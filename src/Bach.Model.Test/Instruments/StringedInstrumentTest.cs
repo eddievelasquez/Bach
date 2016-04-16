@@ -303,7 +303,7 @@ namespace Bach.Model.Test.Instruments
       int startFret,
       int fretSpan)
     {
-      string result = string.Join(" ", Array.ConvertAll(instrument.Render(scale, startString, startFret, fretSpan).ToArray(), f => f.ToString()));
+      string result = string.Join(" ", Array.ConvertAll(instrument.Render(scale, startFret, fretSpan).ToArray(), f => f.ToString()));
       return result;
     }
 

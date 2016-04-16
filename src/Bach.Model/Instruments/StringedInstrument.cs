@@ -86,11 +86,13 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
-    public IEnumerable<Fingering> Render(Scale scale, int startString, int startFret, int fretSpan = 4)
+    public IEnumerable<Fingering> Render(Scale scale, int startFret, int fretSpan = 4)
     {
       Contract.Requires<ArgumentNullException>(scale != null);
-      Contract.Requires<ArgumentOutOfRangeException>(startString > 0 && startString <= Definition.StringCount);
       Contract.Requires<ArgumentOutOfRangeException>(fretSpan > 1 && startFret + fretSpan <= FretCount);
+
+      // Always start at the lowest string
+      int startString = Definition.StringCount;
 
       // Find scale note closest to start string and start fret
       AbsoluteNote startNote = Tuning[startString] + startFret;
