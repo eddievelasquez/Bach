@@ -63,16 +63,6 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
-    public int ToInt()
-    {
-      if( FretNumber > 9 )
-      {
-        return StringNumber * 100 + FretNumber;
-      }
-
-      return StringNumber * 10 + FretNumber;
-    }
-
     public override string ToString()
     {
       return $"{String}{Fret}";

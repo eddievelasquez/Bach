@@ -59,15 +59,6 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void ToIntTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Assert.Equal(61, Fingering.Create(instrument, 6, 1).ToInt());
-      Assert.Equal(111, Fingering.Create(instrument, 1, 11).ToInt());
-    }
-
-
-    [Fact]
     public void EqualsContractTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
