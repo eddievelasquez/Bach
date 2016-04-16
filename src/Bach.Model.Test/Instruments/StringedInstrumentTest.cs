@@ -236,7 +236,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderStartOpenFourFretSpanTest()
+    public void RenderMinorPentatonicStartOpenFourFretSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -248,7 +248,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderStartFifthFretFourFretSpanTest()
+    public void RenderMinorPentatonicStartFifthFretFourFretSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -260,7 +260,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderStartOpenThreeNotesPerStringTest()
+    public void RenderMelodicMinorStartOpenFourFretSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -272,7 +272,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderStartFifthFretThreeNotesPerStringTest()
+    public void RenderMelodicMinorStartFifthFretFourFretSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -282,6 +282,17 @@ namespace Bach.Model.Test.Instruments
       scale = new Scale(Note.G, ScaleFormula.MelodicMinor);
       Assert.Equal("65 66 68 55 57 59 45 47 48 35 37 25 27 28 15 16 18", RenderScale(instrument, scale, 6, 5, 4));
     }
+
+    [Fact]
+    public void RenderMustSkipSeveralFretsForStartingNoteTest()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var scale = new Scale(Note.DSharp, ScaleFormula.MinorPentatonic);
+      Assert.Equal("62 64 51 54 41 44 31 33 22 24 12 14", RenderScale(instrument, scale, 6, 0, 4));
+
+    }
+
 
     #endregion
 

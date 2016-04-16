@@ -27,7 +27,6 @@ namespace Bach.Model.Instruments
 {
   using System;
   using System.Collections.Generic;
-  using System.Diagnostics;
   using System.Diagnostics.Contracts;
 
   public class StringedInstrument: Instrument,
@@ -94,55 +93,37 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentOutOfRangeException>(fretSpan > 1 && startFret + fretSpan <= FretCount);
 
       // Find scale note closest to start string and start fret
-      AbsoluteNote startNote = Tuning[startString];
-      startNote += startFret;
-
-      // Find the scale note that is closest to the starting fret
-      int notePosition;
-      while( (notePosition = scale.IndexOf(startNote)) == -1 )
+      AbsoluteNote startNote = Tuning[startString] + startFret;
+      while( scale.IndexOf(startNote) == -1 )
       {
         ++startNote;
       }
 
-      // Skip over the scale notes
+      // Start rendering the scale at the note closest to the 
+      // start string and fret
       var scaleEnumerator = scale.Render(startNote).GetEnumerator();
       scaleEnumerator.MoveNext();
 
-      int maxFret = startFret + fretSpan;
-
-      for ( int currentString = startString; currentString >= 1; --currentString )
+      // Go through all the strings
+      for( int currentString = startString; currentString >= 1; --currentString )
       {
-        int nextString = currentString - 1;
+        int thisStringStartValue = GetValue(currentString, startFret);
+        int thisStringMaxValue = thisStringStartValue + fretSpan;
+        int nextStringStartValue = GetValue(currentString - 1, startFret);
 
-        // Calculate the starting note on the next string (if applicable)
-        AbsoluteNote? startNoteOnNextString = null;
-        if( nextString > 1 )
+        while( true )
         {
-          startNoteOnNextString = Tuning[nextString] + startFret;
-        }
-
-        int fret = startFret;
-
-        while(true)
-        {
-          // Skip this fingering if the current note is equal to the start note
-          // on the next string
-          if(startNoteOnNextString.HasValue && scaleEnumerator.Current == startNoteOnNextString )
+          int currentValue = scaleEnumerator.Current.AbsoluteValue;
+          if( currentValue > thisStringMaxValue || currentValue >= nextStringStartValue )
           {
             break;
           }
 
-          fret = FindNoteOnString(scaleEnumerator.Current, currentString, fret);
-          if( fret > maxFret )
-          {
-            break;
-          }
-          
-          Fingering result = Fingering.Create(this, currentString, fret);
-          yield return result;
+          int fret = currentValue - thisStringStartValue + startFret;
+          Fingering fingering = Fingering.Create(this, currentString, fret);
+          yield return fingering;
 
           scaleEnumerator.MoveNext(); // Will never return false.
-          ++fret;
         }
       }
     }
@@ -194,22 +175,14 @@ namespace Bach.Model.Instruments
 
     #region Implementation
 
-    private int FindNoteOnString(AbsoluteNote noteToFind, int stringNumber, int startFretNumber)
+    private int GetValue(int @string, int fret)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(stringNumber > 0 && stringNumber <= Definition.StringCount);
-      Contract.Requires<ArgumentOutOfRangeException>(startFretNumber >= 0 && startFretNumber <= FretCount);
-      Contract.Ensures(Contract.Result<int>() <= FretCount);
-
-      AbsoluteNote openNote = Tuning[stringNumber];
-      AbsoluteNote current = openNote + startFretNumber;
-
-      while( current != noteToFind )
+      if( @string < 1 || @string > Definition.StringCount )
       {
-        ++current;
+        return int.MaxValue;
       }
 
-      int fret = openNote - current;
-      return fret;
+      return Tuning[@string].AbsoluteValue + fret;
     }
 
     #endregion
