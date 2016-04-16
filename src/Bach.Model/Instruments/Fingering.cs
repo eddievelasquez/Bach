@@ -32,24 +32,23 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    private Fingering(int stringNumber, int fretNumber)
+    private Fingering(int @string, int fret)
     {
-      FretNumber = fretNumber;
-      StringNumber = stringNumber;
+      String = @string;
+      Fret = fret;
     }
 
     #endregion
 
     #region Factories
 
-    public static Fingering Create(StringedInstrument instrument, int stringNumber, int fretNumber)
+    public static Fingering Create(StringedInstrument instrument, int @string, int fret)
     {
       Contract.Requires<ArgumentNullException>(instrument != null);
-      Contract.Requires<ArgumentOutOfRangeException>(fretNumber >= 0 && fretNumber <= instrument.FretCount);
-      Contract.Requires<ArgumentOutOfRangeException>(stringNumber > 0
-                                                     && stringNumber <= instrument.Definition.StringCount);
+      Contract.Requires<ArgumentOutOfRangeException>(fret >= 0 && fret <= instrument.FretCount);
+      Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
 
-      var result = new Fingering(stringNumber, fretNumber);
+      var result = new Fingering(@string, fret);
       return result;
     }
 
@@ -57,17 +56,8 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
-    public int StringNumber { get; }
-    public int FretNumber { get; }
-
-    #endregion
-
-    #region IEquatable<Fingering> Members
-
-    public bool Equals(Fingering other)
-    {
-      return StringNumber == other.StringNumber && FretNumber == other.FretNumber;
-    }
+    public int String { get; }
+    public int Fret { get; }
 
     #endregion
 
@@ -85,7 +75,7 @@ namespace Bach.Model.Instruments
 
     public override string ToString()
     {
-      return $"{StringNumber}{FretNumber}";
+      return $"{String}{Fret}";
     }
 
     public override bool Equals(object obj)
@@ -102,8 +92,17 @@ namespace Bach.Model.Instruments
     {
       unchecked
       {
-        return (StringNumber * 397) ^ FretNumber;
+        return (String * 397) ^ Fret;
       }
+    }
+
+    #endregion
+
+    #region IEquatable<Fingering> Members
+
+    public bool Equals(Fingering other)
+    {
+      return String == other.String && Fret == other.Fret;
     }
 
     #endregion

@@ -38,8 +38,8 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
       Fingering actual = Fingering.Create(instrument, 6, 5);
-      Assert.Equal(6, actual.StringNumber);
-      Assert.Equal(5, actual.FretNumber);
+      Assert.Equal(6, actual.String);
+      Assert.Equal(5, actual.Fret);
     }
 
     [Fact]
