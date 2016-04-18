@@ -110,13 +110,16 @@ namespace Bach.Model.Instruments
       for( int currentString = startString; currentString >= 1; --currentString )
       {
         int thisStringStartValue = GetValue(currentString, startFret);
-        int thisStringMaxValue = thisStringStartValue + fretSpan;
-        int nextStringStartValue = GetValue(currentString - 1, startFret);
+
+        // The maximum value that we will use for this string is the minumum
+        // between the fret span on this string and the value of the note 
+        // before the start of the next string
+        int maxValue = Math.Min(thisStringStartValue + fretSpan, GetValue(currentString - 1, startFret) - 1);
 
         while( true )
         {
           int currentValue = scaleEnumerator.Current.AbsoluteValue;
-          if( currentValue > thisStringMaxValue || currentValue >= nextStringStartValue )
+          if( currentValue > maxValue )
           {
             break;
           }
