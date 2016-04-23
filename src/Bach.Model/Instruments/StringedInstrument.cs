@@ -59,11 +59,11 @@ namespace Bach.Model.Instruments
       return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard, fretCount);
     }
 
-    public static StringedInstrument Create(string instrumentName, int fretCount, string tuningName = null)
+    public static StringedInstrument Create(string instrumentKey, int fretCount, string tuningName = null)
     {
       Contract.Ensures(Contract.Result<StringedInstrument>() != null);
 
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>(instrumentName);
+      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>(instrumentKey);
       if( string.IsNullOrEmpty(tuningName) )
       {
         tuningName = "Standard";

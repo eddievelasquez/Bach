@@ -43,47 +43,48 @@ namespace Bach.Model.Instruments
     static InstrumentDefinitionRegistry()
     {
       // Add predefined instruments
-      AddDefinition("Guitar", 6,
+      AddDefinition("Guitar", "Guitar", 6,
                     b =>
-                      b.AddTuning("Standard", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,E2"))
-                       .AddTuning("Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"))
-                       .AddTuning("Open D", AbsoluteNoteCollection.Parse("D4,A3,F#3,D3,A2,D2"))
-                       .AddTuning("Open G", AbsoluteNoteCollection.Parse("D4,B3,G2,D2,G2,D2"))
-                       .AddTuning("Open A", AbsoluteNoteCollection.Parse("E4,C#4,A3,E3,A2,E2")));
-      AddDefinition("Bass", 4, b => b.AddTuning("Standard", AbsoluteNoteCollection.Parse("G2,D2,A1,E1")));
+                      b.AddTuning("Standard", "Standard", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,E2"))
+                       .AddTuning("DropD", "Drop D", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,D2"))
+                       .AddTuning("OpenD", "Open D", AbsoluteNoteCollection.Parse("D4,A3,F#3,D3,A2,D2"))
+                       .AddTuning("OpenG", "Open G", AbsoluteNoteCollection.Parse("D4,B3,G2,D2,G2,D2"))
+                       .AddTuning("OpenA", "Open A", AbsoluteNoteCollection.Parse("E4,C#4,A3,E3,A2,E2")));
+      AddDefinition("Bass", "Bass", 4,
+                    b => b.AddTuning("Standard", "Standard", AbsoluteNoteCollection.Parse("G2,D2,A1,E1")));
     }
 
     #endregion
 
     #region Public Methods
 
-    public static InstrumentDefinition Lookup(string name)
+    public static InstrumentDefinition Lookup(string key)
     {
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide an instrument name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide an instrument name");
+      Contract.Requires<ArgumentNullException>(key != null, "Must provide an instrument key");
+      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide an instrument key");
 
       InstrumentDefinition definition;
-      s_definitions.TryGetValue(name, out definition);
+      s_definitions.TryGetValue(key, out definition);
       return definition;
     }
 
-    public static T Lookup<T>(string name) where T: InstrumentDefinition
+    public static T Lookup<T>(string key) where T: InstrumentDefinition
     {
-      return (T) Lookup(name);
+      return (T) Lookup(key);
     }
 
-    public static InstrumentDefinition Get(string name)
+    public static InstrumentDefinition Get(string key)
     {
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide an instrument name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide an instrument name");
+      Contract.Requires<ArgumentNullException>(key != null, "Must provide an instrument key");
+      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide an instrument key");
 
-      InstrumentDefinition definition = s_definitions[name];
+      InstrumentDefinition definition = s_definitions[key];
       return definition;
     }
 
-    public static T Get<T>(string name) where T: InstrumentDefinition
+    public static T Get<T>(string key) where T: InstrumentDefinition
     {
-      return (T) Get(name);
+      return (T) Get(key);
     }
 
     #endregion
@@ -91,17 +92,18 @@ namespace Bach.Model.Instruments
     #region Implementation
 
     private static void AddDefinition(
+      string key,
       string name,
       int stringCount,
       Action<StringedInstrumentDefinitionBuilder> addTunings)
     {
       Contract.Requires<ArgumentNullException>(addTunings != null);
 
-      var builder = new StringedInstrumentDefinitionBuilder(name, stringCount);
+      var builder = new StringedInstrumentDefinitionBuilder(key, name, stringCount);
       addTunings(builder);
 
       StringedInstrumentDefinition definition = builder.Build();
-      s_definitions.Add(definition.Name, definition);
+      s_definitions.Add(definition.Key, definition);
     }
 
     #endregion

@@ -28,7 +28,7 @@ namespace Bach.Model.Instruments
   using System;
   using System.Diagnostics.Contracts;
 
-  public abstract class InstrumentDefinition: INamedObject,
+  public abstract class InstrumentDefinition: IKeyedObject,
                                               IEquatable<InstrumentDefinition>
   {
     #region Construction/Destruction
@@ -47,6 +47,7 @@ namespace Bach.Model.Instruments
 
     internal InstrumentDefinitionState State { get; }
     public Guid InstrumentId => State.InstrumentId;
+    public string Name => State.Name;
 
     #endregion
 
@@ -80,9 +81,9 @@ namespace Bach.Model.Instruments
 
     #endregion
 
-    #region INamedObject Members
+    #region IKeyedObject Members
 
-    public string Name => State.Name;
+    public string Key => State.Key;
 
     #endregion
   }

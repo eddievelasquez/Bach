@@ -30,30 +30,23 @@ namespace Bach.Model.Instruments
 
   internal class StringedInstrumentDefinitionState: InstrumentDefinitionState
   {
-    #region Data Members
-
-    private readonly int _stringCount;
-    private readonly TuningCollection _tunings;
-
-    #endregion
-
     #region Construction/Destruction
 
-    public StringedInstrumentDefinitionState(Guid instrumentId, string name, int stringCount)
-      : base(instrumentId, name)
+    public StringedInstrumentDefinitionState(Guid instrumentId, string key, string name, int stringCount)
+      : base(instrumentId, key, name)
     {
       Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0, "Must provide a string count greater than zero");
 
-      _stringCount = stringCount;
-      _tunings = new TuningCollection(InstrumentId);
+      StringCount = stringCount;
+      Tunings = new TuningCollection(InstrumentId);
     }
 
     #endregion
 
     #region Properties
 
-    public int StringCount => _stringCount;
-    public TuningCollection Tunings => _tunings;
+    public int StringCount { get; }
+    public TuningCollection Tunings { get; }
 
     #endregion
   }

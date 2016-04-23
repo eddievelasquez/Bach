@@ -33,6 +33,7 @@ namespace Bach.Model.Serialization
   {
     #region Properties
 
+    public string Key { get; set; }
     public string Name { get; set; }
     public int StringCount { get; set; }
     public List<PersistentTuning> Tunings { get; set; }

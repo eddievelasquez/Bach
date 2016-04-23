@@ -55,25 +55,25 @@ namespace Bach.Model
       var library = JsonConvert.DeserializeObject<PersistentLibrary>(s);
 
       // Load data
-      ScaleFormulas = new NamedObjectCollection<ScaleFormula>();
+      ScaleFormulas = new KeyedObjectCollection<ScaleFormula>();
       foreach( PersistentScale scale in library.Scales )
       {
-        ScaleFormulas.Add(new ScaleFormula(scale.Name, scale.Formula));
+        ScaleFormulas.Add(new ScaleFormula(scale.Key, scale.Name, scale.Formula));
       }
 
-      ChordFormulas = new NamedObjectCollection<ChordFormula>();
+      ChordFormulas = new KeyedObjectCollection<ChordFormula>();
       foreach( PersistentChord chord in library.Chords )
       {
-        ChordFormulas.Add(new ChordFormula(chord.Name, chord.Symbol, chord.Formula));
+        ChordFormulas.Add(new ChordFormula(chord.Key, chord.Name, chord.Symbol, chord.Formula));
       }
 
-      InstrumentDefinitions = new NamedObjectCollection<InstrumentDefinition>();
-      foreach( PersistentStringedInstrument stringedInstrument in library.StringedInstruments )
+      InstrumentDefinitions = new KeyedObjectCollection<InstrumentDefinition>();
+      foreach( PersistentStringedInstrument instrument in library.StringedInstruments )
       {
-        var builder = new StringedInstrumentDefinitionBuilder(stringedInstrument.Name, stringedInstrument.StringCount);
-        foreach( PersistentTuning tuning in stringedInstrument.Tunings )
+        var builder = new StringedInstrumentDefinitionBuilder(instrument.Key, instrument.Name, instrument.StringCount);
+        foreach( PersistentTuning tuning in instrument.Tunings )
         {
-          builder.AddTuning(tuning.Name, tuning.Notes);
+          builder.AddTuning(tuning.Key, tuning.Name, tuning.Notes);
         }
 
         StringedInstrumentDefinition definition = builder.Build();
@@ -85,9 +85,9 @@ namespace Bach.Model
 
     #region Properties
 
-    public static NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
-    public static NamedObjectCollection<ChordFormula> ChordFormulas { get; }
-    public static NamedObjectCollection<InstrumentDefinition> InstrumentDefinitions { get; }
+    public static KeyedObjectCollection<ScaleFormula> ScaleFormulas { get; }
+    public static KeyedObjectCollection<ChordFormula> ChordFormulas { get; }
+    public static KeyedObjectCollection<InstrumentDefinition> InstrumentDefinitions { get; }
 
     #endregion
   }

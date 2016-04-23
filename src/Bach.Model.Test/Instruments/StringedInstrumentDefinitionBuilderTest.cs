@@ -34,9 +34,11 @@ namespace Bach.Model.Test.Instruments
   {
     #region Constants
 
-    private const string EXPECTED_NAME = "InstrumentName";
-    private const int EXPECTED_STRING_COUNT = 3;
-    private const string STANDARD_TUNING_NAME = "Standard";
+    private const string EXPECTED_INSTRUMENT_KEY = "InstrumentKey";
+    private const string EXPECTED_INSTRUMENT_NAME = "InstrumentName";
+    private const int EXPECTED_INSTRUMENT_STRING_COUNT = 3;
+    private const string EXPECTED_TUNING_KEY = "Standard";
+    private const string EXPECTED_TUNING_NAME = "Standard";
 
     #endregion
 
@@ -47,16 +49,17 @@ namespace Bach.Model.Test.Instruments
     {
       AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4");
 
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      builder.AddTuning(STANDARD_TUNING_NAME, notes);
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes);
       StringedInstrumentDefinition definition = builder.Build();
       Assert.NotNull(definition);
-      Assert.Equal(EXPECTED_NAME, definition.Name);
-      Assert.Equal(EXPECTED_STRING_COUNT, definition.StringCount);
+      Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.Name);
+      Assert.Equal(EXPECTED_INSTRUMENT_STRING_COUNT, definition.StringCount);
       Assert.NotNull(definition.Tunings);
       Assert.Equal(1, definition.Tunings.Count);
-      Assert.Equal(STANDARD_TUNING_NAME, definition.Tunings.Standard.Name);
-      Assert.Equal(STANDARD_TUNING_NAME, definition.Tunings.Standard.Name);
+      Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
+      Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
       Assert.Equal(notes, definition.Tunings.Standard.Notes);
     }
 
@@ -65,71 +68,115 @@ namespace Bach.Model.Test.Instruments
     {
       var notes = AbsoluteNoteCollection.Parse("C4,D4,E4").ToArray();
 
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      builder.AddTuning(STANDARD_TUNING_NAME, notes);
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes);
       StringedInstrumentDefinition definition = builder.Build();
       Assert.NotNull(definition);
-      Assert.Equal(EXPECTED_NAME, definition.Name);
-      Assert.Equal(EXPECTED_STRING_COUNT, definition.StringCount);
+      Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.Name);
+      Assert.Equal(EXPECTED_INSTRUMENT_STRING_COUNT, definition.StringCount);
       Assert.NotNull(definition.Tunings);
       Assert.Equal(1, definition.Tunings.Count);
-      Assert.Equal(STANDARD_TUNING_NAME, definition.Tunings.Standard.Name);
-      Assert.Equal(STANDARD_TUNING_NAME, definition.Tunings.Standard.Name);
+      Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
+      Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
       Assert.Equal(notes, definition.Tunings.Standard.Notes);
+    }
+
+    [Fact]
+    public void AddTuningWithNoteCollectionThrowsOnNullKeyTest()
+    {
+      AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4");
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentNullException>(() => builder.AddTuning(null, EXPECTED_TUNING_NAME, notes));
     }
 
     [Fact]
     public void AddTuningWithNoteCollectionThrowsOnNullNameTest()
     {
       AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4");
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      Assert.Throws<ArgumentNullException>(() => builder.AddTuning(null, notes));
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentNullException>(() => builder.AddTuning(EXPECTED_TUNING_KEY, null, notes));
+    }
+
+    [Fact]
+    public void AddTuningWithNoteCollectionThrowsOnEmptyKeyTest()
+    {
+      AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4");
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning("", EXPECTED_TUNING_NAME, notes));
     }
 
     [Fact]
     public void AddTuningWithNoteCollectionThrowsOnEmptyNameTest()
     {
       AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4");
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      Assert.Throws<ArgumentException>(() => builder.AddTuning("", notes));
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning(EXPECTED_TUNING_KEY, "", notes));
     }
 
     [Fact]
     public void AddTuningWithNoteCollectionThrowsOnMismatchedNoteCountTest()
     {
       AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4,F4");
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      Assert.Throws<ArgumentException>(() => builder.AddTuning(STANDARD_TUNING_NAME, notes));
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes));
+    }
+
+    [Fact]
+    public void AddTuningWithNoteArrayThrowsOnNullKeyTest()
+    {
+      var notes = AbsoluteNoteCollection.Parse("C4,D4,E4").ToArray();
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentNullException>(() => builder.AddTuning(null, EXPECTED_TUNING_NAME, notes));
     }
 
     [Fact]
     public void AddTuningWithNoteArrayThrowsOnNullNameTest()
     {
       var notes = AbsoluteNoteCollection.Parse("C4,D4,E4").ToArray();
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      Assert.Throws<ArgumentNullException>(() => builder.AddTuning(null, notes));
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentNullException>(() => builder.AddTuning(EXPECTED_TUNING_KEY, null, notes));
+    }
+
+    [Fact]
+    public void AddTuningWithNoteArrayThrowsOnEmptyKeyTest()
+    {
+      var notes = AbsoluteNoteCollection.Parse("C4,D4,E4").ToArray();
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning("", EXPECTED_TUNING_NAME, notes));
     }
 
     [Fact]
     public void AddTuningWithNoteArrayThrowsOnEmptyNameTest()
     {
       var notes = AbsoluteNoteCollection.Parse("C4,D4,E4").ToArray();
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      Assert.Throws<ArgumentException>(() => builder.AddTuning("", notes));
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning(EXPECTED_TUNING_KEY, "", notes));
     }
 
     [Fact]
     public void AddTuningWithNoteArrayThrowsOnMismatchedNoteCountTest()
     {
       var notes = AbsoluteNoteCollection.Parse("C4,D4,E4,F4").ToArray();
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      Assert.Throws<ArgumentException>(() => builder.AddTuning(STANDARD_TUNING_NAME, notes));
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes));
     }
 
     [Fact]
     public void BuildThrowOnEmptyTuningsTest()
     {
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
       Assert.Throws<InvalidOperationException>(() => builder.Build());
     }
 
@@ -137,16 +184,18 @@ namespace Bach.Model.Test.Instruments
     public void BuildThrowOnMissingStandardTuningTest()
     {
       var notes = AbsoluteNoteCollection.Parse("C4,D4,E4").ToArray();
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      builder.AddTuning("A tuning", notes);
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      builder.AddTuning("ATuning", "A tuning", notes);
       Assert.Throws<InvalidOperationException>(() => builder.Build());
     }
 
     [Fact]
     public void AddTuningThrowsOnStringMismatchTest()
     {
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      Assert.Throws<ArgumentException>(() => builder.AddTuning(STANDARD_TUNING_NAME, "C4,D4,E4,F4"));
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, "C4,D4,E4,F4"));
     }
 
     [Fact]
@@ -154,11 +203,12 @@ namespace Bach.Model.Test.Instruments
     {
       AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4");
 
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      builder.AddTuning(STANDARD_TUNING_NAME, notes);
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes);
       builder.Build();
 
-      Assert.Throws<InvalidOperationException>(() => builder.AddTuning("A tuning", notes));
+      Assert.Throws<InvalidOperationException>(() => builder.AddTuning("ATuning", "A tuning", notes));
     }
 
     [Fact]
@@ -166,11 +216,12 @@ namespace Bach.Model.Test.Instruments
     {
       var notes = AbsoluteNoteCollection.Parse("C4,D4,E4").ToArray();
 
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      builder.AddTuning(STANDARD_TUNING_NAME, notes);
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes);
       builder.Build();
 
-      Assert.Throws<InvalidOperationException>(() => builder.AddTuning("A tuning", notes));
+      Assert.Throws<InvalidOperationException>(() => builder.AddTuning("ATuning", "A tuning", notes));
     }
 
     [Fact]
@@ -178,8 +229,9 @@ namespace Bach.Model.Test.Instruments
     {
       AbsoluteNoteCollection notes = AbsoluteNoteCollection.Parse("C4,D4,E4");
 
-      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
-      builder.AddTuning(STANDARD_TUNING_NAME, notes);
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_INSTRUMENT_KEY, EXPECTED_INSTRUMENT_NAME,
+                                                            EXPECTED_INSTRUMENT_STRING_COUNT);
+      builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes);
       builder.Build();
       Assert.Throws<InvalidOperationException>(() => builder.Build());
     }

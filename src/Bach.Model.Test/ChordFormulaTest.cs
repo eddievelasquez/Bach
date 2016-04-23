@@ -34,22 +34,38 @@ namespace Bach.Model.Test
     [Fact]
     public void ChordFormulaConstructorTest()
     {
+      const string KEY = "Key";
       const string NAME = "Name";
       const string SYMBOL = "Symbol";
       const string FORMULA = "1,2,3";
-      var target = new ChordFormula(NAME, SYMBOL, FORMULA);
+      var actual = new ChordFormula(KEY, NAME, SYMBOL, FORMULA);
 
-      Assert.Equal(NAME, target.Name);
-      Assert.Equal(SYMBOL, target.Symbol);
-      Assert.Equal("Name: P1,M2,M3", target.ToString());
+      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(NAME, actual.Name);
+      Assert.Equal(SYMBOL, actual.Symbol);
+      Assert.Equal("Name: P1,M2,M3", actual.ToString());
+    }
+
+    [Fact]
+    public void ChordFormulaConstructorWithIntervalsTest()
+    {
+      const string KEY = "Key";
+      const string NAME = "Name";
+      const string SYMBOL = "Symbol";
+      var actual = new ChordFormula(KEY, NAME, SYMBOL, new[] { Interval.Perfect1, Interval.Major2, Interval.Major3 });
+
+      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(NAME, actual.Name);
+      Assert.Equal(SYMBOL, actual.Symbol);
+      Assert.Equal("Name: P1,M2,M3", actual.ToString());
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new ChordFormula("Name", "Symbol", "1,2,3");
-      object y = new ChordFormula("Name", "Symbol", "1,2,3");
-      object z = new ChordFormula("Name", "Symbol", "1,2,3");
+      object x = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      object y = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      object z = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -62,9 +78,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new ChordFormula("Name", "Symbol", "1,2,3");
-      var y = new ChordFormula("Name", "Symbol", "1,2,3");
-      var z = new ChordFormula("Name", "Symbol", "1,2,3");
+      var x = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var y = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var z = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -77,43 +93,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new ChordFormula("Name", "Symbol", "1,2,3");
+      object actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new ChordFormula("Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new ChordFormula("Name", "Symbol", "1,2,3");
+      object actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new ChordFormula("Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new ChordFormula("Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new ChordFormula("Name", "Symbol", "1,2,3");
-      var expected = new ChordFormula("Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var expected = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

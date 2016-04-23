@@ -39,14 +39,23 @@ namespace Bach.Model.Instruments
 
     #region Construction/Destruction
 
-    internal Tuning(StringedInstrumentDefinition instrumentDefinition, string name, AbsoluteNoteCollection notes)
+    internal Tuning(
+      StringedInstrumentDefinition instrumentDefinition,
+      string key,
+      string name,
+      AbsoluteNoteCollection notes)
     {
-      Contract.Requires<ArgumentNullException>(instrumentDefinition != null);
-      Contract.Requires<ArgumentNullException>(name != null);
-      Contract.Requires<ArgumentException>(name.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrumentDefinition.StringCount);
+      Contract.Requires<ArgumentNullException>(instrumentDefinition != null, "Must provide an instrument definition");
+      Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
+      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
+      Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
+      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
+      Contract.Requires<ArgumentNullException>(notes != null, "Must provide a note collection");
+      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrumentDefinition.StringCount,
+                                                     "The number of note must match the instrument's string count");
 
       InstrumentDefinition = instrumentDefinition;
+      Key = key;
       Name = name;
       Notes = notes.ToArray();
     }
@@ -56,6 +65,7 @@ namespace Bach.Model.Instruments
     #region Properties
 
     public StringedInstrumentDefinition InstrumentDefinition { get; }
+    public string Key { get; }
     public string Name { get; }
     public AbsoluteNote[] Notes { get; }
 
@@ -64,29 +74,9 @@ namespace Bach.Model.Instruments
       get
       {
         Contract.Requires<ArgumentOutOfRangeException>(stringNumber >= 1);
-        Contract.Requires<ArgumentOutOfRangeException>(stringNumber <= InstrumentDefinition.StringCount );
+        Contract.Requires<ArgumentOutOfRangeException>(stringNumber <= InstrumentDefinition.StringCount);
         return Notes[stringNumber - 1];
       }
-    }
-
-    #endregion
-
-    #region IEquatable<Tuning> Members
-
-    public bool Equals(Tuning other)
-    {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      return InstrumentDefinition.Equals(other.InstrumentDefinition) && s_nameComparer.Equals(Name, other.Name)
-             && Notes.SequenceEqual(other.Notes);
     }
 
     #endregion
@@ -112,8 +102,29 @@ namespace Bach.Model.Instruments
     {
       var hash = 17;
       hash = hash * 23 + InstrumentDefinition.GetHashCode();
+      hash = hash * 23 + s_nameComparer.GetHashCode(Key);
       hash = hash * 23 + s_nameComparer.GetHashCode(Name);
       return hash;
+    }
+
+    #endregion
+
+    #region IEquatable<Tuning> Members
+
+    public bool Equals(Tuning other)
+    {
+      if( ReferenceEquals(null, other) )
+      {
+        return false;
+      }
+
+      if( ReferenceEquals(this, other) )
+      {
+        return true;
+      }
+
+      return InstrumentDefinition.Equals(other.InstrumentDefinition) && s_nameComparer.Equals(Key, other.Key)
+             && s_nameComparer.Equals(Name, other.Name) && Notes.SequenceEqual(other.Notes);
     }
 
     #endregion

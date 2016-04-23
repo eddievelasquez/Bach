@@ -25,7 +25,7 @@
 
 namespace Bach.Model.Test.Instruments
 {
-  using Bach.Model.Instruments;
+  using Model.Instruments;
   using Xunit;
 
   public class InstrumentDefinitionTest
@@ -109,15 +109,14 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsTest()
     {
-      StringedInstrumentDefinitionBuilder builder = new StringedInstrumentDefinitionBuilder("GuitarX", 6);
-      builder.AddTuning("Standard", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,E2"));
+      var builder = new StringedInstrumentDefinitionBuilder("GuitarX", "GuitarX", 6);
+      builder.AddTuning("Standard", "Standard", AbsoluteNoteCollection.Parse("E4,B3,G3,D3,A2,E2"));
 
       object a = builder.Build();
       object b = InstrumentDefinitionRegistry.Get("guitar");
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
     }
-
 
     #endregion
   }

@@ -32,6 +32,7 @@ namespace Bach.Model.Serialization
   {
     #region Properties
 
+    public string Key { get; set; }
     public string Name { get; set; }
     public string Symbol { get; set; }
     public string Formula { get; set; }

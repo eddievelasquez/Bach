@@ -32,7 +32,7 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class Formula: INamedObject,
+  public class Formula: IKeyedObject,
                         IEquatable<Formula>
   {
     #region Data Members
@@ -45,18 +45,22 @@ namespace Bach.Model
 
     #region Construction/Destruction
 
-    public Formula(string name, params Interval[] intervals)
+    public Formula(string key, string name, Interval[] intervals)
     {
-      Contract.Requires<ArgumentNullException>(name != null);
-      Contract.Requires<ArgumentException>(name.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0);
+      Contract.Requires<ArgumentNullException>(key != null, "Must provide a key");
+      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a key");
+      Contract.Requires<ArgumentNullException>(name != null, "Must provide a name");
+      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a name");
+      Contract.Requires<ArgumentNullException>(intervals != null, "Must provide an interval array");
+      Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0, "Must provide at least one interval");
 
+      Key = key;
       Name = name;
       _intervals = intervals;
     }
 
-    public Formula(string name, string formula)
-      : this(name, ParseIntervals(formula))
+    public Formula(string key, string name, string formula)
+      : this(key, name, ParseIntervals(formula))
     {
     }
 
@@ -67,6 +71,8 @@ namespace Bach.Model
     public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
 
     public int Count => _intervals.Length;
+
+    public string Name { get; }
 
     #endregion
 
@@ -114,7 +120,7 @@ namespace Bach.Model
 
     public override int GetHashCode()
     {
-      return s_comparer.GetHashCode(Name);
+      return s_comparer.GetHashCode(Key);
     }
 
     public IEnumerable<AbsoluteNote> Generate(AbsoluteNote root, int skipCount = 0)
@@ -181,14 +187,15 @@ namespace Bach.Model
         return false;
       }
 
-      return s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
+      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name)
+             && _intervals.SequenceEqual(other.Intervals);
     }
 
     #endregion
 
-    #region INamedObject Members
+    #region IKeyedObject Members
 
-    public string Name { get; }
+    public string Key { get; }
 
     #endregion
 

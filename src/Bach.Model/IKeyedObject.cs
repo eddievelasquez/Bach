@@ -1,5 +1,5 @@
 ﻿//  
-// Module Name: NamedObjectCollection.cs
+// Module Name: NamedObject.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -25,27 +25,11 @@
 
 namespace Bach.Model
 {
-  using System;
-  using System.Collections.ObjectModel;
-
-  public class NamedObjectCollection<T>: KeyedCollection<string, T>
-    where T: INamedObject
+  public interface IKeyedObject
   {
-    #region Construction/Destruction
+    #region Properties
 
-    public NamedObjectCollection()
-      : base(StringComparer.CurrentCultureIgnoreCase)
-    {
-    }
-
-    #endregion
-
-    #region Public Methods
-
-    protected override string GetKeyForItem(T item)
-    {
-      return item.Name;
-    }
+    string Key { get; }
 
     #endregion
   }

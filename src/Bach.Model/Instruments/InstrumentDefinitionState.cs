@@ -30,31 +30,28 @@ namespace Bach.Model.Instruments
 
   internal abstract class InstrumentDefinitionState
   {
-    #region Data Members
-
-    private readonly Guid _instrumentId;
-    private readonly string _name;
-
-    #endregion
-
     #region Construction/Destruction
 
-    protected InstrumentDefinitionState(Guid instrumentId, string name)
+    protected InstrumentDefinitionState(Guid instrumentId, string key, string name)
     {
       Contract.Requires<ArgumentException>(instrumentId != Guid.Empty, "Must provide a non-empty instrument id");
+      Contract.Requires<ArgumentNullException>(key != null, "Must provide an instrument key");
+      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide an instrument key");
       Contract.Requires<ArgumentNullException>(name != null, "Must provide an instrument name");
       Contract.Requires<ArgumentException>(name.Length > 0, "Must provide an instrument name");
 
-      _instrumentId = Guid.NewGuid();
-      _name = name;
+      InstrumentId = instrumentId;
+      Key = key;
+      Name = name;
     }
 
     #endregion
 
     #region Properties
 
-    public Guid InstrumentId => _instrumentId;
-    public string Name => _name;
+    public Guid InstrumentId { get; }
+    public string Key { get; }
+    public string Name { get; }
 
     #endregion
   }
