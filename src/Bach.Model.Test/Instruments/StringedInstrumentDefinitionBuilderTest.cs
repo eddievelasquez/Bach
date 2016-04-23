@@ -27,7 +27,7 @@ namespace Bach.Model.Test.Instruments
 {
   using System;
   using System.Linq;
-  using Bach.Model.Instruments;
+  using Model.Instruments;
   using Xunit;
 
   public class StringedInstrumentDefinitionBuilderTest
@@ -140,6 +140,13 @@ namespace Bach.Model.Test.Instruments
       var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
       builder.AddTuning("A tuning", notes);
       Assert.Throws<InvalidOperationException>(() => builder.Build());
+    }
+
+    [Fact]
+    public void AddTuningThrowsOnStringMismatchTest()
+    {
+      var builder = new StringedInstrumentDefinitionBuilder(EXPECTED_NAME, EXPECTED_STRING_COUNT);
+      Assert.Throws<ArgumentException>(() => builder.AddTuning(STANDARD_TUNING_NAME, "C4,D4,E4,F4"));
     }
 
     [Fact]

@@ -53,6 +53,26 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
+    public StringedInstrumentDefinitionBuilder AddTuning(string name, string notes, int defaultOctave = 4)
+    {
+      Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
+      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
+      Contract.Requires<ArgumentNullException>(notes != null, "Must provide tuning notes");
+      Contract.Requires<ArgumentException>(notes.Length > 0, "Must provide tuning notes");
+      Contract.Ensures(Contract.Result<StringedInstrumentDefinitionBuilder>() != null);
+
+      AbsoluteNoteCollection collection = AbsoluteNoteCollection.Parse(notes, defaultOctave);
+      if( collection.Count != _state.StringCount )
+      {
+        throw new ArgumentException("Must provide exactly {_state.StringCount} notes");
+      }
+
+      CheckBuilderReuse();
+
+      _tuningInfo.Add(name, new AbsoluteNoteCollection(collection));
+      return this;
+    }
+
     public StringedInstrumentDefinitionBuilder AddTuning(string name, params AbsoluteNote[] notes)
     {
       Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
@@ -70,14 +90,6 @@ namespace Bach.Model.Instruments
       return this;
     }
 
-    private void CheckBuilderReuse()
-    {
-      if( _built )
-      {
-        throw new InvalidOperationException("Cannot reuse a builder");
-      }
-    }
-
     public StringedInstrumentDefinitionBuilder AddTuning(string name, AbsoluteNoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
@@ -85,7 +97,7 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentNullException>(notes != null, "Must provide a note collection");
       Contract.Ensures(Contract.Result<StringedInstrumentDefinitionBuilder>() != null);
 
-      if (notes.Count != _state.StringCount)
+      if( notes.Count != _state.StringCount )
       {
         throw new ArgumentException("Must provide exactly {_state.StringCount} notes");
       }
@@ -102,7 +114,7 @@ namespace Bach.Model.Instruments
 
       CheckBuilderReuse();
 
-      if (_tuningInfo.Count == 0 )
+      if( _tuningInfo.Count == 0 )
       {
         throw new InvalidOperationException("A StringedInstrumentDefinition must have at least one Tuning");
       }
@@ -120,6 +132,18 @@ namespace Bach.Model.Instruments
 
       _built = true;
       return definition;
+    }
+
+    #endregion
+
+    #region Implementation
+
+    private void CheckBuilderReuse()
+    {
+      if( _built )
+      {
+        throw new InvalidOperationException("Cannot reuse a builder");
+      }
     }
 
     #endregion
