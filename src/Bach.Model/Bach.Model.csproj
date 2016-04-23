@@ -104,6 +104,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -118,6 +122,7 @@
     <Compile Include="AccidentalMode.cs" />
     <Compile Include="Chord.cs" />
     <Compile Include="ChordFormula.cs" />
+    <Compile Include="INamedObject.cs" />
     <Compile Include="Instruments\Fingering.cs" />
     <Compile Include="Instruments\InstrumentDefinition.cs" />
     <Compile Include="Instruments\InstrumentDefinitionRegistry.cs" />
@@ -149,13 +154,27 @@
     <Compile Include="Player\PlayableCollection.cs" />
     <Compile Include="Player\Silence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NamedObjectCollection.cs" />
+    <Compile Include="Registry.cs" />
     <Compile Include="Scale.cs" />
     <Compile Include="Formula.cs" />
     <Compile Include="ScaleFormula.cs" />
+    <Compile Include="Serialization\PersistentChord.cs" />
+    <Compile Include="Serialization\PersistentLibrary.cs" />
+    <Compile Include="Serialization\PersistentScale.cs" />
+    <Compile Include="Serialization\PersistentStringedInstrument.cs" />
+    <Compile Include="Serialization\PersistentTuning.cs" />
     <Compile Include="Tablature.cs" />
     <Compile Include="Tone.cs" />
     <Compile Include="ToneExtensions.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Bach.Model.Library.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,5 +1,5 @@
-//  
-// Module Name: InstrumentDefinition.cs
+﻿//  
+// Module Name: NamedObjectCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -23,66 +23,29 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+namespace Bach.Model
 {
   using System;
-  using System.Diagnostics.Contracts;
+  using System.Collections.ObjectModel;
 
-  public abstract class InstrumentDefinition: INamedObject,
-                                              IEquatable<InstrumentDefinition>
+  public class NamedObjectCollection<T>: KeyedCollection<string, T>
+    where T: INamedObject
   {
     #region Construction/Destruction
 
-    internal InstrumentDefinition(InstrumentDefinitionState state)
+    public NamedObjectCollection()
+      : base(StringComparer.CurrentCultureIgnoreCase)
     {
-      Contract.Requires<ArgumentNullException>(state != null);
-      State = state;
     }
-
-    #endregion
-
-    #region Properties
-
-    private static StringComparer Comparer { get; } = StringComparer.CurrentCultureIgnoreCase;
-
-    internal InstrumentDefinitionState State { get; }
-    public Guid InstrumentId => State.InstrumentId;
 
     #endregion
 
     #region Public Methods
 
-    public override int GetHashCode()
+    protected override string GetKeyForItem(T item)
     {
-      return InstrumentId.GetHashCode();
+      return item.Name;
     }
-
-    #endregion
-
-    #region IEquatable<InstrumentDefinition> Members
-
-    public bool Equals(InstrumentDefinition other)
-    {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      // InstrumentId is only used for hashcode calculation,
-      // don't used it for equality
-      return Comparer.Equals(Name, other.Name);
-    }
-
-    #endregion
-
-    #region INamedObject Members
-
-    public string Name => State.Name;
 
     #endregion
   }

@@ -1,0 +1,94 @@
+﻿//  
+// Module Name: Registry.cs
+// Project:     Bach.Model
+// Copyright (c) 2016  Eddie Velasquez.
+// 
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+// and associated documentation files (the "Software"), to deal in the Software without restriction, 
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to 
+// do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+//  portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+namespace Bach.Model
+{
+  using System;
+  using System.IO;
+  using System.Reflection;
+  using Instruments;
+  using Newtonsoft.Json;
+  using Serialization;
+
+  public static class Registry
+  {
+    #region Constants
+
+    private const string LIBRARY_FILE_NAME = "Bach.Model.Library.json";
+
+    #endregion
+
+    #region Construction/Destruction
+
+    static Registry()
+    {
+      // Load the library from the JSON file in the same directory as
+      // this assembly.
+      Assembly assembly = Assembly.GetExecutingAssembly();
+      string directory = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath);
+      string path = Path.Combine(directory ?? "", LIBRARY_FILE_NAME);
+      string s = File.ReadAllText(path);
+
+      // Deserialize
+      var library = JsonConvert.DeserializeObject<PersistentLibrary>(s);
+
+      // Load data
+      ScaleFormulas = new NamedObjectCollection<ScaleFormula>();
+      foreach( PersistentScale scale in library.Scales )
+      {
+        ScaleFormulas.Add(new ScaleFormula(scale.Name, scale.Formula));
+      }
+
+      ChordFormulas = new NamedObjectCollection<ChordFormula>();
+      foreach( PersistentChord chord in library.Chords )
+      {
+        ChordFormulas.Add(new ChordFormula(chord.Name, chord.Symbol, chord.Formula));
+      }
+
+      InstrumentDefinitions = new NamedObjectCollection<InstrumentDefinition>();
+      foreach( PersistentStringedInstrument stringedInstrument in library.StringedInstruments )
+      {
+        var builder = new StringedInstrumentDefinitionBuilder(stringedInstrument.Name, stringedInstrument.StringCount);
+        foreach( PersistentTuning tuning in stringedInstrument.Tunings )
+        {
+          builder.AddTuning(tuning.Name, tuning.Notes);
+        }
+
+        StringedInstrumentDefinition definition = builder.Build();
+        InstrumentDefinitions.Add(definition);
+      }
+    }
+
+    #endregion
+
+    #region Properties
+
+    public static NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
+    public static NamedObjectCollection<ChordFormula> ChordFormulas { get; }
+    public static NamedObjectCollection<InstrumentDefinition> InstrumentDefinitions { get; }
+
+    #endregion
+  }
+}

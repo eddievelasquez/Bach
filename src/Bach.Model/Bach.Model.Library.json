@@ -1,0 +1,61 @@
+﻿{
+  "Version": "0.1",
+  "Scales": 
+  [
+    { "Name": "Major", "Formula": "1,2,3,4,5,6,7" },
+    { "Name": "Natural Minor", "Formula": "1,2,m3,4,5,m6,m7" },
+    { "Name": "Harmonic Minor", "Formula": "1,2,m3,4,5,m6,7" },
+    { "Name": "Melodic Minor", "Formula": "1,2,m3,4,5,6,7" },
+    { "Name": "Diminished", "Formula": "1,2,m3,4,d5,A5,6,7" },
+    { "Name": "Polytonal", "Formula": "1,m2,m3,d4,A4,5,6,m7" },
+    { "Name": "Whole Tone", "Formula": "1,2,3,A4,A5,A6" },
+    { "Name": "Pentatonic", "Formula": "1,2,3,5,6" },
+    { "Name": "Minor Pentatonic", "Formula": "1,m3,4,5,m7" },
+    { "Name": "Blues", "Formula": "1,m3,4,d5,5,m7" },
+    { "Name": "Gospel", "Formula": "1,2,m3,3,5,6" }
+  ],
+  "Chords": 
+  [
+    { "Name": "Major", "Symbol": "", "Formula": "1,3,5" },
+    { "Name": "Major Seventh", "Symbol": "M7", "Formula": "1,3,5,7" },
+    { "Name": "Major Ninth", "Symbol": "M9", "Formula": "1,3,5,7,9" },
+    { "Name": "Major Eleventh", "Symbol": "M11", "Formula": "1,3,5,7,9,11" },
+    { "Name": "Major Thirteenth", "Symbol": "M13", "Formula": "1,3,5,7,9,11,13" },
+    { "Name": "Minor", "Symbol": "m", "Formula": "1,m3,5" },
+    { "Name": "Minor Seventh", "Symbol": "m7", "Formula": "1,m3,5,m7" },
+    { "Name": "Minor Ninth", "Symbol": "m9", "Formula": "1,m3,5,m7,9" },
+    { "Name": "Minor Eleventh", "Symbol": "m11", "Formula": "1,m3,5,m7,9,11" },
+    { "Name": "Minor Thirteenth", "Symbol": "m13", "Formula": "1,m3,5,m7,9,11,13" },
+    { "Name": "Dominant Seventh", "Symbol": "7", "Formula": "1,3,5,m7" },
+    { "Name": "Dominant Ninth", "Symbol": "9", "Formula": "1,3,5,m7,9" },
+    { "Name": "Dominant Eleventh", "Symbol": "11", "Formula": "1,3,5,m7,9,11" },
+    { "Name": "Dominant Thirteenth", "Symbol": "13", "Formula": "1,3,5,m7,9,11,13" },
+    { "Name": "Six Nine", "Symbol": "6/9", "Formula": "1,3,5,6,9" },
+    { "Name": "Add Nine", "Symbol": "add9", "Formula": "1,3,5,9" },
+    { "Name": "Diminished", "Symbol": "dim", "Formula": "1,m3,d5" },
+    { "Name": "Diminished Seventh", "Symbol": "dim7", "Formula": "1,m3,d5,d7" },
+    { "Name": "Half Diminished", "Symbol": "7dim5", "Formula": "1,m3,d5,m7" },
+    { "Name": "Augmented", "Symbol": "aug", "Formula": "1,3,A5" }
+  ],
+  "StringedInstruments": 
+  [
+    { 
+        "Name": "Guitar",
+        "StringCount": 6,
+        "Tunings": [
+          { "Name": "Standard", "Notes": "E4,B3,G3,D3,A2,E2" },
+          { "Name": "Drop D", "Notes": "E4,B3,G3,D3,A2,D2" },
+          { "Name": "Open D", "Notes": "D4,A3,F#3,D3,A2,D2" },
+          { "Name": "Open G", "Notes": "D4,B3,G2,D2,G2,D2" },
+          { "Name": "Open A", "Notes": "E4,C#4,A3,E3,A2,E2" }
+        ]
+  },
+    {
+        "Name": "Bass",
+        "StringCount": 4,
+        "Tunings": [
+          { "Name": "Standard", "Notes": "G2,D2,A1,E1" }
+        ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
-//  
-// Module Name: InstrumentDefinition.cs
-// Project:     Bach.Model
+﻿//  
+// Module Name: RegistryTest.cs
+// Project:     Bach.Model.Test
 // Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
@@ -23,66 +23,57 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+namespace Bach.Model.Test
 {
-  using System;
-  using System.Diagnostics.Contracts;
+  using System.Linq;
+  using Model.Instruments;
+  using Xunit;
 
-  public abstract class InstrumentDefinition: INamedObject,
-                                              IEquatable<InstrumentDefinition>
+  public class RegistryTest
   {
-    #region Construction/Destruction
-
-    internal InstrumentDefinition(InstrumentDefinitionState state)
-    {
-      Contract.Requires<ArgumentNullException>(state != null);
-      State = state;
-    }
-
-    #endregion
-
-    #region Properties
-
-    private static StringComparer Comparer { get; } = StringComparer.CurrentCultureIgnoreCase;
-
-    internal InstrumentDefinitionState State { get; }
-    public Guid InstrumentId => State.InstrumentId;
-
-    #endregion
-
     #region Public Methods
 
-    public override int GetHashCode()
+    [Fact]
+    public void ScaleFormulasTest()
     {
-      return InstrumentId.GetHashCode();
+      var scaleFormulas = Registry.ScaleFormulas.ToArray();
+      Assert.NotNull(scaleFormulas);
+      Assert.NotEmpty(scaleFormulas);
+
+      foreach( ScaleFormula expected in scaleFormulas )
+      {
+        ScaleFormula actual = Registry.ScaleFormulas[expected.Name];
+        Assert.Equal(expected, actual);
+      }
     }
 
-    #endregion
-
-    #region IEquatable<InstrumentDefinition> Members
-
-    public bool Equals(InstrumentDefinition other)
+    [Fact]
+    public void ChordFormulasTest()
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
+      var chordFormulas = Registry.ChordFormulas.ToArray();
+      Assert.NotNull(chordFormulas);
+      Assert.NotEmpty(chordFormulas);
 
-      if( ReferenceEquals(this, other) )
+      foreach( ChordFormula expected in chordFormulas )
       {
-        return true;
+        ChordFormula actual = Registry.ChordFormulas[expected.Name];
+        Assert.Equal(expected, actual);
       }
-
-      // InstrumentId is only used for hashcode calculation,
-      // don't used it for equality
-      return Comparer.Equals(Name, other.Name);
     }
 
-    #endregion
+    [Fact]
+    public void InstrumentDefinitionsTest()
+    {
+      var instrumentDefinitions = Registry.InstrumentDefinitions.ToArray();
+      Assert.NotNull(instrumentDefinitions);
+      Assert.NotEmpty(instrumentDefinitions);
 
-    #region INamedObject Members
-
-    public string Name => State.Name;
+      foreach( InstrumentDefinition expected in instrumentDefinitions )
+      {
+        InstrumentDefinition actual = Registry.InstrumentDefinitions[expected.Name];
+        Assert.Equal(expected, actual);
+      }
+    }
 
     #endregion
   }

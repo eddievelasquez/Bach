@@ -1,5 +1,5 @@
 //  
-// Module Name: InstrumentDefinition.cs
+// Module Name: PersistentLibrary.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -23,66 +23,21 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+namespace Bach.Model.Serialization
 {
   using System;
-  using System.Diagnostics.Contracts;
+  using System.Collections.Generic;
+  using Newtonsoft.Json;
 
-  public abstract class InstrumentDefinition: INamedObject,
-                                              IEquatable<InstrumentDefinition>
+  [JsonObject]
+  internal class PersistentLibrary
   {
-    #region Construction/Destruction
-
-    internal InstrumentDefinition(InstrumentDefinitionState state)
-    {
-      Contract.Requires<ArgumentNullException>(state != null);
-      State = state;
-    }
-
-    #endregion
-
     #region Properties
 
-    private static StringComparer Comparer { get; } = StringComparer.CurrentCultureIgnoreCase;
-
-    internal InstrumentDefinitionState State { get; }
-    public Guid InstrumentId => State.InstrumentId;
-
-    #endregion
-
-    #region Public Methods
-
-    public override int GetHashCode()
-    {
-      return InstrumentId.GetHashCode();
-    }
-
-    #endregion
-
-    #region IEquatable<InstrumentDefinition> Members
-
-    public bool Equals(InstrumentDefinition other)
-    {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      // InstrumentId is only used for hashcode calculation,
-      // don't used it for equality
-      return Comparer.Equals(Name, other.Name);
-    }
-
-    #endregion
-
-    #region INamedObject Members
-
-    public string Name => State.Name;
+    public Version Version { get; set; }
+    public List<PersistentScale> Scales { get; set; }
+    public List<PersistentChord> Chords { get; set; }
+    public List<PersistentStringedInstrument> StringedInstruments { get; set; }
 
     #endregion
   }

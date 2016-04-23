@@ -32,9 +32,12 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class Formula: IEquatable<Formula>
+  public class Formula: INamedObject,
+                        IEquatable<Formula>
   {
     #region Data Members
+
+    private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
 
     private readonly Interval[] _intervals;
 
@@ -61,31 +64,9 @@ namespace Bach.Model
 
     #region Properties
 
-    public string Name { get; }
-
     public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
 
     public int Count => _intervals.Length;
-
-    #endregion
-
-    #region IEquatable<Formula> Members
-
-    public bool Equals(Formula other)
-    {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return StringComparer.CurrentCultureIgnoreCase.Equals(Name, other.Name)
-             && _intervals.SequenceEqual(other.Intervals);
-    }
 
     #endregion
 
@@ -133,13 +114,13 @@ namespace Bach.Model
 
     public override int GetHashCode()
     {
-      return Name.GetHashCode();
+      return s_comparer.GetHashCode(Name);
     }
 
     public IEnumerable<AbsoluteNote> Generate(AbsoluteNote root, int skipCount = 0)
     {
       int intervalCount = _intervals.Length;
-      var index = skipCount;
+      int index = skipCount;
 
       while( true )
       {
@@ -183,6 +164,31 @@ namespace Bach.Model
         ++index;
       }
     }
+
+    #endregion
+
+    #region IEquatable<Formula> Members
+
+    public bool Equals(Formula other)
+    {
+      if( ReferenceEquals(other, this) )
+      {
+        return true;
+      }
+
+      if( ReferenceEquals(other, null) )
+      {
+        return false;
+      }
+
+      return s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
+    }
+
+    #endregion
+
+    #region INamedObject Members
+
+    public string Name { get; }
 
     #endregion
 
