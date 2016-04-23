@@ -36,7 +36,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsContractTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
 
       object x = StringedInstrument.Create(definition, 22);
       object y = StringedInstrument.Create(definition, 22);
@@ -53,7 +53,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
 
       Instrument x = StringedInstrument.Create(definition, 22);
       Instrument y = StringedInstrument.Create(definition, 22);
@@ -70,9 +70,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
       object a = StringedInstrument.Create(definition, 22);
-      object b = StringedInstrument.Create(InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("bass"), 22);
+      object b = StringedInstrument.Create(Registry.StringedInstrumentDefinitions["bass"], 22);
 
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
@@ -83,10 +83,10 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
       Instrument a = StringedInstrument.Create(definition, 22);
       Instrument b =
-        StringedInstrument.Create(InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("bass"), 22);
+        StringedInstrument.Create(Registry.StringedInstrumentDefinitions["bass"], 22);
 
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
@@ -97,7 +97,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
       object actual = StringedInstrument.Create(definition, 22);
       Assert.False(actual.Equals(null));
     }
@@ -105,7 +105,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
       Instrument actual = StringedInstrument.Create(definition, 22);
       Assert.False(actual.Equals(null));
     }
@@ -113,7 +113,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
       Instrument actual = StringedInstrument.Create(definition, 22);
       Assert.True(actual.Equals(actual));
     }
@@ -121,7 +121,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void GetHashcodeTest()
     {
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var definition = Registry.StringedInstrumentDefinitions["guitar"];
       Instrument actual = StringedInstrument.Create(definition, 22);
       Instrument expected = StringedInstrument.Create(definition, 22);
       Assert.True(expected.Equals(actual));

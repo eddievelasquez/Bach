@@ -64,13 +64,13 @@ namespace Bach.Model.Test
     [Fact]
     public void InstrumentDefinitionsTest()
     {
-      var instrumentDefinitions = Registry.InstrumentDefinitions.ToArray();
+      var instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
       Assert.NotNull(instrumentDefinitions);
       Assert.NotEmpty(instrumentDefinitions);
 
       foreach( InstrumentDefinition expected in instrumentDefinitions )
       {
-        InstrumentDefinition actual = Registry.InstrumentDefinitions[expected.Key];
+        InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Key];
         Assert.Equal(expected, actual);
       }
     }

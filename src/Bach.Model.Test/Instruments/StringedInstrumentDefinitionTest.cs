@@ -35,9 +35,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsContractTest()
     {
-      object x = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
-      object y = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
-      object z = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      object x = Registry.StringedInstrumentDefinitions["guitar"];
+      object y = Registry.StringedInstrumentDefinitions["guitar"];
+      object z = Registry.StringedInstrumentDefinitions["guitar"];
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -50,9 +50,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
-      var y = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
-      var z = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var x = Registry.StringedInstrumentDefinitions["guitar"];
+      var y = Registry.StringedInstrumentDefinitions["guitar"];
+      var z = Registry.StringedInstrumentDefinitions["guitar"];
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -65,43 +65,43 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      object actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      object actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
-      var expected = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>("guitar");
+      var actual = Registry.StringedInstrumentDefinitions["guitar"];
+      var expected = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

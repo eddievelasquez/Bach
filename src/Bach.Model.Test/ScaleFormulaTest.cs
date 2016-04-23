@@ -35,7 +35,7 @@ namespace Bach.Model.Test
     public void ConstructorTest()
     {
       var actual = new ScaleFormula("Major", "Major", "1,2,3,4,5,6,7");
-      Assert.Equal(ScaleFormula.Major, actual);
+      Assert.Equal(Registry.ScaleFormulas["Major"], actual);
       actual = new ScaleFormula("Major", "Major",
                                 new[]
                                 {
@@ -47,7 +47,7 @@ namespace Bach.Model.Test
                                   Interval.Major6,
                                   Interval.Major7
                                 });
-      Assert.Equal(ScaleFormula.Major, actual);
+      Assert.Equal(Registry.ScaleFormulas["Major"], actual);
     }
 
     #endregion

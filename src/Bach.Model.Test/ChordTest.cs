@@ -38,7 +38,7 @@ namespace Bach.Model.Test
     public void ChordConstructorTest()
     {
       AbsoluteNote root = AbsoluteNote.Parse("C4");
-      ChordFormula formula = ChordFormula.Minor;
+      ChordFormula formula = Registry.ChordFormulas["Minor"];
       var target = new Chord(root, formula);
 
       Assert.Equal(root, target.Root);
@@ -51,34 +51,34 @@ namespace Bach.Model.Test
     public void ChordsTest()
     {
       AbsoluteNote root = AbsoluteNote.Parse("C4");
-      ChordTestImpl("C4,E4,G4", root, ChordFormula.Major);
-      ChordTestImpl("C4,E4,G4,B4", root, ChordFormula.Major7);
-      ChordTestImpl("C4,E4,G4,B4,D5", root, ChordFormula.Major9);
-      ChordTestImpl("C4,E4,G4,B4,D5,F5", root, ChordFormula.Major11);
-      ChordTestImpl("C4,E4,G4,B4,D5,F5,A5", root, ChordFormula.Major13);
-      ChordTestImpl("C4,Eb4,G4", root, ChordFormula.Minor);
-      ChordTestImpl("C4,Eb4,G4,Bb4", root, ChordFormula.Minor7);
-      ChordTestImpl("C4,Eb4,G4,Bb4,D5", root, ChordFormula.Minor9);
-      ChordTestImpl("C4,Eb4,G4,Bb4,D5,F5", root, ChordFormula.Minor11);
-      ChordTestImpl("C4,Eb4,G4,Bb4,D5,F5,A5", root, ChordFormula.Minor13);
-      ChordTestImpl("C4,E4,G4,Bb4", root, ChordFormula.Dominant7);
-      ChordTestImpl("C4,E4,G4,Bb4,D5", root, ChordFormula.Dominant9);
-      ChordTestImpl("C4,E4,G4,Bb4,D5,F5", root, ChordFormula.Dominant11);
-      ChordTestImpl("C4,E4,G4,Bb4,D5,F5,A5", root, ChordFormula.Dominant13);
-      ChordTestImpl("C4,E4,G4,A4,D5", root, ChordFormula.SixNine);
-      ChordTestImpl("C4,E4,G4,D5", root, ChordFormula.AddNine);
-      ChordTestImpl("C4,Eb4,Gb4", root, ChordFormula.Diminished);
-      ChordTestImpl("C4,Eb4,Gb4,A4", root, ChordFormula.Diminished7);
-      ChordTestImpl("C4,Eb4,Gb4,Bb4", root, ChordFormula.HalfDiminished);
-      ChordTestImpl("C4,E4,G#4", root, ChordFormula.Augmented);
+      ChordTestImpl("C4,E4,G4", root, Registry.ChordFormulas["Major"]);
+      ChordTestImpl("C4,E4,G4,B4", root, Registry.ChordFormulas["Major7"]);
+      ChordTestImpl("C4,E4,G4,B4,D5", root, Registry.ChordFormulas["Major9"]);
+      ChordTestImpl("C4,E4,G4,B4,D5,F5", root, Registry.ChordFormulas["Major11"]);
+      ChordTestImpl("C4,E4,G4,B4,D5,F5,A5", root, Registry.ChordFormulas["Major13"]);
+      ChordTestImpl("C4,Eb4,G4", root, Registry.ChordFormulas["Minor"]);
+      ChordTestImpl("C4,Eb4,G4,Bb4", root, Registry.ChordFormulas["Minor7"]);
+      ChordTestImpl("C4,Eb4,G4,Bb4,D5", root, Registry.ChordFormulas["Minor9"]);
+      ChordTestImpl("C4,Eb4,G4,Bb4,D5,F5", root, Registry.ChordFormulas["Minor11"]);
+      ChordTestImpl("C4,Eb4,G4,Bb4,D5,F5,A5", root, Registry.ChordFormulas["Minor13"]);
+      ChordTestImpl("C4,E4,G4,Bb4", root, Registry.ChordFormulas["Dominant7"]);
+      ChordTestImpl("C4,E4,G4,Bb4,D5", root, Registry.ChordFormulas["Dominant9"]);
+      ChordTestImpl("C4,E4,G4,Bb4,D5,F5", root, Registry.ChordFormulas["Dominant11"]);
+      ChordTestImpl("C4,E4,G4,Bb4,D5,F5,A5", root, Registry.ChordFormulas["Dominant13"]);
+      ChordTestImpl("C4,E4,G4,A4,D5", root, Registry.ChordFormulas["SixNine"]);
+      ChordTestImpl("C4,E4,G4,D5", root, Registry.ChordFormulas["AddNine"]);
+      ChordTestImpl("C4,Eb4,Gb4", root, Registry.ChordFormulas["Diminished"]);
+      ChordTestImpl("C4,Eb4,Gb4,A4", root, Registry.ChordFormulas["Diminished7"]);
+      ChordTestImpl("C4,Eb4,Gb4,Bb4", root, Registry.ChordFormulas["HalfDiminished"]);
+      ChordTestImpl("C4,E4,G#4", root, Registry.ChordFormulas["Augmented"]);
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
-      object y = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
-      object z = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      object x = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
+      object y = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
+      object z = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -91,9 +91,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
-      var y = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
-      var z = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var x = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
+      var y = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
+      var z = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -106,43 +106,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      object actual = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      object actual = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
-      var expected = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var actual = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
+      var expected = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -150,7 +150,7 @@ namespace Bach.Model.Test
     [Fact]
     public void InvertTest()
     {
-      var c4 = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var c4 = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       AbsoluteNoteCollection firstInversion = AbsoluteNoteCollection.Parse("E4,G4,C5");
       Chord actual = c4.Invert(1);
       Assert.NotNull(actual);
@@ -171,7 +171,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EnumeratorTest()
     {
-      var c4 = new Chord(AbsoluteNote.Parse("C4"), ChordFormula.Major);
+      var c4 = new Chord(AbsoluteNote.Parse("C4"), Registry.ChordFormulas["Major"]);
       IEnumerator enumerator = ((IEnumerable) c4).GetEnumerator();
       Assert.NotNull(enumerator);
       Assert.True(enumerator.MoveNext());

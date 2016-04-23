@@ -67,7 +67,7 @@ namespace Bach.Model
         ChordFormulas.Add(new ChordFormula(chord.Key, chord.Name, chord.Symbol, chord.Formula));
       }
 
-      InstrumentDefinitions = new KeyedObjectCollection<InstrumentDefinition>();
+      StringedInstrumentDefinitions = new KeyedObjectCollection<StringedInstrumentDefinition>();
       foreach( PersistentStringedInstrument instrument in library.StringedInstruments )
       {
         var builder = new StringedInstrumentDefinitionBuilder(instrument.Key, instrument.Name, instrument.StringCount);
@@ -77,7 +77,7 @@ namespace Bach.Model
         }
 
         StringedInstrumentDefinition definition = builder.Build();
-        InstrumentDefinitions.Add(definition);
+        StringedInstrumentDefinitions.Add(definition);
       }
     }
 
@@ -87,7 +87,7 @@ namespace Bach.Model
 
     public static KeyedObjectCollection<ScaleFormula> ScaleFormulas { get; }
     public static KeyedObjectCollection<ChordFormula> ChordFormulas { get; }
-    public static KeyedObjectCollection<InstrumentDefinition> InstrumentDefinitions { get; }
+    public static KeyedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
 
     #endregion
   }

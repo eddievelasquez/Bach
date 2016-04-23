@@ -63,7 +63,7 @@ namespace Bach.Model.Instruments
     {
       Contract.Ensures(Contract.Result<StringedInstrument>() != null);
 
-      var definition = InstrumentDefinitionRegistry.Get<StringedInstrumentDefinition>(instrumentKey);
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions[instrumentKey];
       if( string.IsNullOrEmpty(tuningName) )
       {
         tuningName = "Standard";
