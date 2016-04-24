@@ -125,11 +125,11 @@
     <Compile Include="IKeyedObject.cs" />
     <Compile Include="Instruments\Fingering.cs" />
     <Compile Include="Instruments\InstrumentDefinition.cs" />
-    <Compile Include="Instruments\InstrumentDefinitionState.cs" />
+    <Compile Include="Instruments\Internal\InstrumentDefinitionState.cs" />
+    <Compile Include="Instruments\Internal\StringedInstrumentDefinitionState.cs" />
     <Compile Include="Instruments\StringedInstrument.cs" />
     <Compile Include="Instruments\StringedInstrumentDefinition.cs" />
     <Compile Include="Instruments\StringedInstrumentDefinitionBuilder.cs" />
-    <Compile Include="Instruments\StringedInstrumentDefinitionState.cs" />
     <Compile Include="Instruments\Tuning.cs" />
     <Compile Include="Instruments\TuningCollection.cs" />
     <Compile Include="Interval.cs" />

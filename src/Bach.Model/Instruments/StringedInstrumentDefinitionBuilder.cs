@@ -28,6 +28,7 @@ namespace Bach.Model.Instruments
   using System;
   using System.Collections.Generic;
   using System.Diagnostics.Contracts;
+  using Internal;
 
   public class StringedInstrumentDefinitionBuilder
   {

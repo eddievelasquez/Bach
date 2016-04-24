@@ -27,6 +27,7 @@ namespace Bach.Model.Instruments
 {
   using System;
   using System.Diagnostics.Contracts;
+  using Internal;
 
   public class StringedInstrumentDefinition: InstrumentDefinition,
                                              IEquatable<StringedInstrumentDefinition>

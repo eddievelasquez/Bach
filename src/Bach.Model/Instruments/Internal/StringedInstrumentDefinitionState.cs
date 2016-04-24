@@ -1,5 +1,5 @@
 //  
-// Module Name: InstrumentDefinitionState.cs
+// Module Name: StringedInstrumentDefinitionState.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
 // 
@@ -23,35 +23,30 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+namespace Bach.Model.Instruments.Internal
 {
   using System;
   using System.Diagnostics.Contracts;
 
-  internal abstract class InstrumentDefinitionState
+  internal class StringedInstrumentDefinitionState: InstrumentDefinitionState
   {
     #region Construction/Destruction
 
-    protected InstrumentDefinitionState(Guid instrumentId, string key, string name)
+    public StringedInstrumentDefinitionState(Guid instrumentId, string key, string name, int stringCount)
+      : base(instrumentId, key, name)
     {
-      Contract.Requires<ArgumentException>(instrumentId != Guid.Empty, "Must provide a non-empty instrument id");
-      Contract.Requires<ArgumentNullException>(key != null, "Must provide an instrument key");
-      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide an instrument key");
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide an instrument name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide an instrument name");
+      Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0, "Must provide a string count greater than zero");
 
-      InstrumentId = instrumentId;
-      Key = key;
-      Name = name;
+      StringCount = stringCount;
+      Tunings = new TuningCollection(InstrumentId);
     }
 
     #endregion
 
     #region Properties
 
-    public Guid InstrumentId { get; }
-    public string Key { get; }
-    public string Name { get; }
+    public int StringCount { get; }
+    public TuningCollection Tunings { get; }
 
     #endregion
   }
