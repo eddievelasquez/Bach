@@ -291,6 +291,47 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal("62 64 51 54 41 44 31 33 22 24 12 14", RenderScale(instrument, scale, 0, 4));
     }
 
+    [Fact]
+    public void RenderCMajorChordFret0Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var root = AbsoluteNote.Parse("C3");
+      var chord = new Chord(root, Registry.ChordFormulas["Major"]);
+      Assert.Equal("6x 53 42 30 21 10", RenderChord(instrument, chord, 0, 4));
+    }
+
+    [Fact]
+    public void RenderCMajorChordFret3Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var root = AbsoluteNote.Parse("C3");
+      var chord = new Chord(root, Registry.ChordFormulas["Major"]);
+      Assert.Equal("6x 53 45 35 25 13", RenderChord(instrument, chord, 3, 4));
+    }
+
+    [Fact]
+    public void RenderCMajorChordFret5Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var root = AbsoluteNote.Parse("C3");
+      var chord = new Chord(root, Registry.ChordFormulas["Major"]);
+      Assert.Equal("68 57 45 35 25 18", RenderChord(instrument, chord, 5, 4));
+    }
+
+    [Fact]
+    public void RenderCMajorChordFret8Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var root = AbsoluteNote.Parse("C3");
+      var chord = new Chord(root, Registry.ChordFormulas["Major"]);
+      Assert.Equal("68 510 410 39 28 18", RenderChord(instrument, chord, 8, 4));
+    }
+
+
     #endregion
 
     #region Implementation
@@ -299,6 +340,14 @@ namespace Bach.Model.Test.Instruments
     {
       string result = string.Join(" ",
                                   Array.ConvertAll(instrument.Render(scale, startFret, fretSpan).ToArray(),
+                                                   f => f.ToString()));
+      return result;
+    }
+
+    private static string RenderChord(StringedInstrument instrument, Chord chord, int startFret, int fretSpan)
+    {
+      string result = string.Join(" ",
+                                  Array.ConvertAll(instrument.Render(chord, startFret, fretSpan).ToArray(),
                                                    f => f.ToString()));
       return result;
     }

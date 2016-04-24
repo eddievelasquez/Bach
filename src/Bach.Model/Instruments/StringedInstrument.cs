@@ -86,6 +86,54 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
+    public IEnumerable<Fingering> Render(Chord chord, int startFret, int fretSpan = 4)
+    {
+      Contract.Requires<ArgumentNullException>(chord != null);
+      Contract.Requires<ArgumentOutOfRangeException>(fretSpan > 1 && startFret + fretSpan <= FretCount);
+
+      // Always start at the lowest string
+      int startString = Definition.StringCount;
+
+      // Start rendering the scale at the note closest to the 
+      // start string and fret
+      var chordEnumerator = chord.Render(chord.Root).GetEnumerator();
+      chordEnumerator.MoveNext();
+
+      // Go through all the strings
+      bool foundRoot = false;
+      for( int currentString = startString; currentString >= 1; --currentString )
+      {
+        int startValue = GetValue(currentString, startFret);
+        int maxValue = startValue + fretSpan;
+        int currentValue = chordEnumerator.Current.AbsoluteValue;
+
+        Fingering fingering;
+        if( foundRoot && currentValue < startValue )
+        {
+          do
+          {
+            chordEnumerator.MoveNext();
+            currentValue = chordEnumerator.Current.AbsoluteValue;
+          } while( currentValue < startValue );
+        }
+
+        if( currentValue < startValue || currentValue > maxValue )
+        {
+          fingering = Fingering.Create(this, currentString);
+          yield return fingering;
+          continue;
+        }
+
+        int fret = currentValue - startValue + startFret;
+        fingering = Fingering.Create(this, currentString, fret);
+        yield return fingering;
+
+        foundRoot = true;
+
+        chordEnumerator.MoveNext(); // Will never return false.
+      }
+    }
+
     public IEnumerable<Fingering> Render(Scale scale, int startFret, int fretSpan = 4)
     {
       Contract.Requires<ArgumentNullException>(scale != null);

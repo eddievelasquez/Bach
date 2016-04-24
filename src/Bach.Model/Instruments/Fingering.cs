@@ -49,8 +49,18 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentOutOfRangeException>(fret >= 0 && fret <= instrument.FretCount);
       Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
 
-      var note = instrument.Tuning[@string] + fret;
+      AbsoluteNote note = instrument.Tuning[@string] + fret;
       var result = new Fingering(note, @string, fret);
+      return result;
+    }
+
+    public static Fingering Create(StringedInstrument instrument, int @string)
+    {
+      Contract.Requires<ArgumentNullException>(instrument != null);
+      Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
+
+      AbsoluteNote note = AbsoluteNote.Empty;
+      var result = new Fingering(note, @string, -1);
       return result;
     }
 
@@ -68,6 +78,11 @@ namespace Bach.Model.Instruments
 
     public override string ToString()
     {
+      if( Fret < 0 )
+      {
+        return $"{String}x";
+      }
+
       return $"{String}{Fret}";
     }
 

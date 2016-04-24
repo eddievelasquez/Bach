@@ -98,7 +98,7 @@ namespace Bach.Model
 
     public IEnumerator<AbsoluteNote> GetEnumerator()
     {
-      return _notes.GetEnumerator();
+      return Formula.Generate(Root).GetEnumerator();
     }
 
     #endregion
@@ -123,6 +123,22 @@ namespace Bach.Model
     #endregion
 
     #region Public Methods
+
+    public Note[] GetNotes(int start = 0)
+    {
+      return Formula.Generate(Root.Note).Skip(start).Take(Formula.Count).ToArray();
+    }
+
+    public IEnumerable<AbsoluteNote> Render(AbsoluteNote startNote)
+    {
+      int pos = Array.IndexOf(GetNotes(), startNote.Note);
+      if (pos == -1)
+      {
+        return Enumerable.Empty<AbsoluteNote>();
+      }
+
+      return Formula.Generate(Root).Skip(pos);
+    }
 
     public Chord Invert(int inversion = 1)
     {
