@@ -1,7 +1,7 @@
 ﻿//  
 // Module Name: Chord.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 // 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -28,40 +28,36 @@ namespace Bach.Model
   using System;
   using System.Collections;
   using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.Diagnostics.Contracts;
   using System.Linq;
   using System.Text;
+  using Util;
 
   public class Chord: IEquatable<Chord>,
-                      IEnumerable<AbsoluteNote>
+                      IEnumerable<Note>
   {
     #region Data Members
-
-    private readonly AbsoluteNoteCollection _notes;
 
     #endregion
 
     #region Construction/Destruction
 
-    private Chord(AbsoluteNote root, ChordFormula formula, string name, IList<AbsoluteNote> notes)
+    private Chord(Note root, ChordFormula formula, string name, IReadOnlyCollection<Note> notes)
     {
-      Contract.Requires<ArgumentException>(root.IsValid);
       Contract.Requires<ArgumentNullException>(formula != null);
       Contract.Requires<ArgumentNullException>(name != null);
       Contract.Requires<ArgumentException>(name.Length > 0);
       Contract.Requires<ArgumentNullException>(notes != null);
-      Contract.Requires<ArgumentException>(notes.Count > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == formula.Count);
 
       Root = root;
       Formula = formula;
       Name = name;
-      _notes = new AbsoluteNoteCollection(notes);
+      Notes = notes.ToArray();
     }
 
-    public Chord(AbsoluteNote root, ChordFormula formula)
+    public Chord(Note root, ChordFormula formula)
     {
-      Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
 
       Root = root;
@@ -73,88 +69,48 @@ namespace Bach.Model
       buf.Append(formula.Symbol);
 
       Name = buf.ToString();
-
-      _notes = new AbsoluteNoteCollection(Formula.Generate(Root).Take(formula.Count).ToArray());
+      Notes = Formula.Generate(Root).Take(formula.Count).ToArray();
     }
 
     #endregion
 
     #region Properties
 
-    public AbsoluteNote Root { get; }
+    public Note Root { get; }
     public string Name { get; }
     public ChordFormula Formula { get; }
-
-    public ReadOnlyCollection<AbsoluteNote> Notes => new ReadOnlyCollection<AbsoluteNote>(_notes);
-
-    #endregion
-
-    #region IEnumerable<Note> Members
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    public IEnumerator<AbsoluteNote> GetEnumerator()
-    {
-      return Formula.Generate(Root).GetEnumerator();
-    }
-
-    #endregion
-
-    #region IEquatable<Chord> Members
-
-    public bool Equals(Chord other)
-    {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
-    }
+    public Note[] Notes { get; }
 
     #endregion
 
     #region Public Methods
 
-    public Note[] GetNotes(int start = 0)
-    {
-      return Formula.Generate(Root.Note).Skip(start).Take(Formula.Count).ToArray();
-    }
-
     public IEnumerable<AbsoluteNote> Render(AbsoluteNote startNote)
     {
-      int pos = Array.IndexOf(GetNotes(), startNote.Note);
-      if (pos == -1)
+      int pos = Array.IndexOf(Notes, startNote.Note);
+      if( pos == -1 )
       {
         return Enumerable.Empty<AbsoluteNote>();
       }
 
-      return Formula.Generate(Root).Skip(pos);
+      int octave = startNote.Octave;
+      if( startNote.Note < Root )
+      {
+        --octave;
+      }
+
+      AbsoluteNote root = AbsoluteNote.Create(Root, octave);
+      return Formula.Generate(root).Skip(pos);
     }
 
     public Chord Invert(int inversion = 1)
     {
       Contract.Requires<ArgumentOutOfRangeException>(inversion > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(inversion < Formula.Count);
 
-      var notes = Notes.ToList();
-      while( inversion > 0 )
-      {
-        AbsoluteNote bass = notes[0] + AbsoluteNote.IntervalsPerOctave;
-        notes.RemoveAt(0);
-        notes.Add(bass);
-
-        --inversion;
-      }
-
-      var inv = new Chord(Root, Formula, Name, notes);
+      var notes = Formula.Generate(Root).Skip(inversion).Take(Formula.Count).ToArray();
+      string inversionName = $"{Name} - {inversion.ToOrdinal()} inversion";
+      var inv = new Chord(Root, Formula, inversionName, notes);
       return inv;
     }
 
@@ -181,7 +137,40 @@ namespace Bach.Model
 
     public override string ToString()
     {
-      return _notes.ToString();
+      return Name;
+    }
+
+    #endregion
+
+    #region IEnumerable<Note> Members
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public IEnumerator<Note> GetEnumerator()
+    {
+      return Formula.Generate(Root).Take(Formula.Count).GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEquatable<Chord> Members
+
+    public bool Equals(Chord other)
+    {
+      if( ReferenceEquals(other, this) )
+      {
+        return true;
+      }
+
+      if( ReferenceEquals(other, null) )
+      {
+        return false;
+      }
+
+      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
     }
 
     #endregion

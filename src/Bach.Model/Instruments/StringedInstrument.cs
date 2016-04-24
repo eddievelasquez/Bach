@@ -94,9 +94,18 @@ namespace Bach.Model.Instruments
       // Always start at the lowest string
       int startString = Definition.StringCount;
 
+      AbsoluteNote startNote = Tuning[startString] + startFret;
+      int octave = startNote.Octave;
+      if (startNote.Note > chord.Root)
+      {
+        ++octave;
+      }
+
+      AbsoluteNote root = AbsoluteNote.Create(chord.Root, octave);
+
       // Start rendering the scale at the note closest to the 
       // start string and fret
-      var chordEnumerator = chord.Render(chord.Root).GetEnumerator();
+      var chordEnumerator = chord.Render(root).GetEnumerator();
       chordEnumerator.MoveNext();
 
       // Go through all the strings
