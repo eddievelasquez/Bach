@@ -96,50 +96,27 @@ namespace Bach.Model.Instruments
 
       AbsoluteNote startNote = Tuning[startString] + startFret;
       int octave = startNote.Octave;
-      if (startNote.Note > chord.Root)
+      if( startNote.Note > chord.Bass )
       {
         ++octave;
       }
 
       AbsoluteNote root = AbsoluteNote.Create(chord.Root, octave);
-
-      // Start rendering the scale at the note closest to the 
-      // start string and fret
-      var chordEnumerator = chord.Render(root).GetEnumerator();
-      chordEnumerator.MoveNext();
+      var notes = chord.Render(root).GetEnumerator();
+      notes.MoveNext();
 
       // Go through all the strings
-      bool foundRoot = false;
       for( int currentString = startString; currentString >= 1; --currentString )
       {
-        int startValue = GetValue(currentString, startFret);
-        int maxValue = startValue + fretSpan;
-        int currentValue = chordEnumerator.Current.AbsoluteValue;
-
-        Fingering fingering;
-        if( foundRoot && currentValue < startValue )
-        {
-          do
-          {
-            chordEnumerator.MoveNext();
-            currentValue = chordEnumerator.Current.AbsoluteValue;
-          } while( currentValue < startValue );
-        }
-
-        if( currentValue < startValue || currentValue > maxValue )
-        {
-          fingering = Fingering.Create(this, currentString);
-          yield return fingering;
-          continue;
-        }
-
-        int fret = currentValue - startValue + startFret;
-        fingering = Fingering.Create(this, currentString, fret);
+        Fingering fingering = GetChordFingering(notes, currentString, startFret, fretSpan);
         yield return fingering;
 
-        foundRoot = true;
-
-        chordEnumerator.MoveNext(); // Will never return false.
+        // Only go to the next note in the chord if a note 
+        // is to be played in the current string
+        if( fingering.Fret >= 0 )
+        {
+          notes.MoveNext();
+        }
       }
     }
 
@@ -236,6 +213,32 @@ namespace Bach.Model.Instruments
     #endregion
 
     #region Implementation
+
+    private Fingering GetChordFingering(IEnumerator<AbsoluteNote> notes, int @string, int startFret, int fretSpan)
+    {
+      int low = GetValue(@string, startFret);
+      int high = low + fretSpan;
+      int value = notes.Current.AbsoluteValue;
+
+      while( value < low )
+      {
+        notes.MoveNext();
+        value = notes.Current.AbsoluteValue;
+      }
+
+      Fingering fingering;
+      if( value >= low && value <= high )
+      {
+        int fret = value - low + startFret;
+        fingering = Fingering.Create(this, @string, fret);
+      }
+      else
+      {
+        fingering = Fingering.Create(this, @string);
+      }
+
+      return fingering;
+    }
 
     private int GetValue(int @string, int fret)
     {
