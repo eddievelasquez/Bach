@@ -31,45 +31,27 @@ namespace Bach.Model
   using System.Diagnostics.Contracts;
   using System.Linq;
   using System.Text;
-  using Util;
 
   public class Chord: IEquatable<Chord>,
                       IEnumerable<Note>
   {
-    #region Data Members
-
-    #endregion
-
     #region Construction/Destruction
 
-    private Chord(Note root, ChordFormula formula, string name, IReadOnlyCollection<Note> notes)
+    private Chord(Note root, ChordFormula formula, IReadOnlyCollection<Note> notes)
     {
       Contract.Requires<ArgumentNullException>(formula != null);
-      Contract.Requires<ArgumentNullException>(name != null);
-      Contract.Requires<ArgumentException>(name.Length > 0);
       Contract.Requires<ArgumentNullException>(notes != null);
       Contract.Requires<ArgumentOutOfRangeException>(notes.Count == formula.Count);
 
       Root = root;
       Formula = formula;
-      Name = name;
+      Name = GenerateName(root, formula, notes.First());
       Notes = notes.ToArray();
     }
 
     public Chord(Note root, ChordFormula formula)
+      : this(root, formula, formula.Generate(root).Take(formula.Count).ToArray())
     {
-      Contract.Requires<ArgumentNullException>(formula != null);
-
-      Root = root;
-      Formula = formula;
-
-      var buf = new StringBuilder();
-      buf.Append(root.Tone);
-      buf.Append(root.Accidental.ToSymbol());
-      buf.Append(formula.Symbol);
-
-      Name = buf.ToString();
-      Notes = Formula.Generate(Root).Take(formula.Count).ToArray();
     }
 
     #endregion
@@ -77,6 +59,7 @@ namespace Bach.Model
     #region Properties
 
     public Note Root { get; }
+    public Note Bass => Notes[0];
     public string Name { get; }
     public ChordFormula Formula { get; }
     public Note[] Notes { get; }
@@ -109,8 +92,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(inversion < Formula.Count);
 
       var notes = Formula.Generate(Root).Skip(inversion).Take(Formula.Count).ToArray();
-      string inversionName = $"{Name} - {inversion.ToOrdinal()} inversion";
-      var inv = new Chord(Root, Formula, inversionName, notes);
+      var inv = new Chord(Root, Formula, notes);
       return inv;
     }
 
@@ -171,6 +153,26 @@ namespace Bach.Model
       }
 
       return Root.Equals(other.Root) && Formula.Equals(other.Formula);
+    }
+
+    #endregion
+
+    #region Implementation
+
+    private static string GenerateName(Note root, ChordFormula formula, Note bass)
+    {
+      var buf = new StringBuilder();
+      buf.Append(root);
+      buf.Append(formula.Symbol);
+
+      if( root != bass )
+      {
+        buf.Append("/");
+        buf.Append(bass);
+      }
+
+      string result = buf.ToString();
+      return result;
     }
 
     #endregion

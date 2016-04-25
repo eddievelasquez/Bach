@@ -151,10 +151,12 @@ namespace Bach.Model.Test
       var cMajor = new Chord(Note.C, Registry.ChordFormulas["Major"]);
       Chord firstInversion = cMajor.Invert(1);
       Assert.NotNull(firstInversion);
+      Assert.Equal("C/E", firstInversion.Name);
       Assert.Equal(NoteCollection.Parse("E,G,C"), firstInversion.Notes);
 
       Chord secondInversion = cMajor.Invert(2);
       Assert.NotNull(secondInversion);
+      Assert.Equal("C/G", secondInversion.Name);
       Assert.Equal(NoteCollection.Parse("G,C,E"), secondInversion.Notes);
 
       Assert.Throws<ArgumentOutOfRangeException>(() => cMajor.Invert(3));
