@@ -166,7 +166,6 @@
     <Compile Include="Tablature.cs" />
     <Compile Include="Tone.cs" />
     <Compile Include="ToneExtensions.cs" />
-    <Compile Include="Util\IntegerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Bach.Model.Library.json">
