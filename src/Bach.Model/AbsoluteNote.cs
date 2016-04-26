@@ -58,6 +58,7 @@ namespace Bach.Model
     private static readonly AbsoluteNote s_a4 = Create(Tone.A, Accidental.Natural, 4);
 
     public static readonly AbsoluteNote Empty = new AbsoluteNote();
+    public static readonly AbsoluteNote MaxValue = new AbsoluteNote(Note.B, MaxOctave, 128);
 
     #region Data Members
 
@@ -438,6 +439,11 @@ namespace Bach.Model
       }
 
       return result;
+    }
+
+    public static AbsoluteNote Min(AbsoluteNote a, AbsoluteNote b)
+    {
+      return a.AbsoluteValue < b.AbsoluteValue ? a : b;
     }
   }
 }

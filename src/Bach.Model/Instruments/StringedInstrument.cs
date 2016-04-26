@@ -143,22 +143,21 @@ namespace Bach.Model.Instruments
       // Go through all the strings
       for( int currentString = startString; currentString >= 1; --currentString )
       {
-        int thisStringStartValue = GetValue(currentString, startFret);
+        AbsoluteNote low = GetNote(currentString, startFret);
 
         // The maximum value that we will use for this string is the minumum
         // between the fret span on this string and the value of the note 
         // before the start of the next string
-        int maxValue = Math.Min(thisStringStartValue + fretSpan, GetValue(currentString - 1, startFret) - 1);
-
+        AbsoluteNote high = AbsoluteNote.Min(low + fretSpan, GetNote(currentString - 1, startFret) - 1);          
         while( true )
         {
-          int currentValue = scaleEnumerator.Current.AbsoluteValue;
-          if( currentValue > maxValue )
+          AbsoluteNote current = scaleEnumerator.Current;
+          if( current > high )
           {
             break;
           }
 
-          int fret = currentValue - thisStringStartValue + startFret;
+          int fret = current - low + startFret;
           Fingering fingering = Fingering.Create(this, currentString, fret);
           yield return fingering;
 
@@ -216,20 +215,20 @@ namespace Bach.Model.Instruments
 
     private Fingering GetChordFingering(IEnumerator<AbsoluteNote> notes, int @string, int startFret, int fretSpan)
     {
-      int low = GetValue(@string, startFret);
-      int high = low + fretSpan;
-      int value = notes.Current.AbsoluteValue;
+      AbsoluteNote low = GetNote(@string, startFret);
+      AbsoluteNote high = low + fretSpan;
+      AbsoluteNote current = notes.Current;
 
-      while( value < low )
+      while( current < low )
       {
         notes.MoveNext();
-        value = notes.Current.AbsoluteValue;
+        current = notes.Current;
       }
 
       Fingering fingering;
-      if( value >= low && value <= high )
+      if( current >= low && current <= high )
       {
-        int fret = value - low + startFret;
+        int fret = current - low + startFret;
         fingering = Fingering.Create(this, @string, fret);
       }
       else
@@ -240,14 +239,14 @@ namespace Bach.Model.Instruments
       return fingering;
     }
 
-    private int GetValue(int @string, int fret)
+    private AbsoluteNote GetNote(int @string, int fret)
     {
       if( @string < 1 || @string > Definition.StringCount )
       {
-        return int.MaxValue;
+        return AbsoluteNote.MaxValue;
       }
 
-      return Tuning[@string].AbsoluteValue + fret;
+      return Tuning[@string] + fret;
     }
 
     #endregion
