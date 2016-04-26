@@ -80,9 +80,6 @@ namespace Bach.Model
 
     private AbsoluteNote(Note note, int octave, int absoluteValue)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
-
       _note = note;
       _octave = (byte) octave;
       _absoluteValue = (byte) absoluteValue;
@@ -393,34 +390,27 @@ namespace Bach.Model
 
     public static AbsoluteNote operator +(AbsoluteNote note, int interval)
     {
-      Contract.Requires<ArgumentNullException>(note != null);
       return note.Add(interval, AccidentalMode);
     }
 
     public static AbsoluteNote operator ++(AbsoluteNote note)
     {
-      Contract.Requires<ArgumentNullException>(note != null);
       return note.Add(1, AccidentalMode);
     }
 
     public static AbsoluteNote operator -(AbsoluteNote note, int interval)
     {
-      Contract.Requires<ArgumentNullException>(note != null);
       return note.Subtract(interval, AccidentalMode);
     }
 
     public static AbsoluteNote operator --(AbsoluteNote note)
     {
-      Contract.Requires<ArgumentNullException>(note != null);
       return note.Subtract(1, AccidentalMode);
     }
 
     public static int operator -(AbsoluteNote left, AbsoluteNote right)
     {
-      Contract.Requires<ArgumentNullException>(left != null);
-      Contract.Requires<ArgumentNullException>(right != null);
-
-      return right.AbsoluteValue - left.AbsoluteValue;
+      return left.AbsoluteValue - right.AbsoluteValue;
     }
 
     public static bool TryParse(string value, out AbsoluteNote note, int defaultOctave = 4)
