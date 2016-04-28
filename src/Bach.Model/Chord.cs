@@ -37,20 +37,21 @@ namespace Bach.Model
   {
     #region Construction/Destruction
 
-    private Chord(Note root, ChordFormula formula, IReadOnlyCollection<Note> notes)
+    private Chord(Note root, ChordFormula formula, int inversion)
     {
       Contract.Requires<ArgumentNullException>(formula != null);
-      Contract.Requires<ArgumentNullException>(notes != null);
-      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == formula.Count);
+      Contract.Requires<ArgumentOutOfRangeException>(inversion >= 0);
+      Contract.Requires<ArgumentOutOfRangeException>(inversion < formula.Count);
 
       Root = root;
       Formula = formula;
-      Name = GenerateName(root, formula, notes.First());
-      Notes = notes.ToArray();
+      Inversion = inversion;
+      Notes = Formula.Generate(Root).Skip(inversion).Take(Formula.Count).ToArray();
+      Name = GenerateName(root, formula, Notes.First());
     }
 
     public Chord(Note root, ChordFormula formula)
-      : this(root, formula, formula.Generate(root).Take(formula.Count).ToArray())
+      : this(root, formula, 0)
     {
     }
 
@@ -60,6 +61,7 @@ namespace Bach.Model
 
     public Note Root { get; }
     public Note Bass => Notes[0];
+    public int Inversion { get;  }
     public string Name { get; }
     public ChordFormula Formula { get; }
     public Note[] Notes { get; }
@@ -68,32 +70,25 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public IEnumerable<AbsoluteNote> Render(AbsoluteNote startNote)
+    public IEnumerable<AbsoluteNote> Render(int octave)
     {
-      int pos = Array.IndexOf(Notes, startNote.Note);
-      if( pos == -1 )
+      if( Inversion != 0 )
       {
-        return Enumerable.Empty<AbsoluteNote>();
-      }
-
-      int octave = startNote.Octave;
-      if( startNote.Note < Root )
-      {
-        --octave;
+        AbsoluteNote bass = AbsoluteNote.Create(Bass, octave);
+        yield return bass;
       }
 
       AbsoluteNote root = AbsoluteNote.Create(Root, octave);
-      return Formula.Generate(root).Skip(pos);
+      foreach( AbsoluteNote note in Formula.Generate(root) )
+      {
+        yield return note;
+      }
     }
 
     public Chord Invert(int inversion = 1)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(inversion > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(inversion < Formula.Count);
-
-      var notes = Formula.Generate(Root).Skip(inversion).Take(Formula.Count).ToArray();
-      var inv = new Chord(Root, Formula, notes);
-      return inv;
+      var result = new Chord(Root, Formula, inversion);
+      return result;
     }
 
     public override bool Equals(object other)
