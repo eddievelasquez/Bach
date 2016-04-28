@@ -372,6 +372,51 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal("6x 5x 412 314 215 114", RenderChord(instrument, chord, 12, 4));
     }
 
+    [Fact]
+    public void RenderCMajorEChordFret0Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]).Invert(1);
+      Assert.Equal("60 53 42 30 21 10", RenderChord(instrument, chord, 0, 4));
+    }
+
+    [Fact]
+    public void RenderCMajorEChordFret3Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      Assert.Equal("6x 53 45 35 25 13", RenderChord(instrument, chord, 3, 4));
+    }
+
+    [Fact]
+    public void RenderCMajorEChordFret5Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      Assert.Equal("68 57 45 35 25 18", RenderChord(instrument, chord, 5, 4));
+    }
+
+    [Fact]
+    public void RenderCMajorEChordFret8Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      Assert.Equal("68 510 410 39 28 18", RenderChord(instrument, chord, 8, 4));
+    }
+
+    [Fact]
+    public void RenderCMajorEChordFret12Test()
+    {
+      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
+
+      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      Assert.Equal("6x 515 414 312 213 112", RenderChord(instrument, chord, 12, 4));
+    }
+
 
     #endregion
 

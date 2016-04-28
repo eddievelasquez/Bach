@@ -101,8 +101,7 @@ namespace Bach.Model.Instruments
         ++octave;
       }
 
-      AbsoluteNote root = AbsoluteNote.Create(chord.Root, octave);
-      var notes = chord.Render(root).GetEnumerator();
+      var notes = chord.Render(octave).GetEnumerator();
       notes.MoveNext();
 
       // Go through all the strings
