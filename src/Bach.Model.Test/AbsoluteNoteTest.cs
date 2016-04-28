@@ -282,19 +282,19 @@ namespace Bach.Model.Test
       AbsoluteNote cDoubleSharp2 = AbsoluteNote.Create(Tone.C, Accidental.DoubleSharp, 2);
 
       // Test interval with same notes in the same octave with different accidentals
-      Assert.Equal(cDoubleFlat2 - cDoubleFlat2, 0);
-      Assert.Equal(cDoubleFlat2 - cFlat2, 1);
-      Assert.Equal(cDoubleFlat2 - c2, 2);
-      Assert.Equal(cDoubleFlat2 - cSharp2, 3);
-      Assert.Equal(cDoubleFlat2 - cDoubleSharp2, 4);
-      Assert.Equal(cFlat2 - cDoubleFlat2, -1);
-      Assert.Equal(c2 - cDoubleFlat2, -2);
-      Assert.Equal(cSharp2 - cDoubleFlat2, -3);
-      Assert.Equal(cDoubleSharp2 - cDoubleFlat2, -4);
+      Assert.Equal(0, cDoubleFlat2 - cDoubleFlat2);
+      Assert.Equal(-1, cDoubleFlat2 - cFlat2);
+      Assert.Equal(-2, cDoubleFlat2 - c2);
+      Assert.Equal(-3, cDoubleFlat2 - cSharp2);
+      Assert.Equal(-4, cDoubleFlat2 - cDoubleSharp2);
+      Assert.Equal(1, cFlat2 - cDoubleFlat2);
+      Assert.Equal(2, c2 - cDoubleFlat2);
+      Assert.Equal(3, cSharp2 - cDoubleFlat2);
+      Assert.Equal(4, cDoubleSharp2 - cDoubleFlat2);
 
       AbsoluteNote c3 = AbsoluteNote.Create(Tone.C, Accidental.Natural, 3);
-      Assert.Equal(c2 - c3, 12);
-      Assert.Equal(c3 - c2, -12);
+      Assert.Equal(-12, c2 - c3);
+      Assert.Equal(12, c3 - c2);
     }
 
     [Fact]
