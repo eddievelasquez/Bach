@@ -44,6 +44,7 @@ namespace Bach.Model.Test
       Assert.Equal(formula, target.Formula);
       Assert.Equal("Cm", target.Name);
       Assert.Equal(NoteCollection.Parse("C,Eb,G"), target.Notes);
+      Assert.Equal(target.Name, target.ToString());
     }
 
     [Fact]
