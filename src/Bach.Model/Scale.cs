@@ -37,7 +37,7 @@ namespace Bach.Model
   {
     #region Construction/Destruction
 
-    public Scale(Note root, Formula formula)
+    public Scale(Note root, ScaleFormula formula)
     {
       Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -48,8 +48,12 @@ namespace Bach.Model
       var buf = new StringBuilder();
       buf.Append(root.Tone);
       buf.Append(root.Accidental.ToSymbol());
-      buf.Append(' ');
-      buf.Append(formula.Name);
+
+      if( !StringComparer.CurrentCultureIgnoreCase.Equals(formula.Name, "Major") )
+      {
+        buf.Append(' ');
+        buf.Append(formula.Name);
+      }
 
       Name = buf.ToString();
     }

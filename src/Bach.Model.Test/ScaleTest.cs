@@ -37,7 +37,7 @@ namespace Bach.Model.Test
     public void ConstructorTest()
     {
       var actual = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
-      Assert.Equal("C Major", actual.Name);
+      Assert.Equal("C", actual.Name);
       Assert.Equal(Note.C, actual.Root);
       Assert.Equal(Registry.ScaleFormulas["Major"], actual.Formula);
     }
