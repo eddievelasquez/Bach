@@ -43,31 +43,29 @@ namespace Bach.Model
 
     #region Construction/Destruction
 
-    public Mode(Note root, ModeFormula formula)
+    public Mode(Scale scale, ModeFormula formula)
     {
-      Contract.Requires<ArgumentNullException>(root != null);
+      Contract.Requires<ArgumentNullException>(scale != null);
       Contract.Requires<ArgumentNullException>(formula != null);
 
-      Root = root;
+      Scale = scale;
       Formula = formula;
 
       var buf = new StringBuilder();
-      buf.Append(root.Tone);
-      buf.Append(root.Accidental.ToSymbol());
+      buf.Append(scale.Name);
       buf.Append(' ');
       buf.Append(formula.Name);
 
       Name = buf.ToString();
 
-      ScaleFormula major = Registry.ScaleFormulas["Major"];
-      _notes = new NoteCollection(new Scale(Root, major).Skip(Formula.Tonic - 1).Take(major.Count).ToArray());
+      _notes = new NoteCollection(scale.Skip(Formula.Tonic - 1).Take(scale.NoteCount).ToArray());
     }
 
     #endregion
 
     #region Properties
 
-    public Note Root { get; }
+    public Scale Scale { get; }
     public string Name { get; }
     public ModeFormula Formula { get; }
 
@@ -101,7 +99,7 @@ namespace Bach.Model
         return false;
       }
 
-      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
+      return Scale.Equals(other.Scale) && Formula.Equals(other.Formula);
     }
 
     #endregion
@@ -125,7 +123,7 @@ namespace Bach.Model
 
     public override int GetHashCode()
     {
-      int hashCode = Root.GetHashCode() ^ Formula.GetHashCode();
+      int hashCode = Scale.GetHashCode() ^ Formula.GetHashCode();
       return hashCode;
     }
 
