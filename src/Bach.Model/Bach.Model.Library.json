@@ -27,7 +27,7 @@
     { "Key": "GypsyMinor", "Name": "Gypsy Minor", "Formula": "R,2,m3,d5,5,A5,m7" },
     { "Key": "Javanese", "Name": "Javanese", "Formula": "R,m2,m3,4,5,6,m7" },
     { "Key": "NeapolitanMinor", "Name": "Neapolitan Minor", "Formula": "R,m2,m3,4,5,A5,7" },
-    { "Key": "MeapolitanMajor", "Name": "Neapolitan Major", "Formula": "R,m2,m3,4,5,6,7" },
+    { "Key": "NeapolitanMajor", "Name": "Neapolitan Major", "Formula": "R,m2,m3,4,5,6,7" },
     { "Key": "HungarianMinor", "Name": "Hungarian Minor", "Formula": "R,2,m3,d5,5,A5,7" },
     { "Key": "InSen", "Name": "In Sen", "Formula": "R,m2,4,5,m7" },
     { "Key": "Iwato", "Name": "Iwato", "Formula": "R,m2,4,d5,m7" },
