@@ -4,15 +4,47 @@
   [
     { "Key": "Major", "Name": "Major", "Formula": "1,2,3,4,5,6,7" },
     { "Key": "NaturalMinor", "Name": "Natural Minor", "Formula": "1,2,m3,4,5,m6,m7" },
-    { "Key": "HarmonicMinor", "Name": "Harmonic Minor", "Formula": "1,2,m3,4,5,m6,7" },
     { "Key": "MelodicMinor", "Name": "Melodic Minor", "Formula": "1,2,m3,4,5,6,7" },
+    { "Key": "HarmonicMinor", "Name": "Harmonic Minor", "Formula": "1,2,m3,4,5,m6,7" },
     { "Key": "Diminished", "Name": "Diminished", "Formula": "1,2,m3,4,d5,A5,6,7" },
-    { "Key": "Polytonal", "Name": "Polytonal", "Formula": "1,m2,m3,d4,A4,5,6,m7" },
     { "Key": "WholeTone", "Name": "Whole Tone", "Formula": "1,2,3,A4,A5,A6" },
-    { "Key": "Pentatonic", "Name": "Pentatonic", "Formula": "1,2,3,5,6" },
-    { "Key": "MinorPentatonic", "Name": "Minor Pentatonic", "Formula": "1,m3,4,5,m7" },
     { "Key": "Blues", "Name": "Blues", "Formula": "1,m3,4,d5,5,m7" },
-    { "Key": "Gospel", "Name": "Gospel", "Formula": "1,2,m3,3,5,6" }
+    { "Key": "MinorPentatonic", "Name": "Minor Pentatonic", "Formula": "1,m3,4,5,m7" },
+    { "Key": "Pentatonic", "Name": "Pentatonic", "Formula": "1,2,3,5,6" },
+    { "Key": "Polytonal", "Name": "Polytonal", "Formula": "1,m2,m3,d4,A4,5,6,m7" },
+    { "Key": "Gospel", "Name": "Gospel", "Formula": "1,2,m3,3,5,6" },
+    { "Key": "HungarianFolk", "Name": "Hungarian Folk", "Formula": "1,m2,3,5,m6,7" },
+    { "Key": "Gypsy", "Name": "Gypsy", "Formula": "1,m2,3,4,5,A5,7" },
+    { "Key": "LeadingTone", "Name": "Leading Tone", "Formula": "1,2,3,d5,A5,m7,7" },
+    { "Key": "Enigmatic", "Name": "Enigmatic", "Formula": "1,m2,3,d5,A5,m7,7" },
+    { "Key": "Persian", "Name": "Persian", "Formula": "1,m2,3,4,d5,A5,7" },
+    { "Key": "Overtone", "Name": "Overtone", "Formula": "1,2,3,d5,5,A5,m7" },
+    { "Key": "Hindu", "Name": "Hindu", "Formula": "1,2,3,4,5,A5,m7" },
+    { "Key": "HungarianMajor", "Name": "Hungarian Major", "Formula": "1,m3,3,d5,5,6,m7" },
+    { "Key": "SpanishGypsy", "Name": "Spanish Gypsy", "Formula": "1,m2,3,4,5,A5,m7" },
+    { "Key": "Arabian", "Name": "Arabian", "Formula": "1,2,3,4,d5,A5,m7" },
+    { "Key": "Oriental", "Name": "Oriental", "Formula": "1,m2,3,4,d5,6,m7" },
+    { "Key": "GypsyMinor", "Name": "Gypsy Minor", "Formula": "1,2,m3,d5,5,A5,m7" },
+    { "Key": "Javanese", "Name": "Javanese", "Formula": "1,m2,m3,4,5,6,m7" },
+    { "Key": "NeapolitanMinor", "Name": "Neapolitan Minor", "Formula": "1,m2,m3,4,5,A5,7" },
+    { "Key": "MeapolitanMajor", "Name": "Neapolitan Major", "Formula": "1,m2,m3,4,5,6,7" },
+    { "Key": "HungarianMinor", "Name": "Hungarian Minor", "Formula": "1,2,m3,d5,5,A5,7" },
+    { "Key": "InSen", "Name": "In Sen", "Formula": "1,m2,4,5,m7" },
+    { "Key": "Iwato", "Name": "Iwato", "Formula": "1,m2,4,d5,m7" },
+    { "Key": "Scottish", "Name": "Scottish", "Formula": "1,2,4,5,6" },
+    { "Key": "Kumoi", "Name": "Kumoi", "Formula": "1,m2,4,5,A5" },
+    { "Key": "Egyptian", "Name": "Egyptian", "Formula": "1,2,4,5,m7" },
+    { "Key": "Yo", "Name": "Yo", "Formula": "1,m3,4,5,m7" },
+    { "Key": "Hirojoshi", "Name": "Hirojoshi", "Formula": "1,2,m3,5,A5" },
+    { "Key": "Balinese", "Name": "Balinese", "Formula": "1,m2,m3,5,A5" },
+    { "Key": "Mongolian", "Name": "Mongolian", "Formula": "1,2,3,5,6" },
+    { "Key": "Augmented", "Name": "Augmented", "Formula": "1,m3,3,5,A5,7" },
+    { "Key": "Pelog", "Name": "Pelog", "Formula": "1,m2,m3,4,5,m7" },
+    { "Key": "Mystic", "Name": "Mystic", "Formula": "1,2,3,d5,6,m7" },
+    { "Key": "Bebop", "Name": "Bebop", "Formula": "1,2,3,4,5,A5,6,7" },
+    { "Key": "BebopDorian", "Name": "Bebop Dorian", "Formula": "1,2,m3,4,5,6,m7,7" },
+    { "Key": "BebopDominant", "Name": "Bebop Dominant", "Formula": "1,2,3,4,5,6,m7,7" },
+    { "Key": "Spanish8Tone", "Name": "Spanish 8 Tone", "Formula": "1,m2,m3,3,4,d5,A5,m7" }
   ],
   "Chords": 
   [
@@ -40,7 +72,7 @@
   "StringedInstruments": 
   [
     { 
-		"Key": "Guitar", 
+    "Key": "Guitar", 
         "Name": "Guitar",
         "StringCount": 6,
         "Tunings": [
@@ -52,7 +84,7 @@
         ]
   },
     {
-		"Key": "Bass", 
+    "Key": "Bass", 
         "Name": "Bass",
         "StringCount": 4,
         "Tunings": [
