@@ -200,7 +200,13 @@ namespace Bach.Model
 
       if( char.IsLetter(value, i) )
       {
-        if( !IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality) )
+        if( value[i] == 'R' )
+        {
+          interval = new Interval(1, IntervalQuality.Perfect);
+          return true;
+        }
+
+        if ( !IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality) )
         {
           return false;
         }

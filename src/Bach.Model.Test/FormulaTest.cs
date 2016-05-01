@@ -53,9 +53,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Formula("Key", "Test", "1,2,3");
-      object y = new Formula("Key", "Test", "1,2,3");
-      object z = new Formula("Key", "Test", "1,2,3");
+      object x = new Formula("Key", "Test", "R,2,3");
+      object y = new Formula("Key", "Test", "R,2,3");
+      object z = new Formula("Key", "Test", "R,2,3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -68,9 +68,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Formula("Key", "Test", "1,2,3");
-      var y = new Formula("Key", "Test", "1,2,3");
-      var z = new Formula("Key", "Test", "1,2,3");
+      var x = new Formula("Key", "Test", "R,2,3");
+      var y = new Formula("Key", "Test", "R,2,3");
+      var z = new Formula("Key", "Test", "R,2,3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -83,43 +83,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new Formula("Key", "Test", "1,2,3");
+      object actual = new Formula("Key", "Test", "R,2,3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new Formula("Key", "Test", "1,2,3");
+      var actual = new Formula("Key", "Test", "R,2,3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Formula("Key", "Test", "1,2,3");
+      object actual = new Formula("Key", "Test", "R,2,3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Formula("Key", "Test", "1,2,3");
+      var actual = new Formula("Key", "Test", "R,2,3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Formula("Key", "Test", "1,2,3");
+      var actual = new Formula("Key", "Test", "R,2,3");
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Formula("Key", "Test", "1,2,3");
-      var expected = new Formula("Key", "Test", "1,2,3");
+      var actual = new Formula("Key", "Test", "R,2,3");
+      var expected = new Formula("Key", "Test", "R,2,3");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

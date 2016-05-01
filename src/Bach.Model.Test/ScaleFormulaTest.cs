@@ -34,7 +34,7 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorTest()
     {
-      var actual = new ScaleFormula("Major", "Major", "1,2,3,4,5,6,7");
+      var actual = new ScaleFormula("Major", "Major", "R,2,3,4,5,6,7");
       Assert.Equal(Registry.ScaleFormulas["Major"], actual);
       actual = new ScaleFormula("Major", "Major",
                                 new[]

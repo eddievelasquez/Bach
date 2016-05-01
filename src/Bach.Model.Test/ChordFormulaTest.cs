@@ -37,7 +37,7 @@ namespace Bach.Model.Test
       const string KEY = "Key";
       const string NAME = "Name";
       const string SYMBOL = "Symbol";
-      const string FORMULA = "1,2,3";
+      const string FORMULA = "R,2,3";
       var actual = new ChordFormula(KEY, NAME, SYMBOL, FORMULA);
 
       Assert.Equal(KEY, actual.Key);
@@ -63,9 +63,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
-      object y = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
-      object z = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      object x = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
+      object y = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
+      object z = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -78,9 +78,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
-      var y = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
-      var z = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var x = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
+      var y = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
+      var z = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -93,43 +93,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      object actual = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      object actual = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
-      var expected = new ChordFormula("Key", "Name", "Symbol", "1,2,3");
+      var actual = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
+      var expected = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
