@@ -71,7 +71,7 @@ namespace Bach.Model
 
     public Note Root { get; }
     public string Name { get; }
-    public Formula Formula { get; }
+    public ScaleFormula Formula { get; }
     public int NoteCount => Formula.Count;
     public Note this[int i] => this.Skip(i).Take(1).Single();
 
