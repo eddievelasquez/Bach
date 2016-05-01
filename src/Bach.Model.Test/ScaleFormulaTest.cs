@@ -50,6 +50,30 @@ namespace Bach.Model.Test
       Assert.Equal(Registry.ScaleFormulas["Major"], actual);
     }
 
+    [Fact]
+    public void GetStepsTest()
+    {
+      TestGetSteps("Major", 2, 2, 1, 2, 2, 2, 1);
+      TestGetSteps("NaturalMinor", 2, 1, 2, 2, 1, 2, 2);
+      TestGetSteps("MelodicMinor", 2, 1, 2, 2, 2, 2, 1);
+      TestGetSteps("HarmonicMinor", 2, 1, 2, 2, 1, 3, 1);
+      TestGetSteps("Diminished", 2, 1, 2, 1, 2, 1, 2, 1);
+      TestGetSteps("WholeTone", 2, 2, 2, 2, 2, 2);
+      TestGetSteps("Blues", 3, 2, 1, 1, 3, 2);
+      TestGetSteps("MinorPentatonic", 3, 2, 2, 3, 2);
+      TestGetSteps("Pentatonic", 2, 2, 3, 2, 3);
+    }
+
+    #endregion
+
+    #region Implementation
+
+    private static void TestGetSteps(string scaleName, params int[] expected)
+    {
+      ScaleFormula scale = Registry.ScaleFormulas[scaleName];
+      Assert.Equal(expected, scale.GetRelativeSteps());
+    }
+
     #endregion
   }
 }

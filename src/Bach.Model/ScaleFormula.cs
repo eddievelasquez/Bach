@@ -40,5 +40,28 @@ namespace Bach.Model
     }
 
     #endregion
+
+    #region Public Methods
+
+    public int[] GetRelativeSteps()
+    {
+      var steps = new int[Intervals.Count];
+      var lastStep = 0;
+
+      for( var i = 1; i < Intervals.Count; i++ )
+      {
+        int currentIntervalSteps = Intervals[i].Steps;
+        int step = currentIntervalSteps - lastStep;
+        steps[i - 1] = step;
+        lastStep = currentIntervalSteps;
+      }
+
+      // Add last step between the root octave and the 
+      // last interval
+      steps[steps.Length - 1] = 12 - lastStep;
+      return steps;
+    }
+
+    #endregion
   }
 }
