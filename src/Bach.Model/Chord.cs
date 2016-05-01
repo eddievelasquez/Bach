@@ -55,13 +55,20 @@ namespace Bach.Model
     {
     }
 
+    public Chord(Note root, string formulaName)
+      : this(root, Registry.ChordFormulas[formulaName], 0)
+    {
+      Contract.Requires<ArgumentNullException>(formulaName != null);
+      Contract.Requires<ArgumentException>(formulaName.Length > 0);
+    }
+
     #endregion
 
     #region Properties
 
     public Note Root { get; }
     public Note Bass => Notes[0];
-    public int Inversion { get;  }
+    public int Inversion { get; }
     public string Name { get; }
     public ChordFormula Formula { get; }
     public Note[] Notes { get; }

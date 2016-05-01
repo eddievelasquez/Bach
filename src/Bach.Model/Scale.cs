@@ -58,6 +58,13 @@ namespace Bach.Model
       Name = buf.ToString();
     }
 
+    public Scale(Note root, string formulaName)
+      : this(root, Registry.ScaleFormulas[formulaName])
+    {
+      Contract.Requires<ArgumentNullException>(formulaName != null);
+      Contract.Requires<ArgumentException>(formulaName.Length > 0);
+    }
+    
     #endregion
 
     #region Properties

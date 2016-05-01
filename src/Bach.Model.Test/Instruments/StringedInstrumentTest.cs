@@ -239,10 +239,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, Registry.ScaleFormulas["MinorPentatonic"]);
+      var scale = new Scale(Note.A, "MinorPentatonic");
       Assert.Equal("60 63 50 53 40 42 30 32 21 23 10 13", RenderScale(instrument, scale, 0, 4));
 
-      scale = new Scale(Note.G, Registry.ScaleFormulas["MinorPentatonic"]);
+      scale = new Scale(Note.G, "MinorPentatonic");
       Assert.Equal("61 63 51 53 40 43 30 33 21 23 11 13", RenderScale(instrument, scale, 0, 4));
     }
 
@@ -251,10 +251,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, Registry.ScaleFormulas["MinorPentatonic"]);
+      var scale = new Scale(Note.A, "MinorPentatonic");
       Assert.Equal("65 68 55 57 45 47 35 37 25 28 15 18", RenderScale(instrument, scale, 5, 4));
 
-      scale = new Scale(Note.G, Registry.ScaleFormulas["MinorPentatonic"]);
+      scale = new Scale(Note.G, "MinorPentatonic");
       Assert.Equal("66 68 55 58 45 48 35 37 26 28 16 18", RenderScale(instrument, scale, 5, 4));
     }
 
@@ -263,10 +263,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, Registry.ScaleFormulas["MelodicMinor"]);
+      var scale = new Scale(Note.A, "MelodicMinor");
       Assert.Equal("60 62 64 50 52 53 40 42 44 31 32 20 21 23 10 12 14", RenderScale(instrument, scale, 0, 4));
 
-      scale = new Scale(Note.G, Registry.ScaleFormulas["MelodicMinor"]);
+      scale = new Scale(Note.G, "MelodicMinor");
       Assert.Equal("60 62 63 50 51 53 40 42 44 30 32 33 21 23 10 12 13", RenderScale(instrument, scale, 0, 4));
     }
 
@@ -275,10 +275,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, Registry.ScaleFormulas["MelodicMinor"]);
+      var scale = new Scale(Note.A, "MelodicMinor");
       Assert.Equal("65 67 68 55 57 59 46 47 49 35 37 25 27 29 15 17 18", RenderScale(instrument, scale, 5, 4));
 
-      scale = new Scale(Note.G, Registry.ScaleFormulas["MelodicMinor"]);
+      scale = new Scale(Note.G, "MelodicMinor");
       Assert.Equal("65 66 68 55 57 59 45 47 48 35 37 25 27 28 15 16 18", RenderScale(instrument, scale, 5, 4));
     }
 
@@ -287,7 +287,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.DSharp, Registry.ScaleFormulas["MinorPentatonic"]);
+      var scale = new Scale(Note.DSharp, "MinorPentatonic");
       Assert.Equal("62 64 51 54 41 44 31 33 22 24 12 14", RenderScale(instrument, scale, 0, 4));
     }
 

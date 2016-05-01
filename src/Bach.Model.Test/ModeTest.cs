@@ -36,7 +36,7 @@ namespace Bach.Model.Test
     [Fact]
     public void ModeConstructorTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       ModeFormula formula = ModeFormula.Phrygian;
       var target = new Mode(scale, formula);
 
@@ -49,7 +49,7 @@ namespace Bach.Model.Test
     [Fact]
     public void ModesTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       TestMode("C,D,E,F,G,A,B", scale, ModeFormula.Ionian);
       TestMode("D,E,F,G,A,B,C", scale, ModeFormula.Dorian);
       TestMode("E,F,G,A,B,C,D", scale, ModeFormula.Phrygian);
@@ -62,7 +62,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       object x = new Mode(scale, ModeFormula.Dorian);
       object y = new Mode(scale, ModeFormula.Dorian);
       object z = new Mode(scale, ModeFormula.Dorian);
@@ -78,7 +78,7 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       var x = new Mode(scale, ModeFormula.Dorian);
       var y = new Mode(scale, ModeFormula.Dorian);
       var z = new Mode(scale, ModeFormula.Dorian);
@@ -94,7 +94,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       object actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(int.MinValue));
     }
@@ -102,7 +102,7 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(int.MinValue));
     }
@@ -110,7 +110,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       object actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(null));
     }
@@ -118,7 +118,7 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(null));
     }
@@ -126,7 +126,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       Assert.True(actual.Equals(actual));
     }
@@ -134,7 +134,7 @@ namespace Bach.Model.Test
     [Fact]
     public void GetHashcodeTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       var expected = new Mode(scale, ModeFormula.Dorian);
       Assert.True(expected.Equals(actual));
@@ -144,7 +144,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EnumeratorTest()
     {
-      var scale = new Scale(Note.C, Registry.ScaleFormulas["Major"]);
+      var scale = new Scale(Note.C, "Major");
       var mode = new Mode(scale, ModeFormula.Ionian);
       IEnumerator enumerator = ((IEnumerable) mode).GetEnumerator();
       Assert.True(enumerator.MoveNext());
