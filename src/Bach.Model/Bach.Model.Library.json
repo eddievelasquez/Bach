@@ -1,6 +1,6 @@
 ﻿{
   "Version": "0.1",
-  "Scales": 
+  "Scales":
   [
     { "Key": "Major", "Name": "Major", "Formula": "R,2,3,4,5,6,7" },
     { "Key": "NaturalMinor", "Name": "Natural Minor", "Formula": "R,2,m3,4,5,m6,m7" },
@@ -46,7 +46,7 @@
     { "Key": "BebopDominant", "Name": "Bebop Dominant", "Formula": "R,2,3,4,5,6,m7,7" },
     { "Key": "Spanish8Tone", "Name": "Spanish 8 Tone", "Formula": "R,m2,m3,3,4,d5,A5,m7" }
   ],
-  "Chords": 
+  "Chords":
   [
     { "Key": "Major", "Name": "Major", "Symbol": "", "Formula": "R,3,5" },
     { "Key": "Major7", "Name": "Major Seventh", "Symbol": "M7", "Formula": "R,3,5,7" },
@@ -69,10 +69,10 @@
     { "Key": "HalfDiminished", "Name": "Half Diminished", "Symbol": "7dim5", "Formula": "R,m3,d5,m7" },
     { "Key": "Augmented", "Name": "Augmented", "Symbol": "aug", "Formula": "R,3,A5" }
   ],
-  "StringedInstruments": 
+  "StringedInstruments":
   [
-    { 
-    "Key": "Guitar", 
+    {
+    "Key": "Guitar",
         "Name": "Guitar",
         "StringCount": 6,
         "Tunings": [
@@ -84,7 +84,7 @@
         ]
   },
     {
-    "Key": "Bass", 
+    "Key": "Bass",
         "Name": "Bass",
         "StringCount": 4,
         "Tunings": [
