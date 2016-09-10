@@ -1,7 +1,7 @@
-//
+﻿//
 // Module Name: NoteCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2013  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -41,8 +41,8 @@ namespace Bach.Model
     {
     }
 
-    public NoteCollection(IList<Note> list)
-      : base(list)
+    public NoteCollection(IList<Note> notes)
+      : base(notes)
     {
     }
 
@@ -69,9 +69,12 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public static bool TryParse(string value, out NoteCollection notes)
+    public static bool TryParse(string value, out NoteCollection notes, int defaultOctave = 4)
     {
-      if( string.IsNullOrEmpty(value) )
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
+
+      if ( string.IsNullOrEmpty(value) )
       {
         notes = null;
         return false;
@@ -82,7 +85,7 @@ namespace Bach.Model
       foreach( string s in value.Split(',') )
       {
         Note note;
-        if( !Note.TryParse(s, out note) )
+        if( !Note.TryParse(s, out note, defaultOctave) )
         {
           notes = null;
           return false;
@@ -94,13 +97,15 @@ namespace Bach.Model
       return true;
     }
 
-    public static NoteCollection Parse(string value)
+    public static NoteCollection Parse(string value, int defaultOctave = 4)
     {
       Contract.Requires<ArgumentNullException>(value != null);
       Contract.Requires<ArgumentException>(value.Length > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
 
       NoteCollection notes;
-      if( !TryParse(value, out notes) )
+      if( !TryParse(value, out notes, defaultOctave) )
       {
         throw new FormatException($"{value} contains invalid notes");
       }
@@ -156,16 +161,14 @@ namespace Bach.Model
     {
       const int MULTIPLIER = 89;
 
-      var hashCode = 0;
-      foreach( Note note in Items )
-      {
-        unchecked
-        {
-          hashCode += note.GetHashCode() * MULTIPLIER;
-        }
-      }
+      Note first = this.FirstOrDefault();
+      Note last = this.LastOrDefault();
 
-      return hashCode;
+      unchecked
+      {
+        int result = (first.GetHashCode() + Count) * MULTIPLIER + last.GetHashCode() + Count;
+        return result;
+      }
     }
 
     #endregion

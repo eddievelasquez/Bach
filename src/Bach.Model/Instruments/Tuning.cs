@@ -43,7 +43,7 @@ namespace Bach.Model.Instruments
       StringedInstrumentDefinition instrumentDefinition,
       string key,
       string name,
-      AbsoluteNoteCollection notes)
+      NoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null, "Must provide an instrument definition");
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
@@ -67,9 +67,9 @@ namespace Bach.Model.Instruments
     public StringedInstrumentDefinition InstrumentDefinition { get; }
     public string Key { get; }
     public string Name { get; }
-    public AbsoluteNote[] Notes { get; }
+    public Note[] Notes { get; }
 
-    public AbsoluteNote this[int stringNumber]
+    public Note this[int stringNumber]
     {
       get
       {

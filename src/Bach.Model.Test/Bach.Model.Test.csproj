@@ -80,9 +80,9 @@
     <Compile Include="IntervalTest.cs" />
     <Compile Include="ModeFormulaTest.cs" />
     <Compile Include="ModeTest.cs" />
-    <Compile Include="AbsoluteNoteTest.cs" />
-    <Compile Include="NoteCollectionTest.cs" />
     <Compile Include="NoteTest.cs" />
+    <Compile Include="ToneCollectionTest.cs" />
+    <Compile Include="ToneTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FormulaTest.cs" />
     <Compile Include="RegistryTest.cs" />
@@ -90,8 +90,8 @@
     <Compile Include="ScaleTest.cs" />
     <Compile Include="Instruments\StringedInstrumentDefinitionBuilderTest.cs" />
     <Compile Include="Instruments\StringedInstrumentDefinitionTest.cs" />
-    <Compile Include="ToneExtensionsTest.cs" />
-    <Compile Include="AbsoluteNoteCollectionTest.cs" />
+    <Compile Include="ToneNameExtensionsTest.cs" />
+    <Compile Include="NoteCollectionTest.cs" />
     <Compile Include="Instruments\TuningCollectionTest.cs" />
   </ItemGroup>
   <ItemGroup>

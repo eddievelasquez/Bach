@@ -32,7 +32,7 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    private Fingering(AbsoluteNote note, int @string, int fret)
+    private Fingering(Note note, int @string, int fret)
     {
       Note = note;
       String = @string;
@@ -49,7 +49,7 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentOutOfRangeException>(fret >= 0 && fret <= instrument.FretCount);
       Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
 
-      AbsoluteNote note = instrument.Tuning[@string] + fret;
+      Note note = instrument.Tuning[@string] + fret;
       var result = new Fingering(note, @string, fret);
       return result;
     }
@@ -59,7 +59,7 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentNullException>(instrument != null);
       Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
 
-      AbsoluteNote note = AbsoluteNote.Empty;
+      Note note = Note.Empty;
       var result = new Fingering(note, @string, -1);
       return result;
     }
@@ -68,7 +68,7 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
-    public AbsoluteNote Note { get; }
+    public Note Note { get; }
     public int String { get; }
     public int Fret { get; }
 

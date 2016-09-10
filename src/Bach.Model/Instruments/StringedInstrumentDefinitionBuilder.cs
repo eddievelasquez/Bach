@@ -64,7 +64,7 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentException>(notes.Length > 0, "Must provide tuning notes");
       Contract.Ensures(Contract.Result<StringedInstrumentDefinitionBuilder>() != null);
 
-      AbsoluteNoteCollection collection = AbsoluteNoteCollection.Parse(notes, defaultOctave);
+      NoteCollection collection = NoteCollection.Parse(notes, defaultOctave);
       if( collection.Count != _state.StringCount )
       {
         throw new ArgumentException("Must provide exactly {_state.StringCount} notes");
@@ -72,12 +72,12 @@ namespace Bach.Model.Instruments
 
       CheckBuilderReuse();
 
-      var info = new TuningInfo { Name = name, Notes = new AbsoluteNoteCollection(collection) };
+      var info = new TuningInfo { Name = name, Notes = new NoteCollection(collection) };
       _tuningInfo.Add(key, info);
       return this;
     }
 
-    public StringedInstrumentDefinitionBuilder AddTuning(string key, string name, params AbsoluteNote[] notes)
+    public StringedInstrumentDefinitionBuilder AddTuning(string key, string name, params Note[] notes)
     {
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
       Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
@@ -92,12 +92,12 @@ namespace Bach.Model.Instruments
 
       CheckBuilderReuse();
 
-      var info = new TuningInfo { Name = name, Notes = new AbsoluteNoteCollection(notes) };
+      var info = new TuningInfo { Name = name, Notes = new NoteCollection(notes) };
       _tuningInfo.Add(key, info);
       return this;
     }
 
-    public StringedInstrumentDefinitionBuilder AddTuning(string key, string name, AbsoluteNoteCollection notes)
+    public StringedInstrumentDefinitionBuilder AddTuning(string key, string name, NoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
       Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
@@ -113,7 +113,7 @@ namespace Bach.Model.Instruments
 
       CheckBuilderReuse();
 
-      var info = new TuningInfo { Name = name, Notes = new AbsoluteNoteCollection(notes) };
+      var info = new TuningInfo { Name = name, Notes = new NoteCollection(notes) };
       _tuningInfo.Add(key, info);
       return this;
     }
@@ -165,7 +165,7 @@ namespace Bach.Model.Instruments
       #region Properties
 
       public string Name { get; set; }
-      public AbsoluteNoteCollection Notes { get; set; }
+      public NoteCollection Notes { get; set; }
 
       #endregion
     }

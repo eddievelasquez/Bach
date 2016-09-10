@@ -33,305 +33,445 @@ namespace Bach.Model.Test
     #region Public Methods
 
     [Fact]
-    public void ConstructorTest()
+    public void CreateWithToneAndAccidentalTest()
     {
-      ConstructorTestImpl(Tone.C, Accidental.DoubleFlat, 10);
-      ConstructorTestImpl(Tone.C, Accidental.Flat, 11);
-      ConstructorTestImpl(Tone.C, Accidental.Natural, 0);
-      ConstructorTestImpl(Tone.C, Accidental.Sharp, 1);
-      ConstructorTestImpl(Tone.C, Accidental.DoubleSharp, 2);
+      Note target = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.Equal(ToneName.A, target.ToneName);
+      Assert.Equal(Accidental.Natural, target.Accidental);
+      Assert.Equal(1, target.Octave);
 
-      ConstructorTestImpl(Tone.D, Accidental.DoubleFlat, 0);
-      ConstructorTestImpl(Tone.D, Accidental.Flat, 1);
-      ConstructorTestImpl(Tone.D, Accidental.Natural, 2);
-      ConstructorTestImpl(Tone.D, Accidental.Sharp, 3);
-      ConstructorTestImpl(Tone.D, Accidental.DoubleSharp, 4);
-
-      ConstructorTestImpl(Tone.E, Accidental.DoubleFlat, 2);
-      ConstructorTestImpl(Tone.E, Accidental.Flat, 3);
-      ConstructorTestImpl(Tone.E, Accidental.Natural, 4);
-      ConstructorTestImpl(Tone.E, Accidental.Sharp, 5);
-      ConstructorTestImpl(Tone.E, Accidental.DoubleSharp, 6);
-
-      ConstructorTestImpl(Tone.F, Accidental.DoubleFlat, 3);
-      ConstructorTestImpl(Tone.F, Accidental.Flat, 4);
-      ConstructorTestImpl(Tone.F, Accidental.Natural, 5);
-      ConstructorTestImpl(Tone.F, Accidental.Sharp, 6);
-      ConstructorTestImpl(Tone.F, Accidental.DoubleSharp, 7);
-
-      ConstructorTestImpl(Tone.G, Accidental.DoubleFlat, 5);
-      ConstructorTestImpl(Tone.G, Accidental.Flat, 6);
-      ConstructorTestImpl(Tone.G, Accidental.Natural, 7);
-      ConstructorTestImpl(Tone.G, Accidental.Sharp, 8);
-      ConstructorTestImpl(Tone.G, Accidental.DoubleSharp, 9);
-
-      ConstructorTestImpl(Tone.A, Accidental.DoubleFlat, 7);
-      ConstructorTestImpl(Tone.A, Accidental.Flat, 8);
-      ConstructorTestImpl(Tone.A, Accidental.Natural, 9);
-      ConstructorTestImpl(Tone.A, Accidental.Sharp, 10);
-      ConstructorTestImpl(Tone.A, Accidental.DoubleSharp, 11);
-
-      ConstructorTestImpl(Tone.B, Accidental.DoubleFlat, 9);
-      ConstructorTestImpl(Tone.B, Accidental.Flat, 10);
-      ConstructorTestImpl(Tone.B, Accidental.Natural, 11);
-      ConstructorTestImpl(Tone.B, Accidental.Sharp, 0);
-      ConstructorTestImpl(Tone.B, Accidental.DoubleSharp, 1);
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(ToneName.C, Accidental.Flat, Note.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(ToneName.C, Accidental.DoubleFlat,
+                                                                       Note.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(ToneName.B, Accidental.Sharp, Note.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(ToneName.B, Accidental.DoubleSharp,
+                                                                       Note.MaxOctave));
     }
 
     [Fact]
-    public void PredefinedNoteTest()
+    public void CreateWithNoteTest()
     {
-      NoteMemberTestImpl(Note.C, Tone.C, Accidental.Natural, 0);
-      NoteMemberTestImpl(Note.CSharp, Tone.C, Accidental.Sharp, 1);
-      NoteMemberTestImpl(Note.DFlat, Tone.D, Accidental.Flat, 1);
-      NoteMemberTestImpl(Note.D, Tone.D, Accidental.Natural, 2);
-      NoteMemberTestImpl(Note.DSharp, Tone.D, Accidental.Sharp, 3);
-      NoteMemberTestImpl(Note.EFlat, Tone.E, Accidental.Flat, 3);
-      NoteMemberTestImpl(Note.E, Tone.E, Accidental.Natural, 4);
-      NoteMemberTestImpl(Note.F, Tone.F, Accidental.Natural, 5);
-      NoteMemberTestImpl(Note.FSharp, Tone.F, Accidental.Sharp, 6);
-      NoteMemberTestImpl(Note.GFlat, Tone.G, Accidental.Flat, 6);
-      NoteMemberTestImpl(Note.G, Tone.G, Accidental.Natural, 7);
-      NoteMemberTestImpl(Note.GSharp, Tone.G, Accidental.Sharp, 8);
-      NoteMemberTestImpl(Note.AFlat, Tone.A, Accidental.Flat, 8);
-      NoteMemberTestImpl(Note.A, Tone.A, Accidental.Natural, 9);
-      NoteMemberTestImpl(Note.ASharp, Tone.A, Accidental.Sharp, 10);
-      NoteMemberTestImpl(Note.BFlat, Tone.B, Accidental.Flat, 10);
-      NoteMemberTestImpl(Note.B, Tone.B, Accidental.Natural, 11);
+      Note target = Note.Create(Tone.A, 1);
+      Assert.Equal(Tone.A, target.Tone);
+      Assert.Equal(1, target.Octave);
+
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(new Tone(ToneName.C, Accidental.Flat),
+                                                                       Note.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(new Tone(ToneName.C, Accidental.DoubleFlat),
+                                                                       Note.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(new Tone(ToneName.B, Accidental.Sharp),
+                                                                       Note.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(
+                                                 () =>
+                                                   Note.Create(new Tone(ToneName.B, Accidental.DoubleSharp),
+                                                                       Note.MaxOctave));
     }
 
     [Fact]
-    public void NextTest()
+    public void EqualsContractTest()
     {
-      NextTestImpl(Note.C, Note.CSharp, Note.DFlat);
-      NextTestImpl(Note.CSharp, Note.D);
-      NextTestImpl(Note.DFlat, Note.D);
-      NextTestImpl(Note.D, Note.DSharp, Note.EFlat);
-      NextTestImpl(Note.DSharp, Note.E);
-      NextTestImpl(Note.EFlat, Note.E);
-      NextTestImpl(Note.E, Note.F);
-      NextTestImpl(Note.F, Note.FSharp, Note.GFlat);
-      NextTestImpl(Note.FSharp, Note.G);
-      NextTestImpl(Note.GFlat, Note.G);
-      NextTestImpl(Note.G, Note.GSharp, Note.AFlat);
-      NextTestImpl(Note.GSharp, Note.A);
-      NextTestImpl(Note.AFlat, Note.A);
-      NextTestImpl(Note.A, Note.ASharp, Note.BFlat);
-      NextTestImpl(Note.ASharp, Note.B);
-      NextTestImpl(Note.BFlat, Note.B);
-      NextTestImpl(Note.B, Note.C);
+      object x = Note.Create(ToneName.A, Accidental.Natural, 1);
+      object y = Note.Create(ToneName.A, Accidental.Natural, 1);
+      object z = Note.Create(ToneName.A, Accidental.Natural, 1);
+
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
     [Fact]
-    public void AddTest()
+    public void TypeSafeEqualsContractTest()
     {
-      AddTestImpl(Note.C, 1, Note.CSharp, Note.DFlat);
-      AddTestImpl(Note.C, 2, Note.D);
-      AddTestImpl(Note.C, 3, Note.DSharp, Note.EFlat);
-      AddTestImpl(Note.C, 4, Note.E);
-      AddTestImpl(Note.C, 5, Note.F);
-      AddTestImpl(Note.C, 6, Note.FSharp, Note.GFlat);
-      AddTestImpl(Note.C, 7, Note.G);
-      AddTestImpl(Note.C, 8, Note.GSharp, Note.AFlat);
-      AddTestImpl(Note.C, 9, Note.A);
-      AddTestImpl(Note.C, 10, Note.ASharp, Note.BFlat);
-      AddTestImpl(Note.C, 11, Note.B);
-      AddTestImpl(Note.C, 12, Note.C);
+      Note x = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note y = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note z = Note.Create(ToneName.A, Accidental.Natural, 1);
+
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
     }
 
     [Fact]
-    public void PreviousTest()
+    public void EqualsFailsWithDifferentTypeTest()
     {
-      PreviousTestImpl(Note.C, Note.B);
-      PreviousTestImpl(Note.CSharp, Note.C);
-      PreviousTestImpl(Note.DFlat, Note.C);
-      PreviousTestImpl(Note.D, Note.CSharp, Note.DFlat);
-      PreviousTestImpl(Note.DSharp, Note.D);
-      PreviousTestImpl(Note.EFlat, Note.D);
-      PreviousTestImpl(Note.E, Note.DSharp, Note.EFlat);
-      PreviousTestImpl(Note.F, Note.E);
-      PreviousTestImpl(Note.FSharp, Note.F);
-      PreviousTestImpl(Note.GFlat, Note.F);
-      PreviousTestImpl(Note.G, Note.FSharp, Note.GFlat);
-      PreviousTestImpl(Note.GSharp, Note.G);
-      PreviousTestImpl(Note.AFlat, Note.G);
-      PreviousTestImpl(Note.A, Note.GSharp, Note.AFlat);
-      PreviousTestImpl(Note.ASharp, Note.A);
-      PreviousTestImpl(Note.BFlat, Note.A);
-      PreviousTestImpl(Note.B, Note.ASharp, Note.BFlat);
+      object actual = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
-    public void SubtractTest()
+    public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      SubtractTestImpl(Note.B, 1, Note.BFlat, Note.ASharp);
-      SubtractTestImpl(Note.B, 2, Note.A);
-      SubtractTestImpl(Note.B, 3, Note.GSharp, Note.AFlat);
-      SubtractTestImpl(Note.B, 4, Note.G);
-      SubtractTestImpl(Note.B, 5, Note.FSharp, Note.GFlat);
-      SubtractTestImpl(Note.B, 6, Note.F);
-      SubtractTestImpl(Note.B, 7, Note.E);
-      SubtractTestImpl(Note.B, 8, Note.DSharp, Note.EFlat);
-      SubtractTestImpl(Note.B, 9, Note.D);
-      SubtractTestImpl(Note.B, 10, Note.CSharp, Note.DFlat);
-      SubtractTestImpl(Note.B, 11, Note.C);
-      SubtractTestImpl(Note.B, 12, Note.B);
+      Note actual = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.False(actual.Equals(int.MinValue));
+    }
+
+    [Fact]
+    public void EqualsFailsWithNullTest()
+    {
+      object actual = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.False(actual.Equals(null));
+    }
+
+    [Fact]
+    public void TypeSafeEqualsFailsWithNullTest()
+    {
+      Note actual = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.False(actual.Equals(null));
+    }
+
+    [Fact]
+    public void EqualsSucceedsWithSameObjectTest()
+    {
+      Note actual = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.True(actual.Equals(actual));
+    }
+
+    [Fact]
+    public void GetHashcodeTest()
+    {
+      Note actual = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note expected = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+    }
+
+    [Fact]
+    public void CompareToContractTest()
+    {
+      {
+        Note a = Note.Create(ToneName.A, Accidental.Natural, 1);
+        Assert.True(a.CompareTo(a) == 0);
+
+        Note b = Note.Create(ToneName.A, Accidental.Natural, 1);
+        Assert.True(a.CompareTo(b) == 0);
+        Assert.True(b.CompareTo(a) == 0);
+
+        Note c = Note.Create(ToneName.A, Accidental.Natural, 1);
+        Assert.True(b.CompareTo(c) == 0);
+        Assert.True(a.CompareTo(c) == 0);
+      }
+      {
+        Note a = Note.Create(ToneName.C, Accidental.Natural, 1);
+        Note b = Note.Create(ToneName.D, Accidental.Natural, 1);
+
+        Assert.Equal(a.CompareTo(b), -b.CompareTo(a));
+
+        Note c = Note.Create(ToneName.E, Accidental.Natural, 1);
+        Assert.True(a.CompareTo(b) < 0);
+        Assert.True(b.CompareTo(c) < 0);
+        Assert.True(a.CompareTo(c) < 0);
+      }
     }
 
     [Fact]
     public void CompareToTest()
     {
-      Assert.True(Note.C.CompareTo(Note.C) == 0);
-      Assert.True(Note.C.CompareTo(Note.D) < 0);
-      Assert.True(Note.D.CompareTo(Note.C) > 0);
-      Assert.True(Note.C.CompareTo(Note.B) < 0);
-      Assert.True(Note.B.CompareTo(Note.C) > 0);
-    }
+      Note a1 = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note aSharp1 = Note.Create(ToneName.A, Accidental.Sharp, 1);
+      Note aFlat1 = Note.Create(ToneName.A, Accidental.Flat, 1);
+      Note a2 = Note.Create(ToneName.A, Accidental.Natural, 2);
+      Note aSharp2 = Note.Create(ToneName.A, Accidental.Sharp, 2);
+      Note aFlat2 = Note.Create(ToneName.A, Accidental.Flat, 2);
 
-    [Fact]
-    public void TryParseTest()
-    {
-      TryParseTestImpl("C", Note.C);
-      TryParseTestImpl("C#", Note.CSharp);
-      TryParseTestImpl("C##", Note.D);
-      TryParseTestImpl("Cb", Note.B);
-      TryParseTestImpl("Cbb", Note.BFlat);
-      TryParseTestImpl("B#", Note.C);
-      TryParseTestImpl("B##", Note.CSharp);
-      TryParseTestImpl("Bb", Note.BFlat);
-      TryParseTestImpl("Bbb", Note.A);
-    }
+      Assert.True(a1.CompareTo(a1) == 0);
+      Assert.True(a1.CompareTo(aSharp1) < 0);
+      Assert.True(a1.CompareTo(aFlat1) > 0);
+      Assert.True(a1.CompareTo(a2) < 0);
+      Assert.True(a1.CompareTo(aFlat2) < 0);
+      Assert.True(a1.CompareTo(aSharp2) < 0);
 
-    [Fact]
-    public void TryParseRejectsInvalidStringsTest()
-    {
-      Note note;
-      Assert.False(Note.TryParse(null, out note));
-      Assert.False(Note.TryParse("", out note));
-      Assert.False(Note.TryParse("J", out note));
-      Assert.False(Note.TryParse("C$", out note));
-    }
-
-    [Fact]
-    public void ParseTest()
-    {
-      Assert.Equal(new Note(Tone.C, Accidental.DoubleFlat) , Note.Parse("Cbb"));
-      Assert.Equal(new Note(Tone.C, Accidental.Flat) , Note.Parse("CB"));
-      Assert.Equal(Note.C, Note.Parse("C"));
-      Assert.Equal(Note.CSharp, Note.Parse("c#"));
-      Assert.Equal(new Note(Tone.C, Accidental.DoubleSharp), Note.Parse("c##"));
-    }
-
-    [Fact]
-    public void ParseRejectsInvalidStringsTest()
-    {
-      Assert.Throws<ArgumentNullException>(() => Note.Parse(null));
-      Assert.Throws<ArgumentException>(() => Note.Parse(""));
-      Assert.Throws<FormatException>(() => Note.Parse("J"));
-      Assert.Throws<FormatException>(() => Note.Parse("C$"));
-    }
-
-    [Fact]
-    public void EqualsTest()
-    {
-      object actual = new Note(Tone.C);
-      Assert.True(Note.C.Equals(actual));
-      Assert.False(Note.C.Equals(null));
-    }
-
-    [Fact]
-    public void AccidentalModeTest()
-    {
-      Note.AccidentalMode = AccidentalMode.FavorFlats;
-      Assert.Equal(AccidentalMode.FavorFlats, Note.AccidentalMode);
-      Note.AccidentalMode = AccidentalMode.FavorSharps;
-      Assert.Equal(AccidentalMode.FavorSharps, Note.AccidentalMode);
-    }
-
-    [Fact]
-    public void LogicalOperatorsTest()
-    {
-      Assert.True(Note.C == new Note(Tone.B, Accidental.Sharp));
-      Assert.True(Note.C != Note.B);
-      Assert.True(Note.C < Note.B);
-      Assert.True(Note.C <= Note.B);
-      Assert.True(Note.D > Note.C);
-      Assert.True(Note.D >= Note.C);
-    }
-
-    [Fact]
-    public void ArithmeticOperatorsTest()
-    {
-      Assert.Equal(Note.C, Note.B + 1);
-      Assert.Equal(Note.C, Note.C + 12);
-      Assert.Equal(Note.B, Note.C - 1);
-      Assert.Equal(Note.C, Note.C - 12);
-
-      Note note = Note.B;
-      Assert.Equal(Note.B, note++);
-      Assert.Equal(Note.C, note);
-      Assert.Equal(Note.CSharp, ++note);
-
-      note = Note.C;
-      Assert.Equal(Note.C, note--);
-      Assert.Equal(Note.B, note);
-      Assert.Equal(Note.BFlat, --note);
+      Note c1 = Note.Create(ToneName.C, Accidental.Natural, 1);
+      Assert.True(a1.CompareTo(c1) > 0);
+      Assert.True(c1.CompareTo(a1) < 0);
     }
 
     [Fact]
     public void ToStringTest()
     {
-      Assert.Equal("Cbb", new Note(Tone.C, Accidental.DoubleFlat).ToString());
-      Assert.Equal("Cb", new Note(Tone.C, Accidental.Flat).ToString());
-      Assert.Equal("C", new Note(Tone.C).ToString());
-      Assert.Equal("C#", new Note(Tone.C, Accidental.Sharp).ToString());
-      Assert.Equal("C##", new Note(Tone.C, Accidental.DoubleSharp).ToString());
+      Note target = Note.Create(ToneName.A, Accidental.DoubleFlat, 1);
+      Assert.Equal("Abb1", target.ToString());
+
+      target = Note.Create(ToneName.A, Accidental.Flat, 1);
+      Assert.Equal("Ab1", target.ToString());
+
+      target = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Assert.Equal("A1", target.ToString());
+
+      target = Note.Create(ToneName.A, Accidental.Sharp, 1);
+      Assert.Equal("A#1", target.ToString());
+
+      target = Note.Create(ToneName.A, Accidental.DoubleSharp, 1);
+      Assert.Equal("A##1", target.ToString());
     }
 
-    #endregion
-
-    #region Implementation
-
-    private static void ConstructorTestImpl(Tone tone, Accidental accidental, int interval)
+    [Fact]
+    public void op_EqualityTest()
     {
-      var note = new Note(tone, accidental);
-      NoteMemberTestImpl(note, tone, accidental, interval);
+      Note a = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note b = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note c = Note.Create(ToneName.B, Accidental.Natural, 1);
+
+      Assert.True(a == b);
+      Assert.False(a == c);
+      Assert.False(b == c);
     }
 
-    private static void NoteMemberTestImpl(Note note, Tone tone, Accidental accidental, int interval)
+    [Fact]
+    public void op_InequalityTest()
     {
-      Assert.Equal(interval, note.Interval);
-      Assert.Equal(tone, note.Tone);
-      Assert.Equal(accidental, note.Accidental);
+      Note a = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note b = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note c = Note.Create(ToneName.B, Accidental.Natural, 1);
+
+      Assert.True(a != c);
+      Assert.True(b != c);
+      Assert.False(a != b);
     }
 
-    private static void TryParseTestImpl(string value, Note expected)
+    [Fact]
+    public void ComparisonOperatorsTest()
+    {
+      Note a = Note.Create(ToneName.A, Accidental.Natural, 1);
+      Note b = Note.Create(ToneName.B, Accidental.Natural, 1);
+
+      Assert.True(b > a);
+      Assert.True(b >= a);
+      Assert.False(b < a);
+      Assert.False(b <= a);
+    }
+
+    [Fact]
+    public void AbsoluteValueTest()
+    {
+      Assert.Equal(0, Note.Parse("C0").AbsoluteValue);
+      Assert.Equal(1, Note.Parse("C#0").AbsoluteValue);
+      Assert.Equal(2, Note.Parse("C##0").AbsoluteValue);
+      Assert.Equal(11, Note.Parse("B0").AbsoluteValue);
+      Assert.Equal(12, Note.Parse("C1").AbsoluteValue);
+      Assert.Equal(Note.Parse("Db1").AbsoluteValue, Note.Parse("C#1").AbsoluteValue);
+      Assert.Equal(Note.Parse("C2").AbsoluteValue, Note.Parse("B#1").AbsoluteValue);
+    }
+
+    [Fact]
+    public void op_SubtractionNoteTest()
+    {
+      Note cDoubleFlat2 = Note.Create(ToneName.C, Accidental.DoubleFlat, 2);
+      Note cFlat2 = Note.Create(ToneName.C, Accidental.Flat, 2);
+      Note c2 = Note.Create(ToneName.C, Accidental.Natural, 2);
+      Note cSharp2 = Note.Create(ToneName.C, Accidental.Sharp, 2);
+      Note cDoubleSharp2 = Note.Create(ToneName.C, Accidental.DoubleSharp, 2);
+
+      // Test interval with same notes in the same octave with different accidentals
+      Assert.Equal(0, cDoubleFlat2 - cDoubleFlat2);
+      Assert.Equal(-1, cDoubleFlat2 - cFlat2);
+      Assert.Equal(-2, cDoubleFlat2 - c2);
+      Assert.Equal(-3, cDoubleFlat2 - cSharp2);
+      Assert.Equal(-4, cDoubleFlat2 - cDoubleSharp2);
+      Assert.Equal(1, cFlat2 - cDoubleFlat2);
+      Assert.Equal(2, c2 - cDoubleFlat2);
+      Assert.Equal(3, cSharp2 - cDoubleFlat2);
+      Assert.Equal(4, cDoubleSharp2 - cDoubleFlat2);
+
+      Note c3 = Note.Create(ToneName.C, Accidental.Natural, 3);
+      Assert.Equal(-12, c2 - c3);
+      Assert.Equal(12, c3 - c2);
+    }
+
+    [Fact]
+    public void op_AdditionIntTest()
+    {
+      Note c2 = Note.Create(ToneName.C, Accidental.Natural, 2);
+
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Sharp, 2), c2 + 1);
+      Assert.Equal(Note.Create(ToneName.B, Accidental.Natural, 1), c2 + -1);
+      Assert.Equal(Note.Create(ToneName.D, Accidental.Natural, 2), c2 + 2);
+      Assert.Equal(Note.Create(ToneName.A, Accidental.Sharp, 1), c2 + -2);
+    }
+
+    [Fact]
+    public void op_IncrementTest()
+    {
+      Note c2 = Note.Create(ToneName.C, Accidental.Natural, 2);
+
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Sharp, 2), ++c2);
+      Assert.Equal(Note.Create(ToneName.D, Accidental.Natural, 2), ++c2);
+    }
+
+    [Fact]
+    public void op_SubtractionIntTest()
+    {
+      Note c2 = Note.Create(ToneName.C, Accidental.Natural, 2);
+
+      Assert.Equal(Note.Create(ToneName.B, Accidental.Natural, 1), c2 - 1);
+      Assert.Equal(Note.Create(ToneName.A, Accidental.Sharp, 1), c2 - 2);
+    }
+
+    [Fact]
+    public void op_DecrementTest()
+    {
+      Note c2 = Note.Create(ToneName.C, Accidental.Natural, 2);
+
+      Assert.Equal(Note.Create(ToneName.B, Accidental.Natural, 1), --c2);
+      Assert.Equal(Note.Create(ToneName.A, Accidental.Sharp, 1), --c2);
+    }
+
+    [Fact]
+    public void op_AdditionIntAccidentalModeTest()
+    {
+      Note c2 = Note.Create(ToneName.C, Accidental.Natural, 2);
+
+      Note.AccidentalMode = AccidentalMode.FavorSharps;
+
+      Note actual = c2 + 1;
+      Assert.Equal("C#2", actual.ToString());
+
+      Note.AccidentalMode = AccidentalMode.FavorFlats;
+
+      actual = c2 + 1;
+      Assert.Equal("Db2", actual.ToString());
+    }
+
+    [Fact]
+    public void op_SubtractionIntAccidentalModeTest()
+    {
+      Note c2 = Note.Create(ToneName.C, Accidental.Natural, 2);
+
+      Note.AccidentalMode = AccidentalMode.FavorSharps;
+
+      Note actual = c2 - 2;
+      Assert.Equal("A#1", actual.ToString());
+
+      Note.AccidentalMode = AccidentalMode.FavorFlats;
+
+      actual = c2 - 2;
+      Assert.Equal("Bb1", actual.ToString());
+    }
+
+    [Fact]
+    public void TryParseTest()
     {
       Note actual;
-      Assert.True(Note.TryParse(value, out actual));
-      Assert.Equal(expected, actual);
+      Assert.True(Note.TryParse("C", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Natural, 4), actual);
+
+      Assert.True(Note.TryParse("C#", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Sharp, 4), actual);
+
+      Assert.True(Note.TryParse("C##", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.DoubleSharp, 4), actual);
+
+      Assert.True(Note.TryParse("Cb", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Flat, 4), actual);
+
+      Assert.True(Note.TryParse("Cbb", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.DoubleFlat, 4), actual);
+
+      Assert.True(Note.TryParse("C2", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Natural, 2), actual);
+
+      Assert.True(Note.TryParse("C#2", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Sharp, 2), actual);
+
+      Assert.True(Note.TryParse("C##2", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.DoubleSharp, 2), actual);
+
+      Assert.True(Note.TryParse("Cb2", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Flat, 2), actual);
+
+      Assert.True(Note.TryParse("Cbb2", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.DoubleFlat, 2), actual);
+
+      Assert.True(Note.TryParse("60", out actual));
+      Assert.Equal(Note.Create(ToneName.C, Accidental.Natural, 4), actual);
+
+      Assert.False(Note.TryParse("H", out actual));
+      Assert.False(actual.IsValid);
+
+      Assert.False(Note.TryParse("C!", out actual));
+      Assert.False(actual.IsValid);
+
+      Assert.False(Note.TryParse("C#-1", out actual));
+      Assert.False(actual.IsValid);
+
+      Assert.False(Note.TryParse("C#10", out actual));
+      Assert.False(actual.IsValid);
+
+      Assert.False(Note.TryParse("C#b2", out actual));
+      Assert.False(actual.IsValid);
+
+      Assert.False(Note.TryParse("Cb#2", out actual));
+      Assert.False(actual.IsValid);
+
+      Assert.False(Note.TryParse(null, out actual));
+      Assert.False(Note.TryParse("", out actual));
+      Assert.False(Note.TryParse("256", out actual));
+      Assert.False(Note.TryParse("-1", out actual));
+      Assert.False(Note.TryParse("1X", out actual));
     }
 
-    private static void NextTestImpl(Note note, Note expectedSharp, Note? expectedFlat = null)
+    [Fact]
+    public void ParseTest()
     {
-      AddTestImpl(note, 1, expectedSharp, expectedFlat);
+      Assert.NotNull(Note.Parse("G9"));
+      Assert.Throws<FormatException>(() => Note.Parse("C$4"));
+      Assert.Throws<ArgumentOutOfRangeException>(() => { Note.Parse("A9"); });
     }
 
-    private static void PreviousTestImpl(Note note, Note expectedSharp, Note? expectedFlat = null)
+    [Fact]
+    public void FrequencyTest()
     {
-      SubtractTestImpl(note, 1, expectedSharp, expectedFlat);
+      Assert.Equal(440.0, Math.Round(Note.Parse("A4").Frequency, 2));
+      Assert.Equal(523.25, Math.Round(Note.Parse("C5").Frequency, 2));
+      Assert.Equal(349.23, Math.Round(Note.Parse("F4").Frequency, 2));
+      Assert.Equal(880.0, Math.Round(Note.Parse("A5").Frequency, 2));
     }
 
-    private static void AddTestImpl(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
+    [Fact]
+    public void MidiTest()
     {
-      Assert.Equal(expectedSharp, note.Add(interval, AccidentalMode.FavorSharps));
-      Assert.Equal(expectedFlat ?? expectedSharp, note.Add(interval, AccidentalMode.FavorFlats));
+      Assert.Equal(12, Note.Parse("C0").Midi);
+      Assert.Equal(24, Note.Parse("C1").Midi);
+      Assert.Equal(36, Note.Parse("C2").Midi);
+      Assert.Equal(48, Note.Parse("C3").Midi);
+      Assert.Equal(60, Note.Parse("C4").Midi);
+      Assert.Equal(72, Note.Parse("C5").Midi);
+      Assert.Equal(84, Note.Parse("C6").Midi);
+      Assert.Equal(96, Note.Parse("C7").Midi);
+      Assert.Equal(108, Note.Parse("C8").Midi);
+      Assert.Equal(120, Note.Parse("C9").Midi);
+      Assert.Equal(127, Note.Parse("G9").Midi);
+      Assert.Throws<ArgumentOutOfRangeException>(() => Note.CreateFromMidi(11));
     }
 
-    private static void SubtractTestImpl(Note note, int interval, Note expectedSharp, Note? expectedFlat = null)
+    [Fact]
+    public void ApplyAccidentalTest()
     {
-      Assert.Equal(expectedSharp, note.Subtract(interval, AccidentalMode.FavorSharps));
-      Assert.Equal(expectedFlat ?? expectedSharp, note.Subtract(interval, AccidentalMode.FavorFlats));
+      Note expected = Note.Parse("C4");
+      Assert.Equal(Note.Parse("Bb3"), expected.ApplyAccidental(Accidental.DoubleFlat));
+      Assert.Equal(Note.Parse("B3"), expected.ApplyAccidental(Accidental.Flat));
+      Assert.Equal(Note.Parse("C4"), expected.ApplyAccidental(Accidental.Natural));
+      Assert.Equal(Note.Parse("C#4"), expected.ApplyAccidental(Accidental.Sharp));
+      Assert.Equal(Note.Parse("C##4"), expected.ApplyAccidental(Accidental.DoubleSharp));
     }
 
     #endregion

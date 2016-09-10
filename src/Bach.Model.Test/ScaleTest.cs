@@ -37,67 +37,67 @@ namespace Bach.Model.Test
     [Fact]
     public void StringConstructorTest()
     {
-      var actual = new Scale(Note.C, "Major");
+      var actual = new Scale(Tone.C, "Major");
       Assert.Equal("C", actual.Name);
-      Assert.Equal(Note.C, actual.Root);
+      Assert.Equal(Tone.C, actual.Root);
       Assert.Equal(Registry.ScaleFormulas["Major"], actual.Formula);
     }
 
     [Fact]
     public void StringConstructorThrowsOnNullFormulaNameTest()
     {
-      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (string) null));
+      Assert.Throws<ArgumentNullException>(() => new Scale(Tone.C, (string) null));
     }
 
     [Fact]
     public void StringConstructorThrowsOnEmptyFormulaNameTest()
     {
-      Assert.Throws<ArgumentException>(() => new Scale(Note.C, ""));
+      Assert.Throws<ArgumentException>(() => new Scale(Tone.C, ""));
     }
 
     [Fact]
     public void FormulaConstructorTest()
     {
       ScaleFormula formula = Registry.ScaleFormulas["Major"];
-      var actual = new Scale(Note.C, formula);
+      var actual = new Scale(Tone.C, formula);
       Assert.Equal("C", actual.Name);
-      Assert.Equal(Note.C, actual.Root);
+      Assert.Equal(Tone.C, actual.Root);
       Assert.Equal(Registry.ScaleFormulas["Major"], actual.Formula);
     }
 
     [Fact]
     public void FormulaConstructorThrowsOnNullFormulaTest()
     {
-      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (ScaleFormula) null));
+      Assert.Throws<ArgumentNullException>(() => new Scale(Tone.C, (ScaleFormula) null));
     }
 
     [Fact]
     public void GetEnumeratorTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       IEnumerator enumerator = ((IEnumerable) scale).GetEnumerator();
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.C, enumerator.Current);
+      Assert.Equal(Tone.C, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.D, enumerator.Current);
+      Assert.Equal(Tone.D, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.E, enumerator.Current);
+      Assert.Equal(Tone.E, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.F, enumerator.Current);
+      Assert.Equal(Tone.F, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.G, enumerator.Current);
+      Assert.Equal(Tone.G, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.A, enumerator.Current);
+      Assert.Equal(Tone.A, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.B, enumerator.Current);
+      Assert.Equal(Tone.B, enumerator.Current);
       Assert.True(enumerator.MoveNext()); // Scale enumerator wraps around infintely
-      Assert.Equal(Note.C, enumerator.Current);
+      Assert.Equal(Tone.C, enumerator.Current);
     }
 
     [Fact]
     public void GenerateScaleTest()
     {
-      Note root = Note.C;
+      Tone root = Tone.C;
       TestScale("C,D,E,F,G,A,B", root, "Major");
       TestScale("C,D,Eb,F,G,Ab,Bb", root, "NaturalMinor");
       TestScale("C,D,Eb,F,G,Ab,B", root, "HarmonicMinor");
@@ -114,9 +114,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Scale(Note.C, "Major");
-      object y = new Scale(Note.C, "Major");
-      object z = new Scale(Note.C, "Major");
+      object x = new Scale(Tone.C, "Major");
+      object y = new Scale(Tone.C, "Major");
+      object z = new Scale(Tone.C, "Major");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -129,9 +129,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Scale(Note.C, "Major");
-      var y = new Scale(Note.C, "Major");
-      var z = new Scale(Note.C, "Major");
+      var x = new Scale(Tone.C, "Major");
+      var y = new Scale(Tone.C, "Major");
+      var z = new Scale(Tone.C, "Major");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -144,43 +144,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new Scale(Note.C, "Major");
+      object actual = new Scale(Tone.C, "Major");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new Scale(Note.C, "Major");
+      var actual = new Scale(Tone.C, "Major");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Scale(Note.C, "Major");
+      object actual = new Scale(Tone.C, "Major");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Scale(Note.C, "Major");
+      var actual = new Scale(Tone.C, "Major");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Scale(Note.C, "Major");
+      var actual = new Scale(Tone.C, "Major");
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Scale(Note.C, "Major");
-      var expected = new Scale(Note.C, "Major");
+      var actual = new Scale(Tone.C, "Major");
+      var expected = new Scale(Tone.C, "Major");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -188,19 +188,19 @@ namespace Bach.Model.Test
     [Fact]
     public void GetNotesTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(new[] { Note.C, Note.EFlat, Note.F, Note.G, Note.BFlat }, scale.GetNotes());
-      Assert.Equal(new[] { Note.EFlat, Note.F, Note.G, Note.BFlat, Note.C }, scale.GetNotes(1));
-      Assert.Equal(new[] { Note.F, Note.G, Note.BFlat, Note.C, Note.EFlat }, scale.GetNotes(2));
-      Assert.Equal(new[] { Note.G, Note.BFlat, Note.C, Note.EFlat, Note.F }, scale.GetNotes(3));
-      Assert.Equal(new[] { Note.BFlat, Note.C, Note.EFlat, Note.F, Note.G }, scale.GetNotes(4));
-      Assert.Equal(new[] { Note.C, Note.EFlat, Note.F, Note.G, Note.BFlat }, scale.GetNotes(5));
+      var scale = new Scale(Tone.C, "MinorPentatonic");
+      Assert.Equal(new[] { Tone.C, Tone.EFlat, Tone.F, Tone.G, Tone.BFlat }, scale.GetNotes());
+      Assert.Equal(new[] { Tone.EFlat, Tone.F, Tone.G, Tone.BFlat, Tone.C }, scale.GetNotes(1));
+      Assert.Equal(new[] { Tone.F, Tone.G, Tone.BFlat, Tone.C, Tone.EFlat }, scale.GetNotes(2));
+      Assert.Equal(new[] { Tone.G, Tone.BFlat, Tone.C, Tone.EFlat, Tone.F }, scale.GetNotes(3));
+      Assert.Equal(new[] { Tone.BFlat, Tone.C, Tone.EFlat, Tone.F, Tone.G }, scale.GetNotes(4));
+      Assert.Equal(new[] { Tone.C, Tone.EFlat, Tone.F, Tone.G, Tone.BFlat }, scale.GetNotes(5));
     }
 
     [Fact]
     public void RenderTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
+      var scale = new Scale(Tone.C, "MinorPentatonic");
       TestRender(scale, "C4", "C4,Eb4,F4,G4,Bb4");
       TestRender(scale, "Eb4", "Eb4,F4,G4,Bb4,C5");
       TestRender(scale, "F4", "F4,G4,Bb4,C5,Eb5");
@@ -211,44 +211,44 @@ namespace Bach.Model.Test
     [Fact]
     public void RenderReturnsEmptyIfNotNoteInScaleTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Empty(scale.Render(AbsoluteNote.Parse("D4")));
+      var scale = new Scale(Tone.C, "MinorPentatonic");
+      Assert.Empty(scale.Render(Note.Parse("D4")));
     }
 
     [Fact]
     public void NoteCountTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].Count, scale.NoteCount);
+      var scale = new Scale(Tone.C, "MinorPentatonic");
+      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].IntervalCount, scale.ToneCount);
     }
 
     [Fact]
     public void IndexOfTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(0, scale.IndexOf(Note.C));
-      Assert.Equal(1, scale.IndexOf(Note.EFlat));
-      Assert.Equal(2, scale.IndexOf(Note.F));
-      Assert.Equal(3, scale.IndexOf(Note.G));
-      Assert.Equal(4, scale.IndexOf(Note.BFlat));
+      var scale = new Scale(Tone.C, "MinorPentatonic");
+      Assert.Equal(0, scale.IndexOf(Tone.C));
+      Assert.Equal(1, scale.IndexOf(Tone.EFlat));
+      Assert.Equal(2, scale.IndexOf(Tone.F));
+      Assert.Equal(3, scale.IndexOf(Tone.G));
+      Assert.Equal(4, scale.IndexOf(Tone.BFlat));
     }
 
     [Fact]
     public void ToStringTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
+      var scale = new Scale(Tone.C, "MinorPentatonic");
       Assert.Equal("C,Eb,F,G,Bb", scale.ToString());
     }
 
     [Fact]
     public void IndexerTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Note.C, scale[0]);
-      Assert.Equal(Note.EFlat, scale[1]);
-      Assert.Equal(Note.F, scale[2]);
-      Assert.Equal(Note.G, scale[3]);
-      Assert.Equal(Note.BFlat, scale[4]);
+      var scale = new Scale(Tone.C, "MinorPentatonic");
+      Assert.Equal(Tone.C, scale[0]);
+      Assert.Equal(Tone.EFlat, scale[1]);
+      Assert.Equal(Tone.F, scale[2]);
+      Assert.Equal(Tone.G, scale[3]);
+      Assert.Equal(Tone.BFlat, scale[4]);
     }
 
     #endregion
@@ -257,13 +257,13 @@ namespace Bach.Model.Test
 
     private static void TestRender(Scale scale, string startNote, string expectedNotes)
     {
-      var actual = scale.Render(AbsoluteNote.Parse(startNote)).Take(scale.Formula.Count).ToArray();
-      Assert.Equal(AbsoluteNoteCollection.Parse(expectedNotes), actual);
+      var actual = scale.Render(Note.Parse(startNote)).Take(scale.Formula.IntervalCount).ToArray();
+      Assert.Equal(NoteCollection.Parse(expectedNotes), actual);
     }
 
-    private static void TestScale(string expectedNotes, Note root, string formulaName)
+    private static void TestScale(string expectedNotes, Tone root, string formulaName)
     {
-      NoteCollection expected = NoteCollection.Parse(expectedNotes);
+      ToneCollection expected = ToneCollection.Parse(expectedNotes);
       var scale = new Scale(root, formulaName);
       var actual = scale.Take(expected.Count).ToArray();
       Assert.Equal(expected, actual);

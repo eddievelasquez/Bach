@@ -40,7 +40,7 @@ namespace Bach.Model.Test.Instruments
       Fingering actual = Fingering.Create(instrument, 6, 5);
       Assert.Equal(6, actual.String);
       Assert.Equal(5, actual.Fret);
-      Assert.Equal(AbsoluteNote.Parse("A2"), actual.Note);
+      Assert.Equal(Note.Parse("A2"), actual.Note);
     }
 
     [Fact]

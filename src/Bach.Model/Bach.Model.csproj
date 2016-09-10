@@ -139,12 +139,12 @@
     <Compile Include="Mode.cs" />
     <Compile Include="ModeFormula.cs" />
     <Compile Include="Notation.cs" />
-    <Compile Include="AbsoluteNote.cs">
+    <Compile Include="Note.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AbsoluteNoteCollection.cs" />
-    <Compile Include="Note.cs" />
     <Compile Include="NoteCollection.cs" />
+    <Compile Include="Tone.cs" />
+    <Compile Include="ToneCollection.cs" />
     <Compile Include="Player\Chord.cs" />
     <Compile Include="Player\Duration.cs" />
     <Compile Include="Player\IPlayable.cs" />
@@ -164,8 +164,8 @@
     <Compile Include="Serialization\PersistentStringedInstrument.cs" />
     <Compile Include="Serialization\PersistentTuning.cs" />
     <Compile Include="Tablature.cs" />
-    <Compile Include="Tone.cs" />
-    <Compile Include="ToneExtensions.cs" />
+    <Compile Include="ToneName.cs" />
+    <Compile Include="ToneNameExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Bach.Model.Library.json">

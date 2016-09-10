@@ -1,7 +1,7 @@
-﻿//
-// Module Name: NoteCollection.cs
+//
+// Module Name: ToneCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -32,25 +32,25 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class AbsoluteNoteCollection: Collection<AbsoluteNote>,
-                                       IEquatable<IEnumerable<AbsoluteNote>>
+  public class ToneCollection: Collection<Tone>,
+                               IEquatable<IEnumerable<Tone>>
   {
     #region Construction/Destruction
 
-    public AbsoluteNoteCollection()
+    public ToneCollection()
     {
     }
 
-    public AbsoluteNoteCollection(IList<AbsoluteNote> list)
-      : base(list)
+    public ToneCollection(IList<Tone> tones)
+      : base(tones)
     {
     }
 
     #endregion
 
-    #region IEquatable<IEnumerable<AbsoluteNote>> Members
+    #region IEquatable<IEnumerable<Tone>> Members
 
-    public bool Equals(IEnumerable<AbsoluteNote> other)
+    public bool Equals(IEnumerable<Tone> other)
     {
       if( ReferenceEquals(other, this) )
       {
@@ -69,58 +69,53 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public static bool TryParse(string value, out AbsoluteNoteCollection notes, int defaultOctave = 4)
+    public static bool TryParse(string value, out ToneCollection tones)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= AbsoluteNote.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= AbsoluteNote.MaxOctave);
-
-      if ( string.IsNullOrEmpty(value) )
+      if( string.IsNullOrEmpty(value) )
       {
-        notes = null;
+        tones = null;
         return false;
       }
 
-      notes = new AbsoluteNoteCollection();
+      tones = new ToneCollection();
 
       foreach( string s in value.Split(',') )
       {
-        AbsoluteNote note;
-        if( !AbsoluteNote.TryParse(s, out note, defaultOctave) )
+        Tone tone;
+        if( !Tone.TryParse(s, out tone) )
         {
-          notes = null;
+          tones = null;
           return false;
         }
 
-        notes.Add(note);
+        tones.Add(tone);
       }
 
       return true;
     }
 
-    public static AbsoluteNoteCollection Parse(string value, int defaultOctave = 4)
+    public static ToneCollection Parse(string value)
     {
       Contract.Requires<ArgumentNullException>(value != null);
       Contract.Requires<ArgumentException>(value.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= AbsoluteNote.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= AbsoluteNote.MaxOctave);
 
-      AbsoluteNoteCollection notes;
-      if( !TryParse(value, out notes, defaultOctave) )
+      ToneCollection tones;
+      if( !TryParse(value, out tones) )
       {
-        throw new FormatException($"{value} contains invalid notes");
+        throw new FormatException($"{value} contains invalid tones");
       }
 
-      return notes;
+      return tones;
     }
 
-    public static string ToString(IEnumerable<AbsoluteNote> notes)
+    public static string ToString(IEnumerable<Tone> tones)
     {
-      Contract.Requires<ArgumentNullException>(notes != null);
+      Contract.Requires<ArgumentNullException>(tones != null);
 
       var buf = new StringBuilder();
       var needsComma = false;
 
-      foreach( AbsoluteNote note in notes )
+      foreach( Tone note in tones )
       {
         if( needsComma )
         {
@@ -154,21 +149,23 @@ namespace Bach.Model
         return false;
       }
 
-      return Equals((AbsoluteNoteCollection) other);
+      return Equals((ToneCollection) other);
     }
 
     public override int GetHashCode()
     {
       const int MULTIPLIER = 89;
 
-      AbsoluteNote first = this.FirstOrDefault();
-      AbsoluteNote last = this.LastOrDefault();
-
-      unchecked
+      var hashCode = 0;
+      foreach( Tone tone in Items )
       {
-        int result = (first.GetHashCode() + Count) * MULTIPLIER + last.GetHashCode() + Count;
-        return result;
+        unchecked
+        {
+          hashCode += tone.GetHashCode() * MULTIPLIER;
+        }
       }
+
+      return hashCode;
     }
 
     #endregion

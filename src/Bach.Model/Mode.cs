@@ -33,11 +33,11 @@ namespace Bach.Model
   using System.Text;
 
   public class Mode: IEquatable<Mode>,
-                     IEnumerable<Note>
+                     IEnumerable<Tone>
   {
     #region Data Members
 
-    private readonly NoteCollection _notes;
+    private readonly ToneCollection _tones;
 
     #endregion
 
@@ -58,7 +58,7 @@ namespace Bach.Model
 
       Name = buf.ToString();
 
-      _notes = new NoteCollection(scale.Skip(Formula.Tonic - 1).Take(scale.NoteCount).ToArray());
+      _tones = new ToneCollection(scale.Skip(Formula.Tonic - 1).Take(scale.ToneCount).ToArray());
     }
 
     #endregion
@@ -78,9 +78,9 @@ namespace Bach.Model
       return GetEnumerator();
     }
 
-    public IEnumerator<Note> GetEnumerator()
+    public IEnumerator<Tone> GetEnumerator()
     {
-      return _notes.GetEnumerator();
+      return _tones.GetEnumerator();
     }
 
     #endregion
@@ -129,7 +129,7 @@ namespace Bach.Model
 
     public override string ToString()
     {
-      return _notes.ToString();
+      return _tones.ToString();
     }
 
     #endregion

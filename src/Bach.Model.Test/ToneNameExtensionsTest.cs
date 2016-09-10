@@ -1,5 +1,5 @@
 ﻿//
-// Module Name: ToneExtensionsTest.cs
+// Module Name: ToneNameExtensionsTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2016  Eddie Velasquez.
 //
@@ -27,42 +27,42 @@ namespace Bach.Model.Test
 {
   using Xunit;
 
-  public class ToneExtensionsTest
+  public class ToneNameExtensionsTest
   {
     #region Public Methods
 
     [Fact]
     public void NextTest()
     {
-      Assert.Equal(Tone.D, Tone.C.Next());
-      Assert.Equal(Tone.C, Tone.B.Next());
+      Assert.Equal(ToneName.D, ToneName.C.Next());
+      Assert.Equal(ToneName.C, ToneName.B.Next());
     }
 
     [Fact]
     public void PreviousTest()
     {
-      Assert.Equal(Tone.C, Tone.D.Previous());
-      Assert.Equal(Tone.B, Tone.C.Previous());
+      Assert.Equal(ToneName.C, ToneName.D.Previous());
+      Assert.Equal(ToneName.B, ToneName.C.Previous());
     }
 
     [Fact]
     public void IntervalBetweenTest()
     {
-      Assert.Equal(2, Tone.C.IntervalBetween(Tone.D));
-      Assert.Equal(2, Tone.D.IntervalBetween(Tone.E));
-      Assert.Equal(1, Tone.E.IntervalBetween(Tone.F));
-      Assert.Equal(2, Tone.F.IntervalBetween(Tone.G));
-      Assert.Equal(2, Tone.G.IntervalBetween(Tone.A));
-      Assert.Equal(2, Tone.A.IntervalBetween(Tone.B));
-      Assert.Equal(1, Tone.B.IntervalBetween(Tone.C));
+      Assert.Equal(2, ToneName.C.IntervalBetween(ToneName.D));
+      Assert.Equal(2, ToneName.D.IntervalBetween(ToneName.E));
+      Assert.Equal(1, ToneName.E.IntervalBetween(ToneName.F));
+      Assert.Equal(2, ToneName.F.IntervalBetween(ToneName.G));
+      Assert.Equal(2, ToneName.G.IntervalBetween(ToneName.A));
+      Assert.Equal(2, ToneName.A.IntervalBetween(ToneName.B));
+      Assert.Equal(1, ToneName.B.IntervalBetween(ToneName.C));
 
-      Assert.Equal(0, Tone.C.IntervalBetween(Tone.C));
-      Assert.Equal(2, Tone.C.IntervalBetween(Tone.D));
-      Assert.Equal(4, Tone.C.IntervalBetween(Tone.E));
-      Assert.Equal(5, Tone.C.IntervalBetween(Tone.F));
-      Assert.Equal(7, Tone.C.IntervalBetween(Tone.G));
-      Assert.Equal(9, Tone.C.IntervalBetween(Tone.A));
-      Assert.Equal(11, Tone.C.IntervalBetween(Tone.B));
+      Assert.Equal(0, ToneName.C.IntervalBetween(ToneName.C));
+      Assert.Equal(2, ToneName.C.IntervalBetween(ToneName.D));
+      Assert.Equal(4, ToneName.C.IntervalBetween(ToneName.E));
+      Assert.Equal(5, ToneName.C.IntervalBetween(ToneName.F));
+      Assert.Equal(7, ToneName.C.IntervalBetween(ToneName.G));
+      Assert.Equal(9, ToneName.C.IntervalBetween(ToneName.A));
+      Assert.Equal(11, ToneName.C.IntervalBetween(ToneName.B));
     }
 
     #endregion

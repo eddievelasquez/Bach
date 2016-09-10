@@ -70,7 +70,7 @@ namespace Bach.Model
 
     public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
 
-    public int Count => _intervals.Length;
+    public int IntervalCount => _intervals.Length;
 
     public string Name { get; }
 
@@ -123,7 +123,7 @@ namespace Bach.Model
       return s_comparer.GetHashCode(Key);
     }
 
-    public IEnumerable<AbsoluteNote> Generate(AbsoluteNote root, int skipCount = 0)
+    public IEnumerable<Note> Generate(Note root, int skipCount = 0)
     {
       int intervalCount = _intervals.Length;
       int index = skipCount;
@@ -141,14 +141,14 @@ namespace Bach.Model
         int octaveAdd = index / intervalCount;
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
-        AbsoluteNote note = root.Add(interval.Steps + octaveAdd * AbsoluteNote.IntervalsPerOctave, accidentalMode);
+        Note note = root.Add(interval.Steps + octaveAdd * Note.IntervalsPerOctave, accidentalMode);
         yield return note;
 
         ++index;
       }
     }
 
-    public IEnumerable<Note> Generate(Note root)
+    public IEnumerable<Tone> Generate(Tone root)
     {
       int intervalCount = _intervals.Length;
       var index = 0;
@@ -164,8 +164,8 @@ namespace Bach.Model
         }
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
-        Note note = root.Add(interval.Steps, accidentalMode);
-        yield return note;
+        Tone tone = root.Add(interval.Steps, accidentalMode);
+        yield return tone;
 
         ++index;
       }

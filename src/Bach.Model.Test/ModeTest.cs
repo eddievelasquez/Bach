@@ -36,20 +36,20 @@ namespace Bach.Model.Test
     [Fact]
     public void ModeConstructorTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       ModeFormula formula = ModeFormula.Phrygian;
       var target = new Mode(scale, formula);
 
       Assert.Equal(scale, target.Scale);
       Assert.Equal(formula, target.Formula);
       Assert.Equal("C Phrygian", target.Name);
-      Assert.Equal(target.ToArray(), NoteCollection.Parse("E,F,G,A,B,C,D"));
+      Assert.Equal(target.ToArray(), ToneCollection.Parse("E,F,G,A,B,C,D"));
     }
 
     [Fact]
     public void ModesTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       TestMode("C,D,E,F,G,A,B", scale, ModeFormula.Ionian);
       TestMode("D,E,F,G,A,B,C", scale, ModeFormula.Dorian);
       TestMode("E,F,G,A,B,C,D", scale, ModeFormula.Phrygian);
@@ -62,7 +62,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       object x = new Mode(scale, ModeFormula.Dorian);
       object y = new Mode(scale, ModeFormula.Dorian);
       object z = new Mode(scale, ModeFormula.Dorian);
@@ -78,7 +78,7 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       var x = new Mode(scale, ModeFormula.Dorian);
       var y = new Mode(scale, ModeFormula.Dorian);
       var z = new Mode(scale, ModeFormula.Dorian);
@@ -94,7 +94,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       object actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(int.MinValue));
     }
@@ -102,7 +102,7 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(int.MinValue));
     }
@@ -110,7 +110,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       object actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(null));
     }
@@ -118,7 +118,7 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       Assert.False(actual.Equals(null));
     }
@@ -126,7 +126,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       Assert.True(actual.Equals(actual));
     }
@@ -134,7 +134,7 @@ namespace Bach.Model.Test
     [Fact]
     public void GetHashcodeTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       var actual = new Mode(scale, ModeFormula.Dorian);
       var expected = new Mode(scale, ModeFormula.Dorian);
       Assert.True(expected.Equals(actual));
@@ -144,23 +144,23 @@ namespace Bach.Model.Test
     [Fact]
     public void EnumeratorTest()
     {
-      var scale = new Scale(Note.C, "Major");
+      var scale = new Scale(Tone.C, "Major");
       var mode = new Mode(scale, ModeFormula.Ionian);
       IEnumerator enumerator = ((IEnumerable) mode).GetEnumerator();
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.C, enumerator.Current);
+      Assert.Equal(Tone.C, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.D, enumerator.Current);
+      Assert.Equal(Tone.D, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.E, enumerator.Current);
+      Assert.Equal(Tone.E, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.F, enumerator.Current);
+      Assert.Equal(Tone.F, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.G, enumerator.Current);
+      Assert.Equal(Tone.G, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.A, enumerator.Current);
+      Assert.Equal(Tone.A, enumerator.Current);
       Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.B, enumerator.Current);
+      Assert.Equal(Tone.B, enumerator.Current);
       Assert.False(enumerator.MoveNext());
     }
 
@@ -170,7 +170,7 @@ namespace Bach.Model.Test
 
     private static void TestMode(string expectedNotes, Scale root, ModeFormula formula)
     {
-      var expected = NoteCollection.Parse(expectedNotes).ToArray();
+      var expected = ToneCollection.Parse(expectedNotes).ToArray();
       var mode = new Mode(root, formula);
       var actualNotes = mode.ToArray();
       Assert.Equal(expected, actualNotes);
