@@ -48,7 +48,7 @@ namespace Bach.Model.Instruments
 
     internal InstrumentDefinitionState State { get; }
     public Guid InstrumentId => State.InstrumentId;
-    public string Name => State.Name;
+    public string InstrumentName => State.InstrumentName;
 
     #endregion
 
@@ -77,14 +77,14 @@ namespace Bach.Model.Instruments
 
       // InstrumentId is only used for hashcode calculation,
       // don't used it for equality
-      return Comparer.Equals(Name, other.Name);
+      return Comparer.Equals(InstrumentName, other.InstrumentName);
     }
 
     #endregion
 
     #region IKeyedObject Members
 
-    public string Key => State.Key;
+    public string Key => State.InstrumentKey;
 
     #endregion
   }

@@ -45,7 +45,6 @@ namespace Bach.Model.Instruments
 
     public int StringCount => State.StringCount;
 
-    // TODO: This has to return a read-only collection
     public TuningCollection Tunings => State.Tunings;
 
     private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState) base.State;

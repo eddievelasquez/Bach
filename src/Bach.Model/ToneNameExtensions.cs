@@ -29,7 +29,9 @@ namespace Bach.Model
   {
     #region Data Members
 
-    private static readonly int[] s_intervals = { 2, // C-D
+    private static readonly int[] s_intervals =
+    {
+      2, // C-D
       2, // D-E
       1, // E-F
       2, // F-G
@@ -72,8 +74,8 @@ namespace Bach.Model
       var interval = 0;
       while( toneName != end )
       {
-        interval += s_intervals[(int) toneName];
-        toneName = (ToneName) (((int) toneName + 1) % s_intervals.Length);
+        interval += s_intervals[(int)toneName];
+        toneName = (ToneName) (((int)toneName + 1) % s_intervals.Length);
       }
 
       return interval;

@@ -54,7 +54,7 @@ namespace Bach.Model.Test.Instruments
       builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes);
       StringedInstrumentDefinition definition = builder.Build();
       Assert.NotNull(definition);
-      Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.Name);
+      Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.InstrumentName);
       Assert.Equal(EXPECTED_INSTRUMENT_STRING_COUNT, definition.StringCount);
       Assert.NotNull(definition.Tunings);
       Assert.Equal(1, definition.Tunings.Count);
@@ -73,7 +73,7 @@ namespace Bach.Model.Test.Instruments
       builder.AddTuning(EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, notes);
       StringedInstrumentDefinition definition = builder.Build();
       Assert.NotNull(definition);
-      Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.Name);
+      Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.InstrumentName);
       Assert.Equal(EXPECTED_INSTRUMENT_STRING_COUNT, definition.StringCount);
       Assert.NotNull(definition.Tunings);
       Assert.Equal(1, definition.Tunings.Count);

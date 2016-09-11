@@ -37,7 +37,9 @@ namespace Bach.Model
     public const int MinInterval = 1;
     public const int MaxInterval = 15;
 
-    private static readonly int[,] s_steps = { // Diminished, Minor, Perfect, Major, Augmented
+    private static readonly int[,] s_steps =
+    {
+      // Diminished, Minor, Perfect, Major, Augmented
       { -1, -1, 0, -1, 1 }, // First
       { 0, 1, -1, 2, 3 }, // Second
       { 2, 3, -1, 4, 5 }, // Third

@@ -1,7 +1,7 @@
 ﻿//
 // Module Name: ModeFormula.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2013, 2016  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.

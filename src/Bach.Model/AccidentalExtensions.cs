@@ -1,7 +1,7 @@
 //
 // Module Name: AccidentalExtensions.cs
 // Project:     Bach.Model
-// Copyright (c) 2013  Eddie Velasquez.
+// Copyright (c) 2013, 2016  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -60,16 +60,18 @@ namespace Bach.Model
 
       foreach( char c in value )
       {
-        if( c == 'b' || c == 'B' )
+        switch(c)
         {
+        case 'b':
+        case 'B':
           --accidental;
-        }
-        else if( c == '#' )
-        {
+          break;
+
+        case '#':
           ++accidental;
-        }
-        else
-        {
+          break;
+
+        default:
           return false;
         }
       }

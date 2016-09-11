@@ -32,17 +32,17 @@ namespace Bach.Model.Instruments.Internal
   {
     #region Construction/Destruction
 
-    protected InstrumentDefinitionState(Guid instrumentId, string key, string name)
+    protected InstrumentDefinitionState(Guid instrumentId, string instrumentKey, string instrumentName)
     {
       Contract.Requires<ArgumentException>(instrumentId != Guid.Empty, "Must provide a non-empty instrument id");
-      Contract.Requires<ArgumentNullException>(key != null, "Must provide an instrument key");
-      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide an instrument key");
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide an instrument name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide an instrument name");
+      Contract.Requires<ArgumentNullException>(instrumentKey != null, "Must provide an instrument key");
+      Contract.Requires<ArgumentException>(instrumentKey.Length > 0, "Must provide an instrument key");
+      Contract.Requires<ArgumentNullException>(instrumentName != null, "Must provide an instrument name");
+      Contract.Requires<ArgumentException>(instrumentName.Length > 0, "Must provide an instrument name");
 
       InstrumentId = instrumentId;
-      Key = key;
-      Name = name;
+      InstrumentKey = instrumentKey;
+      InstrumentName = instrumentName;
     }
 
     #endregion
@@ -50,8 +50,8 @@ namespace Bach.Model.Instruments.Internal
     #region Properties
 
     public Guid InstrumentId { get; }
-    public string Key { get; }
-    public string Name { get; }
+    public string InstrumentKey { get; }
+    public string InstrumentName { get; }
 
     #endregion
   }

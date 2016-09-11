@@ -33,8 +33,8 @@ namespace Bach.Model
   {
     #region Constants
 
-    private const ushort TONE_MASK = 7;
-    private const ushort TONE_SHIFT = 7;
+    private const ushort TONE_NAME_MASK = 7;
+    private const ushort TONE_NAME_SHIFT = 7;
     private const ushort ACCIDENTAL_MASK = 7;
     private const ushort ACCIDENTAL_SHIFT = 4;
     private const ushort INTERVAL_MASK = 0x0F;
@@ -136,7 +136,7 @@ namespace Bach.Model
     public static AccidentalMode AccidentalMode { get; set; }
 
     public int Interval => DecodeInterval(_encoded);
-    public ToneName ToneName => DecodeTone(_encoded);
+    public ToneName ToneName => DecodeToneName(_encoded);
     public Accidental Accidental => DecodeAccidental(_encoded);
 
     #endregion
@@ -316,7 +316,7 @@ namespace Bach.Model
                                                      && accidental <= Accidental.DoubleSharp);
       var encoded =
         (ushort)
-          ((((ushort) toneName & TONE_MASK) << TONE_SHIFT)
+          ((((ushort) toneName & TONE_NAME_MASK) << TONE_NAME_SHIFT)
            | (((ushort) (accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT) | ((ushort) value & INTERVAL_MASK));
       return encoded;
     }
@@ -327,9 +327,9 @@ namespace Bach.Model
       return result;
     }
 
-    private static ToneName DecodeTone(ushort encoded)
+    private static ToneName DecodeToneName(ushort encoded)
     {
-      int result = (encoded >> TONE_SHIFT) & TONE_MASK;
+      int result = (encoded >> TONE_NAME_SHIFT) & TONE_NAME_MASK;
       return (ToneName) result;
     }
 
