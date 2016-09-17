@@ -120,6 +120,10 @@ namespace Bach.Model.Test
       NextTestImpl(Tone.ASharp, Tone.B);
       NextTestImpl(Tone.BFlat, Tone.B);
       NextTestImpl(Tone.B, Tone.C);
+
+      NextTestImpl(new Tone(ToneName.C, Accidental.DoubleSharp), Tone.DSharp, Tone.EFlat);
+      NextTestImpl(new Tone(ToneName.E, Accidental.DoubleSharp), Tone.G);
+      NextTestImpl(new Tone(ToneName.B, Accidental.DoubleSharp), Tone.D);
     }
 
     [Fact]
@@ -159,6 +163,9 @@ namespace Bach.Model.Test
       PreviousTestImpl(Tone.ASharp, Tone.A);
       PreviousTestImpl(Tone.BFlat, Tone.A);
       PreviousTestImpl(Tone.B, Tone.ASharp, Tone.BFlat);
+
+      PreviousTestImpl(new Tone(ToneName.B, Accidental.DoubleFlat), Tone.GSharp, Tone.AFlat);
+      PreviousTestImpl(new Tone(ToneName.C, Accidental.DoubleFlat), Tone.A);
     }
 
     [Fact]
