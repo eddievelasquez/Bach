@@ -25,6 +25,11 @@
 
 namespace Bach.Model
 {
+  /// <summary>
+  /// A ToneName represents a basic diatonic pitch
+  /// according to the English naming convention for
+  /// the 12 tone chromatic scale.
+  /// </summary>
   public enum ToneName
   {
     C,

@@ -28,6 +28,12 @@ namespace Bach.Model
   using System;
   using System.Diagnostics.Contracts;
 
+  /// <summary>
+  /// A Tone represents a combination of a <see cref="ToneName"/>
+  /// and an optional <see cref="Accidental"/> following the
+  /// English naming convention for the 12 tone
+  /// chromatic scale.
+  /// </summary>
   public struct Tone: IEquatable<Tone>,
                       IComparable<Tone>
   {
@@ -103,30 +109,30 @@ namespace Bach.Model
 
     private static Tone Create(ToneName toneName, Accidental accidental = Accidental.Natural)
     {
-      var note = new Tone(toneName, accidental);
-      Link link = s_links[note.Interval];
+      var tone = new Tone(toneName, accidental);
+      Link link = s_links[tone.Interval];
       if( link == null )
       {
         link = new Link();
-        s_links[note.Interval] = link;
+        s_links[tone.Interval] = link;
       }
 
       switch( accidental )
       {
         case Accidental.Flat:
-          link.Flat = note;
+          link.Flat = tone;
           break;
 
         case Accidental.Natural:
-          link.Natural = note;
+          link.Natural = tone;
           break;
 
         case Accidental.Sharp:
-          link.Sharp = note;
+          link.Sharp = tone;
           break;
       }
 
-      return note;
+      return tone;
     }
 
     #endregion

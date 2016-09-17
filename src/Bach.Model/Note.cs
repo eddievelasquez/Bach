@@ -29,6 +29,15 @@ namespace Bach.Model
   using System.Diagnostics.Contracts;
   using System.Text;
 
+  /// <summary>
+  /// A Note represents the pitch of a sound (<see cref="Tone"/>)
+  /// on a given octave.
+  /// </summary>
+  /// <remarks>
+  /// The octave of a Note ranges from 0 to 9,
+  /// which corresponds to MIDI notes from 12 (C0)
+  /// to 127 (B9).
+  /// </remarks>
   public struct Note: IEquatable<Note>,
                       IComparable<Note>
   {

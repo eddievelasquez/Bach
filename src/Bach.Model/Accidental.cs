@@ -25,6 +25,11 @@
 
 namespace Bach.Model
 {
+  /// <summary>
+  /// An Accidental represents a modification in tone
+  /// to a <see cref="ToneName"/> by raising or lowering
+  /// its relative pitch.
+  /// </summary>
   public enum Accidental
   {
     DoubleFlat = -2,
