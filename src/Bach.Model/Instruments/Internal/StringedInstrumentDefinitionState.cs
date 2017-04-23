@@ -32,7 +32,10 @@ namespace Bach.Model.Instruments.Internal
   {
     #region Construction/Destruction
 
-    public StringedInstrumentDefinitionState(Guid instrumentId, string instrumentKey, string instrumentName, int stringCount)
+    public StringedInstrumentDefinitionState(Guid instrumentId,
+                                             string instrumentKey,
+                                             string instrumentName,
+                                             int stringCount)
       : base(instrumentId, instrumentKey, instrumentName)
     {
       Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0, "Must provide a string count greater than zero");

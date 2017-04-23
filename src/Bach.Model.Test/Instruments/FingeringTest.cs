@@ -79,9 +79,9 @@ namespace Bach.Model.Test.Instruments
     public void TypeSafeEqualsContractTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      var x = Fingering.Create(instrument, 6, 5);
-      var y = Fingering.Create(instrument, 6, 5);
-      var z = Fingering.Create(instrument, 6, 5);
+      Fingering x = Fingering.Create(instrument, 6, 5);
+      Fingering y = Fingering.Create(instrument, 6, 5);
+      Fingering z = Fingering.Create(instrument, 6, 5);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -103,7 +103,7 @@ namespace Bach.Model.Test.Instruments
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      var actual = Fingering.Create(instrument, 6, 5);
+      Fingering actual = Fingering.Create(instrument, 6, 5);
       Assert.False(actual.Equals(int.MinValue));
     }
 
@@ -119,7 +119,7 @@ namespace Bach.Model.Test.Instruments
     public void TypeSafeEqualsFailsWithNullTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      var actual = Fingering.Create(instrument, 6, 5);
+      Fingering actual = Fingering.Create(instrument, 6, 5);
       Assert.False(actual.Equals(null));
     }
 
@@ -127,7 +127,7 @@ namespace Bach.Model.Test.Instruments
     public void EqualsSucceedsWithSameObjectTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      var actual = Fingering.Create(instrument, 6, 5);
+      Fingering actual = Fingering.Create(instrument, 6, 5);
       Assert.True(actual.Equals(actual));
     }
 
@@ -135,8 +135,8 @@ namespace Bach.Model.Test.Instruments
     public void GetHashcodeTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      var actual = Fingering.Create(instrument, 6, 5);
-      var expected = Fingering.Create(instrument, 6, 5);
+      Fingering actual = Fingering.Create(instrument, 6, 5);
+      Fingering expected = Fingering.Create(instrument, 6, 5);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -148,7 +148,6 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal("65", Fingering.Create(instrument, 6, 5).ToString());
       Assert.Equal("612", Fingering.Create(instrument, 6, 12).ToString());
     }
-
 
     #endregion
   }

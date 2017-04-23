@@ -43,7 +43,8 @@ namespace Bach.Model
 
     #region Construction/Destruction
 
-    public Mode(Scale scale, ModeFormula formula)
+    public Mode(Scale scale,
+                ModeFormula formula)
     {
       Contract.Requires<ArgumentNullException>(scale != null);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -73,15 +74,9 @@ namespace Bach.Model
 
     #region IEnumerable<Note> Members
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IEnumerator<Tone> GetEnumerator()
-    {
-      return _tones.GetEnumerator();
-    }
+    public IEnumerator<Tone> GetEnumerator() => _tones.GetEnumerator();
 
     #endregion
 
@@ -127,10 +122,7 @@ namespace Bach.Model
       return hashCode;
     }
 
-    public override string ToString()
-    {
-      return _tones.ToString();
-    }
+    public override string ToString() => _tones.ToString();
 
     #endregion
   }

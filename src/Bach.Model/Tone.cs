@@ -101,13 +101,15 @@ namespace Bach.Model
       AccidentalMode = AccidentalMode.FavorSharps;
     }
 
-    public Tone(ToneName toneName, Accidental accidental = Accidental.Natural)
+    public Tone(ToneName toneName,
+                Accidental accidental = Accidental.Natural)
     {
       int interval = CalcInterval(toneName, accidental);
       _encoded = Encode(interval, toneName, accidental);
     }
 
-    private static Tone Create(ToneName toneName, Accidental accidental = Accidental.Natural)
+    private static Tone Create(ToneName toneName,
+                               Accidental accidental = Accidental.Natural)
     {
       var tone = new Tone(toneName, accidental);
       Link link = s_links[tone.Interval];
@@ -142,32 +144,29 @@ namespace Bach.Model
     public static AccidentalMode AccidentalMode { get; set; }
 
     public int Interval => DecodeInterval(_encoded);
+
     public ToneName ToneName => DecodeToneName(_encoded);
+
     public Accidental Accidental => DecodeAccidental(_encoded);
 
     #endregion
 
     #region IComparable<Note> Members
 
-    public int CompareTo(Tone other)
-    {
-      return Interval - other.Interval;
-    }
+    public int CompareTo(Tone other) => Interval - other.Interval;
 
     #endregion
 
     #region IEquatable<Note> Members
 
-    public bool Equals(Tone other)
-    {
-      return Interval == other.Interval;
-    }
+    public bool Equals(Tone other) => Interval == other.Interval;
 
     #endregion
 
     #region Public Methods
 
-    public static bool TryParse(string value, out Tone tone)
+    public static bool TryParse(string value,
+                                out Tone tone)
     {
       if( string.IsNullOrEmpty(value) )
       {
@@ -208,14 +207,16 @@ namespace Bach.Model
     }
 
     [Pure]
-    public Tone Add(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
+    public Tone Add(int interval,
+                    AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       int newInterval = (Interval + interval) % INTERVAL_COUNT;
       return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
     }
 
     [Pure]
-    public Tone Subtract(int interval, AccidentalMode mode = AccidentalMode.FavorSharps)
+    public Tone Subtract(int interval,
+                         AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       interval %= INTERVAL_COUNT;
       int newInterval = Interval - interval;
@@ -237,51 +238,53 @@ namespace Bach.Model
       return obj.GetType() == GetType() && Equals((Tone) obj);
     }
 
-    public override int GetHashCode()
-    {
-      return Interval;
-    }
+    public override int GetHashCode() => Interval;
 
-    public override string ToString()
-    {
-      return $"{ToneName}{Accidental.ToSymbol()}";
-    }
+    public override string ToString() => $"{ToneName}{Accidental.ToSymbol()}";
 
     #endregion
 
     #region Operators
 
-    public static bool operator ==(Tone left, Tone right) => Equals(left, right);
+    public static bool operator==(Tone left,
+                                  Tone right) => Equals(left, right);
 
-    public static bool operator !=(Tone left, Tone right) => !Equals(left, right);
+    public static bool operator!=(Tone left,
+                                  Tone right) => !Equals(left, right);
 
-    public static bool operator >(Tone left, Tone right) => left.CompareTo(right) > 0;
+    public static bool operator>(Tone left,
+                                 Tone right) => left.CompareTo(right) > 0;
 
-    public static bool operator <(Tone left, Tone right) => left.CompareTo(right) < 0;
+    public static bool operator<(Tone left,
+                                 Tone right) => left.CompareTo(right) < 0;
 
-    public static bool operator >=(Tone left, Tone right) => left.CompareTo(right) >= 0;
+    public static bool operator>=(Tone left,
+                                  Tone right) => left.CompareTo(right) >= 0;
 
-    public static bool operator <=(Tone left, Tone right) => left.CompareTo(right) <= 0;
+    public static bool operator<=(Tone left,
+                                  Tone right) => left.CompareTo(right) <= 0;
 
-    public static Tone operator +(Tone tone, int interval)
+    public static Tone operator+(Tone tone,
+                                 int interval)
     {
       Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Add(interval, AccidentalMode);
     }
 
-    public static Tone operator ++(Tone tone)
+    public static Tone operator++(Tone tone)
     {
       Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Add(1, AccidentalMode);
     }
 
-    public static Tone operator -(Tone tone, int interval)
+    public static Tone operator-(Tone tone,
+                                 int interval)
     {
       Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Subtract(interval, AccidentalMode);
     }
 
-    public static Tone operator --(Tone tone)
+    public static Tone operator--(Tone tone)
     {
       Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Subtract(1, AccidentalMode);
@@ -291,7 +294,8 @@ namespace Bach.Model
 
     #region Implementation
 
-    private static int CalcInterval(ToneName toneName, Accidental accidental)
+    private static int CalcInterval(ToneName toneName,
+                                    Accidental accidental)
     {
       int interval = (ToneName.C.IntervalBetween(toneName) + (int) accidental) % INTERVAL_COUNT;
       if( interval < 0 )
@@ -302,7 +306,8 @@ namespace Bach.Model
       return interval;
     }
 
-    internal static Tone GetNote(int index, bool favorSharps)
+    internal static Tone GetNote(int index,
+                                 bool favorSharps)
     {
       Link link = s_links[index];
 
@@ -314,16 +319,17 @@ namespace Bach.Model
       return favorSharps ? link.Sharp.Value : link.Flat.Value;
     }
 
-    private static ushort Encode(int value, ToneName toneName, Accidental accidental)
+    private static ushort Encode(int value,
+                                 ToneName toneName,
+                                 Accidental accidental)
     {
       Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
       Contract.Requires<ArgumentOutOfRangeException>(toneName >= ToneName.C && toneName <= ToneName.B);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat
-                                                     && accidental <= Accidental.DoubleSharp);
-      var encoded =
-        (ushort)
-          ((((ushort) toneName & TONE_NAME_MASK) << TONE_NAME_SHIFT)
-           | (((ushort) (accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT) | ((ushort) value & INTERVAL_MASK));
+      Contract.Requires<ArgumentOutOfRangeException>(
+        accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
+      var encoded = (ushort) ((((ushort) toneName & TONE_NAME_MASK) << TONE_NAME_SHIFT)
+                              | (((ushort) (accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT)
+                              | ((ushort) value & INTERVAL_MASK));
       return encoded;
     }
 

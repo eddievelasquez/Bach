@@ -64,7 +64,8 @@ namespace Bach.Model
       return toneName - 1;
     }
 
-    public static int IntervalBetween(this ToneName toneName, ToneName end)
+    public static int IntervalBetween(this ToneName toneName,
+                                      ToneName end)
     {
       if( toneName == end )
       {
@@ -74,8 +75,8 @@ namespace Bach.Model
       var interval = 0;
       while( toneName != end )
       {
-        interval += s_intervals[(int)toneName];
-        toneName = (ToneName) (((int)toneName + 1) % s_intervals.Length);
+        interval += s_intervals[(int) toneName];
+        toneName = (ToneName) (((int) toneName + 1) % s_intervals.Length);
       }
 
       return interval;

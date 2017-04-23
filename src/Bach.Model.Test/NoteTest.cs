@@ -40,20 +40,10 @@ namespace Bach.Model.Test
       Assert.Equal(Accidental.Natural, target.Accidental);
       Assert.Equal(1, target.Octave);
 
-      Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(ToneName.C, Accidental.Flat, Note.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(ToneName.C, Accidental.DoubleFlat,
-                                                                       Note.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(ToneName.B, Accidental.Sharp, Note.MaxOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(ToneName.B, Accidental.DoubleSharp,
-                                                                       Note.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Note.Create(ToneName.C, Accidental.Flat, Note.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Note.Create(ToneName.C, Accidental.DoubleFlat, Note.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Note.Create(ToneName.B, Accidental.Sharp, Note.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Note.Create(ToneName.B, Accidental.DoubleSharp, Note.MaxOctave));
     }
 
     [Fact]
@@ -64,21 +54,13 @@ namespace Bach.Model.Test
       Assert.Equal(1, target.Octave);
 
       Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(new Tone(ToneName.C, Accidental.Flat),
-                                                                       Note.MinOctave));
+        () => Note.Create(new Tone(ToneName.C, Accidental.Flat), Note.MinOctave));
       Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(new Tone(ToneName.C, Accidental.DoubleFlat),
-                                                                       Note.MinOctave));
+        () => Note.Create(new Tone(ToneName.C, Accidental.DoubleFlat), Note.MinOctave));
       Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(new Tone(ToneName.B, Accidental.Sharp),
-                                                                       Note.MaxOctave));
+        () => Note.Create(new Tone(ToneName.B, Accidental.Sharp), Note.MaxOctave));
       Assert.Throws<ArgumentOutOfRangeException>(
-                                                 () =>
-                                                   Note.Create(new Tone(ToneName.B, Accidental.DoubleSharp),
-                                                                       Note.MaxOctave));
+        () => Note.Create(new Tone(ToneName.B, Accidental.DoubleSharp), Note.MaxOctave));
     }
 
     [Fact]

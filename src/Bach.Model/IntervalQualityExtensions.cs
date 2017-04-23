@@ -51,7 +51,8 @@ namespace Bach.Model
       return quality;
     }
 
-    public static bool TryParse(string value, out IntervalQuality quality)
+    public static bool TryParse(string value,
+                                out IntervalQuality quality)
     {
       if( !string.IsNullOrEmpty(value) )
       {

@@ -67,10 +67,7 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
-    public override int GetHashCode()
-    {
-      return Definition.GetHashCode();
-    }
+    public override int GetHashCode() => Definition.GetHashCode();
 
     #endregion
   }

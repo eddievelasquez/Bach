@@ -36,7 +36,7 @@ namespace Bach.Model.Test
     [Fact]
     public void ScaleFormulasTest()
     {
-      var scaleFormulas = Registry.ScaleFormulas.ToArray();
+      ScaleFormula[] scaleFormulas = Registry.ScaleFormulas.ToArray();
       Assert.NotNull(scaleFormulas);
       Assert.NotEmpty(scaleFormulas);
 
@@ -50,7 +50,7 @@ namespace Bach.Model.Test
     [Fact]
     public void ChordFormulasTest()
     {
-      var chordFormulas = Registry.ChordFormulas.ToArray();
+      ChordFormula[] chordFormulas = Registry.ChordFormulas.ToArray();
       Assert.NotNull(chordFormulas);
       Assert.NotEmpty(chordFormulas);
 
@@ -64,7 +64,7 @@ namespace Bach.Model.Test
     [Fact]
     public void InstrumentDefinitionsTest()
     {
-      var instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
+      StringedInstrumentDefinition[] instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
       Assert.NotNull(instrumentDefinitions);
       Assert.NotEmpty(instrumentDefinitions);
 

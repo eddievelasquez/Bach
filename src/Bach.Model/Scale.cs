@@ -37,7 +37,8 @@ namespace Bach.Model
   {
     #region Construction/Destruction
 
-    public Scale(Tone root, ScaleFormula formula)
+    public Scale(Tone root,
+                 ScaleFormula formula)
     {
       Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -58,7 +59,8 @@ namespace Bach.Model
       Name = buf.ToString();
     }
 
-    public Scale(Tone root, string formulaName)
+    public Scale(Tone root,
+                 string formulaName)
       : this(root, Registry.ScaleFormulas[formulaName])
     {
       Contract.Requires<ArgumentNullException>(formulaName != null);
@@ -72,7 +74,9 @@ namespace Bach.Model
     public Tone Root { get; }
     public string Name { get; }
     public ScaleFormula Formula { get; }
+
     public int ToneCount => Formula.IntervalCount;
+
     public Tone this[int i] => this.Skip(i).Take(1).Single();
 
     #endregion
@@ -97,12 +101,10 @@ namespace Bach.Model
       return Formula.Generate(root).Skip(pos);
     }
 
-    public Tone[] GetNotes(int start = 0)
-    {
-      return this.Skip(start).Take(Formula.IntervalCount).ToArray();
-    }
+    public Tone[] GetNotes(int start = 0) => this.Skip(start).Take(Formula.IntervalCount).ToArray();
 
     public int IndexOf(Tone tone) => Array.IndexOf(GetNotes(), tone);
+
     public int IndexOf(Note note) => Array.IndexOf(GetNotes(), note.Tone);
 
     public override bool Equals(object other)
@@ -126,31 +128,22 @@ namespace Bach.Model
 
       unchecked
       {
-        hashCode = hashCode * 23 + Root.GetHashCode();
-        hashCode = hashCode * 23 + Formula.GetHashCode();
+        hashCode = (hashCode * 23) + Root.GetHashCode();
+        hashCode = (hashCode * 23) + Formula.GetHashCode();
       }
 
       return hashCode;
     }
 
-    public override string ToString()
-    {
-      return ToneCollection.ToString(this.Take(ToneCount));
-    }
+    public override string ToString() => ToneCollection.ToString(this.Take(ToneCount));
 
     #endregion
 
     #region IEnumerable<Note> Members
 
-    public IEnumerator<Tone> GetEnumerator()
-    {
-      return Formula.Generate(Root).GetEnumerator();
-    }
+    public IEnumerator<Tone> GetEnumerator() => Formula.Generate(Root).GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     #endregion
 

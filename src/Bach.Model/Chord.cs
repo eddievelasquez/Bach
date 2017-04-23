@@ -37,7 +37,9 @@ namespace Bach.Model
   {
     #region Construction/Destruction
 
-    private Chord(Tone root, ChordFormula formula, int inversion)
+    private Chord(Tone root,
+                  ChordFormula formula,
+                  int inversion)
     {
       Contract.Requires<ArgumentNullException>(formula != null);
       Contract.Requires<ArgumentOutOfRangeException>(inversion >= 0);
@@ -50,12 +52,14 @@ namespace Bach.Model
       Name = GenerateName(root, formula, Tones.First());
     }
 
-    public Chord(Tone root, ChordFormula formula)
+    public Chord(Tone root,
+                 ChordFormula formula)
       : this(root, formula, 0)
     {
     }
 
-    public Chord(Tone root, string formulaName)
+    public Chord(Tone root,
+                 string formulaName)
       : this(root, Registry.ChordFormulas[formulaName], 0)
     {
       Contract.Requires<ArgumentNullException>(formulaName != null);
@@ -67,7 +71,9 @@ namespace Bach.Model
     #region Properties
 
     public Tone Root { get; }
+
     public Tone Bass => Tones[0];
+
     public int Inversion { get; }
     public string Name { get; }
     public ChordFormula Formula { get; }
@@ -119,24 +125,15 @@ namespace Bach.Model
       return hashCode;
     }
 
-    public override string ToString()
-    {
-      return Name;
-    }
+    public override string ToString() => Name;
 
     #endregion
 
     #region IEnumerable<Note> Members
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IEnumerator<Tone> GetEnumerator()
-    {
-      return Formula.Generate(Root).Take(Formula.IntervalCount).GetEnumerator();
-    }
+    public IEnumerator<Tone> GetEnumerator() => Formula.Generate(Root).Take(Formula.IntervalCount).GetEnumerator();
 
     #endregion
 
@@ -161,7 +158,9 @@ namespace Bach.Model
 
     #region Implementation
 
-    private static string GenerateName(Tone root, ChordFormula formula, Tone bass)
+    private static string GenerateName(Tone root,
+                                       ChordFormula formula,
+                                       Tone bass)
     {
       var buf = new StringBuilder();
       buf.Append(root);

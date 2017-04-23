@@ -123,6 +123,5 @@ namespace Bach.Model.Test
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
-
   }
 }

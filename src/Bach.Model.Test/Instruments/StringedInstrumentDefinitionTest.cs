@@ -25,7 +25,7 @@
 
 namespace Bach.Model.Test.Instruments
 {
-  using Bach.Model.Instruments;
+  using Model.Instruments;
   using Xunit;
 
   public class StringedInstrumentDefinitionTest
@@ -50,9 +50,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = Registry.StringedInstrumentDefinitions["guitar"];
-      var y = Registry.StringedInstrumentDefinitions["guitar"];
-      var z = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition x = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition y = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition z = Registry.StringedInstrumentDefinitions["guitar"];
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -72,7 +72,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.False(actual.Equals(int.MinValue));
     }
 
@@ -86,22 +86,22 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = Registry.StringedInstrumentDefinitions["guitar"];
-      var expected = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition expected = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

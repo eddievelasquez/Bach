@@ -45,7 +45,9 @@ namespace Bach.Model.Instruments
 
     #region Construction/Destruction
 
-    public StringedInstrumentDefinitionBuilder(string key, string name, int stringCount)
+    public StringedInstrumentDefinitionBuilder(string key,
+                                               string name,
+                                               int stringCount)
     {
       _state = new StringedInstrumentDefinitionState(Guid.NewGuid(), key, name, stringCount);
     }
@@ -54,7 +56,10 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
-    public StringedInstrumentDefinitionBuilder AddTuning(string key, string name, string notes, int defaultOctave = 4)
+    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+                                                         string name,
+                                                         string notes,
+                                                         int defaultOctave = 4)
     {
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
       Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
@@ -77,7 +82,9 @@ namespace Bach.Model.Instruments
       return this;
     }
 
-    public StringedInstrumentDefinitionBuilder AddTuning(string key, string name, params Note[] notes)
+    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+                                                         string name,
+                                                         params Note[] notes)
     {
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
       Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
@@ -97,7 +104,9 @@ namespace Bach.Model.Instruments
       return this;
     }
 
-    public StringedInstrumentDefinitionBuilder AddTuning(string key, string name, NoteCollection notes)
+    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+                                                         string name,
+                                                         NoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
       Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
@@ -135,7 +144,7 @@ namespace Bach.Model.Instruments
       }
 
       var definition = new StringedInstrumentDefinition(_state);
-      foreach( var info in _tuningInfo )
+      foreach( KeyValuePair<string, TuningInfo> info in _tuningInfo )
       {
         _state.Tunings.Add(new Tuning(definition, info.Key, info.Value.Name, info.Value.Notes));
       }

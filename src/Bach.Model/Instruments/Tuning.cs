@@ -39,11 +39,10 @@ namespace Bach.Model.Instruments
 
     #region Construction/Destruction
 
-    internal Tuning(
-      StringedInstrumentDefinition instrumentDefinition,
-      string key,
-      string name,
-      NoteCollection notes)
+    internal Tuning(StringedInstrumentDefinition instrumentDefinition,
+                    string key,
+                    string name,
+                    NoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null, "Must provide an instrument definition");
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
@@ -51,8 +50,9 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
       Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(notes != null, "Must provide a note collection");
-      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrumentDefinition.StringCount,
-                                                     "The number of note must match the instrument's string count");
+      Contract.Requires<ArgumentOutOfRangeException>(
+        notes.Count == instrumentDefinition.StringCount,
+        "The number of note must match the instrument's string count");
 
       InstrumentDefinition = instrumentDefinition;
       Key = key;
@@ -101,9 +101,9 @@ namespace Bach.Model.Instruments
     public override int GetHashCode()
     {
       var hash = 17;
-      hash = hash * 23 + InstrumentDefinition.GetHashCode();
-      hash = hash * 23 + s_nameComparer.GetHashCode(Key);
-      hash = hash * 23 + s_nameComparer.GetHashCode(Name);
+      hash = (hash * 23) + InstrumentDefinition.GetHashCode();
+      hash = (hash * 23) + s_nameComparer.GetHashCode(Key);
+      hash = (hash * 23) + s_nameComparer.GetHashCode(Name);
       return hash;
     }
 

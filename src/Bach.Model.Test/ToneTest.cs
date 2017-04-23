@@ -222,8 +222,8 @@ namespace Bach.Model.Test
     [Fact]
     public void ParseTest()
     {
-      Assert.Equal(new Tone(ToneName.C, Accidental.DoubleFlat) , Tone.Parse("Cbb"));
-      Assert.Equal(new Tone(ToneName.C, Accidental.Flat) , Tone.Parse("CB"));
+      Assert.Equal(new Tone(ToneName.C, Accidental.DoubleFlat), Tone.Parse("Cbb"));
+      Assert.Equal(new Tone(ToneName.C, Accidental.Flat), Tone.Parse("CB"));
       Assert.Equal(Tone.C, Tone.Parse("C"));
       Assert.Equal(Tone.CSharp, Tone.Parse("c#"));
       Assert.Equal(new Tone(ToneName.C, Accidental.DoubleSharp), Tone.Parse("c##"));
@@ -299,43 +299,59 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void ConstructorTestImpl(ToneName toneName, Accidental accidental, int interval)
+    private static void ConstructorTestImpl(ToneName toneName,
+                                            Accidental accidental,
+                                            int interval)
     {
       var note = new Tone(toneName, accidental);
       ToneMemberTestImpl(note, toneName, accidental, interval);
     }
 
-    private static void ToneMemberTestImpl(Tone tone, ToneName toneName, Accidental accidental, int interval)
+    private static void ToneMemberTestImpl(Tone tone,
+                                           ToneName toneName,
+                                           Accidental accidental,
+                                           int interval)
     {
       Assert.Equal(interval, tone.Interval);
       Assert.Equal(toneName, tone.ToneName);
       Assert.Equal(accidental, tone.Accidental);
     }
 
-    private static void TryParseTestImpl(string value, Tone expected)
+    private static void TryParseTestImpl(string value,
+                                         Tone expected)
     {
       Tone actual;
       Assert.True(Tone.TryParse(value, out actual));
       Assert.Equal(expected, actual);
     }
 
-    private static void NextTestImpl(Tone tone, Tone expectedSharp, Tone? expectedFlat = null)
+    private static void NextTestImpl(Tone tone,
+                                     Tone expectedSharp,
+                                     Tone? expectedFlat = null)
     {
       AddTestImpl(tone, 1, expectedSharp, expectedFlat);
     }
 
-    private static void PreviousTestImpl(Tone tone, Tone expectedSharp, Tone? expectedFlat = null)
+    private static void PreviousTestImpl(Tone tone,
+                                         Tone expectedSharp,
+                                         Tone? expectedFlat = null)
     {
       SubtractTestImpl(tone, 1, expectedSharp, expectedFlat);
     }
 
-    private static void AddTestImpl(Tone tone, int interval, Tone expectedSharp, Tone? expectedFlat = null)
+    private static void AddTestImpl(Tone tone,
+                                    int interval,
+                                    Tone expectedSharp,
+                                    Tone? expectedFlat = null)
     {
       Assert.Equal(expectedSharp, tone.Add(interval, AccidentalMode.FavorSharps));
       Assert.Equal(expectedFlat ?? expectedSharp, tone.Add(interval, AccidentalMode.FavorFlats));
     }
 
-    private static void SubtractTestImpl(Tone tone, int interval, Tone expectedSharp, Tone? expectedFlat = null)
+    private static void SubtractTestImpl(Tone tone,
+                                         int interval,
+                                         Tone expectedSharp,
+                                         Tone? expectedFlat = null)
     {
       Assert.Equal(expectedSharp, tone.Subtract(interval, AccidentalMode.FavorSharps));
       Assert.Equal(expectedFlat ?? expectedSharp, tone.Subtract(interval, AccidentalMode.FavorFlats));

@@ -60,7 +60,7 @@ namespace Bach.Model.Test
     [Fact]
     public void FormulaConstructorTest()
     {
-      var formula = Registry.ChordFormulas["Minor"];
+      ChordFormula formula = Registry.ChordFormulas["Minor"];
       var target = new Chord(Tone.C, formula);
       Assert.Equal(Tone.C, target.Root);
       Assert.Equal(Registry.ChordFormulas["Minor"], target.Formula);
@@ -210,10 +210,12 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void ChordTestImpl(string expectedNotes, Tone root, string formulaName)
+    private static void ChordTestImpl(string expectedNotes,
+                                      Tone root,
+                                      string formulaName)
     {
       var chord = new Chord(root, formulaName);
-      var actualNotes = chord.Take(ToneCollection.Parse(expectedNotes).Count).ToArray();
+      Tone[] actualNotes = chord.Take(ToneCollection.Parse(expectedNotes).Count).ToArray();
       Assert.Equal(ToneCollection.Parse(expectedNotes), actualNotes);
     }
 

@@ -29,12 +29,16 @@ namespace Bach.Model
   {
     #region Construction/Destruction
 
-    public ScaleFormula(string key, string name, Interval[] intervals)
+    public ScaleFormula(string key,
+                        string name,
+                        Interval[] intervals)
       : base(key, name, intervals)
     {
     }
 
-    public ScaleFormula(string key, string name, string formula)
+    public ScaleFormula(string key,
+                        string name,
+                        string formula)
       : base(key, name, formula)
     {
     }

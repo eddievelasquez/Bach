@@ -51,7 +51,8 @@ namespace Bach.Model
 
     #region Construction/Destruction
 
-    public ModeFormula(string name, int tonic)
+    public ModeFormula(string name,
+                       int tonic)
     {
       Contract.Requires<ArgumentNullException>(name != null);
       Contract.Requires<ArgumentException>(name.Length > 0);
@@ -107,15 +108,9 @@ namespace Bach.Model
       return Equals((ModeFormula) other);
     }
 
-    public override int GetHashCode()
-    {
-      return Tonic;
-    }
+    public override int GetHashCode() => Tonic;
 
-    public override string ToString()
-    {
-      return Name;
-    }
+    public override string ToString() => Name;
 
     #endregion
   }

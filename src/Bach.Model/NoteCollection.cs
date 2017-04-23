@@ -69,12 +69,14 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public static bool TryParse(string value, out NoteCollection notes, int defaultOctave = 4)
+    public static bool TryParse(string value,
+                                out NoteCollection notes,
+                                int defaultOctave = 4)
     {
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
 
-      if ( string.IsNullOrEmpty(value) )
+      if( string.IsNullOrEmpty(value) )
       {
         notes = null;
         return false;
@@ -97,7 +99,8 @@ namespace Bach.Model
       return true;
     }
 
-    public static NoteCollection Parse(string value, int defaultOctave = 4)
+    public static NoteCollection Parse(string value,
+                                       int defaultOctave = 4)
     {
       Contract.Requires<ArgumentNullException>(value != null);
       Contract.Requires<ArgumentException>(value.Length > 0);
@@ -137,10 +140,7 @@ namespace Bach.Model
       return buf.ToString();
     }
 
-    public override string ToString()
-    {
-      return ToString(this);
-    }
+    public override string ToString() => ToString(this);
 
     public override bool Equals(object other)
     {
@@ -166,7 +166,7 @@ namespace Bach.Model
 
       unchecked
       {
-        int result = (first.GetHashCode() + Count) * MULTIPLIER + last.GetHashCode() + Count;
+        int result = ((first.GetHashCode() + Count) * MULTIPLIER) + last.GetHashCode() + Count;
         return result;
       }
     }

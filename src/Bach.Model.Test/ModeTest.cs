@@ -168,11 +168,13 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void TestMode(string expectedNotes, Scale root, ModeFormula formula)
+    private static void TestMode(string expectedNotes,
+                                 Scale root,
+                                 ModeFormula formula)
     {
-      var expected = ToneCollection.Parse(expectedNotes).ToArray();
+      Tone[] expected = ToneCollection.Parse(expectedNotes).ToArray();
       var mode = new Mode(root, formula);
-      var actualNotes = mode.ToArray();
+      Tone[] actualNotes = mode.ToArray();
       Assert.Equal(expected, actualNotes);
       Assert.Equal(expectedNotes, mode.ToString());
     }

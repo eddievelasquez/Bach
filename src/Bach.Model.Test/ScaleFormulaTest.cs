@@ -36,17 +36,19 @@ namespace Bach.Model.Test
     {
       var actual = new ScaleFormula("Major", "Major", "R,2,3,4,5,6,7");
       Assert.Equal(Registry.ScaleFormulas["Major"], actual);
-      actual = new ScaleFormula("Major", "Major",
-                                new[]
-                                {
-                                  Interval.Perfect1,
-                                  Interval.Major2,
-                                  Interval.Major3,
-                                  Interval.Perfect4,
-                                  Interval.Perfect5,
-                                  Interval.Major6,
-                                  Interval.Major7
-                                });
+      actual = new ScaleFormula(
+        "Major",
+        "Major",
+        new[]
+        {
+          Interval.Perfect1,
+          Interval.Major2,
+          Interval.Major3,
+          Interval.Perfect4,
+          Interval.Perfect5,
+          Interval.Major6,
+          Interval.Major7
+        });
       Assert.Equal(Registry.ScaleFormulas["Major"], actual);
     }
 
@@ -68,7 +70,8 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void TestGetSteps(string scaleName, params int[] expected)
+    private static void TestGetSteps(string scaleName,
+                                     params int[] expected)
     {
       ScaleFormula scale = Registry.ScaleFormulas[scaleName];
       Assert.Equal(expected, scale.GetRelativeSteps());

@@ -26,7 +26,6 @@
 namespace Bach.Model.Test
 {
   using System;
-  using System.Linq;
   using Xunit;
 
   public class NoteCollectionTest
@@ -41,8 +40,8 @@ namespace Bach.Model.Test
       Assert.Equal(expected, NoteCollection.Parse("60,72")); // Using midi
       Assert.Throws<ArgumentNullException>(() => NoteCollection.Parse(null));
       Assert.Throws<ArgumentException>(() => NoteCollection.Parse(""));
-      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.Parse("C4,C5", Int32.MinValue));
-      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.Parse("C4,C5", Int32.MaxValue));
+      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.Parse("C4,C5", int.MinValue));
+      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.Parse("C4,C5", int.MaxValue));
       Assert.Throws<FormatException>(() => NoteCollection.Parse("C$4,Z5"));
     }
 

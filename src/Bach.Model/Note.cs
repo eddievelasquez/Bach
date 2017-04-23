@@ -59,10 +59,12 @@ namespace Bach.Model
     };
 
     // Midi supports C-1, but we only support C0 and above
-    private static readonly byte s_minAbsoluteValue = (byte) CalcAbsoluteValue(ToneName.C, Accidental.Natural, MinOctave);
+    private static readonly byte s_minAbsoluteValue =
+      (byte) CalcAbsoluteValue(ToneName.C, Accidental.Natural, MinOctave);
 
     // G9 is the highest note supported by MIDI
-    private static readonly byte s_maxAbsoluteValue = (byte) CalcAbsoluteValue(ToneName.G, Accidental.Natural, MaxOctave);
+    private static readonly byte s_maxAbsoluteValue =
+      (byte) CalcAbsoluteValue(ToneName.G, Accidental.Natural, MaxOctave);
 
     private static readonly Note s_a4 = Create(ToneName.A, Accidental.Natural, 4);
 
@@ -79,7 +81,8 @@ namespace Bach.Model
 
     #region Construction
 
-    private Note(int absoluteValue, AccidentalMode accidentalMode)
+    private Note(int absoluteValue,
+                 AccidentalMode accidentalMode)
     {
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
@@ -88,14 +91,19 @@ namespace Bach.Model
       CalcNote(_absoluteValue, out _tone, out _octave, accidentalMode);
     }
 
-    private Note(Tone tone, int octave, int absoluteValue)
+    private Note(Tone tone,
+                 int octave,
+                 int absoluteValue)
     {
       _tone = tone;
       _octave = (byte) octave;
       _absoluteValue = (byte) absoluteValue;
     }
 
-    private Note(ToneName toneName, Accidental accidental, int octave, int absoluteValue)
+    private Note(ToneName toneName,
+                 Accidental accidental,
+                 int octave,
+                 int absoluteValue)
     {
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
@@ -109,7 +117,8 @@ namespace Bach.Model
 
     #region Factories
 
-    public static Note Create(Tone tone, int octave)
+    public static Note Create(Tone tone,
+                              int octave)
     {
       Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
       Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
@@ -130,7 +139,9 @@ namespace Bach.Model
       return new Note(tone, octave, abs);
     }
 
-    public static Note Create(ToneName toneName, Accidental accidental, int octave)
+    public static Note Create(ToneName toneName,
+                              Accidental accidental,
+                              int octave)
     {
       Contract.Requires<ArgumentOutOfRangeException>(toneName >= ToneName.C);
       Contract.Requires<ArgumentOutOfRangeException>(toneName <= ToneName.B);
@@ -203,41 +214,29 @@ namespace Bach.Model
       }
     }
 
-    public int Midi
-    {
-      get
-      {
-        // The formula to convert a note to MIDI (according to http://en.wikipedia.org/wiki/Note)
-        // is p = 69 + 12 x log2(freq / 440). As it happens, our AbsoluteValue almost
-        // matches, but we don't support the -1 octave we must add 12 to obtain the
-        // MIDI number.
-        return AbsoluteValue + 12;
-      }
-    }
+    // The formula to convert a note to MIDI (according to http://en.wikipedia.org/wiki/Note)
+    // is p = 69 + 12 x log2(freq / 440). As it happens, our AbsoluteValue almost
+    // matches, but we don't support the -1 octave we must add 12 to obtain the
+    // MIDI number.
+    public int Midi => AbsoluteValue + 12;
 
     public static AccidentalMode AccidentalMode
     {
-      get { return Tone.AccidentalMode; }
-      set { Tone.AccidentalMode = value; }
+      get => Tone.AccidentalMode;
+      set => Tone.AccidentalMode = value;
     }
 
     #endregion
 
     #region IComparable<Note> Members
 
-    public int CompareTo(Note other)
-    {
-      return AbsoluteValue - other.AbsoluteValue;
-    }
+    public int CompareTo(Note other) => AbsoluteValue - other.AbsoluteValue;
 
     #endregion
 
     #region IEquatable<Note> Members
 
-    public bool Equals(Note obj)
-    {
-      return obj.AbsoluteValue == AbsoluteValue;
-    }
+    public bool Equals(Note obj) => obj.AbsoluteValue == AbsoluteValue;
 
     #endregion
 
@@ -253,19 +252,15 @@ namespace Bach.Model
       return Equals((Note) obj);
     }
 
-    public override int GetHashCode()
-    {
-      return AbsoluteValue;
-    }
+    public override int GetHashCode() => AbsoluteValue;
 
-    public override string ToString()
-    {
-      return $"{_tone}{Octave}";
-    }
+    public override string ToString() => $"{_tone}{Octave}";
 
     #endregion
 
-    private static bool TryParseNotes(string value, ref Note note, int defaultOctave)
+    private static bool TryParseNotes(string value,
+                                      ref Note note,
+                                      int defaultOctave)
     {
       ToneName toneName;
       if( !Enum.TryParse(value.Substring(0, 1), true, out toneName) )
@@ -289,7 +284,9 @@ namespace Bach.Model
       return true;
     }
 
-    private static bool TryParseMidi(string value, ref Note note, int defaultOctave)
+    private static bool TryParseMidi(string value,
+                                     ref Note note,
+                                     int defaultOctave)
     {
       int midi;
       if( !int.TryParse(value, out midi) )
@@ -306,20 +303,27 @@ namespace Bach.Model
       return true;
     }
 
-    private static int CalcAbsoluteValue(ToneName toneName, Accidental accidental, int octave)
+    private static int CalcAbsoluteValue(ToneName toneName,
+                                         Accidental accidental,
+                                         int octave)
     {
-      int value = octave * IntervalsPerOctave + s_intervals[(int) toneName] + (int) accidental;
+      int value = (octave * IntervalsPerOctave) + s_intervals[(int) toneName] + (int) accidental;
       return value;
     }
 
-    private static void CalcNote(byte absoluteValue, out Tone tone, out byte octave, AccidentalMode accidentalMode)
+    private static void CalcNote(byte absoluteValue,
+                                 out Tone tone,
+                                 out byte octave,
+                                 AccidentalMode accidentalMode)
     {
       int remainder;
       octave = (byte) Math.DivRem(absoluteValue, IntervalsPerOctave, out remainder);
       tone = Tone.GetNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
     }
 
-    private static void TryGetAccidental(string value, ref int index, out Accidental accidental)
+    private static void TryGetAccidental(string value,
+                                         ref int index,
+                                         out Accidental accidental)
     {
       accidental = Accidental.Natural;
 
@@ -351,7 +355,9 @@ namespace Bach.Model
       }
     }
 
-    private static void TryGetOctave(string value, ref int index, ref int octave)
+    private static void TryGetOctave(string value,
+                                     ref int index,
+                                     ref int octave)
     {
       if( index >= value.Length || !int.TryParse(value.Substring(index, 1), out octave) )
       {
@@ -368,62 +374,63 @@ namespace Bach.Model
     {
       byte octave;
       Tone tone;
-      CalcNote((byte) (AbsoluteValue + accidental), out tone, out octave,
-               accidental < Accidental.Natural ? AccidentalMode.FavorFlats : AccidentalMode.FavorSharps);
+      CalcNote(
+        (byte) (AbsoluteValue + accidental),
+        out tone,
+        out octave,
+        accidental < Accidental.Natural ? AccidentalMode.FavorFlats : AccidentalMode.FavorSharps);
 
       return Create(tone, octave);
     }
 
-    public static bool operator ==(Note lhs, Note rhs) => Equals(lhs, rhs);
+    public static bool operator==(Note lhs,
+                                  Note rhs) => Equals(lhs, rhs);
 
-    public static bool operator !=(Note lhs, Note rhs) => !Equals(lhs, rhs);
+    public static bool operator!=(Note lhs,
+                                  Note rhs) => !Equals(lhs, rhs);
 
-    public static bool operator >(Note left, Note right) => left.CompareTo(right) > 0;
+    public static bool operator>(Note left,
+                                 Note right) => left.CompareTo(right) > 0;
 
-    public static bool operator <(Note left, Note right) => left.CompareTo(right) < 0;
+    public static bool operator<(Note left,
+                                 Note right) => left.CompareTo(right) < 0;
 
-    public static bool operator >=(Note left, Note right) => left.CompareTo(right) >= 0;
+    public static bool operator>=(Note left,
+                                  Note right) => left.CompareTo(right) >= 0;
 
-    public static bool operator <=(Note left, Note right) => left.CompareTo(right) <= 0;
+    public static bool operator<=(Note left,
+                                  Note right) => left.CompareTo(right) <= 0;
 
-    public Note Add(int interval, AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+    public Note Add(int interval,
+                    AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
     {
       var result = new Note(AbsoluteValue + interval, accidentalMode);
       return result;
     }
 
-    public Note Subtract(int interval, AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+    public Note Subtract(int interval,
+                         AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
     {
       var result = new Note(AbsoluteValue - interval, accidentalMode);
       return result;
     }
 
-    public static Note operator +(Note note, int interval)
-    {
-      return note.Add(interval, AccidentalMode);
-    }
+    public static Note operator+(Note note,
+                                 int interval) => note.Add(interval, AccidentalMode);
 
-    public static Note operator ++(Note note)
-    {
-      return note.Add(1, AccidentalMode);
-    }
+    public static Note operator++(Note note) => note.Add(1, AccidentalMode);
 
-    public static Note operator -(Note note, int interval)
-    {
-      return note.Subtract(interval, AccidentalMode);
-    }
+    public static Note operator-(Note note,
+                                 int interval) => note.Subtract(interval, AccidentalMode);
 
-    public static Note operator --(Note note)
-    {
-      return note.Subtract(1, AccidentalMode);
-    }
+    public static Note operator--(Note note) => note.Subtract(1, AccidentalMode);
 
-    public static int operator -(Note left, Note right)
-    {
-      return left.AbsoluteValue - right.AbsoluteValue;
-    }
+    public static int operator-(Note left,
+                                Note right) => left.AbsoluteValue - right.AbsoluteValue;
 
-    public static bool TryParse(string value, out Note note, int defaultOctave = 4)
+    public static bool TryParse(string value,
+                                out Note note,
+                                int defaultOctave = 4)
     {
       note = new Note();
       if( string.IsNullOrEmpty(value) )
@@ -439,7 +446,8 @@ namespace Bach.Model
       return TryParseNotes(value, ref note, defaultOctave);
     }
 
-    public static Note Parse(string value, int defaultOctave = 4)
+    public static Note Parse(string value,
+                             int defaultOctave = 4)
     {
       Note result;
       if( !TryParse(value, out result) )
@@ -450,9 +458,7 @@ namespace Bach.Model
       return result;
     }
 
-    public static Note Min(Note a, Note b)
-    {
-      return a.AbsoluteValue < b.AbsoluteValue ? a : b;
-    }
+    public static Note Min(Note a,
+                           Note b) => a.AbsoluteValue < b.AbsoluteValue ? a : b;
   }
 }

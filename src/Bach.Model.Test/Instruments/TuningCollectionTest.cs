@@ -27,8 +27,9 @@ namespace Bach.Model.Test.Instruments
 {
   using System;
   using System.Collections;
+  using System.Collections.Generic;
   using System.Linq;
-  using Bach.Model.Instruments;
+  using Model.Instruments;
   using Xunit;
 
   public class TuningCollectionTest
@@ -38,7 +39,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void ContainsKeyTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.True(definition.Tunings.ContainsKey("standard"));
       Assert.False(definition.Tunings.ContainsKey("DoesNotExist!!!"));
     }
@@ -46,14 +47,14 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void ContainsKeyThrowsOnNullKeyTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.Throws<ArgumentNullException>(() => definition.Tunings.ContainsKey(null));
     }
 
     [Fact]
     public void TryGetValueTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
 
       Tuning tuning;
       Assert.True(definition.Tunings.TryGetValue("standard", out tuning));
@@ -63,7 +64,7 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TryGetValueThrowsOnNullKeyTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
       Tuning tuning;
       Assert.Throws<ArgumentNullException>(() => definition.Tunings.TryGetValue(null, out tuning));
     }
@@ -71,25 +72,25 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void KeysTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.Equal(definition.Tunings.Count, definition.Tunings.Keys.Count());
     }
 
     [Fact]
     public void ValuesTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
       Assert.Equal(definition.Tunings.Count, definition.Tunings.Values.Count());
     }
 
     [Fact]
     public void GetEnumeratorTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
-      var tunings = definition.Tunings.ToArray();
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
+      KeyValuePair<string, Tuning>[] tunings = definition.Tunings.ToArray();
 
-      var enumerator = definition.Tunings.GetEnumerator();
-      for( int i = 0; i < tunings.Length; i++ )
+      IEnumerator<KeyValuePair<string, Tuning>> enumerator = definition.Tunings.GetEnumerator();
+      for( var i = 0; i < tunings.Length; i++ )
       {
         Assert.True(enumerator.MoveNext());
         Assert.Equal(tunings[i], enumerator.Current);
@@ -101,11 +102,11 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void GetEnumeratorOfObjectTest()
     {
-      var definition = Registry.StringedInstrumentDefinitions["guitar"];
-      var tunings = definition.Tunings.ToArray();
+      StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions["guitar"];
+      KeyValuePair<string, Tuning>[] tunings = definition.Tunings.ToArray();
 
       IEnumerator enumerator = ((IEnumerable) definition.Tunings).GetEnumerator();
-      for( int i = 0; i < tunings.Length; i++ )
+      for( var i = 0; i < tunings.Length; i++ )
       {
         Assert.True(enumerator.MoveNext());
         Assert.Equal(tunings[i], enumerator.Current);

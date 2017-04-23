@@ -47,17 +47,16 @@ namespace Bach.Model.Instruments
     private static StringComparer Comparer { get; } = StringComparer.CurrentCultureIgnoreCase;
 
     internal InstrumentDefinitionState State { get; }
+
     public Guid InstrumentId => State.InstrumentId;
+
     public string InstrumentName => State.InstrumentName;
 
     #endregion
 
     #region Public Methods
 
-    public override int GetHashCode()
-    {
-      return InstrumentId.GetHashCode();
-    }
+    public override int GetHashCode() => InstrumentId.GetHashCode();
 
     #endregion
 

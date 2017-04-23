@@ -90,8 +90,8 @@ namespace Bach.Model.Instruments
     public override int GetHashCode()
     {
       var hash = 17;
-      hash = hash * 23 + base.GetHashCode();
-      hash = hash * 23 + StringCount;
+      hash = (hash * 23) + base.GetHashCode();
+      hash = (hash * 23) + StringCount;
       return hash;
     }
 

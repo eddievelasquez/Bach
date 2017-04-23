@@ -45,7 +45,8 @@ namespace Bach.Model
       return s_symbols[(int) accidental + s_doubleFlatOffset];
     }
 
-    public static bool TryParse(string value, out Accidental accidental)
+    public static bool TryParse(string value,
+                                out Accidental accidental)
     {
       accidental = Accidental.Natural;
       if( string.IsNullOrEmpty(value) )
@@ -60,19 +61,19 @@ namespace Bach.Model
 
       foreach( char c in value )
       {
-        switch(c)
+        switch( c )
         {
-        case 'b':
-        case 'B':
-          --accidental;
-          break;
+          case 'b':
+          case 'B':
+            --accidental;
+            break;
 
-        case '#':
-          ++accidental;
-          break;
+          case '#':
+            ++accidental;
+            break;
 
-        default:
-          return false;
+          default:
+            return false;
         }
       }
 

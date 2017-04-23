@@ -42,10 +42,7 @@ namespace Bach.Model
 
     #region Public Methods
 
-    protected override string GetKeyForItem(T item)
-    {
-      return item.Key;
-    }
+    protected override string GetKeyForItem(T item) => item.Key;
 
     #endregion
   }

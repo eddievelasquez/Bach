@@ -34,17 +34,19 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorTest()
     {
-      var actual = new Formula("Major", "Major",
-                               new[]
-                               {
-                                 Interval.Perfect1,
-                                 Interval.Major2,
-                                 Interval.Major3,
-                                 Interval.Perfect4,
-                                 Interval.Perfect5,
-                                 Interval.Major6,
-                                 Interval.Major7
-                               });
+      var actual = new Formula(
+        "Major",
+        "Major",
+        new[]
+        {
+          Interval.Perfect1,
+          Interval.Major2,
+          Interval.Major3,
+          Interval.Perfect4,
+          Interval.Perfect5,
+          Interval.Major6,
+          Interval.Major7
+        });
       Assert.Equal("Major", actual.Key);
       Assert.Equal("Major", actual.Name);
       Assert.Equal(7, actual.IntervalCount);

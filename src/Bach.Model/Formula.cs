@@ -45,7 +45,9 @@ namespace Bach.Model
 
     #region Construction/Destruction
 
-    public Formula(string key, string name, Interval[] intervals)
+    public Formula(string key,
+                   string name,
+                   Interval[] intervals)
     {
       Contract.Requires<ArgumentNullException>(key != null, "Must provide a key");
       Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a key");
@@ -59,7 +61,9 @@ namespace Bach.Model
       _intervals = intervals;
     }
 
-    public Formula(string key, string name, string formula)
+    public Formula(string key,
+                   string name,
+                   string formula)
       : this(key, name, ParseIntervals(formula))
     {
     }
@@ -118,12 +122,10 @@ namespace Bach.Model
       return Equals((Formula) other);
     }
 
-    public override int GetHashCode()
-    {
-      return s_comparer.GetHashCode(Key);
-    }
+    public override int GetHashCode() => s_comparer.GetHashCode(Key);
 
-    public IEnumerable<Note> Generate(Note root, int skipCount = 0)
+    public IEnumerable<Note> Generate(Note root,
+                                      int skipCount = 0)
     {
       int intervalCount = _intervals.Length;
       int index = skipCount;
@@ -141,7 +143,7 @@ namespace Bach.Model
         int octaveAdd = index / intervalCount;
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
-        Note note = root.Add(interval.Steps + octaveAdd * Note.IntervalsPerOctave, accidentalMode);
+        Note note = root.Add(interval.Steps + (octaveAdd * Note.IntervalsPerOctave), accidentalMode);
         yield return note;
 
         ++index;
@@ -206,7 +208,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentNullException>(formula != null);
       Contract.Requires<ArgumentException>(formula.Length > 0);
 
-      var values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+      string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
       return values.Select(Interval.Parse).ToArray();
     }
 

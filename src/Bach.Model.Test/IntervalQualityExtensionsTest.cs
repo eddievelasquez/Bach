@@ -60,7 +60,5 @@ namespace Bach.Model.Test
       Assert.Throws<ArgumentOutOfRangeException>(() => (IntervalQuality.Diminished - 1).LongName());
       Assert.Throws<ArgumentOutOfRangeException>(() => (IntervalQuality.Augmented + 1).LongName());
     }
-
-
   }
 }

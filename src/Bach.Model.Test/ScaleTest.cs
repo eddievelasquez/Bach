@@ -255,17 +255,21 @@ namespace Bach.Model.Test
 
     #region Implementation
 
-    private static void TestRender(Scale scale, string startNote, string expectedNotes)
+    private static void TestRender(Scale scale,
+                                   string startNote,
+                                   string expectedNotes)
     {
-      var actual = scale.Render(Note.Parse(startNote)).Take(scale.Formula.IntervalCount).ToArray();
+      Note[] actual = scale.Render(Note.Parse(startNote)).Take(scale.Formula.IntervalCount).ToArray();
       Assert.Equal(NoteCollection.Parse(expectedNotes), actual);
     }
 
-    private static void TestScale(string expectedNotes, Tone root, string formulaName)
+    private static void TestScale(string expectedNotes,
+                                  Tone root,
+                                  string formulaName)
     {
       ToneCollection expected = ToneCollection.Parse(expectedNotes);
       var scale = new Scale(root, formulaName);
-      var actual = scale.Take(expected.Count).ToArray();
+      Tone[] actual = scale.Take(expected.Count).ToArray();
       Assert.Equal(expected, actual);
     }
 

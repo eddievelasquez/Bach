@@ -69,7 +69,8 @@ namespace Bach.Model
 
     #region Public Methods
 
-    public static bool TryParse(string value, out ToneCollection tones)
+    public static bool TryParse(string value,
+                                out ToneCollection tones)
     {
       if( string.IsNullOrEmpty(value) )
       {
@@ -132,10 +133,7 @@ namespace Bach.Model
       return buf.ToString();
     }
 
-    public override string ToString()
-    {
-      return ToString(this);
-    }
+    public override string ToString() => ToString(this);
 
     public override bool Equals(object other)
     {

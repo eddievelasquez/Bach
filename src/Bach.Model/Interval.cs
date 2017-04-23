@@ -97,7 +97,8 @@ namespace Bach.Model
 
     #region Construction
 
-    public Interval(int number, IntervalQuality quality)
+    public Interval(int number,
+                    IntervalQuality quality)
     {
       // Validate that the provided number and quality
       // refer to a valid interval
@@ -121,7 +122,8 @@ namespace Bach.Model
 
     #region Methods
 
-    public static bool IsValid(int number, IntervalQuality quality)
+    public static bool IsValid(int number,
+                               IntervalQuality quality)
     {
       if( number < MinInterval || number > MaxInterval )
       {
@@ -137,7 +139,8 @@ namespace Bach.Model
       return steps != -1;
     }
 
-    public static int GetSteps(int number, IntervalQuality quality)
+    public static int GetSteps(int number,
+                               IntervalQuality quality)
     {
       Contract.Requires<ArgumentOutOfRangeException>(number >= MinInterval);
       Contract.Requires<ArgumentOutOfRangeException>(number <= MaxInterval);
@@ -153,12 +156,11 @@ namespace Bach.Model
       return steps;
     }
 
-    public override string ToString()
-    {
-      return Number == 0 ? string.Empty : ToString(Number, Quality);
-    }
+    public override string ToString() => Number == 0 ? string.Empty : ToString(Number, Quality);
 
-    private static string ToString(int number, IntervalQuality quality, bool supressPerfectAndMajor = true)
+    private static string ToString(int number,
+                                   IntervalQuality quality,
+                                   bool supressPerfectAndMajor = true)
     {
       var buf = new StringBuilder();
       if( quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || supressPerfectAndMajor )
@@ -181,7 +183,8 @@ namespace Bach.Model
       return interval;
     }
 
-    public static bool TryParse(string value, out Interval interval)
+    public static bool TryParse(string value,
+                                out Interval interval)
     {
       interval = Invalid;
 
@@ -208,7 +211,7 @@ namespace Bach.Model
           return true;
         }
 
-        if ( !IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality) )
+        if( !IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality) )
         {
           return false;
         }
@@ -224,7 +227,7 @@ namespace Bach.Model
 
       if( quality == IntervalQuality.Unknown )
       {
-        int temp = (number - 1) % 7 + 1;
+        int temp = ((number - 1) % 7) + 1;
         if( temp == 1 || temp == 4 || temp == 5 )
         {
           quality = IntervalQuality.Perfect;
@@ -248,10 +251,7 @@ namespace Bach.Model
 
     #region IEquatable<Interval> Implementation
 
-    public bool Equals(Interval obj)
-    {
-      return obj.Number == Number && obj.Quality == Quality;
-    }
+    public bool Equals(Interval obj) => obj.Number == Number && obj.Quality == Quality;
 
     public override bool Equals(object obj)
     {
@@ -289,17 +289,23 @@ namespace Bach.Model
 
     #region Operators
 
-    public static bool operator ==(Interval lhs, Interval rhs) => Equals(lhs, rhs);
+    public static bool operator==(Interval lhs,
+                                  Interval rhs) => Equals(lhs, rhs);
 
-    public static bool operator !=(Interval lhs, Interval rhs) => !Equals(lhs, rhs);
+    public static bool operator!=(Interval lhs,
+                                  Interval rhs) => !Equals(lhs, rhs);
 
-    public static bool operator <(Interval lhs, Interval rhs) => lhs.CompareTo(rhs) < 0;
+    public static bool operator<(Interval lhs,
+                                 Interval rhs) => lhs.CompareTo(rhs) < 0;
 
-    public static bool operator <=(Interval lhs, Interval rhs) => lhs.CompareTo(rhs) <= 0;
+    public static bool operator<=(Interval lhs,
+                                  Interval rhs) => lhs.CompareTo(rhs) <= 0;
 
-    public static bool operator >(Interval lhs, Interval rhs) => lhs.CompareTo(rhs) > 0;
+    public static bool operator>(Interval lhs,
+                                 Interval rhs) => lhs.CompareTo(rhs) > 0;
 
-    public static bool operator >=(Interval lhs, Interval rhs) => lhs.CompareTo(rhs) >= 0;
+    public static bool operator>=(Interval lhs,
+                                  Interval rhs) => lhs.CompareTo(rhs) >= 0;
 
     #endregion
   }

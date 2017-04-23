@@ -32,7 +32,9 @@ namespace Bach.Model.Instruments.Internal
   {
     #region Construction/Destruction
 
-    protected InstrumentDefinitionState(Guid instrumentId, string instrumentKey, string instrumentName)
+    protected InstrumentDefinitionState(Guid instrumentId,
+                                        string instrumentKey,
+                                        string instrumentName)
     {
       Contract.Requires<ArgumentException>(instrumentId != Guid.Empty, "Must provide a non-empty instrument id");
       Contract.Requires<ArgumentNullException>(instrumentKey != null, "Must provide an instrument key");

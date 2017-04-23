@@ -29,13 +29,19 @@ namespace Bach.Model
   {
     #region Construction/Destruction
 
-    public ChordFormula(string key, string name, string symbol, Interval[] intervals)
+    public ChordFormula(string key,
+                        string name,
+                        string symbol,
+                        Interval[] intervals)
       : base(key, name, intervals)
     {
       Symbol = symbol ?? string.Empty;
     }
 
-    public ChordFormula(string key, string name, string symbol, string formula)
+    public ChordFormula(string key,
+                        string name,
+                        string symbol,
+                        string formula)
       : base(key, name, formula)
     {
       Symbol = symbol ?? string.Empty;

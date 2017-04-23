@@ -32,7 +32,9 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    private Fingering(Note note, int @string, int fret)
+    private Fingering(Note note,
+                      int @string,
+                      int fret)
     {
       Note = note;
       String = @string;
@@ -43,7 +45,9 @@ namespace Bach.Model.Instruments
 
     #region Factories
 
-    public static Fingering Create(StringedInstrument instrument, int @string, int fret)
+    public static Fingering Create(StringedInstrument instrument,
+                                   int @string,
+                                   int fret)
     {
       Contract.Requires<ArgumentNullException>(instrument != null);
       Contract.Requires<ArgumentOutOfRangeException>(fret >= 0 && fret <= instrument.FretCount);
@@ -54,7 +58,8 @@ namespace Bach.Model.Instruments
       return result;
     }
 
-    public static Fingering Create(StringedInstrument instrument, int @string)
+    public static Fingering Create(StringedInstrument instrument,
+                                   int @string)
     {
       Contract.Requires<ArgumentNullException>(instrument != null);
       Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
@@ -108,10 +113,7 @@ namespace Bach.Model.Instruments
 
     #region IEquatable<Fingering> Members
 
-    public bool Equals(Fingering other)
-    {
-      return String == other.String && Fret == other.Fret;
-    }
+    public bool Equals(Fingering other) => String == other.String && Fret == other.Fret;
 
     #endregion
   }

@@ -66,30 +66,21 @@ namespace Bach.Model.Instruments
 
     #region IReadOnlyDictionary<string,Tuning> Members
 
-    public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator()
-    {
-      return _tunings.GetEnumerator();
-    }
+    public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator() => _tunings.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public int Count => _tunings.Count;
 
-    public bool ContainsKey(string key)
-    {
-      return _tunings.ContainsKey(key);
-    }
+    public bool ContainsKey(string key) => _tunings.ContainsKey(key);
 
-    public bool TryGetValue(string key, out Tuning value)
-    {
-      return _tunings.TryGetValue(key, out value);
-    }
+    public bool TryGetValue(string key,
+                            out Tuning value) => _tunings.TryGetValue(key, out value);
 
     public Tuning this[string key] => _tunings[key];
+
     public IEnumerable<string> Keys => _tunings.Keys;
+
     public IEnumerable<Tuning> Values => _tunings.Values;
 
     #endregion
