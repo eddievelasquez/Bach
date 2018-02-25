@@ -59,7 +59,7 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.InstrumentName);
       Assert.Equal(EXPECTED_INSTRUMENT_STRING_COUNT, definition.StringCount);
       Assert.NotNull(definition.Tunings);
-      Assert.Equal(1, definition.Tunings.Count);
+      Assert.Single(definition.Tunings);
       Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
       Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
       Assert.Equal(notes, definition.Tunings.Standard.Notes);
@@ -80,7 +80,7 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal(EXPECTED_INSTRUMENT_NAME, definition.InstrumentName);
       Assert.Equal(EXPECTED_INSTRUMENT_STRING_COUNT, definition.StringCount);
       Assert.NotNull(definition.Tunings);
-      Assert.Equal(1, definition.Tunings.Count);
+      Assert.Single(definition.Tunings);
       Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
       Assert.Equal(EXPECTED_TUNING_NAME, definition.Tunings.Standard.Name);
       Assert.Equal(notes, definition.Tunings.Standard.Notes);

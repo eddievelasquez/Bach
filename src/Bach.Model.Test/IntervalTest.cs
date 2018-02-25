@@ -35,33 +35,33 @@ namespace Bach.Model.Test
     [Fact]
     public void StepTest()
     {
-      Assert.Equal(Interval.Perfect1.Steps, 0);
-      Assert.Equal(Interval.Augmented1.Steps, 1);
-      Assert.Equal(Interval.Diminished2.Steps, 0);
-      Assert.Equal(Interval.Minor2.Steps, 1);
-      Assert.Equal(Interval.Major2.Steps, 2);
-      Assert.Equal(Interval.Augmented2.Steps, 3);
-      Assert.Equal(Interval.Diminished3.Steps, 2);
-      Assert.Equal(Interval.Minor3.Steps, 3);
-      Assert.Equal(Interval.Major3.Steps, 4);
-      Assert.Equal(Interval.Augmented3.Steps, 5);
-      Assert.Equal(Interval.Diminished4.Steps, 4);
-      Assert.Equal(Interval.Perfect4.Steps, 5);
-      Assert.Equal(Interval.Augmented4.Steps, 6);
-      Assert.Equal(Interval.Diminished5.Steps, 6);
-      Assert.Equal(Interval.Perfect5.Steps, 7);
-      Assert.Equal(Interval.Augmented5.Steps, 8);
-      Assert.Equal(Interval.Diminished6.Steps, 7);
-      Assert.Equal(Interval.Minor6.Steps, 8);
-      Assert.Equal(Interval.Major6.Steps, 9);
-      Assert.Equal(Interval.Augmented6.Steps, 10);
-      Assert.Equal(Interval.Diminished7.Steps, 9);
-      Assert.Equal(Interval.Minor7.Steps, 10);
-      Assert.Equal(Interval.Major7.Steps, 11);
-      Assert.Equal(Interval.Augmented7.Steps, 12);
-      Assert.Equal(Interval.Diminished8.Steps, 11);
-      Assert.Equal(Interval.Perfect8.Steps, 12);
-      Assert.Equal(Interval.Augmented8.Steps, 13);
+      Assert.Equal(0, Interval.Perfect1.Steps);
+      Assert.Equal(1, Interval.Augmented1.Steps);
+      Assert.Equal(0, Interval.Diminished2.Steps);
+      Assert.Equal(1, Interval.Minor2.Steps);
+      Assert.Equal(2, Interval.Major2.Steps);
+      Assert.Equal(3, Interval.Augmented2.Steps);
+      Assert.Equal(2, Interval.Diminished3.Steps);
+      Assert.Equal(3, Interval.Minor3.Steps);
+      Assert.Equal(4, Interval.Major3.Steps);
+      Assert.Equal(5, Interval.Augmented3.Steps);
+      Assert.Equal(4, Interval.Diminished4.Steps);
+      Assert.Equal(5, Interval.Perfect4.Steps);
+      Assert.Equal(6, Interval.Augmented4.Steps);
+      Assert.Equal(6, Interval.Diminished5.Steps);
+      Assert.Equal(7, Interval.Perfect5.Steps);
+      Assert.Equal(8, Interval.Augmented5.Steps);
+      Assert.Equal(7, Interval.Diminished6.Steps);
+      Assert.Equal(8, Interval.Minor6.Steps);
+      Assert.Equal(9, Interval.Major6.Steps);
+      Assert.Equal(10, Interval.Augmented6.Steps);
+      Assert.Equal(9, Interval.Diminished7.Steps);
+      Assert.Equal(10, Interval.Minor7.Steps);
+      Assert.Equal(11, Interval.Major7.Steps);
+      Assert.Equal(12, Interval.Augmented7.Steps);
+      Assert.Equal(11, Interval.Diminished8.Steps);
+      Assert.Equal(12, Interval.Perfect8.Steps);
+      Assert.Equal(13, Interval.Augmented8.Steps);
     }
 
     [Fact]

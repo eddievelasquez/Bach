@@ -414,7 +414,6 @@ namespace Bach.Model.Test
     [Fact]
     public void ParseTest()
     {
-      Assert.NotNull(Note.Parse("G9"));
       Assert.Throws<FormatException>(() => Note.Parse("C$4"));
       Assert.Throws<ArgumentOutOfRangeException>(() => { Note.Parse("A9"); });
     }

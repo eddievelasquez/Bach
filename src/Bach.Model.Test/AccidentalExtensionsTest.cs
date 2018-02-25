@@ -35,11 +35,11 @@ namespace Bach.Model.Test
     [Fact]
     public void ToSymbolTest()
     {
-      Assert.Equal(Accidental.DoubleFlat.ToSymbol(), "bb");
-      Assert.Equal(Accidental.Flat.ToSymbol(), "b");
-      Assert.Equal(Accidental.Natural.ToSymbol(), "");
-      Assert.Equal(Accidental.Sharp.ToSymbol(), "#");
-      Assert.Equal(Accidental.DoubleSharp.ToSymbol(), "##");
+      Assert.Equal("bb", Accidental.DoubleFlat.ToSymbol());
+      Assert.Equal("b", Accidental.Flat.ToSymbol());
+      Assert.Equal("", Accidental.Natural.ToSymbol());
+      Assert.Equal("#", Accidental.Sharp.ToSymbol());
+      Assert.Equal("##", Accidental.DoubleSharp.ToSymbol());
     }
 
     [Fact]
