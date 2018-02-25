@@ -26,14 +26,13 @@
 namespace Bach.Model
 {
   using System;
-  using System.Diagnostics.Contracts;
 
   public static class AccidentalExtensions
   {
     #region Data Members
 
     private static readonly string[] s_symbols = { "bb", "b", "", "#", "##" };
-    private static readonly int s_doubleFlatOffset = Math.Abs((int) Accidental.DoubleFlat);
+    private static readonly int s_doubleFlatOffset = Math.Abs((int)Accidental.DoubleFlat);
 
     #endregion
 
@@ -42,26 +41,26 @@ namespace Bach.Model
     public static string ToSymbol(this Accidental accidental)
     {
       Contract.Requires(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-      return s_symbols[(int) accidental + s_doubleFlatOffset];
+      return s_symbols[(int)accidental + s_doubleFlatOffset];
     }
 
     public static bool TryParse(string value,
                                 out Accidental accidental)
     {
       accidental = Accidental.Natural;
-      if( string.IsNullOrEmpty(value) )
+      if (string.IsNullOrEmpty(value))
       {
         return true;
       }
 
-      if( value.Length > 2 )
+      if (value.Length > 2)
       {
         return false;
       }
 
-      foreach( char c in value )
+      foreach (char c in value)
       {
-        switch( c )
+        switch (c)
         {
           case 'b':
           case 'B':
@@ -84,7 +83,7 @@ namespace Bach.Model
     public static Accidental Parse(string value)
     {
       Accidental accidental;
-      if( !TryParse(value, out accidental) )
+      if (!TryParse(value, out accidental))
       {
         throw new FormatException($"{value} is not a valid accidental");
       }

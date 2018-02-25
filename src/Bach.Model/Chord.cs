@@ -28,7 +28,6 @@ namespace Bach.Model
   using System;
   using System.Collections;
   using System.Collections.Generic;
-  using System.Diagnostics.Contracts;
   using System.Linq;
   using System.Text;
 
@@ -62,8 +61,6 @@ namespace Bach.Model
                  string formulaName)
       : this(root, Registry.ChordFormulas[formulaName], 0)
     {
-      Contract.Requires<ArgumentNullException>(formulaName != null);
-      Contract.Requires<ArgumentException>(formulaName.Length > 0);
     }
 
     #endregion

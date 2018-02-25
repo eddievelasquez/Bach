@@ -27,7 +27,6 @@ namespace Bach.Model.Instruments
 {
   using System;
   using System.Collections.Generic;
-  using System.Diagnostics.Contracts;
   using Internal;
 
   public class StringedInstrumentDefinitionBuilder
@@ -67,7 +66,6 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(notes != null, "Must provide tuning notes");
       Contract.Requires<ArgumentException>(notes.Length > 0, "Must provide tuning notes");
-      Contract.Ensures(Contract.Result<StringedInstrumentDefinitionBuilder>() != null);
 
       NoteCollection collection = NoteCollection.Parse(notes, defaultOctave);
       if( collection.Count != _state.StringCount )
@@ -90,7 +88,6 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
       Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
       Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
-      Contract.Ensures(Contract.Result<StringedInstrumentDefinitionBuilder>() != null);
 
       if( notes.Length != _state.StringCount )
       {
@@ -113,7 +110,6 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
       Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(notes != null, "Must provide a note collection");
-      Contract.Ensures(Contract.Result<StringedInstrumentDefinitionBuilder>() != null);
 
       if( notes.Count != _state.StringCount )
       {
@@ -129,8 +125,6 @@ namespace Bach.Model.Instruments
 
     public StringedInstrumentDefinition Build()
     {
-      Contract.Ensures(Contract.Result<StringedInstrumentDefinition>() != null);
-
       CheckBuilderReuse();
 
       if( _tuningInfo.Count == 0 )

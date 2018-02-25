@@ -52,7 +52,7 @@ namespace Bach.Model.Test
     [Fact]
     public void StringConstructorThrowsOnEmptyFormulaNameTest()
     {
-      Assert.Throws<ArgumentException>(() => new Scale(Tone.C, ""));
+      Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => new Scale(Tone.C, ""));
     }
 
     [Fact]

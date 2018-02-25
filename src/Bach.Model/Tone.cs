@@ -26,7 +26,6 @@
 namespace Bach.Model
 {
   using System;
-  using System.Diagnostics.Contracts;
 
   /// <summary>
   /// A Tone represents a combination of a <see cref="ToneName"/>
@@ -206,7 +205,6 @@ namespace Bach.Model
       return result;
     }
 
-    [Pure]
     public Tone Add(int interval,
                     AccidentalMode mode = AccidentalMode.FavorSharps)
     {
@@ -214,7 +212,6 @@ namespace Bach.Model
       return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
     }
 
-    [Pure]
     public Tone Subtract(int interval,
                          AccidentalMode mode = AccidentalMode.FavorSharps)
     {

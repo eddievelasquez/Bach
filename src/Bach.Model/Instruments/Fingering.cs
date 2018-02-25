@@ -26,7 +26,6 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Diagnostics.Contracts;
 
   public struct Fingering: IEquatable<Fingering>
   {

@@ -26,16 +26,16 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Diagnostics.Contracts;
   using Internal;
 
-  public class StringedInstrumentDefinition: InstrumentDefinition,
-                                             IEquatable<StringedInstrumentDefinition>
+  public class StringedInstrumentDefinition
+    : InstrumentDefinition,
+      IEquatable<StringedInstrumentDefinition>
   {
     #region Construction/Destruction
 
-    internal StringedInstrumentDefinition(StringedInstrumentDefinitionState state)
-      : base(state)
+    internal StringedInstrumentDefinition( StringedInstrumentDefinitionState state )
+      : base( state )
     {
     }
 
@@ -47,63 +47,52 @@ namespace Bach.Model.Instruments
 
     public TuningCollection Tunings => State.Tunings;
 
-    private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState) base.State;
+    private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState)base.State;
 
     #endregion
 
     #region IEquatable<StringedInstrumentDefinition> Members
 
-    public bool Equals(StringedInstrumentDefinition other)
+    public bool Equals( StringedInstrumentDefinition other )
     {
-      if( ReferenceEquals(null, other) )
+      if( ReferenceEquals( null, other ) )
       {
         return false;
       }
 
-      if( ReferenceEquals(this, other) )
+      if( ReferenceEquals( this, other ) )
       {
         return true;
       }
 
-      return StringCount == other.StringCount && base.Equals(other);
+      return StringCount == other.StringCount && base.Equals( other );
     }
 
     #endregion
 
     #region Public Methods
 
-    public override bool Equals(object obj)
+    public override bool Equals( object obj )
     {
-      if( ReferenceEquals(null, obj) )
+      if( ReferenceEquals( null, obj ) )
       {
         return false;
       }
 
-      if( ReferenceEquals(this, obj) )
+      if( ReferenceEquals( this, obj ) )
       {
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals((StringedInstrumentDefinition) obj);
+      return obj.GetType() == GetType() && Equals( (StringedInstrumentDefinition)obj );
     }
 
     public override int GetHashCode()
     {
       var hash = 17;
-      hash = (hash * 23) + base.GetHashCode();
-      hash = (hash * 23) + StringCount;
+      hash = ( hash * 23 ) + base.GetHashCode();
+      hash = ( hash * 23 ) + StringCount;
       return hash;
-    }
-
-    #endregion
-
-    #region Implementation
-
-    [ContractInvariantMethod]
-    private void ObjectInvariant()
-    {
-      Contract.Invariant(StringCount > 0);
-      Contract.Invariant(Tunings != null);
     }
 
     #endregion

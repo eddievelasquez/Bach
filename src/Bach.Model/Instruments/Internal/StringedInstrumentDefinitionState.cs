@@ -26,7 +26,6 @@
 namespace Bach.Model.Instruments.Internal
 {
   using System;
-  using System.Diagnostics.Contracts;
 
   internal class StringedInstrumentDefinitionState: InstrumentDefinitionState
   {

@@ -26,7 +26,6 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Diagnostics.Contracts;
   using System.Linq;
 
   public class Tuning: IEquatable<Tuning>

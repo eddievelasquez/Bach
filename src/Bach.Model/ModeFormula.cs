@@ -26,7 +26,6 @@
 namespace Bach.Model
 {
   using System;
-  using System.Diagnostics.Contracts;
 
   public class ModeFormula: IEquatable<ModeFormula>
   {

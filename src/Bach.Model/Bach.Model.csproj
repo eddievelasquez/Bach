@@ -121,6 +121,7 @@
     <Compile Include="AccidentalMode.cs" />
     <Compile Include="Chord.cs" />
     <Compile Include="ChordFormula.cs" />
+    <Compile Include="Contract.cs" />
     <Compile Include="IKeyedObject.cs" />
     <Compile Include="Instruments\Fingering.cs" />
     <Compile Include="Instruments\InstrumentDefinition.cs" />
