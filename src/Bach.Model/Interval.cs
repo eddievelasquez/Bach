@@ -52,7 +52,7 @@ namespace Bach.Model
       { 16, -1, 17, -1, 18 }, // Eleventh (Fourth)
       { 18, -1, 19, -1, 20 }, // Twelfth (Fifth)
       { 19, 20, -1, 21, 22 }, // Thirteenth (Sixth)
-      { 21, 22, -1, 23, 24 }, // Forteenth (Seventh)
+      { 21, 22, -1, 23, 24 }, // Fourteenth (Seventh)
       { 23, -1, 24, -1, 25 } // Fifteenth (Eighth)
     };
 
