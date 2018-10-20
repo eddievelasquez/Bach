@@ -82,8 +82,7 @@ namespace Bach.Model
 
     public static Accidental Parse(string value)
     {
-      Accidental accidental;
-      if (!TryParse(value, out accidental))
+      if (!TryParse(value, out Accidental accidental))
       {
         throw new FormatException($"{value} is not a valid accidental");
       }

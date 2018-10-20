@@ -34,7 +34,7 @@ namespace Bach.Model.Instruments
   {
     #region Data Members
 
-    private Guid _instrumentId;
+    private readonly Guid _instrumentId;
 
     private readonly Dictionary<string, Tuning> _tunings =
       new Dictionary<string, Tuning>(StringComparer.CurrentCultureIgnoreCase);

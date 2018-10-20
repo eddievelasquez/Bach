@@ -48,10 +48,8 @@ namespace Bach.Model
                    string name,
                    Interval[] intervals)
     {
-      Contract.Requires<ArgumentNullException>(key != null, "Must provide a key");
-      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a key");
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide a name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a name");
+      Contract.RequiresNotNullOrEmpty(key, "Must provide a key");
+      Contract.RequiresNotNullOrEmpty(name, "Must provide a name");
       Contract.Requires<ArgumentNullException>(intervals != null, "Must provide an interval array");
       Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0, "Must provide at least one interval");
 
@@ -126,6 +124,7 @@ namespace Bach.Model
     public IEnumerable<Note> Generate(Note root,
                                       int skipCount = 0)
     {
+      // NOTE: By design, this iterator never returns.
       int intervalCount = _intervals.Length;
       int index = skipCount;
 
@@ -154,6 +153,7 @@ namespace Bach.Model
       int intervalCount = _intervals.Length;
       var index = 0;
 
+      // NOTE: By design, this iterator never returns.
       while( true )
       {
         Interval interval = _intervals[index % intervalCount];
@@ -204,8 +204,7 @@ namespace Bach.Model
 
     private static Interval[] ParseIntervals(string formula)
     {
-      Contract.Requires<ArgumentNullException>(formula != null);
-      Contract.Requires<ArgumentException>(formula.Length > 0);
+      Contract.RequiresNotNullOrEmpty(formula, "Must provide a formula");
 
       string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
       return values.Select(Interval.Parse).ToArray();

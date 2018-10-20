@@ -44,14 +44,10 @@ namespace Bach.Model.Instruments
                     NoteCollection notes)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null, "Must provide an instrument definition");
-      Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
-      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
+      Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
+      Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(notes != null, "Must provide a note collection");
-      Contract.Requires<ArgumentOutOfRangeException>(
-        notes.Count == instrumentDefinition.StringCount,
-        "The number of note must match the instrument's string count");
+      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrumentDefinition.StringCount,"The number of note must match the instrument's string count");
 
       InstrumentDefinition = instrumentDefinition;
       Key = key;

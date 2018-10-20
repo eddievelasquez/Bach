@@ -60,12 +60,9 @@ namespace Bach.Model.Instruments
                                                          string notes,
                                                          int defaultOctave = 4)
     {
-      Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
-      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
-      Contract.Requires<ArgumentNullException>(notes != null, "Must provide tuning notes");
-      Contract.Requires<ArgumentException>(notes.Length > 0, "Must provide tuning notes");
+      Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
+      Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
+      Contract.RequiresNotNullOrEmpty(notes, "Must provide tuning notes");
 
       NoteCollection collection = NoteCollection.Parse(notes, defaultOctave);
       if( collection.Count != _state.StringCount )
@@ -84,10 +81,8 @@ namespace Bach.Model.Instruments
                                                          string name,
                                                          params Note[] notes)
     {
-      Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
-      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
+      Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
+      Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
 
       if( notes.Length != _state.StringCount )
       {
@@ -105,10 +100,8 @@ namespace Bach.Model.Instruments
                                                          string name,
                                                          NoteCollection notes)
     {
-      Contract.Requires<ArgumentNullException>(key != null, "Must provide a tuning key");
-      Contract.Requires<ArgumentException>(key.Length > 0, "Must provide a tuning key");
-      Contract.Requires<ArgumentNullException>(name != null, "Must provide a tuning name");
-      Contract.Requires<ArgumentException>(name.Length > 0, "Must provide a tuning name");
+      Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
+      Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(notes != null, "Must provide a note collection");
 
       if( notes.Count != _state.StringCount )

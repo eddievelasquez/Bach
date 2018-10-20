@@ -97,7 +97,7 @@ namespace Bach.Model.Instruments
         return false;
       }
 
-      return obj is Fingering && Equals((Fingering) obj);
+      return obj is Fingering fingering && Equals(fingering);
     }
 
     public override int GetHashCode()

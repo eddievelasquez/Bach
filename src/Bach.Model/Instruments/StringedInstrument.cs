@@ -141,31 +141,39 @@ namespace Bach.Model.Instruments
       // Start rendering the scale at the note closest to the
       // start string and fret
       IEnumerator<Note> scaleEnumerator = scale.Render( startNote ).GetEnumerator();
-      scaleEnumerator.MoveNext();
 
-      // Go through all the strings
-      for( int currentString = startString; currentString >= 1; --currentString )
+      try
       {
-        Note low = GetNote( currentString, startFret );
+        scaleEnumerator.MoveNext();
 
-        // The maximum value that we will use for this string is the minumum
-        // between the fret span on this string and the value of the note
-        // before the start of the next string
-        Note high = Note.Min( low + fretSpan, GetNote( currentString - 1, startFret ) - 1 );
-        while( true )
+        // Go through all the strings
+        for( int currentString = startString; currentString >= 1; --currentString )
         {
-          Note current = scaleEnumerator.Current;
-          if( current > high )
+          Note low = GetNote( currentString, startFret );
+
+          // The maximum value that we will use for this string is the minimum
+          // between the fret span on this string and the value of the note
+          // before the start of the next string
+          Note high = Note.Min( low + fretSpan, GetNote( currentString - 1, startFret ) - 1 );
+          while( true )
           {
-            break;
+            Note current = scaleEnumerator.Current;
+            if( current > high )
+            {
+              break;
+            }
+
+            int fret = ( current - low ) + startFret;
+            Fingering fingering = Fingering.Create( this, currentString, fret );
+            yield return fingering;
+
+            scaleEnumerator.MoveNext(); // Will never return false.
           }
-
-          int fret = ( current - low ) + startFret;
-          Fingering fingering = Fingering.Create( this, currentString, fret );
-          yield return fingering;
-
-          scaleEnumerator.MoveNext(); // Will never return false.
         }
+      }
+      finally
+      {
+        scaleEnumerator.Dispose();
       }
     }
 

@@ -26,6 +26,7 @@
 namespace Bach.Model
 {
   using System;
+  using System.Diagnostics;
 
   /// <summary>
   /// A Tone represents a combination of a <see cref="ToneName"/>
@@ -173,8 +174,7 @@ namespace Bach.Model
         return false;
       }
 
-      ToneName toneName;
-      if( !Enum.TryParse(value.Substring(0, 1), true, out toneName) )
+      if( !Enum.TryParse(value.Substring(0, 1), true, out ToneName toneName) )
       {
         tone = C;
         return false;
@@ -193,11 +193,9 @@ namespace Bach.Model
 
     public static Tone Parse(string value)
     {
-      Contract.Requires<ArgumentNullException>(value != null);
-      Contract.Requires<ArgumentException>(value.Length > 0);
+      Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
 
-      Tone result;
-      if( !TryParse(value, out result) )
+      if( !TryParse(value, out Tone result) )
       {
         throw new FormatException($"{value} is not a valid tone");
       }
@@ -264,26 +262,22 @@ namespace Bach.Model
     public static Tone operator+(Tone tone,
                                  int interval)
     {
-      Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Add(interval, AccidentalMode);
     }
 
     public static Tone operator++(Tone tone)
     {
-      Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Add(1, AccidentalMode);
     }
 
     public static Tone operator-(Tone tone,
                                  int interval)
     {
-      Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Subtract(interval, AccidentalMode);
     }
 
     public static Tone operator--(Tone tone)
     {
-      Contract.Requires<ArgumentNullException>(tone != null);
       return tone.Subtract(1, AccidentalMode);
     }
 
@@ -312,6 +306,9 @@ namespace Bach.Model
       {
         return link.Natural.Value;
       }
+
+      Debug.Assert(link.Sharp.HasValue);
+      Debug.Assert(link.Flat.HasValue);
 
       return favorSharps ? link.Sharp.Value : link.Flat.Value;
     }

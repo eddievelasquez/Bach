@@ -39,7 +39,6 @@ namespace Bach.Model
     public Scale(Tone root,
                  ScaleFormula formula)
     {
-      Contract.Requires<ArgumentNullException>(root != null);
       Contract.Requires<ArgumentNullException>(formula != null);
 
       Root = root;
@@ -62,8 +61,7 @@ namespace Bach.Model
                  string formulaName)
       : this(root, Registry.ScaleFormulas[formulaName])
     {
-      Contract.Requires<ArgumentNullException>(formulaName != null);
-      Contract.Requires<ArgumentException>(formulaName.Length > 0);
+      Contract.RequiresNotNullOrEmpty(formulaName, "Must provide a formula name");
     }
 
     #endregion

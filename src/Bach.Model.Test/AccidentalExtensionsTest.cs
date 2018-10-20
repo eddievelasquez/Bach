@@ -68,6 +68,8 @@ namespace Bach.Model.Test
       Assert.Equal(Accidental.Sharp, accidental);
       Assert.True(AccidentalExtensions.TryParse("##", out accidental));
       Assert.Equal(Accidental.DoubleSharp, accidental);
+      Assert.False(AccidentalExtensions.TryParse("b#", out accidental));
+      Assert.False(AccidentalExtensions.TryParse("#b", out accidental));
       Assert.False(AccidentalExtensions.TryParse("bbb", out accidental));
       Assert.False(AccidentalExtensions.TryParse("###", out accidental));
       Assert.False(AccidentalExtensions.TryParse("$", out accidental));

@@ -32,5 +32,11 @@ namespace Bach.Model
         throw exception;
       }
     }
+
+    public static void RequiresNotNullOrEmpty(string value, string message = null)
+    {
+      Requires<ArgumentNullException>(value != null, message);
+      Requires<ArgumentException>(value.Length > 0, message);
+    }
   }
 }

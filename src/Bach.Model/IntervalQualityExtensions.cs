@@ -41,8 +41,7 @@ namespace Bach.Model
 
     public static IntervalQuality Parse(string value)
     {
-      IntervalQuality quality;
-      if( !TryParse(value, out quality) )
+      if( !TryParse(value, out IntervalQuality quality) )
       {
         throw new FormatException($"\"{value}\" is not a valid interval quality");
       }

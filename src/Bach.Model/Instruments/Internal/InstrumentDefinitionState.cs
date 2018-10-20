@@ -36,10 +36,8 @@ namespace Bach.Model.Instruments.Internal
                                         string instrumentName)
     {
       Contract.Requires<ArgumentException>(instrumentId != Guid.Empty, "Must provide a non-empty instrument id");
-      Contract.Requires<ArgumentNullException>(instrumentKey != null, "Must provide an instrument key");
-      Contract.Requires<ArgumentException>(instrumentKey.Length > 0, "Must provide an instrument key");
-      Contract.Requires<ArgumentNullException>(instrumentName != null, "Must provide an instrument name");
-      Contract.Requires<ArgumentException>(instrumentName.Length > 0, "Must provide an instrument name");
+      Contract.RequiresNotNullOrEmpty(instrumentKey, "Must provide an instrument key");
+      Contract.RequiresNotNullOrEmpty(instrumentName, "Must provide an instrument name");
 
       InstrumentId = instrumentId;
       InstrumentKey = instrumentKey;

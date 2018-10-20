@@ -173,8 +173,7 @@ namespace Bach.Model
 
     public static Interval Parse(string value)
     {
-      Interval interval;
-      if( !TryParse(value, out interval) )
+      if( !TryParse(value, out Interval interval) )
       {
         throw new FormatException(value + " is not a valid interval");
       }
@@ -218,8 +217,7 @@ namespace Bach.Model
         ++i;
       }
 
-      int number;
-      if( !int.TryParse(value.Substring(i), out number) )
+      if( !int.TryParse(value.Substring(i), out int number) )
       {
         return false;
       }

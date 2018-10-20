@@ -81,8 +81,7 @@ namespace Bach.Model
 
       foreach( string s in value.Split(',') )
       {
-        Tone tone;
-        if( !Tone.TryParse(s, out tone) )
+        if( !Tone.TryParse(s, out Tone tone) )
         {
           tones = null;
           return false;
@@ -96,11 +95,9 @@ namespace Bach.Model
 
     public static ToneCollection Parse(string value)
     {
-      Contract.Requires<ArgumentNullException>(value != null);
-      Contract.Requires<ArgumentException>(value.Length > 0);
+      Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
 
-      ToneCollection tones;
-      if( !TryParse(value, out tones) )
+      if( !TryParse(value, out ToneCollection tones) )
       {
         throw new FormatException($"{value} contains invalid tones");
       }

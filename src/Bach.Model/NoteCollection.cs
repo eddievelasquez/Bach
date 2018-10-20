@@ -85,8 +85,7 @@ namespace Bach.Model
 
       foreach( string s in value.Split(',') )
       {
-        Note note;
-        if( !Note.TryParse(s, out note, defaultOctave) )
+        if( !Note.TryParse(s, out Note note, defaultOctave) )
         {
           notes = null;
           return false;
@@ -106,8 +105,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
 
-      NoteCollection notes;
-      if( !TryParse(value, out notes, defaultOctave) )
+      if( !TryParse(value, out NoteCollection notes, defaultOctave) )
       {
         throw new FormatException($"{value} contains invalid notes");
       }

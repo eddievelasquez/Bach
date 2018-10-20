@@ -261,18 +261,15 @@ namespace Bach.Model
                                       ref Note note,
                                       int defaultOctave)
     {
-      ToneName toneName;
-      if( !Enum.TryParse(value.Substring(0, 1), true, out toneName) )
+      if( !Enum.TryParse(value.Substring(0, 1), true, out ToneName toneName) )
       {
         return false;
       }
 
       var index = 1;
-
-      Accidental accidental;
       int octave = defaultOctave;
 
-      TryGetAccidental(value, ref index, out accidental);
+      TryGetAccidental(value, ref index, out Accidental accidental);
       TryGetOctave(value, ref index, ref octave);
       if( index < value.Length )
       {
@@ -287,8 +284,7 @@ namespace Bach.Model
                                      ref Note note,
                                      int defaultOctave)
     {
-      int midi;
-      if( !int.TryParse(value, out midi) )
+      if( !int.TryParse(value, out int midi) )
       {
         return false;
       }
@@ -315,8 +311,7 @@ namespace Bach.Model
                                  out byte octave,
                                  AccidentalMode accidentalMode)
     {
-      int remainder;
-      octave = (byte) Math.DivRem(absoluteValue, IntervalsPerOctave, out remainder);
+      octave = (byte) Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
       tone = Tone.GetNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
     }
 
@@ -371,12 +366,10 @@ namespace Bach.Model
 
     public Note ApplyAccidental(Accidental accidental)
     {
-      byte octave;
-      Tone tone;
       CalcNote(
         (byte) (AbsoluteValue + accidental),
-        out tone,
-        out octave,
+        out Tone tone,
+        out byte octave,
         accidental < Accidental.Natural ? AccidentalMode.FavorFlats : AccidentalMode.FavorSharps);
 
       return Create(tone, octave);
@@ -448,8 +441,7 @@ namespace Bach.Model
     public static Note Parse(string value,
                              int defaultOctave = 4)
     {
-      Note result;
-      if( !TryParse(value, out result) )
+      if( !TryParse(value, out Note result) )
       {
         throw new FormatException($"{value} is not a valid note");
       }
