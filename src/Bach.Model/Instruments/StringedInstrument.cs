@@ -34,13 +34,13 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    private StringedInstrument( StringedInstrumentDefinition definition,
+    private StringedInstrument(StringedInstrumentDefinition definition,
                                 Tuning tuning,
-                                int fretCount )
-      : base( definition )
+                                int fretCount)
+      : base(definition)
     {
-      Contract.Requires<ArgumentNullException>( tuning != null );
-      Contract.Requires<ArgumentOutOfRangeException>( fretCount > 0 );
+      Contract.Requires<ArgumentNullException>(tuning != null);
+      Contract.Requires<ArgumentOutOfRangeException>(fretCount > 0);
 
       Tuning = tuning;
       FretCount = fretCount;
@@ -50,26 +50,26 @@ namespace Bach.Model.Instruments
 
     #region Factories
 
-    public static StringedInstrument Create( StringedInstrumentDefinition definition,
+    public static StringedInstrument Create(StringedInstrumentDefinition definition,
                                              int fretCount,
-                                             Tuning tuning = null )
+                                             Tuning tuning = null)
     {
-      Contract.Requires<ArgumentNullException>( definition != null );
+      Contract.Requires<ArgumentNullException>(definition != null);
 
-      return new StringedInstrument( definition, tuning ?? definition.Tunings.Standard, fretCount );
+      return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard, fretCount);
     }
 
-    public static StringedInstrument Create( string instrumentKey,
+    public static StringedInstrument Create(string instrumentKey,
                                              int fretCount,
-                                             string tuningName = null )
+                                             string tuningName = null)
     {
       StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions[instrumentKey];
-      if( string.IsNullOrEmpty( tuningName ) )
+      if (string.IsNullOrEmpty(tuningName))
       {
         tuningName = "Standard";
       }
 
-      return new StringedInstrument( definition, definition.Tunings[tuningName], fretCount );
+      return new StringedInstrument(definition, definition.Tunings[tuningName], fretCount);
     }
 
     #endregion
@@ -86,85 +86,85 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
-    public IEnumerable<Fingering> Render( Chord chord,
+    public IEnumerable<Fingering> Render(Chord chord,
                                           int startFret,
-                                          int fretSpan = 4 )
+                                          int fretSpan = 4)
     {
-      Contract.Requires<ArgumentNullException>( chord != null );
-      Contract.Requires<ArgumentOutOfRangeException>( fretSpan > 1 && startFret + fretSpan <= FretCount );
+      Contract.Requires<ArgumentNullException>(chord != null);
+      Contract.Requires<ArgumentOutOfRangeException>(fretSpan > 1 && startFret + fretSpan <= FretCount);
 
       // Always start at the lowest string
       int startString = Definition.StringCount;
 
-      Note startNote = Tuning[startString] + startFret;
-      int octave = startNote.Octave;
-      if( startNote.Tone > chord.Bass )
+      Pitch startPitch = Tuning[startString] + startFret;
+      int octave = startPitch.Octave;
+      if (startPitch.Note > chord.Bass)
       {
         ++octave;
       }
 
-      IEnumerator<Note> notes = chord.Render( octave ).GetEnumerator();
+      IEnumerator<Pitch> notes = chord.Render(octave).GetEnumerator();
       notes.MoveNext();
 
       // Go through all the strings
-      for( int currentString = startString; currentString >= 1; --currentString )
+      for (int currentString = startString; currentString >= 1; --currentString)
       {
-        Fingering fingering = GetChordFingering( notes, currentString, startFret, fretSpan );
+        Fingering fingering = GetChordFingering(notes, currentString, startFret, fretSpan);
         yield return fingering;
 
-        // Only go to the next note in the chord if a note
+        // Only go to the next pitch in the chord if a pitch
         // is to be played in the current string
-        if( fingering.Fret >= 0 )
+        if (fingering.Fret >= 0)
         {
           notes.MoveNext();
         }
       }
     }
 
-    public IEnumerable<Fingering> Render( Scale scale,
+    public IEnumerable<Fingering> Render(Scale scale,
                                           int startFret,
-                                          int fretSpan = 4 )
+                                          int fretSpan = 4)
     {
-      Contract.Requires<ArgumentNullException>( scale != null );
-      Contract.Requires<ArgumentOutOfRangeException>( fretSpan > 1 && startFret + fretSpan <= FretCount );
+      Contract.Requires<ArgumentNullException>(scale != null);
+      Contract.Requires<ArgumentOutOfRangeException>(fretSpan > 1 && startFret + fretSpan <= FretCount);
 
       // Always start at the lowest string
       int startString = Definition.StringCount;
 
-      // Find scale note closest to start string and start fret
-      Note startNote = Tuning[startString] + startFret;
-      while( scale.IndexOf( startNote ) == -1 )
+      // Find scale pitch closest to start string and start fret
+      Pitch startPitch = Tuning[startString] + startFret;
+      while (scale.IndexOf(startPitch) == -1)
       {
-        ++startNote;
+        ++startPitch;
       }
 
-      // Start rendering the scale at the note closest to the
+      // Start rendering the scale at the pitch closest to the
       // start string and fret
-      IEnumerator<Note> scaleEnumerator = scale.Render( startNote ).GetEnumerator();
+      IEnumerator<Pitch> scaleEnumerator = scale.Render(startPitch).GetEnumerator();
 
       try
       {
         scaleEnumerator.MoveNext();
 
         // Go through all the strings
-        for( int currentString = startString; currentString >= 1; --currentString )
+        for (int currentString = startString; currentString >= 1; --currentString)
         {
-          Note low = GetNote( currentString, startFret );
+          Pitch low = GetNote(currentString, startFret);
 
           // The maximum value that we will use for this string is the minimum
-          // between the fret span on this string and the value of the note
+          // between the fret span on this string and the value of the pitch
           // before the start of the next string
-          Note high = Note.Min( low + fretSpan, GetNote( currentString - 1, startFret ) - 1 );
-          while( true )
+          Pitch high = Pitch.Min(low + fretSpan, GetNote(currentString - 1, startFret) - 1);
+          while (true)
           {
-            Note current = scaleEnumerator.Current;
-            if( current > high )
+            Pitch current = scaleEnumerator.Current;
+            if (current > high)
             {
               break;
             }
 
-            int fret = ( current - low ) + startFret;
-            Fingering fingering = Fingering.Create( this, currentString, fret );
+            int fret = (current - low) + startFret;
+            Fingering fingering = Fingering.Create(this, currentString, fret);
             yield return fingering;
 
             scaleEnumerator.MoveNext(); // Will never return false.
@@ -177,27 +177,27 @@ namespace Bach.Model.Instruments
       }
     }
 
-    public override bool Equals( object obj )
+    public override bool Equals(object obj)
     {
-      if( ReferenceEquals( null, obj ) )
+      if (ReferenceEquals(null, obj))
       {
         return false;
       }
 
-      if( ReferenceEquals( this, obj ) )
+      if (ReferenceEquals(this, obj))
       {
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals( (StringedInstrument)obj );
+      return obj.GetType() == GetType() && Equals((StringedInstrument)obj);
     }
 
     public override int GetHashCode()
     {
       var hash = 17;
-      hash = ( hash * 23 ) + base.GetHashCode();
-      hash = ( hash * 23 ) + Tuning.GetHashCode();
-      hash = ( hash * 23 ) + FretCount.GetHashCode();
+      hash = (hash * 23) + base.GetHashCode();
+      hash = (hash * 23) + Tuning.GetHashCode();
+      hash = (hash * 23) + FretCount.GetHashCode();
       return hash;
     }
 
@@ -205,60 +205,60 @@ namespace Bach.Model.Instruments
 
     #region IEquatable<StringedInstrument> Members
 
-    public bool Equals( StringedInstrument other )
+    public bool Equals(StringedInstrument other)
     {
-      if( ReferenceEquals( null, other ) )
+      if (ReferenceEquals(null, other))
       {
         return false;
       }
 
-      if( ReferenceEquals( this, other ) )
+      if (ReferenceEquals(this, other))
       {
         return true;
       }
 
-      return Equals( Tuning, other.Tuning ) && FretCount == other.FretCount && base.Equals( other );
+      return Equals(Tuning, other.Tuning) && FretCount == other.FretCount && base.Equals(other);
     }
 
     #endregion
 
     #region Implementation
 
-    private Fingering GetChordFingering( IEnumerator<Note> notes,
+    private Fingering GetChordFingering(IEnumerator<Pitch> notes,
                                          int @string,
                                          int startFret,
-                                         int fretSpan )
+                                         int fretSpan)
     {
-      Note low = GetNote( @string, startFret );
-      Note high = low + fretSpan;
-      Note current = notes.Current;
+      Pitch low = GetNote(@string, startFret);
+      Pitch high = low + fretSpan;
+      Pitch current = notes.Current;
 
-      while( current < low )
+      while (current < low)
       {
         notes.MoveNext();
         current = notes.Current;
       }
 
       Fingering fingering;
-      if( current >= low && current <= high )
+      if (current >= low && current <= high)
       {
-        int fret = ( current - low ) + startFret;
-        fingering = Fingering.Create( this, @string, fret );
+        int fret = (current - low) + startFret;
+        fingering = Fingering.Create(this, @string, fret);
       }
       else
       {
-        fingering = Fingering.Create( this, @string );
+        fingering = Fingering.Create(this, @string);
       }
 
       return fingering;
     }
 
-    private Note GetNote( int @string,
-                          int fret )
+    private Pitch GetNote(int @string,
+                          int fret)
     {
-      if( @string < 1 || @string > Definition.StringCount )
+      if (@string < 1 || @string > Definition.StringCount)
       {
-        return Note.MaxValue;
+        return Pitch.MaxValue;
       }
 
       return Tuning[@string] + fret;

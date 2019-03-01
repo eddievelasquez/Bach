@@ -32,11 +32,11 @@ namespace Bach.Model
   using System.Text;
 
   public class Chord: IEquatable<Chord>,
-                      IEnumerable<Tone>
+                      IEnumerable<Note>
   {
     #region Construction/Destruction
 
-    private Chord(Tone root,
+    private Chord(Note root,
                   ChordFormula formula,
                   int inversion)
     {
@@ -47,17 +47,17 @@ namespace Bach.Model
       Root = root;
       Formula = formula;
       Inversion = inversion;
-      Tones = Formula.Generate(Root).Skip(inversion).Take(Formula.IntervalCount).ToArray();
-      Name = GenerateName(root, formula, Tones.First());
+      Notes = Formula.Generate(Root).Skip(inversion).Take(Formula.IntervalCount).ToArray();
+      Name = GenerateName(root, formula, Notes.First());
     }
 
-    public Chord(Tone root,
+    public Chord(Note root,
                  ChordFormula formula)
       : this(root, formula, 0)
     {
     }
 
-    public Chord(Tone root,
+    public Chord(Note root,
                  string formulaName)
       : this(root, Registry.ChordFormulas[formulaName], 0)
     {
@@ -67,29 +67,29 @@ namespace Bach.Model
 
     #region Properties
 
-    public Tone Root { get; }
+    public Note Root { get; }
 
-    public Tone Bass => Tones[0];
+    public Note Bass => Notes[0];
 
     public int Inversion { get; }
     public string Name { get; }
     public ChordFormula Formula { get; }
-    public Tone[] Tones { get; }
+    public Note[] Notes { get; }
 
     #endregion
 
     #region Public Methods
 
-    public IEnumerable<Note> Render(int octave)
+    public IEnumerable<Pitch> Render(int octave)
     {
       if( Inversion != 0 )
       {
-        Note bass = Note.Create(Bass, octave);
+        Pitch bass = Pitch.Create(Bass, octave);
         yield return bass;
       }
 
-      Note root = Note.Create(Root, octave);
-      foreach( Note note in Formula.Generate(root) )
+      Pitch root = Pitch.Create(Root, octave);
+      foreach( Pitch note in Formula.Generate(root) )
       {
         yield return note;
       }
@@ -126,11 +126,11 @@ namespace Bach.Model
 
     #endregion
 
-    #region IEnumerable<Note> Members
+    #region IEnumerable<Pitch> Members
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IEnumerator<Tone> GetEnumerator() => Formula.Generate(Root).Take(Formula.IntervalCount).GetEnumerator();
+    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).Take(Formula.IntervalCount).GetEnumerator();
 
     #endregion
 
@@ -155,9 +155,9 @@ namespace Bach.Model
 
     #region Implementation
 
-    private static string GenerateName(Tone root,
+    private static string GenerateName(Note root,
                                        ChordFormula formula,
-                                       Tone bass)
+                                       Note bass)
     {
       var buf = new StringBuilder();
       buf.Append(root);

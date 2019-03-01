@@ -30,49 +30,32 @@ namespace Bach.Model.Test
 
   public class NoteCollectionTest
   {
-    #region Public Methods
+    [Fact]
+    public void TryParseTest()
+    {
+      NoteCollection actual;
+      Assert.True(NoteCollection.TryParse("C,Db", out actual));
+      Assert.Equal(new[] { Note.C, Note.DFlat }, actual);
+      Assert.False(NoteCollection.TryParse(null, out actual));
+      Assert.False(NoteCollection.TryParse("", out actual));
+      Assert.False(NoteCollection.TryParse("C$", out actual));
+    }
 
     [Fact]
     public void ParseTest()
     {
-      var expected = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      Assert.Equal(expected, NoteCollection.Parse("C4,C5")); // Using notes
-      Assert.Equal(expected, NoteCollection.Parse("60,72")); // Using midi
+      Assert.Equal(new[] { Note.C, Note.DFlat }, NoteCollection.Parse("C,Db"));
       Assert.Throws<ArgumentNullException>(() => NoteCollection.Parse(null));
       Assert.Throws<ArgumentException>(() => NoteCollection.Parse(""));
-      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.Parse("C4,C5", int.MinValue));
-      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.Parse("C4,C5", int.MaxValue));
-      Assert.Throws<FormatException>(() => NoteCollection.Parse("C$4,Z5"));
-    }
-
-    [Fact]
-    public void ToStringTest()
-    {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      Assert.Equal("C4,C5", actual.ToString());
-    }
-
-    [Fact]
-    public void TryParseTest()
-    {
-      NoteCollection collection;
-      Assert.True(NoteCollection.TryParse("C4,E4", out collection));
-      Assert.Equal(new[] { Note.Parse("C4"), Note.Parse("E4") }, collection);
-      Assert.False(NoteCollection.TryParse(null, out collection));
-      Assert.Null(collection);
-      Assert.False(NoteCollection.TryParse("", out collection));
-      Assert.Null(collection);
-      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.TryParse("C4", out collection, int.MaxValue));
-      Assert.Throws<ArgumentOutOfRangeException>(() => NoteCollection.TryParse("C4", out collection, int.MinValue));
-      Assert.False(NoteCollection.TryParse("C$4,Z5", out collection));
+      Assert.Throws<FormatException>(() => NoteCollection.Parse("C$"));
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      object y = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      object z = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      object x = new NoteCollection(NoteCollection.Parse("C,Db"));
+      object y = new NoteCollection(NoteCollection.Parse("C,Db"));
+      object z = new NoteCollection(NoteCollection.Parse("C,Db"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -85,9 +68,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      var y = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      var z = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var x = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var y = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var z = new NoteCollection(NoteCollection.Parse("C,Db"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -100,47 +83,45 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      object actual = new NoteCollection(NoteCollection.Parse("C,Db"));
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      object actual = new NoteCollection(NoteCollection.Parse("C,Db"));
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
-      var expected = new NoteCollection(new[] { Note.Parse("C4"), Note.Parse("C5") });
+      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var expected = new NoteCollection(NoteCollection.Parse("C,Db"));
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
-
-    #endregion
   }
 }

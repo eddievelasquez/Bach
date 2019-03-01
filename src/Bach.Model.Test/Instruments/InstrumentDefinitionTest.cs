@@ -110,7 +110,7 @@ namespace Bach.Model.Test.Instruments
     public void EqualsTest()
     {
       var builder = new StringedInstrumentDefinitionBuilder("GuitarX", "GuitarX", 6);
-      builder.AddTuning("Standard", "Standard", NoteCollection.Parse("E4,B3,G3,D3,A2,E2"));
+      builder.AddTuning("Standard", "Standard", PitchCollection.Parse("E4,B3,G3,D3,A2,E2"));
 
       object a = builder.Build();
       object b = Registry.StringedInstrumentDefinitions["guitar"];

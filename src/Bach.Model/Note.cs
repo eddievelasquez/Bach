@@ -1,4 +1,4 @@
-﻿//
+//
 // Module Name: Note.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
@@ -26,422 +26,176 @@
 namespace Bach.Model
 {
   using System;
-  using System.Text;
+  using System.Diagnostics;
 
   /// <summary>
-  /// A Note represents the pitch of a sound (<see cref="Tone"/>)
-  /// on a given octave.
+  /// A Note represents a combination of a <see cref="NoteName"/>
+  /// and an optional <see cref="Accidental"/> following the
+  /// English naming convention for the 12 note
+  /// chromatic scale.
   /// </summary>
-  /// <remarks>
-  /// The octave of a Note ranges from 0 to 9,
-  /// which corresponds to MIDI notes from 12 (C0)
-  /// to 127 (B9).
-  /// </remarks>
-  public struct Note: IEquatable<Note>,
+  public struct Note : IEquatable<Note>,
                       IComparable<Note>
   {
-    public const int MinOctave = 0;
-    public const int MaxOctave = 9;
-    internal const double A4Frequency = 440.0;
-    internal const int IntervalsPerOctave = 12;
+    #region Constants
 
-    private static readonly int[] s_intervals =
-    {
-      0, // C
-      2, // D
-      4, // E
-      5, // F
-      7, // G
-      9, // A
-      11, // B
-      12 // C
-    };
+    private const ushort TONE_NAME_MASK = 7;
+    private const ushort TONE_NAME_SHIFT = 7;
+    private const ushort ACCIDENTAL_MASK = 7;
+    private const ushort ACCIDENTAL_SHIFT = 4;
+    private const ushort INTERVAL_MASK = 0x0F;
+    private const int INTERVAL_COUNT = 12;
 
-    // Midi supports C-1, but we only support C0 and above
-    private static readonly byte s_minAbsoluteValue =
-      (byte) CalcAbsoluteValue(ToneName.C, Accidental.Natural, MinOctave);
-
-    // G9 is the highest note supported by MIDI
-    private static readonly byte s_maxAbsoluteValue =
-      (byte) CalcAbsoluteValue(ToneName.G, Accidental.Natural, MaxOctave);
-
-    private static readonly Note s_a4 = Create(ToneName.A, Accidental.Natural, 4);
-
-    public static readonly Note Empty = new Note();
-    public static readonly Note MaxValue = new Note(Tone.B, MaxOctave, 128);
+    #endregion
 
     #region Data Members
 
-    private readonly byte _absoluteValue;
-    private readonly byte _octave;
-    private readonly Tone _tone;
+    private static readonly Link[] s_links;
+
+    public static readonly Note C;
+    public static readonly Note CSharp;
+    public static readonly Note DFlat;
+    public static readonly Note D;
+    public static readonly Note DSharp;
+    public static readonly Note EFlat;
+    public static readonly Note E;
+    public static readonly Note F;
+    public static readonly Note FSharp;
+    public static readonly Note GFlat;
+    public static readonly Note G;
+    public static readonly Note GSharp;
+    public static readonly Note AFlat;
+    public static readonly Note A;
+    public static readonly Note ASharp;
+    public static readonly Note BFlat;
+    public static readonly Note B;
+
+    private readonly ushort _encoded;
 
     #endregion
 
-    #region Construction
+    #region Construction/Destruction
 
-    private Note(int absoluteValue,
-                 AccidentalMode accidentalMode)
+    static Note()
     {
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
+      s_links = new Link[INTERVAL_COUNT];
 
-      _absoluteValue = (byte) absoluteValue;
-      CalcNote(_absoluteValue, out _tone, out _octave, accidentalMode);
+      C = Create(NoteName.C);
+      CSharp = Create(NoteName.C, Accidental.Sharp);
+      DFlat = Create(NoteName.D, Accidental.Flat);
+      D = Create(NoteName.D);
+      DSharp = Create(NoteName.D, Accidental.Sharp);
+      EFlat = Create(NoteName.E, Accidental.Flat);
+      E = Create(NoteName.E);
+      F = Create(NoteName.F);
+      FSharp = Create(NoteName.F, Accidental.Sharp);
+      GFlat = Create(NoteName.G, Accidental.Flat);
+      G = Create(NoteName.G);
+      GSharp = Create(NoteName.G, Accidental.Sharp);
+      AFlat = Create(NoteName.A, Accidental.Flat);
+      A = Create(NoteName.A);
+      ASharp = Create(NoteName.A, Accidental.Sharp);
+      BFlat = Create(NoteName.B, Accidental.Flat);
+      B = Create(NoteName.B);
+
+      AccidentalMode = AccidentalMode.FavorSharps;
     }
 
-    private Note(Tone tone,
-                 int octave,
-                 int absoluteValue)
+    public Note(NoteName noteName,
+                Accidental accidental = Accidental.Natural)
     {
-      _tone = tone;
-      _octave = (byte) octave;
-      _absoluteValue = (byte) absoluteValue;
+      int interval = CalcInterval(noteName, accidental);
+      _encoded = Encode(interval, noteName, accidental);
     }
 
-    private Note(ToneName toneName,
-                 Accidental accidental,
-                 int octave,
-                 int absoluteValue)
+    private static Note Create(NoteName noteName,
+                               Accidental accidental = Accidental.Natural)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
-
-      _tone = new Tone(toneName, accidental);
-      _octave = (byte) octave;
-      _absoluteValue = (byte) absoluteValue;
-    }
-
-    #endregion
-
-    #region Factories
-
-    public static Note Create(Tone tone,
-                              int octave)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
-
-      int abs = CalcAbsoluteValue(tone.ToneName, tone.Accidental, octave);
-      if( abs < s_minAbsoluteValue )
+      var tone = new Note(noteName, accidental);
+      Link link = s_links[tone.Interval];
+      if (link == null)
       {
-        throw new ArgumentOutOfRangeException(
-          $"Must be equal to or greater than {new Note(s_minAbsoluteValue, AccidentalMode)}");
+        link = new Link();
+        s_links[tone.Interval] = link;
       }
 
-      if( abs > s_maxAbsoluteValue )
+      switch (accidental)
       {
-        throw new ArgumentOutOfRangeException(
-          $"Must be equal to or less than {new Note(s_maxAbsoluteValue, AccidentalMode)}");
+        case Accidental.Flat:
+          link.Flat = tone;
+          break;
+
+        case Accidental.Natural:
+          link.Natural = tone;
+          break;
+
+        case Accidental.Sharp:
+          link.Sharp = tone;
+          break;
       }
 
-      return new Note(tone, octave, abs);
-    }
-
-    public static Note Create(ToneName toneName,
-                              Accidental accidental,
-                              int octave)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(toneName >= ToneName.C);
-      Contract.Requires<ArgumentOutOfRangeException>(toneName <= ToneName.B);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.DoubleSharp);
-      Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
-
-      int abs = CalcAbsoluteValue(toneName, accidental, octave);
-      if( abs < s_minAbsoluteValue )
-      {
-        throw new ArgumentOutOfRangeException(
-          $"Must be equal to or greater than {new Note(s_minAbsoluteValue, AccidentalMode)}");
-      }
-
-      if( abs > s_maxAbsoluteValue )
-      {
-        throw new ArgumentOutOfRangeException(
-          $"Must be equal to or less than {new Note(s_maxAbsoluteValue, AccidentalMode)}");
-      }
-
-      return new Note(toneName, accidental, octave, abs);
-    }
-
-    public static Note CreateFromMidi(int midi)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(midi >= 0);
-      Contract.Requires<ArgumentOutOfRangeException>(midi <= 127);
-
-      int absoluteValue = midi - 12;
-      if( absoluteValue < 0 )
-      {
-        throw new ArgumentOutOfRangeException(nameof(midi), "midi is out of range");
-      }
-
-      var note = new Note(absoluteValue, AccidentalMode);
-      return note;
+      return tone;
     }
 
     #endregion
 
     #region Properties
 
-    public bool IsValid
-    {
-      get
-      {
-        int abs = _absoluteValue + (int) _tone.Accidental;
-        return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
-      }
-    }
+    public static AccidentalMode AccidentalMode { get; set; }
 
-    public Tone Tone => _tone;
+    public int Interval => DecodeInterval(_encoded);
 
-    public ToneName ToneName => _tone.ToneName;
+    public NoteName NoteName => DecodeToneName(_encoded);
 
-    public Accidental Accidental => _tone.Accidental;
-
-    public int Octave => _octave;
-
-    public int AbsoluteValue => _absoluteValue;
-
-    public double Frequency
-    {
-      get
-      {
-        int interval = AbsoluteValue - s_a4.AbsoluteValue;
-        double freq = Math.Pow(2, interval / 12.0) * A4Frequency;
-        return freq;
-      }
-    }
-
-    // The formula to convert a note to MIDI (according to http://en.wikipedia.org/wiki/Note)
-    // is p = 69 + 12 x log2(freq / 440). As it happens, our AbsoluteValue almost
-    // matches, but we don't support the -1 octave we must add 12 to obtain the
-    // MIDI number.
-    public int Midi => AbsoluteValue + 12;
-
-    public static AccidentalMode AccidentalMode
-    {
-      get => Tone.AccidentalMode;
-      set => Tone.AccidentalMode = value;
-    }
+    public Accidental Accidental => DecodeAccidental(_encoded);
 
     #endregion
 
-    #region IComparable<Note> Members
+    #region IComparable<Pitch> Members
 
-    public int CompareTo(Note other) => AbsoluteValue - other.AbsoluteValue;
-
-    #endregion
-
-    #region IEquatable<Note> Members
-
-    public bool Equals(Note obj) => obj.AbsoluteValue == AbsoluteValue;
+    public int CompareTo(Note other) => Interval - other.Interval;
 
     #endregion
 
-    #region Overrides
+    #region IEquatable<Pitch> Members
 
-    public override bool Equals(object obj)
-    {
-      if( ReferenceEquals(obj, null) || obj.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Note) obj);
-    }
-
-    public override int GetHashCode() => AbsoluteValue;
-
-    public override string ToString() => $"{_tone}{Octave}";
+    public bool Equals(Note other) => Interval == other.Interval;
 
     #endregion
 
-    private static bool TryParseNotes(string value,
-                                      ref Note note,
-                                      int defaultOctave)
-    {
-      if( !Enum.TryParse(value.Substring(0, 1), true, out ToneName toneName) )
-      {
-        return false;
-      }
-
-      var index = 1;
-      int octave = defaultOctave;
-
-      TryGetAccidental(value, ref index, out Accidental accidental);
-      TryGetOctave(value, ref index, ref octave);
-      if( index < value.Length )
-      {
-        return false;
-      }
-
-      note = Create(toneName, accidental, octave);
-      return true;
-    }
-
-    private static bool TryParseMidi(string value,
-                                     ref Note note,
-                                     int defaultOctave)
-    {
-      if( !int.TryParse(value, out int midi) )
-      {
-        return false;
-      }
-
-      if( midi < 0 || midi > 127 )
-      {
-        return false;
-      }
-
-      note = CreateFromMidi(midi);
-      return true;
-    }
-
-    private static int CalcAbsoluteValue(ToneName toneName,
-                                         Accidental accidental,
-                                         int octave)
-    {
-      int value = (octave * IntervalsPerOctave) + s_intervals[(int) toneName] + (int) accidental;
-      return value;
-    }
-
-    private static void CalcNote(byte absoluteValue,
-                                 out Tone tone,
-                                 out byte octave,
-                                 AccidentalMode accidentalMode)
-    {
-      octave = (byte) Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
-      tone = Tone.GetNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
-    }
-
-    private static void TryGetAccidental(string value,
-                                         ref int index,
-                                         out Accidental accidental)
-    {
-      accidental = Accidental.Natural;
-
-      var buf = new StringBuilder();
-      for( int i = index; i < value.Length; ++i )
-      {
-        char ch = value[i];
-        if( ch != '#' && ch != 'b' && ch != 'B' )
-        {
-          if( buf.Length > 0 )
-          {
-            break;
-          }
-
-          return;
-        }
-
-        buf.Append(ch);
-      }
-
-      if( buf.Length == 0 )
-      {
-        return;
-      }
-
-      if( AccidentalExtensions.TryParse(buf.ToString(), out accidental) )
-      {
-        index += buf.Length;
-      }
-    }
-
-    private static void TryGetOctave(string value,
-                                     ref int index,
-                                     ref int octave)
-    {
-      if( index >= value.Length || !int.TryParse(value.Substring(index, 1), out octave) )
-      {
-        return;
-      }
-
-      if( octave >= MinOctave && octave <= MaxOctave )
-      {
-        ++index;
-      }
-    }
-
-    public Note ApplyAccidental(Accidental accidental)
-    {
-      CalcNote(
-        (byte) (AbsoluteValue + accidental),
-        out Tone tone,
-        out byte octave,
-        accidental < Accidental.Natural ? AccidentalMode.FavorFlats : AccidentalMode.FavorSharps);
-
-      return Create(tone, octave);
-    }
-
-    public static bool operator==(Note lhs,
-                                  Note rhs) => Equals(lhs, rhs);
-
-    public static bool operator!=(Note lhs,
-                                  Note rhs) => !Equals(lhs, rhs);
-
-    public static bool operator>(Note left,
-                                 Note right) => left.CompareTo(right) > 0;
-
-    public static bool operator<(Note left,
-                                 Note right) => left.CompareTo(right) < 0;
-
-    public static bool operator>=(Note left,
-                                  Note right) => left.CompareTo(right) >= 0;
-
-    public static bool operator<=(Note left,
-                                  Note right) => left.CompareTo(right) <= 0;
-
-    public Note Add(int interval,
-                    AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
-    {
-      var result = new Note(AbsoluteValue + interval, accidentalMode);
-      return result;
-    }
-
-    public Note Subtract(int interval,
-                         AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
-    {
-      var result = new Note(AbsoluteValue - interval, accidentalMode);
-      return result;
-    }
-
-    public static Note operator+(Note note,
-                                 int interval) => note.Add(interval, AccidentalMode);
-
-    public static Note operator++(Note note) => note.Add(1, AccidentalMode);
-
-    public static Note operator-(Note note,
-                                 int interval) => note.Subtract(interval, AccidentalMode);
-
-    public static Note operator--(Note note) => note.Subtract(1, AccidentalMode);
-
-    public static int operator-(Note left,
-                                Note right) => left.AbsoluteValue - right.AbsoluteValue;
+    #region Public Methods
 
     public static bool TryParse(string value,
-                                out Note note,
-                                int defaultOctave = 4)
+                                out Note note)
     {
-      note = new Note();
-      if( string.IsNullOrEmpty(value) )
+      if (string.IsNullOrEmpty(value))
       {
+        note = C;
         return false;
       }
 
-      if( char.IsDigit(value, 0) )
+      if (!Enum.TryParse(value.Substring(0, 1), true, out NoteName toneName))
       {
-        return TryParseMidi(value, ref note, defaultOctave);
+        note = C;
+        return false;
       }
 
-      return TryParseNotes(value, ref note, defaultOctave);
+      var accidental = Accidental.Natural;
+      if (value.Length > 1 && !AccidentalExtensions.TryParse(value.Substring(1), out accidental))
+      {
+        note = C;
+        return false;
+      }
+
+      note = new Note(toneName, accidental);
+      return true;
     }
 
-    public static Note Parse(string value,
-                             int defaultOctave = 4)
+    public static Note Parse(string value)
     {
-      if( !TryParse(value, out Note result) )
+      Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
+
+      if (!TryParse(value, out Note result))
       {
         throw new FormatException($"{value} is not a valid note");
       }
@@ -449,7 +203,163 @@ namespace Bach.Model
       return result;
     }
 
-    public static Note Min(Note a,
-                           Note b) => a.AbsoluteValue < b.AbsoluteValue ? a : b;
+    public Note Add(int interval,
+                    AccidentalMode mode = AccidentalMode.FavorSharps)
+    {
+      int newInterval = (Interval + interval) % INTERVAL_COUNT;
+      return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
+    }
+
+    public Note Subtract(int interval,
+                         AccidentalMode mode = AccidentalMode.FavorSharps)
+    {
+      interval %= INTERVAL_COUNT;
+      int newInterval = Interval - interval;
+      if (newInterval < 0)
+      {
+        newInterval = INTERVAL_COUNT - interval;
+      }
+
+      return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (ReferenceEquals(null, obj))
+      {
+        return false;
+      }
+
+      return obj.GetType() == GetType() && Equals((Note)obj);
+    }
+
+    public override int GetHashCode() => Interval;
+
+    public override string ToString() => $"{NoteName}{Accidental.ToSymbol()}";
+
+    #endregion
+
+    #region Operators
+
+    public static bool operator ==(Note left,
+                                  Note right) => Equals(left, right);
+
+    public static bool operator !=(Note left,
+                                  Note right) => !Equals(left, right);
+
+    public static bool operator >(Note left,
+                                 Note right) => left.CompareTo(right) > 0;
+
+    public static bool operator <(Note left,
+                                 Note right) => left.CompareTo(right) < 0;
+
+    public static bool operator >=(Note left,
+                                  Note right) => left.CompareTo(right) >= 0;
+
+    public static bool operator <=(Note left,
+                                  Note right) => left.CompareTo(right) <= 0;
+
+    public static Note operator +(Note note,
+                                 int interval)
+    {
+      return note.Add(interval, AccidentalMode);
+    }
+
+    public static Note operator ++(Note note)
+    {
+      return note.Add(1, AccidentalMode);
+    }
+
+    public static Note operator -(Note note,
+                                 int interval)
+    {
+      return note.Subtract(interval, AccidentalMode);
+    }
+
+    public static Note operator --(Note note)
+    {
+      return note.Subtract(1, AccidentalMode);
+    }
+
+    #endregion
+
+    #region Implementation
+
+    private static int CalcInterval(NoteName noteName,
+                                    Accidental accidental)
+    {
+      int interval = (NoteName.C.IntervalBetween(noteName) + (int)accidental) % INTERVAL_COUNT;
+      if (interval < 0)
+      {
+        interval = INTERVAL_COUNT + interval;
+      }
+
+      return interval;
+    }
+
+    internal static Note GetNote(int index,
+                                 bool favorSharps)
+    {
+      Link link = s_links[index];
+
+      if (link.Natural != null)
+      {
+        return link.Natural.Value;
+      }
+
+      Debug.Assert(link.Sharp.HasValue);
+      Debug.Assert(link.Flat.HasValue);
+
+      return favorSharps ? link.Sharp.Value : link.Flat.Value;
+    }
+
+    private static ushort Encode(int value,
+                                 NoteName noteName,
+                                 Accidental accidental)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
+      Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
+      Contract.Requires<ArgumentOutOfRangeException>(
+        accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
+      var encoded = (ushort)((((ushort)noteName & TONE_NAME_MASK) << TONE_NAME_SHIFT)
+                              | (((ushort)(accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT)
+                              | ((ushort)value & INTERVAL_MASK));
+      return encoded;
+    }
+
+    private static int DecodeInterval(ushort encoded)
+    {
+      int result = encoded & INTERVAL_MASK;
+      return result;
+    }
+
+    private static NoteName DecodeToneName(ushort encoded)
+    {
+      int result = (encoded >> TONE_NAME_SHIFT) & TONE_NAME_MASK;
+      return (NoteName)result;
+    }
+
+    private static Accidental DecodeAccidental(ushort encoded)
+    {
+      int result = ((encoded >> ACCIDENTAL_SHIFT) & ACCIDENTAL_MASK) - 2;
+      return (Accidental)result;
+    }
+
+    #endregion
+
+    #region Nested type: Link
+
+    private class Link
+    {
+      #region Properties
+
+      public Note? Natural { get; set; }
+      public Note? Sharp { get; set; }
+      public Note? Flat { get; set; }
+
+      #endregion
+    }
+
+    #endregion
   }
 }

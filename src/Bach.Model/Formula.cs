@@ -121,7 +121,7 @@ namespace Bach.Model
 
     public override int GetHashCode() => s_comparer.GetHashCode(Key);
 
-    public IEnumerable<Note> Generate(Note root,
+    public IEnumerable<Pitch> Generate(Pitch root,
                                       int skipCount = 0)
     {
       // NOTE: By design, this iterator never returns.
@@ -140,15 +140,15 @@ namespace Bach.Model
 
         int octaveAdd = index / intervalCount;
 
-        // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
-        Note note = root.Add(interval.Steps + (octaveAdd * Note.IntervalsPerOctave), accidentalMode);
-        yield return note;
+        // TODO: Must ensure that enharmonic intervals are choosing the appropriate pitch
+        Pitch pitch = root.Add(interval.Steps + (octaveAdd * Pitch.IntervalsPerOctave), accidentalMode);
+        yield return pitch;
 
         ++index;
       }
     }
 
-    public IEnumerable<Tone> Generate(Tone root)
+    public IEnumerable<Note> Generate(Note root)
     {
       int intervalCount = _intervals.Length;
       var index = 0;
@@ -164,9 +164,9 @@ namespace Bach.Model
           accidentalMode = AccidentalMode.FavorFlats;
         }
 
-        // TODO: Must ensure that enharmonic intervals are choosing the appropriate note
-        Tone tone = root.Add(interval.Steps, accidentalMode);
-        yield return tone;
+        // TODO: Must ensure that enharmonic intervals are choosing the appropriate pitch
+        Note note = root.Add(interval.Steps, accidentalMode);
+        yield return note;
 
         ++index;
       }

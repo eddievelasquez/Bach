@@ -31,11 +31,11 @@ namespace Bach.Model.Instruments
   {
     #region Construction/Destruction
 
-    private Fingering(Note note,
+    private Fingering(Pitch pitch,
                       int @string,
                       int fret)
     {
-      Note = note;
+      Pitch = pitch;
       String = @string;
       Fret = fret;
     }
@@ -52,8 +52,8 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentOutOfRangeException>(fret >= 0 && fret <= instrument.FretCount);
       Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
 
-      Note note = instrument.Tuning[@string] + fret;
-      var result = new Fingering(note, @string, fret);
+      Pitch pitch = instrument.Tuning[@string] + fret;
+      var result = new Fingering(pitch, @string, fret);
       return result;
     }
 
@@ -63,8 +63,8 @@ namespace Bach.Model.Instruments
       Contract.Requires<ArgumentNullException>(instrument != null);
       Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
 
-      Note note = Note.Empty;
-      var result = new Fingering(note, @string, -1);
+      Pitch pitch = Pitch.Empty;
+      var result = new Fingering(pitch, @string, -1);
       return result;
     }
 
@@ -72,7 +72,7 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
-    public Note Note { get; }
+    public Pitch Pitch { get; }
     public int String { get; }
     public int Fret { get; }
 

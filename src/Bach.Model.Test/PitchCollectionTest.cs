@@ -1,5 +1,5 @@
 ﻿//
-// Module Name: FingeringTest.cs
+// Module Name: PitchCollectionTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2016  Eddie Velasquez.
 //
@@ -23,49 +23,56 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test.Instruments
+namespace Bach.Model.Test
 {
   using System;
-  using Model.Instruments;
   using Xunit;
 
-  public class FingeringTest
+  public class PitchCollectionTest
   {
     #region Public Methods
 
     [Fact]
-    public void CreateTest()
+    public void ParseTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
-      Assert.Equal(6, actual.String);
-      Assert.Equal(5, actual.Fret);
-      Assert.Equal(Pitch.Parse("A2"), actual.Pitch);
+      var expected = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
+      Assert.Equal(expected, PitchCollection.Parse("C4,C5")); // Using pitches
+      Assert.Equal(expected, PitchCollection.Parse("60,72")); // Using midi
+      Assert.Throws<ArgumentNullException>(() => PitchCollection.Parse(null));
+      Assert.Throws<ArgumentException>(() => PitchCollection.Parse(""));
+      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.Parse("C4,C5", int.MinValue));
+      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.Parse("C4,C5", int.MaxValue));
+      Assert.Throws<FormatException>(() => PitchCollection.Parse("C$4,Z5"));
     }
 
     [Fact]
-    public void CreateThrowsWithOutOfRangeStringNumberTest()
+    public void ToStringTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 0, 5));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 7, 5));
+      var actual = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
+      Assert.Equal("C4,C5", actual.ToString());
     }
 
     [Fact]
-    public void CreateThrowsWithOutOfRangeFretNumberTest()
+    public void TryParseTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 6, -1));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 6, 23));
+      PitchCollection collection;
+      Assert.True(PitchCollection.TryParse("C4,E4", out collection));
+      Assert.Equal(new[] { Pitch.Parse("C4"), Pitch.Parse("E4") }, collection);
+      Assert.False(PitchCollection.TryParse(null, out collection));
+      Assert.Null(collection);
+      Assert.False(PitchCollection.TryParse("", out collection));
+      Assert.Null(collection);
+      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.TryParse("C4", out collection, int.MaxValue));
+      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.TryParse("C4", out collection, int.MinValue));
+      Assert.False(PitchCollection.TryParse("C$4,Z5", out collection));
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      object x = Fingering.Create(instrument, 6, 5);
-      object y = Fingering.Create(instrument, 6, 5);
-      object z = Fingering.Create(instrument, 6, 5);
+      object x = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
+      object y = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
+      object z = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -78,10 +85,9 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering x = Fingering.Create(instrument, 6, 5);
-      Fingering y = Fingering.Create(instrument, 6, 5);
-      Fingering z = Fingering.Create(instrument, 6, 5);
+      var x = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
+      var y = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
+      var z = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -94,59 +100,45 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      object actual = Fingering.Create(instrument, 6, 5);
+      object actual = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
+      var actual = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      object actual = Fingering.Create(instrument, 6, 5);
+      object actual = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
+      var actual = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
+      var actual = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
-      Fingering expected = Fingering.Create(instrument, 6, 5);
+      var actual = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
+      var expected = new PitchCollection(new[] { Pitch.Parse("C4"), Pitch.Parse("C5") });
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
-    }
-
-    [Fact]
-    public void ToStringTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Assert.Equal("65", Fingering.Create(instrument, 6, 5).ToString());
-      Assert.Equal("612", Fingering.Create(instrument, 6, 12).ToString());
     }
 
     #endregion

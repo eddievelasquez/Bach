@@ -1,7 +1,7 @@
-//
-// Module Name: ToneCollection.cs
+﻿//
+// Module Name: PitchCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2013, 2016  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -31,32 +31,32 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class ToneCollection: Collection<Tone>,
-                               IEquatable<IEnumerable<Tone>>
+  public class PitchCollection : Collection<Pitch>,
+                               IEquatable<IEnumerable<Pitch>>
   {
     #region Construction/Destruction
 
-    public ToneCollection()
+    public PitchCollection()
     {
     }
 
-    public ToneCollection(IList<Tone> tones)
-      : base(tones)
+    public PitchCollection(IList<Pitch> notes)
+      : base(notes)
     {
     }
 
     #endregion
 
-    #region IEquatable<IEnumerable<Tone>> Members
+    #region IEquatable<IEnumerable<Pitch>> Members
 
-    public bool Equals(IEnumerable<Tone> other)
+    public bool Equals(IEnumerable<Pitch> other)
     {
-      if( ReferenceEquals(other, this) )
+      if (ReferenceEquals(other, this))
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) )
+      if (ReferenceEquals(other, null))
       {
         return false;
       }
@@ -69,52 +69,60 @@ namespace Bach.Model
     #region Public Methods
 
     public static bool TryParse(string value,
-                                out ToneCollection tones)
+                                out PitchCollection pitches,
+                                int defaultOctave = 4)
     {
-      if( string.IsNullOrEmpty(value) )
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Pitch.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Pitch.MaxOctave);
+
+      if (string.IsNullOrEmpty(value))
       {
-        tones = null;
+        pitches = null;
         return false;
       }
 
-      tones = new ToneCollection();
+      pitches = new PitchCollection();
 
-      foreach( string s in value.Split(',') )
+      foreach (string s in value.Split(','))
       {
-        if( !Tone.TryParse(s, out Tone tone) )
+        if (!Pitch.TryParse(s, out Pitch note, defaultOctave))
         {
-          tones = null;
+          pitches = null;
           return false;
         }
 
-        tones.Add(tone);
+        pitches.Add(note);
       }
 
       return true;
     }
 
-    public static ToneCollection Parse(string value)
+    public static PitchCollection Parse(string value,
+                                       int defaultOctave = 4)
     {
-      Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
+      Contract.Requires<ArgumentNullException>(value != null);
+      Contract.Requires<ArgumentException>(value.Length > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Pitch.MinOctave);
+      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Pitch.MaxOctave);
 
-      if( !TryParse(value, out ToneCollection tones) )
+      if (!TryParse(value, out PitchCollection notes, defaultOctave))
       {
-        throw new FormatException($"{value} contains invalid tones");
+        throw new FormatException($"{value} contains invalid pitches");
       }
 
-      return tones;
+      return notes;
     }
 
-    public static string ToString(IEnumerable<Tone> tones)
+    public static string ToString(IEnumerable<Pitch> notes)
     {
-      Contract.Requires<ArgumentNullException>(tones != null);
+      Contract.Requires<ArgumentNullException>(notes != null);
 
       var buf = new StringBuilder();
       var needsComma = false;
 
-      foreach( Tone note in tones )
+      foreach (Pitch note in notes)
       {
-        if( needsComma )
+        if (needsComma)
         {
           buf.Append(',');
         }
@@ -133,33 +141,31 @@ namespace Bach.Model
 
     public override bool Equals(object other)
     {
-      if( ReferenceEquals(other, this) )
+      if (ReferenceEquals(other, this))
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+      if (ReferenceEquals(other, null) || other.GetType() != GetType())
       {
         return false;
       }
 
-      return Equals((ToneCollection) other);
+      return Equals((PitchCollection)other);
     }
 
     public override int GetHashCode()
     {
       const int MULTIPLIER = 89;
 
-      var hashCode = 0;
-      foreach( Tone tone in Items )
-      {
-        unchecked
-        {
-          hashCode += tone.GetHashCode() * MULTIPLIER;
-        }
-      }
+      Pitch first = this.FirstOrDefault();
+      Pitch last = this.LastOrDefault();
 
-      return hashCode;
+      unchecked
+      {
+        int result = ((first.GetHashCode() + Count) * MULTIPLIER) + last.GetHashCode() + Count;
+        return result;
+      }
     }
 
     #endregion

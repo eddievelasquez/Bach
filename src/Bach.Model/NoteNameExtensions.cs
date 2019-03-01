@@ -1,7 +1,7 @@
 //
-// Module Name: ToneName.cs
+// Module Name: NoteNameExtensions.cs
 // Project:     Bach.Model
-// Copyright (c) 2013, 2016  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,19 +25,63 @@
 
 namespace Bach.Model
 {
-  /// <summary>
-  /// A ToneName represents a basic diatonic pitch
-  /// according to the English naming convention for
-  /// the 12 tone chromatic scale.
-  /// </summary>
-  public enum ToneName
+  public static class NoteNameExtensions
   {
-    C,
-    D,
-    E,
-    F,
-    G,
-    A,
-    B
+    #region Data Members
+
+    private static readonly int[] s_intervals =
+    {
+      2, // C-D
+      2, // D-E
+      1, // E-F
+      2, // F-G
+      2, // G-A
+      2, // A-B
+      1 // B-C
+    };
+
+    #endregion
+
+    #region Public Methods
+
+    public static NoteName Next(this NoteName noteName)
+    {
+      if (noteName == NoteName.B)
+      {
+        return NoteName.C;
+      }
+
+      return noteName + 1;
+    }
+
+    public static NoteName Previous(this NoteName noteName)
+    {
+      if (noteName == NoteName.C)
+      {
+        return NoteName.B;
+      }
+
+      return noteName - 1;
+    }
+
+    public static int IntervalBetween(this NoteName noteName,
+                                      NoteName end)
+    {
+      if (noteName == end)
+      {
+        return 0;
+      }
+
+      var interval = 0;
+      while (noteName != end)
+      {
+        interval += s_intervals[(int)noteName];
+        noteName = (NoteName)(((int)noteName + 1) % s_intervals.Length);
+      }
+
+      return interval;
+    }
+
+    #endregion
   }
 }

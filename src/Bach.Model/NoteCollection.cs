@@ -1,7 +1,7 @@
-﻿//
+//
 // Module Name: NoteCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2013, 2016  Eddie Velasquez.
+// Copyright (c) 2016  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -31,7 +31,7 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class NoteCollection: Collection<Note>,
+  public class NoteCollection : Collection<Note>,
                                IEquatable<IEnumerable<Note>>
   {
     #region Construction/Destruction
@@ -40,8 +40,8 @@ namespace Bach.Model
     {
     }
 
-    public NoteCollection(IList<Note> notes)
-      : base(notes)
+    public NoteCollection(IList<Note> tones)
+      : base(tones)
     {
     }
 
@@ -51,12 +51,12 @@ namespace Bach.Model
 
     public bool Equals(IEnumerable<Note> other)
     {
-      if( ReferenceEquals(other, this) )
+      if (ReferenceEquals(other, this))
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) )
+      if (ReferenceEquals(other, null))
       {
         return false;
       }
@@ -69,13 +69,9 @@ namespace Bach.Model
     #region Public Methods
 
     public static bool TryParse(string value,
-                                out NoteCollection notes,
-                                int defaultOctave = 4)
+                                out NoteCollection notes)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
-
-      if( string.IsNullOrEmpty(value) )
+      if (string.IsNullOrEmpty(value))
       {
         notes = null;
         return false;
@@ -83,46 +79,42 @@ namespace Bach.Model
 
       notes = new NoteCollection();
 
-      foreach( string s in value.Split(',') )
+      foreach (string s in value.Split(','))
       {
-        if( !Note.TryParse(s, out Note note, defaultOctave) )
+        if (!Note.TryParse(s, out Note tone))
         {
           notes = null;
           return false;
         }
 
-        notes.Add(note);
+        notes.Add(tone);
       }
 
       return true;
     }
 
-    public static NoteCollection Parse(string value,
-                                       int defaultOctave = 4)
+    public static NoteCollection Parse(string value)
     {
-      Contract.Requires<ArgumentNullException>(value != null);
-      Contract.Requires<ArgumentException>(value.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Note.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Note.MaxOctave);
+      Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
 
-      if( !TryParse(value, out NoteCollection notes, defaultOctave) )
+      if (!TryParse(value, out NoteCollection tones))
       {
         throw new FormatException($"{value} contains invalid notes");
       }
 
-      return notes;
+      return tones;
     }
 
-    public static string ToString(IEnumerable<Note> notes)
+    public static string ToString(IEnumerable<Note> tones)
     {
-      Contract.Requires<ArgumentNullException>(notes != null);
+      Contract.Requires<ArgumentNullException>(tones != null);
 
       var buf = new StringBuilder();
       var needsComma = false;
 
-      foreach( Note note in notes )
+      foreach (Note note in tones)
       {
-        if( needsComma )
+        if (needsComma)
         {
           buf.Append(',');
         }
@@ -141,31 +133,33 @@ namespace Bach.Model
 
     public override bool Equals(object other)
     {
-      if( ReferenceEquals(other, this) )
+      if (ReferenceEquals(other, this))
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+      if (ReferenceEquals(other, null) || other.GetType() != GetType())
       {
         return false;
       }
 
-      return Equals((NoteCollection) other);
+      return Equals((NoteCollection)other);
     }
 
     public override int GetHashCode()
     {
       const int MULTIPLIER = 89;
 
-      Note first = this.FirstOrDefault();
-      Note last = this.LastOrDefault();
-
-      unchecked
+      var hashCode = 0;
+      foreach (Note tone in Items)
       {
-        int result = ((first.GetHashCode() + Count) * MULTIPLIER) + last.GetHashCode() + Count;
-        return result;
+        unchecked
+        {
+          hashCode += tone.GetHashCode() * MULTIPLIER;
+        }
       }
+
+      return hashCode;
     }
 
     #endregion

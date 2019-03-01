@@ -32,11 +32,11 @@ namespace Bach.Model
   using System.Text;
 
   public class Scale: IEquatable<Scale>,
-                      IEnumerable<Tone>
+                      IEnumerable<Note>
   {
     #region Construction/Destruction
 
-    public Scale(Tone root,
+    public Scale(Note root,
                  ScaleFormula formula)
     {
       Contract.Requires<ArgumentNullException>(formula != null);
@@ -45,7 +45,7 @@ namespace Bach.Model
       Formula = formula;
 
       var buf = new StringBuilder();
-      buf.Append(root.ToneName);
+      buf.Append(root.NoteName);
       buf.Append(root.Accidental.ToSymbol());
 
       if( !StringComparer.CurrentCultureIgnoreCase.Equals(formula.Name, "Major") )
@@ -57,7 +57,7 @@ namespace Bach.Model
       Name = buf.ToString();
     }
 
-    public Scale(Tone root,
+    public Scale(Note root,
                  string formulaName)
       : this(root, Registry.ScaleFormulas[formulaName])
     {
@@ -68,41 +68,41 @@ namespace Bach.Model
 
     #region Properties
 
-    public Tone Root { get; }
+    public Note Root { get; }
     public string Name { get; }
     public ScaleFormula Formula { get; }
 
     public int ToneCount => Formula.IntervalCount;
 
-    public Tone this[int i] => this.Skip(i).Take(1).Single();
+    public Note this[int i] => this.Skip(i).Take(1).Single();
 
     #endregion
 
     #region Public Methods
 
-    public IEnumerable<Note> Render(Note startNote)
+    public IEnumerable<Pitch> Render(Pitch startPitch)
     {
-      int pos = Array.IndexOf(GetNotes(), startNote.Tone);
+      int pos = Array.IndexOf(GetNotes(), startPitch.Note);
       if( pos == -1 )
       {
-        return Enumerable.Empty<Note>();
+        return Enumerable.Empty<Pitch>();
       }
 
-      int octave = startNote.Octave;
-      if( startNote.Tone < Root )
+      int octave = startPitch.Octave;
+      if( startPitch.Note < Root )
       {
         --octave;
       }
 
-      Note root = Note.Create(Root, octave);
+      Pitch root = Pitch.Create(Root, octave);
       return Formula.Generate(root).Skip(pos);
     }
 
-    public Tone[] GetNotes(int start = 0) => this.Skip(start).Take(Formula.IntervalCount).ToArray();
+    public Note[] GetNotes(int start = 0) => this.Skip(start).Take(Formula.IntervalCount).ToArray();
 
-    public int IndexOf(Tone tone) => Array.IndexOf(GetNotes(), tone);
+    public int IndexOf(Note note) => Array.IndexOf(GetNotes(), note);
 
-    public int IndexOf(Note note) => Array.IndexOf(GetNotes(), note.Tone);
+    public int IndexOf(Pitch pitch) => Array.IndexOf(GetNotes(), pitch.Note);
 
     public override bool Equals(object other)
     {
@@ -132,13 +132,13 @@ namespace Bach.Model
       return hashCode;
     }
 
-    public override string ToString() => ToneCollection.ToString(this.Take(ToneCount));
+    public override string ToString() => NoteCollection.ToString(this.Take(ToneCount));
 
     #endregion
 
-    #region IEnumerable<Note> Members
+    #region IEnumerable<Pitch> Members
 
-    public IEnumerator<Tone> GetEnumerator() => Formula.Generate(Root).GetEnumerator();
+    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

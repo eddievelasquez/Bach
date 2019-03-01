@@ -49,18 +49,18 @@ namespace Bach.Model.Test.Instruments
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.Equal(guitar, actual.InstrumentDefinition);
       Assert.Equal(EXPECTED_TUNING_NAME, actual.Name);
-      Assert.NotNull(actual.Notes);
-      Assert.Equal(6, actual.Notes.Length);
+      Assert.NotNull(actual.Pitches);
+      Assert.Equal(6, actual.Pitches.Length);
     }
 
     [Fact]
     public void ConstructorFailsWithNullInstrumentTest()
     {
       Assert.Throws<ArgumentNullException>(
-        () => new Tuning(null, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2,D2")));
+        () => new Tuning(null, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2,D2")));
     }
 
     [Fact]
@@ -70,7 +70,7 @@ namespace Bach.Model.Test.Instruments
         () =>
         {
           StringedInstrumentDefinition guitar = Registry.StringedInstrumentDefinitions[EXPECTED_INSTRUMENT_KEY];
-          new Tuning(guitar, null, EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+          new Tuning(guitar, null, EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
         });
     }
 
@@ -81,7 +81,7 @@ namespace Bach.Model.Test.Instruments
         () =>
         {
           StringedInstrumentDefinition guitar = Registry.StringedInstrumentDefinitions[EXPECTED_INSTRUMENT_KEY];
-          new Tuning(guitar, EXPECTED_TUNING_KEY, null, NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+          new Tuning(guitar, EXPECTED_TUNING_KEY, null, PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
         });
     }
 
@@ -92,7 +92,7 @@ namespace Bach.Model.Test.Instruments
         () =>
         {
           StringedInstrumentDefinition guitar = Registry.StringedInstrumentDefinitions[EXPECTED_INSTRUMENT_KEY];
-          new Tuning(guitar, "", EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+          new Tuning(guitar, "", EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
         });
     }
 
@@ -103,7 +103,7 @@ namespace Bach.Model.Test.Instruments
         () =>
         {
           StringedInstrumentDefinition guitar = Registry.StringedInstrumentDefinitions[EXPECTED_INSTRUMENT_KEY];
-          new Tuning(guitar, EXPECTED_TUNING_KEY, "", NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+          new Tuning(guitar, EXPECTED_TUNING_KEY, "", PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
         });
     }
 
@@ -125,7 +125,7 @@ namespace Bach.Model.Test.Instruments
         () =>
         {
           StringedInstrumentDefinition guitar = Registry.StringedInstrumentDefinitions[EXPECTED_INSTRUMENT_KEY];
-          new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2"));
+          new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2"));
         });
     }
 
@@ -137,17 +137,17 @@ namespace Bach.Model.Test.Instruments
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       object y = new Tuning(
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       object z = new Tuning(
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -161,9 +161,9 @@ namespace Bach.Model.Test.Instruments
     public void TypeSafeEqualsContractTest()
     {
       StringedInstrumentDefinition guitar = Registry.StringedInstrumentDefinitions[EXPECTED_INSTRUMENT_KEY];
-      var x = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      var y = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
-      var z = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var x = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var y = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var z = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -181,7 +181,7 @@ namespace Bach.Model.Test.Instruments
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       object b = guitar;
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
@@ -193,7 +193,7 @@ namespace Bach.Model.Test.Instruments
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
       StringedInstrumentDefinition guitar = Registry.StringedInstrumentDefinitions[EXPECTED_INSTRUMENT_KEY];
-      var a = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+      var a = new Tuning(guitar, EXPECTED_TUNING_KEY, EXPECTED_TUNING_NAME, PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       StringedInstrumentDefinition b = guitar;
       Assert.False(a.Equals(b));
       Assert.False(b.Equals(a));
@@ -209,7 +209,7 @@ namespace Bach.Model.Test.Instruments
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.False(actual.Equals(null));
     }
 
@@ -221,7 +221,7 @@ namespace Bach.Model.Test.Instruments
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.False(actual.Equals(null));
     }
 
@@ -233,7 +233,7 @@ namespace Bach.Model.Test.Instruments
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.True(actual.Equals(actual));
     }
 
@@ -245,12 +245,12 @@ namespace Bach.Model.Test.Instruments
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       var expected = new Tuning(
         guitar,
         EXPECTED_TUNING_KEY,
         EXPECTED_TUNING_NAME,
-        NoteCollection.Parse("E4,B3,G3,D3,A2,D2"));
+        PitchCollection.Parse("E4,B3,G3,D3,A2,D2"));
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

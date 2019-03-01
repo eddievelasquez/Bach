@@ -31,12 +31,12 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class Mode: IEquatable<Mode>,
-                     IEnumerable<Tone>
+  public class Mode : IEquatable<Mode>,
+                     IEnumerable<Note>
   {
     #region Data Members
 
-    private readonly ToneCollection _tones;
+    private readonly NoteCollection _notes;
 
     #endregion
 
@@ -58,7 +58,7 @@ namespace Bach.Model
 
       Name = buf.ToString();
 
-      _tones = new ToneCollection(scale.Skip(Formula.Tonic - 1).Take(scale.ToneCount).ToArray());
+      _notes = new NoteCollection(scale.Skip(Formula.Tonic - 1).Take(scale.ToneCount).ToArray());
     }
 
     #endregion
@@ -71,11 +71,11 @@ namespace Bach.Model
 
     #endregion
 
-    #region IEnumerable<Note> Members
+    #region IEnumerable<Pitch> Members
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IEnumerator<Tone> GetEnumerator() => _tones.GetEnumerator();
+    public IEnumerator<Note> GetEnumerator() => _notes.GetEnumerator();
 
     #endregion
 
@@ -83,12 +83,12 @@ namespace Bach.Model
 
     public bool Equals(Mode other)
     {
-      if( ReferenceEquals(other, this) )
+      if (ReferenceEquals(other, this))
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) )
+      if (ReferenceEquals(other, null))
       {
         return false;
       }
@@ -102,17 +102,17 @@ namespace Bach.Model
 
     public override bool Equals(object other)
     {
-      if( ReferenceEquals(other, this) )
+      if (ReferenceEquals(other, this))
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+      if (ReferenceEquals(other, null) || other.GetType() != GetType())
       {
         return false;
       }
 
-      return Equals((Mode) other);
+      return Equals((Mode)other);
     }
 
     public override int GetHashCode()
@@ -121,7 +121,7 @@ namespace Bach.Model
       return hashCode;
     }
 
-    public override string ToString() => _tones.ToString();
+    public override string ToString() => _notes.ToString();
 
     #endregion
   }

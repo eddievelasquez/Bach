@@ -41,18 +41,18 @@ namespace Bach.Model.Instruments
     internal Tuning(StringedInstrumentDefinition instrumentDefinition,
                     string key,
                     string name,
-                    NoteCollection notes)
+                    PitchCollection pitches)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null, "Must provide an instrument definition");
       Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
-      Contract.Requires<ArgumentNullException>(notes != null, "Must provide a note collection");
-      Contract.Requires<ArgumentOutOfRangeException>(notes.Count == instrumentDefinition.StringCount,"The number of note must match the instrument's string count");
+      Contract.Requires<ArgumentNullException>(pitches != null, "Must provide a pitch collection");
+      Contract.Requires<ArgumentOutOfRangeException>(pitches.Count == instrumentDefinition.StringCount,"The number of pitch must match the instrument's string count");
 
       InstrumentDefinition = instrumentDefinition;
       Key = key;
       Name = name;
-      Notes = notes.ToArray();
+      Pitches = pitches.ToArray();
     }
 
     #endregion
@@ -62,15 +62,15 @@ namespace Bach.Model.Instruments
     public StringedInstrumentDefinition InstrumentDefinition { get; }
     public string Key { get; }
     public string Name { get; }
-    public Note[] Notes { get; }
+    public Pitch[] Pitches { get; }
 
-    public Note this[int stringNumber]
+    public Pitch this[int stringNumber]
     {
       get
       {
         Contract.Requires<ArgumentOutOfRangeException>(stringNumber >= 1);
         Contract.Requires<ArgumentOutOfRangeException>(stringNumber <= InstrumentDefinition.StringCount);
-        return Notes[stringNumber - 1];
+        return Pitches[stringNumber - 1];
       }
     }
 
@@ -119,7 +119,7 @@ namespace Bach.Model.Instruments
       }
 
       return InstrumentDefinition.Equals(other.InstrumentDefinition) && s_nameComparer.Equals(Key, other.Key)
-             && s_nameComparer.Equals(Name, other.Name) && Notes.SequenceEqual(other.Notes);
+             && s_nameComparer.Equals(Name, other.Name) && Pitches.SequenceEqual(other.Pitches);
     }
 
     #endregion
