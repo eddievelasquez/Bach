@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -29,23 +29,13 @@ namespace Bach.Model.Instruments
 
   public abstract class Instrument: IEquatable<Instrument>
   {
-    #region Construction/Destruction
-
     protected Instrument(InstrumentDefinition definition)
     {
       Contract.Requires<ArgumentNullException>(definition != null);
       Definition = definition;
     }
 
-    #endregion
-
-    #region Properties
-
     public InstrumentDefinition Definition { get; }
-
-    #endregion
-
-    #region IEquatable<Instrument> Members
 
     public bool Equals(Instrument other)
     {
@@ -62,12 +52,6 @@ namespace Bach.Model.Instruments
       return Definition.Equals(other.Definition);
     }
 
-    #endregion
-
-    #region Public Methods
-
     public override int GetHashCode() => Definition.GetHashCode();
-
-    #endregion
   }
 }

@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -34,13 +34,7 @@ namespace Bach.Model
 
   public static class Registry
   {
-    #region Constants
-
-    private const string LIBRARY_FILE_NAME = "Bach.Model.Library.json";
-
-    #endregion
-
-    #region Construction/Destruction
+    private const string LibraryFileName = "Bach.Model.Library.json";
 
     static Registry()
     {
@@ -48,7 +42,7 @@ namespace Bach.Model
       // this assembly.
       Assembly assembly = Assembly.GetExecutingAssembly();
       string directory = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath);
-      string path = Path.Combine(directory ?? "", LIBRARY_FILE_NAME);
+      string path = Path.Combine(directory ?? "", LibraryFileName);
       string s = File.ReadAllText(path);
 
       // Deserialize
@@ -81,14 +75,8 @@ namespace Bach.Model
       }
     }
 
-    #endregion
-
-    #region Properties
-
     public static KeyedObjectCollection<ScaleFormula> ScaleFormulas { get; }
     public static KeyedObjectCollection<ChordFormula> ChordFormulas { get; }
     public static KeyedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
-
-    #endregion
   }
 }

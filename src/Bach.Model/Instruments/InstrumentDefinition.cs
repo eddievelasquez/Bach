@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -28,20 +28,15 @@ namespace Bach.Model.Instruments
   using System;
   using Internal;
 
-  public abstract class InstrumentDefinition: IKeyedObject,
-                                              IEquatable<InstrumentDefinition>
+  public abstract class InstrumentDefinition
+    : IKeyedObject,
+      IEquatable<InstrumentDefinition>
   {
-    #region Construction/Destruction
-
     internal InstrumentDefinition(InstrumentDefinitionState state)
     {
       Contract.Requires<ArgumentNullException>(state != null);
       State = state;
     }
-
-    #endregion
-
-    #region Properties
 
     private static StringComparer Comparer { get; } = StringComparer.CurrentCultureIgnoreCase;
 
@@ -51,15 +46,7 @@ namespace Bach.Model.Instruments
 
     public string InstrumentName => State.InstrumentName;
 
-    #endregion
-
-    #region Public Methods
-
     public override int GetHashCode() => InstrumentId.GetHashCode();
-
-    #endregion
-
-    #region IEquatable<InstrumentDefinition> Members
 
     public bool Equals(InstrumentDefinition other)
     {
@@ -78,12 +65,6 @@ namespace Bach.Model.Instruments
       return Comparer.Equals(InstrumentName, other.InstrumentName);
     }
 
-    #endregion
-
-    #region IKeyedObject Members
-
     public string Key => State.InstrumentKey;
-
-    #endregion
   }
 }

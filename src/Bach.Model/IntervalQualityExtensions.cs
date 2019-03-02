@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -29,15 +29,9 @@ namespace Bach.Model
 
   public static class IntervalQualityExtensions
   {
-    #region Data Members
-
     private static readonly string[] s_symbols = { "d", "m", "P", "M", "A" };
     private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
     private static readonly string[] s_long = { "diminished", "minor", "perfect", "major", "augmented" };
-
-    #endregion
-
-    #region Public Methods
 
     public static IntervalQuality Parse(string value)
     {
@@ -93,7 +87,5 @@ namespace Bach.Model
 
       return s_long[(int) quality];
     }
-
-    #endregion
   }
 }

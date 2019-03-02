@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,11 +31,10 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class Scale: IEquatable<Scale>,
-                      IEnumerable<Note>
+  public class Scale
+    : IEquatable<Scale>,
+      IEnumerable<Note>
   {
-    #region Construction/Destruction
-
     public Scale(Note root,
                  ScaleFormula formula)
     {
@@ -64,10 +63,6 @@ namespace Bach.Model
       Contract.RequiresNotNullOrEmpty(formulaName, "Must provide a formula name");
     }
 
-    #endregion
-
-    #region Properties
-
     public Note Root { get; }
     public string Name { get; }
     public ScaleFormula Formula { get; }
@@ -75,10 +70,6 @@ namespace Bach.Model
     public int ToneCount => Formula.IntervalCount;
 
     public Note this[int i] => this.Skip(i).Take(1).Single();
-
-    #endregion
-
-    #region Public Methods
 
     public IEnumerable<Pitch> Render(Pitch startPitch)
     {
@@ -125,8 +116,8 @@ namespace Bach.Model
 
       unchecked
       {
-        hashCode = (hashCode * 23) + Root.GetHashCode();
-        hashCode = (hashCode * 23) + Formula.GetHashCode();
+        hashCode = ( hashCode * 23 ) + Root.GetHashCode();
+        hashCode = ( hashCode * 23 ) + Formula.GetHashCode();
       }
 
       return hashCode;
@@ -134,17 +125,9 @@ namespace Bach.Model
 
     public override string ToString() => NoteCollection.ToString(this.Take(ToneCount));
 
-    #endregion
-
-    #region IEnumerable<Pitch> Members
-
     public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    #endregion
-
-    #region IEquatable<Scale> Members
 
     public bool Equals(Scale other)
     {
@@ -160,7 +143,5 @@ namespace Bach.Model
 
       return Root.Equals(other.Root) && Formula.Equals(other.Formula);
     }
-
-    #endregion
   }
 }

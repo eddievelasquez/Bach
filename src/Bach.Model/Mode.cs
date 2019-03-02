@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,16 +31,11 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class Mode : IEquatable<Mode>,
-                     IEnumerable<Note>
+  public class Mode
+    : IEquatable<Mode>,
+      IEnumerable<Note>
   {
-    #region Data Members
-
     private readonly NoteCollection _notes;
-
-    #endregion
-
-    #region Construction/Destruction
 
     public Mode(Scale scale,
                 ModeFormula formula)
@@ -61,34 +56,22 @@ namespace Bach.Model
       _notes = new NoteCollection(scale.Skip(Formula.Tonic - 1).Take(scale.ToneCount).ToArray());
     }
 
-    #endregion
-
-    #region Properties
-
     public Scale Scale { get; }
     public string Name { get; }
     public ModeFormula Formula { get; }
-
-    #endregion
-
-    #region IEnumerable<Pitch> Members
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public IEnumerator<Note> GetEnumerator() => _notes.GetEnumerator();
 
-    #endregion
-
-    #region IEquatable<Mode> Members
-
     public bool Equals(Mode other)
     {
-      if (ReferenceEquals(other, this))
+      if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      if (ReferenceEquals(other, null))
+      if( ReferenceEquals(other, null) )
       {
         return false;
       }
@@ -96,23 +79,19 @@ namespace Bach.Model
       return Scale.Equals(other.Scale) && Formula.Equals(other.Formula);
     }
 
-    #endregion
-
-    #region Public Methods
-
     public override bool Equals(object other)
     {
-      if (ReferenceEquals(other, this))
+      if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      if (ReferenceEquals(other, null) || other.GetType() != GetType())
+      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
       {
         return false;
       }
 
-      return Equals((Mode)other);
+      return Equals((Mode) other);
     }
 
     public override int GetHashCode()
@@ -122,7 +101,5 @@ namespace Bach.Model
     }
 
     public override string ToString() => _notes.ToString();
-
-    #endregion
   }
 }

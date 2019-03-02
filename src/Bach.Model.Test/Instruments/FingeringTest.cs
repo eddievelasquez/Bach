@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,8 +31,6 @@ namespace Bach.Model.Test.Instruments
 
   public class FingeringTest
   {
-    #region Public Methods
-
     [Fact]
     public void CreateTest()
     {
@@ -148,7 +146,5 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal("65", Fingering.Create(instrument, 6, 5).ToString());
       Assert.Equal("612", Fingering.Create(instrument, 6, 12).ToString());
     }
-
-    #endregion
   }
 }

@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -27,8 +27,6 @@ namespace Bach.Model
 {
   public static class NoteNameExtensions
   {
-    #region Data Members
-
     private static readonly int[] s_intervals =
     {
       2, // C-D
@@ -40,13 +38,9 @@ namespace Bach.Model
       1 // B-C
     };
 
-    #endregion
-
-    #region Public Methods
-
     public static NoteName Next(this NoteName noteName)
     {
-      if (noteName == NoteName.B)
+      if( noteName == NoteName.B )
       {
         return NoteName.C;
       }
@@ -56,7 +50,7 @@ namespace Bach.Model
 
     public static NoteName Previous(this NoteName noteName)
     {
-      if (noteName == NoteName.C)
+      if( noteName == NoteName.C )
       {
         return NoteName.B;
       }
@@ -67,21 +61,19 @@ namespace Bach.Model
     public static int IntervalBetween(this NoteName noteName,
                                       NoteName end)
     {
-      if (noteName == end)
+      if( noteName == end )
       {
         return 0;
       }
 
       var interval = 0;
-      while (noteName != end)
+      while( noteName != end )
       {
-        interval += s_intervals[(int)noteName];
-        noteName = (NoteName)(((int)noteName + 1) % s_intervals.Length);
+        interval += s_intervals[(int) noteName];
+        noteName = (NoteName) ( ( (int) noteName + 1 ) % s_intervals.Length );
       }
 
       return interval;
     }
-
-    #endregion
   }
 }

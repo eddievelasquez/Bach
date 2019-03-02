@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -32,17 +32,11 @@ namespace Bach.Model.Test.Instruments
 
   public class StringedInstrumentDefinitionBuilderTest
   {
-    #region Constants
-
     private const string EXPECTED_INSTRUMENT_KEY = "InstrumentKey";
     private const string EXPECTED_INSTRUMENT_NAME = "InstrumentName";
     private const int EXPECTED_INSTRUMENT_STRING_COUNT = 3;
     private const string EXPECTED_TUNING_KEY = "Standard";
     private const string EXPECTED_TUNING_NAME = "Standard";
-
-    #endregion
-
-    #region Public Methods
 
     [Fact]
     public void BuildTest()
@@ -272,7 +266,5 @@ namespace Bach.Model.Test.Instruments
       builder.Build();
       Assert.Throws<InvalidOperationException>(() => builder.Build());
     }
-
-    #endregion
   }
 }

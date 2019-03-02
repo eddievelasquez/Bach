@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -29,38 +29,32 @@ namespace Bach.Model
 
   public static class AccidentalExtensions
   {
-    #region Data Members
-
     private static readonly string[] s_symbols = { "bb", "b", "", "#", "##" };
-    private static readonly int s_doubleFlatOffset = Math.Abs((int)Accidental.DoubleFlat);
-
-    #endregion
-
-    #region Public Methods
+    private static readonly int s_doubleFlatOffset = Math.Abs((int) Accidental.DoubleFlat);
 
     public static string ToSymbol(this Accidental accidental)
     {
       Contract.Requires(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-      return s_symbols[(int)accidental + s_doubleFlatOffset];
+      return s_symbols[(int) accidental + s_doubleFlatOffset];
     }
 
     public static bool TryParse(string value,
                                 out Accidental accidental)
     {
       accidental = Accidental.Natural;
-      if (string.IsNullOrEmpty(value))
+      if( string.IsNullOrEmpty(value) )
       {
         return true;
       }
 
-      if (value.Length > 2)
+      if( value.Length > 2 )
       {
         return false;
       }
 
-      foreach (char c in value)
+      foreach( char c in value )
       {
-        switch (c)
+        switch( c )
         {
           case 'b':
           case 'B':
@@ -82,14 +76,12 @@ namespace Bach.Model
 
     public static Accidental Parse(string value)
     {
-      if (!TryParse(value, out Accidental accidental))
+      if( !TryParse(value, out Accidental accidental) )
       {
         throw new FormatException($"{value} is not a valid accidental");
       }
 
       return accidental;
     }
-
-    #endregion
   }
 }

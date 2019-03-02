@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -29,14 +29,8 @@ namespace Bach.Model
 
   public class ModeFormula: IEquatable<ModeFormula>
   {
-    #region Constants
-
     public const int MinTonic = 1;
     public const int MaxTonic = 7;
-
-    #endregion
-
-    #region Data Members
 
     public static readonly ModeFormula Ionian = new ModeFormula("Ionian", 1);
     public static readonly ModeFormula Dorian = new ModeFormula("Dorian", 2);
@@ -45,10 +39,6 @@ namespace Bach.Model
     public static readonly ModeFormula Mixolydian = new ModeFormula("Mixolydian", 5);
     public static readonly ModeFormula Aeolian = new ModeFormula("Aeolian", 6);
     public static readonly ModeFormula Locrian = new ModeFormula("Locrian", 7);
-
-    #endregion
-
-    #region Construction/Destruction
 
     public ModeFormula(string name,
                        int tonic)
@@ -62,16 +52,8 @@ namespace Bach.Model
       Tonic = tonic;
     }
 
-    #endregion
-
-    #region Properties
-
     public string Name { get; }
     public int Tonic { get; }
-
-    #endregion
-
-    #region IEquatable<ModeFormula> Members
 
     public bool Equals(ModeFormula other)
     {
@@ -87,10 +69,6 @@ namespace Bach.Model
 
       return Tonic == other.Tonic;
     }
-
-    #endregion
-
-    #region Public Methods
 
     public override bool Equals(object other)
     {
@@ -110,7 +88,5 @@ namespace Bach.Model
     public override int GetHashCode() => Tonic;
 
     public override string ToString() => Name;
-
-    #endregion
   }
 }

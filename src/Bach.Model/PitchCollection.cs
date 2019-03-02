@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,11 +31,10 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class PitchCollection : Collection<Pitch>,
-                               IEquatable<IEnumerable<Pitch>>
+  public class PitchCollection
+    : Collection<Pitch>,
+      IEquatable<IEnumerable<Pitch>>
   {
-    #region Construction/Destruction
-
     public PitchCollection()
     {
     }
@@ -45,28 +44,15 @@ namespace Bach.Model
     {
     }
 
-    #endregion
-
-    #region IEquatable<IEnumerable<Pitch>> Members
-
     public bool Equals(IEnumerable<Pitch> other)
     {
-      if (ReferenceEquals(other, this))
+      if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      if (ReferenceEquals(other, null))
-      {
-        return false;
-      }
-
-      return this.SequenceEqual(other);
+      return !ReferenceEquals(other, null) && this.SequenceEqual(other);
     }
-
-    #endregion
-
-    #region Public Methods
 
     public static bool TryParse(string value,
                                 out PitchCollection pitches,
@@ -75,7 +61,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Pitch.MinOctave);
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Pitch.MaxOctave);
 
-      if (string.IsNullOrEmpty(value))
+      if( string.IsNullOrEmpty(value) )
       {
         pitches = null;
         return false;
@@ -83,9 +69,9 @@ namespace Bach.Model
 
       pitches = new PitchCollection();
 
-      foreach (string s in value.Split(','))
+      foreach( string s in value.Split(',') )
       {
-        if (!Pitch.TryParse(s, out Pitch note, defaultOctave))
+        if( !Pitch.TryParse(s, out Pitch note, defaultOctave) )
         {
           pitches = null;
           return false;
@@ -98,14 +84,14 @@ namespace Bach.Model
     }
 
     public static PitchCollection Parse(string value,
-                                       int defaultOctave = 4)
+                                        int defaultOctave = 4)
     {
       Contract.Requires<ArgumentNullException>(value != null);
       Contract.Requires<ArgumentException>(value.Length > 0);
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Pitch.MinOctave);
       Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Pitch.MaxOctave);
 
-      if (!TryParse(value, out PitchCollection notes, defaultOctave))
+      if( !TryParse(value, out PitchCollection notes, defaultOctave) )
       {
         throw new FormatException($"{value} contains invalid pitches");
       }
@@ -120,9 +106,9 @@ namespace Bach.Model
       var buf = new StringBuilder();
       var needsComma = false;
 
-      foreach (Pitch note in notes)
+      foreach( Pitch note in notes )
       {
-        if (needsComma)
+        if( needsComma )
         {
           buf.Append(',');
         }
@@ -141,33 +127,31 @@ namespace Bach.Model
 
     public override bool Equals(object other)
     {
-      if (ReferenceEquals(other, this))
+      if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      if (ReferenceEquals(other, null) || other.GetType() != GetType())
+      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
       {
         return false;
       }
 
-      return Equals((PitchCollection)other);
+      return Equals((PitchCollection) other);
     }
 
     public override int GetHashCode()
     {
-      const int MULTIPLIER = 89;
+      const int Multiplier = 89;
 
       Pitch first = this.FirstOrDefault();
       Pitch last = this.LastOrDefault();
 
       unchecked
       {
-        int result = ((first.GetHashCode() + Count) * MULTIPLIER) + last.GetHashCode() + Count;
+        int result = ( ( first.GetHashCode() + Count ) * Multiplier ) + last.GetHashCode() + Count;
         return result;
       }
     }
-
-    #endregion
   }
 }

@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,11 +31,10 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class NoteCollection : Collection<Note>,
-                               IEquatable<IEnumerable<Note>>
+  public class NoteCollection
+    : Collection<Note>,
+      IEquatable<IEnumerable<Note>>
   {
-    #region Construction/Destruction
-
     public NoteCollection()
     {
     }
@@ -45,33 +44,20 @@ namespace Bach.Model
     {
     }
 
-    #endregion
-
-    #region IEquatable<IEnumerable<Note>> Members
-
     public bool Equals(IEnumerable<Note> other)
     {
-      if (ReferenceEquals(other, this))
+      if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      if (ReferenceEquals(other, null))
-      {
-        return false;
-      }
-
-      return this.SequenceEqual(other);
+      return !ReferenceEquals(other, null) && this.SequenceEqual(other);
     }
-
-    #endregion
-
-    #region Public Methods
 
     public static bool TryParse(string value,
                                 out NoteCollection notes)
     {
-      if (string.IsNullOrEmpty(value))
+      if( string.IsNullOrEmpty(value) )
       {
         notes = null;
         return false;
@@ -79,9 +65,9 @@ namespace Bach.Model
 
       notes = new NoteCollection();
 
-      foreach (string s in value.Split(','))
+      foreach( string s in value.Split(',') )
       {
-        if (!Note.TryParse(s, out Note tone))
+        if( !Note.TryParse(s, out Note tone) )
         {
           notes = null;
           return false;
@@ -97,7 +83,7 @@ namespace Bach.Model
     {
       Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
 
-      if (!TryParse(value, out NoteCollection tones))
+      if( !TryParse(value, out NoteCollection tones) )
       {
         throw new FormatException($"{value} contains invalid notes");
       }
@@ -112,9 +98,9 @@ namespace Bach.Model
       var buf = new StringBuilder();
       var needsComma = false;
 
-      foreach (Note note in tones)
+      foreach( Note note in tones )
       {
-        if (needsComma)
+        if( needsComma )
         {
           buf.Append(',');
         }
@@ -133,35 +119,33 @@ namespace Bach.Model
 
     public override bool Equals(object other)
     {
-      if (ReferenceEquals(other, this))
+      if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      if (ReferenceEquals(other, null) || other.GetType() != GetType())
+      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
       {
         return false;
       }
 
-      return Equals((NoteCollection)other);
+      return Equals((NoteCollection) other);
     }
 
     public override int GetHashCode()
     {
-      const int MULTIPLIER = 89;
+      const int Multiplier = 89;
 
       var hashCode = 0;
-      foreach (Note tone in Items)
+      foreach( Note tone in Items )
       {
         unchecked
         {
-          hashCode += tone.GetHashCode() * MULTIPLIER;
+          hashCode += tone.GetHashCode() * Multiplier;
         }
       }
 
       return hashCode;
     }
-
-    #endregion
   }
 }

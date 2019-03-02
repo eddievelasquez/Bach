@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -30,8 +30,6 @@ namespace Bach.Model.Test
 
   public class NoteTest
   {
-    #region Public Methods
-
     [Fact]
     public void ConstructorTest()
     {
@@ -295,10 +293,6 @@ namespace Bach.Model.Test
       Assert.Equal("C##", new Note(NoteName.C, Accidental.DoubleSharp).ToString());
     }
 
-    #endregion
-
-    #region Implementation
-
     private static void ConstructorTestImpl(NoteName noteName,
                                             Accidental accidental,
                                             int interval)
@@ -356,7 +350,5 @@ namespace Bach.Model.Test
       Assert.Equal(expectedSharp, note.Subtract(interval, AccidentalMode.FavorSharps));
       Assert.Equal(expectedFlat ?? expectedSharp, note.Subtract(interval, AccidentalMode.FavorFlats));
     }
-
-    #endregion
   }
 }

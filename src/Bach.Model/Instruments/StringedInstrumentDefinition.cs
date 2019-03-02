@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -32,59 +32,45 @@ namespace Bach.Model.Instruments
     : InstrumentDefinition,
       IEquatable<StringedInstrumentDefinition>
   {
-    #region Construction/Destruction
-
-    internal StringedInstrumentDefinition( StringedInstrumentDefinitionState state )
-      : base( state )
+    internal StringedInstrumentDefinition(StringedInstrumentDefinitionState state)
+      : base(state)
     {
     }
-
-    #endregion
-
-    #region Properties
 
     public int StringCount => State.StringCount;
 
     public TuningCollection Tunings => State.Tunings;
 
-    private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState)base.State;
+    private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState) base.State;
 
-    #endregion
-
-    #region IEquatable<StringedInstrumentDefinition> Members
-
-    public bool Equals( StringedInstrumentDefinition other )
+    public bool Equals(StringedInstrumentDefinition other)
     {
-      if( ReferenceEquals( null, other ) )
+      if( ReferenceEquals(null, other) )
       {
         return false;
       }
 
-      if( ReferenceEquals( this, other ) )
+      if( ReferenceEquals(this, other) )
       {
         return true;
       }
 
-      return StringCount == other.StringCount && base.Equals( other );
+      return StringCount == other.StringCount && base.Equals(other);
     }
 
-    #endregion
-
-    #region Public Methods
-
-    public override bool Equals( object obj )
+    public override bool Equals(object obj)
     {
-      if( ReferenceEquals( null, obj ) )
+      if( ReferenceEquals(null, obj) )
       {
         return false;
       }
 
-      if( ReferenceEquals( this, obj ) )
+      if( ReferenceEquals(this, obj) )
       {
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals( (StringedInstrumentDefinition)obj );
+      return obj.GetType() == GetType() && Equals((StringedInstrumentDefinition) obj);
     }
 
     public override int GetHashCode()
@@ -94,7 +80,5 @@ namespace Bach.Model.Instruments
       hash = ( hash * 23 ) + StringCount;
       return hash;
     }
-
-    #endregion
   }
 }

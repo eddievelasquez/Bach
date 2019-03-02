@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,18 +31,11 @@ namespace Bach.Model.Instruments
 
   public class StringedInstrumentDefinitionBuilder
   {
-    #region Data Members
-
     private readonly StringedInstrumentDefinitionState _state;
 
-    private readonly Dictionary<string, TuningInfo> _tuningInfo =
-      new Dictionary<string, TuningInfo>(StringComparer.CurrentCultureIgnoreCase);
+    private readonly Dictionary<string, TuningInfo> _tuningInfo = new Dictionary<string, TuningInfo>(StringComparer.CurrentCultureIgnoreCase);
 
     private bool _built;
-
-    #endregion
-
-    #region Construction/Destruction
 
     public StringedInstrumentDefinitionBuilder(string key,
                                                string name,
@@ -50,10 +43,6 @@ namespace Bach.Model.Instruments
     {
       _state = new StringedInstrumentDefinitionState(Guid.NewGuid(), key, name, stringCount);
     }
-
-    #endregion
-
-    #region Public Methods
 
     public StringedInstrumentDefinitionBuilder AddTuning(string key,
                                                          string name,
@@ -65,7 +54,7 @@ namespace Bach.Model.Instruments
       Contract.RequiresNotNullOrEmpty(notes, "Must provide tuning pitches");
 
       PitchCollection collection = PitchCollection.Parse(notes, defaultOctave);
-      if (collection.Count != _state.StringCount)
+      if( collection.Count != _state.StringCount )
       {
         throw new ArgumentException("Must provide exactly {_state.StringCount} pitches");
       }
@@ -84,7 +73,7 @@ namespace Bach.Model.Instruments
       Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
 
-      if (pitches.Length != _state.StringCount)
+      if( pitches.Length != _state.StringCount )
       {
         throw new ArgumentException("Must provide exactly {_state.StringCount} pitches");
       }
@@ -104,7 +93,7 @@ namespace Bach.Model.Instruments
       Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(pitches != null, "Must provide a pitch collection");
 
-      if (pitches.Count != _state.StringCount)
+      if( pitches.Count != _state.StringCount )
       {
         throw new ArgumentException("Must provide exactly {_state.StringCount} pitches");
       }
@@ -120,18 +109,18 @@ namespace Bach.Model.Instruments
     {
       CheckBuilderReuse();
 
-      if (_tuningInfo.Count == 0)
+      if( _tuningInfo.Count == 0 )
       {
         throw new InvalidOperationException("A StringedInstrumentDefinition must have at least one Tuning");
       }
 
-      if (!_tuningInfo.ContainsKey("standard"))
+      if( !_tuningInfo.ContainsKey("standard") )
       {
         throw new InvalidOperationException("Must provide a standard tuning");
       }
 
       var definition = new StringedInstrumentDefinition(_state);
-      foreach (KeyValuePair<string, TuningInfo> info in _tuningInfo)
+      foreach( KeyValuePair<string, TuningInfo> info in _tuningInfo )
       {
         _state.Tunings.Add(new Tuning(definition, info.Key, info.Value.Name, info.Value.Pitches));
       }
@@ -140,32 +129,18 @@ namespace Bach.Model.Instruments
       return definition;
     }
 
-    #endregion
-
-    #region Implementation
-
     private void CheckBuilderReuse()
     {
-      if (_built)
+      if( _built )
       {
         throw new InvalidOperationException("Cannot reuse a builder");
       }
     }
 
-    #endregion
-
-    #region Nested type: TuningInfo
-
     private struct TuningInfo
     {
-      #region Properties
-
       public string Name { get; set; }
       public PitchCollection Pitches { get; set; }
-
-      #endregion
     }
-
-    #endregion
   }
 }

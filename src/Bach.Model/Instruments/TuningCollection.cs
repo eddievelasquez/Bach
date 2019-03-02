@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -32,25 +32,14 @@ namespace Bach.Model.Instruments
 
   public class TuningCollection: IReadOnlyDictionary<string, Tuning>
   {
-    #region Data Members
-
     private readonly Guid _instrumentId;
 
-    private readonly Dictionary<string, Tuning> _tunings =
-      new Dictionary<string, Tuning>(StringComparer.CurrentCultureIgnoreCase);
-
-    #endregion
-
-    #region Construction/Destruction
+    private readonly Dictionary<string, Tuning> _tunings = new Dictionary<string, Tuning>(StringComparer.CurrentCultureIgnoreCase);
 
     internal TuningCollection(Guid instrumentId)
     {
       _instrumentId = instrumentId;
     }
-
-    #endregion
-
-    #region Properties
 
     public Tuning Standard
     {
@@ -61,10 +50,6 @@ namespace Bach.Model.Instruments
       }
     }
 
-    #endregion
-
-    #region IReadOnlyDictionary<string,Tuning> Members
-
     public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator() => _tunings.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -74,15 +59,14 @@ namespace Bach.Model.Instruments
     public bool ContainsKey(string key) => _tunings.ContainsKey(key);
 
     public bool TryGetValue(string key,
-                            out Tuning value) => _tunings.TryGetValue(key, out value);
+                            out Tuning value) =>
+      _tunings.TryGetValue(key, out value);
 
     public Tuning this[string key] => _tunings[key];
 
     public IEnumerable<string> Keys => _tunings.Keys;
 
     public IEnumerable<Tuning> Values => _tunings.Values;
-
-    #endregion
 
     internal void Add(Tuning tuning)
     {

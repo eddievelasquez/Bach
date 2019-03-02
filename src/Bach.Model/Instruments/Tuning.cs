@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -30,13 +30,7 @@ namespace Bach.Model.Instruments
 
   public class Tuning: IEquatable<Tuning>
   {
-    #region Data Members
-
     private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
-
-    #endregion
-
-    #region Construction/Destruction
 
     internal Tuning(StringedInstrumentDefinition instrumentDefinition,
                     string key,
@@ -47,17 +41,15 @@ namespace Bach.Model.Instruments
       Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(pitches != null, "Must provide a pitch collection");
-      Contract.Requires<ArgumentOutOfRangeException>(pitches.Count == instrumentDefinition.StringCount,"The number of pitch must match the instrument's string count");
+      Contract.Requires<ArgumentOutOfRangeException>(
+        pitches.Count == instrumentDefinition.StringCount,
+        "The number of pitch must match the instrument's string count");
 
       InstrumentDefinition = instrumentDefinition;
       Key = key;
       Name = name;
       Pitches = pitches.ToArray();
     }
-
-    #endregion
-
-    #region Properties
 
     public StringedInstrumentDefinition InstrumentDefinition { get; }
     public string Key { get; }
@@ -73,10 +65,6 @@ namespace Bach.Model.Instruments
         return Pitches[stringNumber - 1];
       }
     }
-
-    #endregion
-
-    #region Public Methods
 
     public override bool Equals(object obj)
     {
@@ -96,15 +84,11 @@ namespace Bach.Model.Instruments
     public override int GetHashCode()
     {
       var hash = 17;
-      hash = (hash * 23) + InstrumentDefinition.GetHashCode();
-      hash = (hash * 23) + s_nameComparer.GetHashCode(Key);
-      hash = (hash * 23) + s_nameComparer.GetHashCode(Name);
+      hash = ( hash * 23 ) + InstrumentDefinition.GetHashCode();
+      hash = ( hash * 23 ) + s_nameComparer.GetHashCode(Key);
+      hash = ( hash * 23 ) + s_nameComparer.GetHashCode(Name);
       return hash;
     }
-
-    #endregion
-
-    #region IEquatable<Tuning> Members
 
     public bool Equals(Tuning other)
     {
@@ -118,10 +102,8 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      return InstrumentDefinition.Equals(other.InstrumentDefinition) && s_nameComparer.Equals(Key, other.Key)
-             && s_nameComparer.Equals(Name, other.Name) && Pitches.SequenceEqual(other.Pitches);
+      return InstrumentDefinition.Equals(other.InstrumentDefinition) && s_nameComparer.Equals(Key, other.Key) && s_nameComparer.Equals(Name, other.Name)
+             && Pitches.SequenceEqual(other.Pitches);
     }
-
-    #endregion
   }
 }

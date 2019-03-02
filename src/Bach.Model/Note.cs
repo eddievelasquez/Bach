@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -34,21 +34,16 @@ namespace Bach.Model
   /// English naming convention for the 12 note
   /// chromatic scale.
   /// </summary>
-  public struct Note : IEquatable<Note>,
-                      IComparable<Note>
+  public struct Note
+    : IEquatable<Note>,
+      IComparable<Note>
   {
-    #region Constants
-
-    private const ushort TONE_NAME_MASK = 7;
-    private const ushort TONE_NAME_SHIFT = 7;
-    private const ushort ACCIDENTAL_MASK = 7;
-    private const ushort ACCIDENTAL_SHIFT = 4;
-    private const ushort INTERVAL_MASK = 0x0F;
-    private const int INTERVAL_COUNT = 12;
-
-    #endregion
-
-    #region Data Members
+    private const ushort ToneNameMask = 7;
+    private const ushort ToneNameShift = 7;
+    private const ushort AccidentalMask = 7;
+    private const ushort AccidentalShift = 4;
+    private const ushort IntervalMask = 0x0F;
+    private const int IntervalCount = 12;
 
     private static readonly Link[] s_links;
 
@@ -72,13 +67,9 @@ namespace Bach.Model
 
     private readonly ushort _encoded;
 
-    #endregion
-
-    #region Construction/Destruction
-
     static Note()
     {
-      s_links = new Link[INTERVAL_COUNT];
+      s_links = new Link[IntervalCount];
 
       C = Create(NoteName.C);
       CSharp = Create(NoteName.C, Accidental.Sharp);
@@ -113,13 +104,13 @@ namespace Bach.Model
     {
       var tone = new Note(noteName, accidental);
       Link link = s_links[tone.Interval];
-      if (link == null)
+      if( link == null )
       {
         link = new Link();
         s_links[tone.Interval] = link;
       }
 
-      switch (accidental)
+      switch( accidental )
       {
         case Accidental.Flat:
           link.Flat = tone;
@@ -137,10 +128,6 @@ namespace Bach.Model
       return tone;
     }
 
-    #endregion
-
-    #region Properties
-
     public static AccidentalMode AccidentalMode { get; set; }
 
     public int Interval => DecodeInterval(_encoded);
@@ -149,39 +136,27 @@ namespace Bach.Model
 
     public Accidental Accidental => DecodeAccidental(_encoded);
 
-    #endregion
-
-    #region IComparable<Pitch> Members
-
     public int CompareTo(Note other) => Interval - other.Interval;
 
-    #endregion
-
-    #region IEquatable<Pitch> Members
-
     public bool Equals(Note other) => Interval == other.Interval;
-
-    #endregion
-
-    #region Public Methods
 
     public static bool TryParse(string value,
                                 out Note note)
     {
-      if (string.IsNullOrEmpty(value))
+      if( string.IsNullOrEmpty(value) )
       {
         note = C;
         return false;
       }
 
-      if (!Enum.TryParse(value.Substring(0, 1), true, out NoteName toneName))
+      if( !Enum.TryParse(value.Substring(0, 1), true, out NoteName toneName) )
       {
         note = C;
         return false;
       }
 
       var accidental = Accidental.Natural;
-      if (value.Length > 1 && !AccidentalExtensions.TryParse(value.Substring(1), out accidental))
+      if( value.Length > 1 && !AccidentalExtensions.TryParse(value.Substring(1), out accidental) )
       {
         note = C;
         return false;
@@ -195,7 +170,7 @@ namespace Bach.Model
     {
       Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
 
-      if (!TryParse(value, out Note result))
+      if( !TryParse(value, out Note result) )
       {
         throw new FormatException($"{value} is not a valid note");
       }
@@ -206,18 +181,18 @@ namespace Bach.Model
     public Note Add(int interval,
                     AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      int newInterval = (Interval + interval) % INTERVAL_COUNT;
+      int newInterval = ( Interval + interval ) % IntervalCount;
       return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
     }
 
     public Note Subtract(int interval,
                          AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      interval %= INTERVAL_COUNT;
+      interval %= IntervalCount;
       int newInterval = Interval - interval;
-      if (newInterval < 0)
+      if( newInterval < 0 )
       {
-        newInterval = INTERVAL_COUNT - interval;
+        newInterval = IntervalCount - interval;
       }
 
       return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
@@ -225,73 +200,61 @@ namespace Bach.Model
 
     public override bool Equals(object obj)
     {
-      if (ReferenceEquals(null, obj))
+      if( ReferenceEquals(null, obj) )
       {
         return false;
       }
 
-      return obj.GetType() == GetType() && Equals((Note)obj);
+      return obj.GetType() == GetType() && Equals((Note) obj);
     }
 
     public override int GetHashCode() => Interval;
 
     public override string ToString() => $"{NoteName}{Accidental.ToSymbol()}";
 
-    #endregion
+    public static bool operator==(Note left,
+                                  Note right) =>
+      Equals(left, right);
 
-    #region Operators
+    public static bool operator!=(Note left,
+                                  Note right) =>
+      !Equals(left, right);
 
-    public static bool operator ==(Note left,
-                                  Note right) => Equals(left, right);
+    public static bool operator>(Note left,
+                                 Note right) =>
+      left.CompareTo(right) > 0;
 
-    public static bool operator !=(Note left,
-                                  Note right) => !Equals(left, right);
+    public static bool operator<(Note left,
+                                 Note right) =>
+      left.CompareTo(right) < 0;
 
-    public static bool operator >(Note left,
-                                 Note right) => left.CompareTo(right) > 0;
+    public static bool operator>=(Note left,
+                                  Note right) =>
+      left.CompareTo(right) >= 0;
 
-    public static bool operator <(Note left,
-                                 Note right) => left.CompareTo(right) < 0;
+    public static bool operator<=(Note left,
+                                  Note right) =>
+      left.CompareTo(right) <= 0;
 
-    public static bool operator >=(Note left,
-                                  Note right) => left.CompareTo(right) >= 0;
+    public static Note operator+(Note note,
+                                 int interval) =>
+      note.Add(interval, AccidentalMode);
 
-    public static bool operator <=(Note left,
-                                  Note right) => left.CompareTo(right) <= 0;
+    public static Note operator++(Note note) => note.Add(1, AccidentalMode);
 
-    public static Note operator +(Note note,
-                                 int interval)
-    {
-      return note.Add(interval, AccidentalMode);
-    }
+    public static Note operator-(Note note,
+                                 int interval) =>
+      note.Subtract(interval, AccidentalMode);
 
-    public static Note operator ++(Note note)
-    {
-      return note.Add(1, AccidentalMode);
-    }
-
-    public static Note operator -(Note note,
-                                 int interval)
-    {
-      return note.Subtract(interval, AccidentalMode);
-    }
-
-    public static Note operator --(Note note)
-    {
-      return note.Subtract(1, AccidentalMode);
-    }
-
-    #endregion
-
-    #region Implementation
+    public static Note operator--(Note note) => note.Subtract(1, AccidentalMode);
 
     private static int CalcInterval(NoteName noteName,
                                     Accidental accidental)
     {
-      int interval = (NoteName.C.IntervalBetween(noteName) + (int)accidental) % INTERVAL_COUNT;
-      if (interval < 0)
+      int interval = ( NoteName.C.IntervalBetween(noteName) + (int) accidental ) % IntervalCount;
+      if( interval < 0 )
       {
-        interval = INTERVAL_COUNT + interval;
+        interval = IntervalCount + interval;
       }
 
       return interval;
@@ -302,7 +265,7 @@ namespace Bach.Model
     {
       Link link = s_links[index];
 
-      if (link.Natural != null)
+      if( link.Natural != null )
       {
         return link.Natural.Value;
       }
@@ -319,47 +282,35 @@ namespace Bach.Model
     {
       Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
       Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
-      Contract.Requires<ArgumentOutOfRangeException>(
-        accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-      var encoded = (ushort)((((ushort)noteName & TONE_NAME_MASK) << TONE_NAME_SHIFT)
-                              | (((ushort)(accidental + 2) & ACCIDENTAL_MASK) << ACCIDENTAL_SHIFT)
-                              | ((ushort)value & INTERVAL_MASK));
+      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
+      var encoded = (ushort) ( ( ( (ushort) noteName & ToneNameMask ) << ToneNameShift )
+                               | ( ( (ushort) ( accidental + 2 ) & AccidentalMask ) << AccidentalShift ) | ( (ushort) value & IntervalMask ) );
       return encoded;
     }
 
     private static int DecodeInterval(ushort encoded)
     {
-      int result = encoded & INTERVAL_MASK;
+      int result = encoded & IntervalMask;
       return result;
     }
 
     private static NoteName DecodeToneName(ushort encoded)
     {
-      int result = (encoded >> TONE_NAME_SHIFT) & TONE_NAME_MASK;
-      return (NoteName)result;
+      int result = ( encoded >> ToneNameShift ) & ToneNameMask;
+      return (NoteName) result;
     }
 
     private static Accidental DecodeAccidental(ushort encoded)
     {
-      int result = ((encoded >> ACCIDENTAL_SHIFT) & ACCIDENTAL_MASK) - 2;
-      return (Accidental)result;
+      int result = ( ( encoded >> AccidentalShift ) & AccidentalMask ) - 2;
+      return (Accidental) result;
     }
-
-    #endregion
-
-    #region Nested type: Link
 
     private class Link
     {
-      #region Properties
-
       public Note? Natural { get; set; }
       public Note? Sharp { get; set; }
       public Note? Flat { get; set; }
-
-      #endregion
     }
-
-    #endregion
   }
 }

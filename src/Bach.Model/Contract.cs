@@ -4,14 +4,14 @@ namespace Bach.Model
 
   internal static class Contract
   {
-    public static void Requires( bool condition,
-                                 string message = null )
+    public static void Requires(bool condition,
+                                string message = null)
     {
-      Requires<ArgumentException>( condition, message );
+      Requires<ArgumentException>(condition, message);
     }
 
-    public static void Requires<TException>( bool condition,
-                                             string message = null )
+    public static void Requires<TException>(bool condition,
+                                            string message = null)
       where TException: Exception, new()
     {
       if( !condition )
@@ -22,7 +22,7 @@ namespace Bach.Model
         try
         {
           message = message ?? "Unexpected Condition";
-          exception = Activator.CreateInstance( typeof( TException ), message ) as TException;
+          exception = Activator.CreateInstance(typeof(TException), message) as TException;
         }
         catch( MissingMethodException )
         {
@@ -33,7 +33,8 @@ namespace Bach.Model
       }
     }
 
-    public static void RequiresNotNullOrEmpty(string value, string message = null)
+    public static void RequiresNotNullOrEmpty(string value,
+                                              string message = null)
     {
       Requires<ArgumentNullException>(value != null, message);
       Requires<ArgumentException>(value.Length > 0, message);

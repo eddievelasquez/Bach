@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -27,8 +27,6 @@ namespace Bach.Model
 {
   public class ScaleFormula: Formula
   {
-    #region Construction/Destruction
-
     public ScaleFormula(string key,
                         string name,
                         Interval[] intervals)
@@ -42,10 +40,6 @@ namespace Bach.Model
       : base(key, name, formula)
     {
     }
-
-    #endregion
-
-    #region Public Methods
 
     public int[] GetRelativeSteps()
     {
@@ -65,7 +59,5 @@ namespace Bach.Model
       steps[steps.Length - 1] = 12 - lastStep;
       return steps;
     }
-
-    #endregion
   }
 }

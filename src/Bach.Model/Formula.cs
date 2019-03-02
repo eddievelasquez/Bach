@@ -18,7 +18,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-// PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 // HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,18 +31,13 @@ namespace Bach.Model
   using System.Linq;
   using System.Text;
 
-  public class Formula: IKeyedObject,
-                        IEquatable<Formula>
+  public class Formula
+    : IKeyedObject,
+      IEquatable<Formula>
   {
-    #region Data Members
-
     private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
 
     private readonly Interval[] _intervals;
-
-    #endregion
-
-    #region Construction/Destruction
 
     public Formula(string key,
                    string name,
@@ -65,19 +60,11 @@ namespace Bach.Model
     {
     }
 
-    #endregion
-
-    #region Properties
-
     public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
 
     public int IntervalCount => _intervals.Length;
 
     public string Name { get; }
-
-    #endregion
-
-    #region Public Methods
 
     public override string ToString()
     {
@@ -122,7 +109,7 @@ namespace Bach.Model
     public override int GetHashCode() => s_comparer.GetHashCode(Key);
 
     public IEnumerable<Pitch> Generate(Pitch root,
-                                      int skipCount = 0)
+                                       int skipCount = 0)
     {
       // NOTE: By design, this iterator never returns.
       int intervalCount = _intervals.Length;
@@ -141,7 +128,7 @@ namespace Bach.Model
         int octaveAdd = index / intervalCount;
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate pitch
-        Pitch pitch = root.Add(interval.Steps + (octaveAdd * Pitch.IntervalsPerOctave), accidentalMode);
+        Pitch pitch = root.Add(interval.Steps + ( octaveAdd * Pitch.IntervalsPerOctave ), accidentalMode);
         yield return pitch;
 
         ++index;
@@ -170,11 +157,9 @@ namespace Bach.Model
 
         ++index;
       }
+
+      // ReSharper disable once IteratorNeverReturns
     }
-
-    #endregion
-
-    #region IEquatable<Formula> Members
 
     public bool Equals(Formula other)
     {
@@ -188,19 +173,10 @@ namespace Bach.Model
         return false;
       }
 
-      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name)
-             && _intervals.SequenceEqual(other.Intervals);
+      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
     }
 
-    #endregion
-
-    #region IKeyedObject Members
-
     public string Key { get; }
-
-    #endregion
-
-    #region Implementation
 
     private static Interval[] ParseIntervals(string formula)
     {
@@ -209,7 +185,5 @@ namespace Bach.Model
       string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
       return values.Select(Interval.Parse).ToArray();
     }
-
-    #endregion
   }
 }
