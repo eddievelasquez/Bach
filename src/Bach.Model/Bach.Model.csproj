@@ -23,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Bach.Model.ExternalAnnotations.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Bach.Model.Library.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
