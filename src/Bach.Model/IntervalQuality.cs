@@ -25,13 +25,25 @@
 
 namespace Bach.Model
 {
+  /// <summary>Values that represent interval qualities.</summary>
   public enum IntervalQuality
   {
+    /// <summary>An enum constant representing an unknown interval.</summary>
     Unknown = -1,
+
+    /// <summary>An enum constant representing a diminished interval.</summary>
     Diminished,
+
+    /// <summary>An enum constant representing a minor interval.</summary>
     Minor,
+
+    /// <summary>An enum constant representing a perfect interval.</summary>
     Perfect,
+
+    /// <summary>An enum constant representing a major interval.</summary>
     Major,
+
+    /// <summary>An enum constant representing an augmented interval.</summary>
     Augmented
   }
 }

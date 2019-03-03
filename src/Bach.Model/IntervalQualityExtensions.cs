@@ -27,12 +27,19 @@ namespace Bach.Model
 {
   using System;
 
+  /// <summary>Provides extension to IntervalQualify.</summary>
   public static class IntervalQualityExtensions
   {
     private static readonly string[] s_symbols = { "d", "m", "P", "M", "A" };
     private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
     private static readonly string[] s_long = { "diminished", "minor", "perfect", "major", "augmented" };
 
+    /// <summary>
+    /// Converts the specified string representation of an interval quality to its <see cref="IntervalQuality"/> equivalent.
+    /// </summary>
+    /// <param name="value">A string containing the interval quality to convert.</param>
+    /// <returns>An object that is equivalent to the interval quality contained in value.</returns>
+    /// <exception cref="FormatException">value does not contain a valid string representation of an interval quality.</exception>
     public static IntervalQuality Parse(string value)
     {
       if( !TryParse(value, out IntervalQuality quality) )
@@ -43,6 +50,16 @@ namespace Bach.Model
       return quality;
     }
 
+    /// <summary>
+    /// Converts the specified string representation of an interval quality to its <see cref="IntervalQuality"/> equivalent
+    /// and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="value">A string containing the interval quality to convert.</param>
+    /// <param name="quality">When this method returns, contains the IntervalQuality value equivalent to the interval quality
+    /// contained in value, if the conversion succeeded, or <see cref="IntervalQuality.Unknown"/> if the conversion failed.
+    /// The conversion fails if the value parameter is null or empty  or does not contain a valid string
+    /// representation of an interval quality. This parameter is passed uninitialized.</param>
+    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string value,
                                 out IntervalQuality quality)
     {
@@ -55,7 +72,7 @@ namespace Bach.Model
             continue;
           }
 
-          quality = (IntervalQuality) i;
+          quality = (IntervalQuality)i;
           return true;
         }
       }
@@ -64,28 +81,43 @@ namespace Bach.Model
       return false;
     }
 
+    /// <summary>Returns the symbol for the given interval quality.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
+    ///                                               required range.</exception>
+    /// <param name="quality">An interval quality.</param>
+    /// <returns>A string.</returns>
     public static string Symbol(this IntervalQuality quality)
     {
       Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished);
       Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented);
 
-      return s_symbols[(int) quality];
+      return s_symbols[(int)quality];
     }
 
+    /// <summary>Returns the short name for the given interval quality.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
+    ///                                               required range.</exception>
+    /// <param name="quality">An interval quality.</param>
+    /// <returns>A string.</returns>
     public static string ShortName(this IntervalQuality quality)
     {
       Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished);
       Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented);
 
-      return s_short[(int) quality];
+      return s_short[(int)quality];
     }
 
+    /// <summary>Returns the long name for the given interval quality.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
+    ///                                               required range.</exception>
+    /// <param name="quality">An interval quality.</param>
+    /// <returns>A string.</returns>
     public static string LongName(this IntervalQuality quality)
     {
       Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished);
       Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented);
 
-      return s_long[(int) quality];
+      return s_long[(int)quality];
     }
   }
 }

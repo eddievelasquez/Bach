@@ -48,7 +48,7 @@ namespace Bach.Model
 
       for( var i = 1; i < Intervals.Count; i++ )
       {
-        int currentIntervalSteps = Intervals[i].Steps;
+        int currentIntervalSteps = Intervals[i].SemitoneCount;
         int step = currentIntervalSteps - lastStep;
         steps[i - 1] = step;
         lastStep = currentIntervalSteps;

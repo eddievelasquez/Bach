@@ -128,7 +128,7 @@ namespace Bach.Model
         int octaveAdd = index / intervalCount;
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate pitch
-        Pitch pitch = root.Add(interval.Steps + ( octaveAdd * Pitch.IntervalsPerOctave ), accidentalMode);
+        Pitch pitch = root.Add(interval.SemitoneCount + ( octaveAdd * Pitch.IntervalsPerOctave ), accidentalMode);
         yield return pitch;
 
         ++index;
@@ -152,7 +152,7 @@ namespace Bach.Model
         }
 
         // TODO: Must ensure that enharmonic intervals are choosing the appropriate pitch
-        Note note = root.Add(interval.Steps, accidentalMode);
+        Note note = root.Add(interval.SemitoneCount, accidentalMode);
         yield return note;
 
         ++index;
