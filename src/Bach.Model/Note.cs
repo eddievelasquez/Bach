@@ -1,4 +1,4 @@
-//
+﻿//
 // Module Name: Note.cs
 // Project:     Bach.Model
 // Copyright (c) 2016  Eddie Velasquez.
@@ -29,10 +29,9 @@ namespace Bach.Model
   using System.Diagnostics;
 
   /// <summary>
-  /// A Note represents a combination of a <see cref="NoteName"/>
-  /// and an optional <see cref="Accidental"/> following the
-  /// English naming convention for the 12 note
-  /// chromatic scale.
+  /// A Note represents a combination of a <see cref="P:Bach.Model.Note.NoteName" />
+  /// and an optional <see cref="P:Bach.Model.Note.Accidental" /> following the English naming
+  /// convention for the 12 note chromatic scale.
   /// </summary>
   public struct Note
     : IEquatable<Note>,
@@ -42,34 +41,67 @@ namespace Bach.Model
     private const ushort ToneNameShift = 7;
     private const ushort AccidentalMask = 7;
     private const ushort AccidentalShift = 4;
-    private const ushort IntervalMask = 0x0F;
-    private const int IntervalCount = 12;
+    private const ushort AbsoluteValueMask = 0x0F;
+    private const int AbsoluteValueCount = 12;
 
     private static readonly Link[] s_links;
 
+    /// <summary>C note.</summary>
     public static readonly Note C;
+
+    /// <summary>C♯ note.</summary>
     public static readonly Note CSharp;
+
+    /// <summary>D♭ note.</summary>
     public static readonly Note DFlat;
+
+    /// <summary>D note.</summary>
     public static readonly Note D;
+
+    /// <summary>D♯ note.</summary>
     public static readonly Note DSharp;
+
+    /// <summary>E♭ note.</summary>
     public static readonly Note EFlat;
+
+    /// <summary>E note.</summary>
     public static readonly Note E;
+
+    /// <summary>F note.</summary>
     public static readonly Note F;
+
+    /// <summary>F♯ note.</summary>
     public static readonly Note FSharp;
+
+    /// <summary>G♭ note.</summary>
     public static readonly Note GFlat;
+
+    /// <summary>G note.</summary>
     public static readonly Note G;
+
+    /// <summary>G♯ note.</summary>
     public static readonly Note GSharp;
+
+    /// <summary>A♭ note.</summary>
     public static readonly Note AFlat;
+
+    /// <summary>A note.</summary>
     public static readonly Note A;
+
+    /// <summary>A♯ note.</summary>
     public static readonly Note ASharp;
+
+    /// <summary>B♭ note.</summary>
     public static readonly Note BFlat;
+
+    /// <summary>B note.</summary>
     public static readonly Note B;
 
     private readonly ushort _encoded;
 
     static Note()
     {
-      s_links = new Link[IntervalCount];
+      s_links = new Link[AbsoluteValueCount];
 
       C = Create(NoteName.C);
       CSharp = Create(NoteName.C, Accidental.Sharp);
@@ -92,22 +124,25 @@ namespace Bach.Model
       AccidentalMode = AccidentalMode.FavorSharps;
     }
 
+    /// <summary>Constructor.</summary>
+    /// <param name="noteName">Name of the note.</param>
+    /// <param name="accidental">(Optional) The accidental.</param>
     public Note(NoteName noteName,
                 Accidental accidental = Accidental.Natural)
     {
-      int interval = CalcInterval(noteName, accidental);
-      _encoded = Encode(interval, noteName, accidental);
+      int absoluteValue = CalcAbsoluteValue(noteName, accidental);
+      _encoded = Encode(absoluteValue, noteName, accidental);
     }
 
     private static Note Create(NoteName noteName,
                                Accidental accidental = Accidental.Natural)
     {
       var tone = new Note(noteName, accidental);
-      Link link = s_links[tone.Interval];
+      Link link = s_links[tone.AbsoluteValue];
       if( link == null )
       {
         link = new Link();
-        s_links[tone.Interval] = link;
+        s_links[tone.AbsoluteValue] = link;
       }
 
       switch( accidental )
@@ -128,18 +163,30 @@ namespace Bach.Model
       return tone;
     }
 
+    /// <summary>Gets or sets the accidental mode.</summary>
+    /// <value>The accidental mode.</value>
     public static AccidentalMode AccidentalMode { get; set; }
 
-    public int Interval => DecodeInterval(_encoded);
+    private int AbsoluteValue => DecodeAbsoluteValue(_encoded);
 
+    /// <summary>Gets the name of the note.</summary>
+    /// <value>The name of the note.</value>
     public NoteName NoteName => DecodeToneName(_encoded);
 
+    /// <summary>Gets the accidental.</summary>
+    /// <value>The accidental.</value>
     public Accidental Accidental => DecodeAccidental(_encoded);
 
-    public int CompareTo(Note other) => Interval - other.Interval;
+    /// <inheritdoc/>
+    public int CompareTo(Note other) => AbsoluteValue - other.AbsoluteValue;
 
-    public bool Equals(Note other) => Interval == other.Interval;
+    /// <inheritdoc/>
+    public bool Equals(Note other) => AbsoluteValue == other.AbsoluteValue;
 
+    /// <summary>Attempts to parse a Note from the given string.</summary>
+    /// <param name="value">The value to parse.</param>
+    /// <param name="note">[out] The note.</param>
+    /// <returns>True if it succeeds, false if it fails.</returns>
     public static bool TryParse(string value,
                                 out Note note)
     {
@@ -166,6 +213,12 @@ namespace Bach.Model
       return true;
     }
 
+    /// <summary>Parses te provided string.</summary>
+    /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a Note.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+    /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+    /// <param name="value">The value to parse.</param>
+    /// <returns>A Note.</returns>
     public static Note Parse(string value)
     {
       Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
@@ -178,29 +231,38 @@ namespace Bach.Model
       return result;
     }
 
-    public Note Add(int interval,
+    /// <summary>Adds a number of semitones to the current instance.</summary>
+    /// <param name="semitoneCount">Number of semitones.</param>
+    /// <param name="mode">(Optional) The accidental mode.</param>
+    /// <returns>A Note.</returns>
+    public Note Add(int semitoneCount,
                     AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      int newInterval = ( Interval + interval ) % IntervalCount;
-      return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
+      int absoluteValue = ( AbsoluteValue + semitoneCount ) % AbsoluteValueCount;
+      return GetNote(absoluteValue, mode == AccidentalMode.FavorSharps);
     }
 
-    public Note Subtract(int interval,
+    /// <summary>Subtracts a number of semitones from the current instance.</summary>
+    /// <param name="semitoneCount">Number of semitones.</param>
+    /// <param name="mode">(Optional) The accidental mode.</param>
+    /// <returns>A Note.</returns>
+    public Note Subtract(int semitoneCount,
                          AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      interval %= IntervalCount;
-      int newInterval = Interval - interval;
-      if( newInterval < 0 )
+      semitoneCount %= AbsoluteValueCount;
+      int absoluteValue = AbsoluteValue - semitoneCount;
+      if( absoluteValue < 0 )
       {
-        newInterval = IntervalCount - interval;
+        absoluteValue = AbsoluteValueCount - semitoneCount;
       }
 
-      return GetNote(newInterval, mode == AccidentalMode.FavorSharps);
+      return GetNote(absoluteValue, mode == AccidentalMode.FavorSharps);
     }
 
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(null, obj) )
+      if( obj is null )
       {
         return false;
       }
@@ -208,56 +270,96 @@ namespace Bach.Model
       return obj.GetType() == GetType() && Equals((Note) obj);
     }
 
-    public override int GetHashCode() => Interval;
+    /// <inheritdoc />
+    public override int GetHashCode() => AbsoluteValue;
 
+    /// <inheritdoc />
     public override string ToString() => $"{NoteName}{Accidental.ToSymbol()}";
 
+    /// <summary>Equality operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
     public static bool operator==(Note left,
-                                  Note right) =>
-      Equals(left, right);
+                                  Note right)
+      => Equals(left, right);
 
+    /// <summary>Inequality operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
     public static bool operator!=(Note left,
-                                  Note right) =>
-      !Equals(left, right);
+                                  Note right)
+      => !Equals(left, right);
 
+    /// <summary>Greater-than comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
     public static bool operator>(Note left,
-                                 Note right) =>
-      left.CompareTo(right) > 0;
+                                 Note right)
+      => left.CompareTo(right) > 0;
 
+    /// <summary>Less-than comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
     public static bool operator<(Note left,
-                                 Note right) =>
-      left.CompareTo(right) < 0;
+                                 Note right)
+      => left.CompareTo(right) < 0;
 
+    /// <summary>Greater-than-or-equal comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
     public static bool operator>=(Note left,
-                                  Note right) =>
-      left.CompareTo(right) >= 0;
+                                  Note right)
+      => left.CompareTo(right) >= 0;
 
+    /// <summary>Less-than-or-equal comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
     public static bool operator<=(Note left,
-                                  Note right) =>
-      left.CompareTo(right) <= 0;
+                                  Note right)
+      => left.CompareTo(right) <= 0;
 
+    /// <summary>Addition operator.</summary>
+    /// <param name="note">The first value.</param>
+    /// <param name="semitoneCount">A number of semitones to add to it.</param>
+    /// <returns>The result of the operation.</returns>
     public static Note operator+(Note note,
-                                 int interval) =>
-      note.Add(interval, AccidentalMode);
+                                 int semitoneCount)
+      => note.Add(semitoneCount, AccidentalMode);
 
+    /// <summary>Increment operator.</summary>
+    /// <param name="note">The note.</param>
+    /// <returns>The result of the operation.</returns>
     public static Note operator++(Note note) => note.Add(1, AccidentalMode);
 
+    /// <summary>Subtraction operator.</summary>
+    /// <param name="note">The first value.</param>
+    /// <param name="semitoneCount">A number of semitones to subtract from it.</param>
+    /// <returns>The result of the operation.</returns>
     public static Note operator-(Note note,
-                                 int interval) =>
-      note.Subtract(interval, AccidentalMode);
+                                 int semitoneCount)
+      => note.Subtract(semitoneCount, AccidentalMode);
 
+    /// <summary>Decrement operator.</summary>
+    /// <param name="note">The note.</param>
+    /// <returns>The result of the operation.</returns>
     public static Note operator--(Note note) => note.Subtract(1, AccidentalMode);
 
-    private static int CalcInterval(NoteName noteName,
-                                    Accidental accidental)
+    private static int CalcAbsoluteValue(NoteName noteName,
+                                         Accidental accidental)
     {
-      int interval = ( NoteName.C.IntervalBetween(noteName) + (int) accidental ) % IntervalCount;
-      if( interval < 0 )
+      int absoluteValue = ( NoteName.C.SemitonesBetween(noteName) + (int) accidental ) % AbsoluteValueCount;
+      if( absoluteValue < 0 )
       {
-        interval = IntervalCount + interval;
+        absoluteValue = AbsoluteValueCount + absoluteValue;
       }
 
-      return interval;
+      return absoluteValue;
     }
 
     internal static Note GetNote(int index,
@@ -284,13 +386,14 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
       Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
       var encoded = (ushort) ( ( ( (ushort) noteName & ToneNameMask ) << ToneNameShift )
-                               | ( ( (ushort) ( accidental + 2 ) & AccidentalMask ) << AccidentalShift ) | ( (ushort) value & IntervalMask ) );
+                               | ( ( (ushort) ( accidental + 2 ) & AccidentalMask ) << AccidentalShift )
+                               | ( (ushort) value & AbsoluteValueMask ) );
       return encoded;
     }
 
-    private static int DecodeInterval(ushort encoded)
+    private static int DecodeAbsoluteValue(ushort encoded)
     {
-      int result = encoded & IntervalMask;
+      int result = encoded & AbsoluteValueMask;
       return result;
     }
 

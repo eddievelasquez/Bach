@@ -1,4 +1,4 @@
-//
+﻿//
 // Module Name: Accidental.cs
 // Project:     Bach.Model
 // Copyright (c) 2013, 2016  Eddie Velasquez.
@@ -26,16 +26,34 @@
 namespace Bach.Model
 {
   /// <summary>
-  /// An Accidental represents a modification in note
-  /// to a <see cref="NoteName"/> by raising or lowering
-  /// its relative pitch.
+  /// An Accidental represents a modification to a <see cref="NoteName"/>
+  /// by raising or lowering its relative pitch.
   /// </summary>
   public enum Accidental
   {
+    /// <summary>
+    /// Double flat (♭♭)
+    /// </summary>
     DoubleFlat = -2,
+
+    /// <summary>
+    /// Flat (♭)
+    /// </summary>
     Flat = -1,
+
+    /// <summary>
+    /// Natural (♮)
+    /// </summary>
     Natural = 0,
+
+    /// <summary>
+    /// Sharp (♯)
+    /// </summary>
     Sharp = 1,
+
+    /// <summary>
+    /// Double Sharp (♯♯)
+    /// </summary>
     DoubleSharp = 2
   }
 }

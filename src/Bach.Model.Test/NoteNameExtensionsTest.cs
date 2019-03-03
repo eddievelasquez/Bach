@@ -44,23 +44,23 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void IntervalBetweenTest()
+    public void SemitonesBetweenTest()
     {
-      Assert.Equal(2, NoteName.C.IntervalBetween(NoteName.D));
-      Assert.Equal(2, NoteName.D.IntervalBetween(NoteName.E));
-      Assert.Equal(1, NoteName.E.IntervalBetween(NoteName.F));
-      Assert.Equal(2, NoteName.F.IntervalBetween(NoteName.G));
-      Assert.Equal(2, NoteName.G.IntervalBetween(NoteName.A));
-      Assert.Equal(2, NoteName.A.IntervalBetween(NoteName.B));
-      Assert.Equal(1, NoteName.B.IntervalBetween(NoteName.C));
+      Assert.Equal(2, NoteName.C.SemitonesBetween(NoteName.D));
+      Assert.Equal(2, NoteName.D.SemitonesBetween(NoteName.E));
+      Assert.Equal(1, NoteName.E.SemitonesBetween(NoteName.F));
+      Assert.Equal(2, NoteName.F.SemitonesBetween(NoteName.G));
+      Assert.Equal(2, NoteName.G.SemitonesBetween(NoteName.A));
+      Assert.Equal(2, NoteName.A.SemitonesBetween(NoteName.B));
+      Assert.Equal(1, NoteName.B.SemitonesBetween(NoteName.C));
 
-      Assert.Equal(0, NoteName.C.IntervalBetween(NoteName.C));
-      Assert.Equal(2, NoteName.C.IntervalBetween(NoteName.D));
-      Assert.Equal(4, NoteName.C.IntervalBetween(NoteName.E));
-      Assert.Equal(5, NoteName.C.IntervalBetween(NoteName.F));
-      Assert.Equal(7, NoteName.C.IntervalBetween(NoteName.G));
-      Assert.Equal(9, NoteName.C.IntervalBetween(NoteName.A));
-      Assert.Equal(11, NoteName.C.IntervalBetween(NoteName.B));
+      Assert.Equal(0, NoteName.C.SemitonesBetween(NoteName.C));
+      Assert.Equal(2, NoteName.C.SemitonesBetween(NoteName.D));
+      Assert.Equal(4, NoteName.C.SemitonesBetween(NoteName.E));
+      Assert.Equal(5, NoteName.C.SemitonesBetween(NoteName.F));
+      Assert.Equal(7, NoteName.C.SemitonesBetween(NoteName.G));
+      Assert.Equal(9, NoteName.C.SemitonesBetween(NoteName.A));
+      Assert.Equal(11, NoteName.C.SemitonesBetween(NoteName.B));
     }
   }
 }

@@ -306,7 +306,6 @@ namespace Bach.Model.Test
                                            Accidental accidental,
                                            int interval)
     {
-      Assert.Equal(interval, note.Interval);
       Assert.Equal(noteName, note.NoteName);
       Assert.Equal(accidental, note.Accidental);
     }

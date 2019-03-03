@@ -27,17 +27,35 @@ namespace Bach.Model
 {
   using System;
 
+  /// <summary>
+  /// Provides extensions for <see cref="Accidental"/>.
+  /// </summary>
   public static class AccidentalExtensions
   {
     private static readonly string[] s_symbols = { "bb", "b", "", "#", "##" };
     private static readonly int s_doubleFlatOffset = Math.Abs((int) Accidental.DoubleFlat);
 
+    /// <summary>
+    /// Converts an <see cref="Accidental"/> to its string representation.
+    /// </summary>
+    /// <param name="accidental">The accidental</param>
+    /// <returns>String representation of the accidental.</returns>
     public static string ToSymbol(this Accidental accidental)
     {
       Contract.Requires(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
       return s_symbols[(int) accidental + s_doubleFlatOffset];
     }
 
+    /// <summary>
+    /// Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent
+    /// and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="value">A string containing the accidental to convert.</param>
+    /// <param name="accidental">When this method returns, contains the Accidental value equivalent to accidental
+    /// contained in value, if the conversion succeeded, or Natural if the conversion failed.
+    /// The conversion fails if the s parameter is longer than 2 characters or does not contain a valid string
+    /// representation of an accidental. This parameter is passed uninitialized.</param>
+    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string value,
                                 out Accidental accidental)
     {
@@ -74,6 +92,12 @@ namespace Bach.Model
       return accidental != Accidental.Natural;
     }
 
+    /// <summary>
+    /// Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent.
+    /// </summary>
+    /// <param name="value">A string containing the accidental to convert.</param>
+    /// <returns>An object that is equivalent to the accidental contained in value.</returns>
+    /// <exception cref="FormatException">value does not contain a valid string representation of an accidental.</exception>
     public static Accidental Parse(string value)
     {
       if( !TryParse(value, out Accidental accidental) )

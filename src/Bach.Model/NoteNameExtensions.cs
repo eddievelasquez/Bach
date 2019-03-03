@@ -25,6 +25,9 @@
 
 namespace Bach.Model
 {
+  /// <summary>
+  /// Provides extension to for <see cref="NoteName"/>.
+  /// </summary>
   public static class NoteNameExtensions
   {
     private static readonly int[] s_intervals =
@@ -38,6 +41,11 @@ namespace Bach.Model
       1 // B-C
     };
 
+    /// <summary>
+    /// Returns the next <see cref="NoteName"/>.
+    /// </summary>
+    /// <param name="noteName">The starting note name.</param>
+    /// <returns>The next note name.</returns>
     public static NoteName Next(this NoteName noteName)
     {
       if( noteName == NoteName.B )
@@ -48,6 +56,11 @@ namespace Bach.Model
       return noteName + 1;
     }
 
+    /// <summary>
+    /// Returns the previous <see cref="NoteName"/>.
+    /// </summary>
+    /// <param name="noteName">The starting note name.</param>
+    /// <returns>The previous note name.</returns>
     public static NoteName Previous(this NoteName noteName)
     {
       if( noteName == NoteName.C )
@@ -58,8 +71,14 @@ namespace Bach.Model
       return noteName - 1;
     }
 
-    public static int IntervalBetween(this NoteName noteName,
-                                      NoteName end)
+    /// <summary>
+    /// Calculates the semitone distance between two note names.
+    /// </summary>
+    /// <param name="noteName">The first note name</param>
+    /// <param name="end">The last not name</param>
+    /// <returns>The distance in semitones between the two note names.</returns>
+    public static int SemitonesBetween(this NoteName noteName,
+                                       NoteName end)
     {
       if( noteName == end )
       {
