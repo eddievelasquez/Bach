@@ -30,6 +30,28 @@ namespace Bach.Model.Test
   public class NoteNameExtensionsTest
   {
     [Fact]
+    public void AddTest()
+    {
+      Assert.Equal(NoteName.C, NoteName.C.Add(0));
+      Assert.Equal(NoteName.D, NoteName.C.Add(1));
+      Assert.Equal(NoteName.E, NoteName.C.Add(2));
+      Assert.Equal(NoteName.B, NoteName.C.Add(6));
+      Assert.Equal(NoteName.C, NoteName.C.Add(7));
+      Assert.Equal(NoteName.D, NoteName.C.Add(8));
+    }
+
+    [Fact]
+    public void SubtractTest()
+    {
+      Assert.Equal(NoteName.B, NoteName.B.Subtract(0));
+      Assert.Equal(NoteName.A, NoteName.B.Subtract(1));
+      Assert.Equal(NoteName.G, NoteName.B.Subtract(2));
+      Assert.Equal(NoteName.C, NoteName.B.Subtract(6));
+      Assert.Equal(NoteName.B, NoteName.B.Subtract(7));
+      Assert.Equal(NoteName.A, NoteName.B.Subtract(8));
+    }
+
+    [Fact]
     public void NextTest()
     {
       Assert.Equal(NoteName.D, NoteName.C.Next());

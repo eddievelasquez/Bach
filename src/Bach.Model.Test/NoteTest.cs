@@ -293,6 +293,58 @@ namespace Bach.Model.Test
       Assert.Equal("C##", new Note(NoteName.C, Accidental.DoubleSharp).ToString());
     }
 
+    [Fact]
+    public void NoteSubtractionTest()
+    {
+      Assert.Equal(Interval.MajorThird, Note.C - Note.E);
+      Assert.Equal(Interval.MinorThird, Note.CSharp - Note.E);
+      Assert.Equal(Interval.MinorThird, Note.D - Note.F);
+      Assert.Equal(Interval.Fourth, Note.D - Note.G);
+      Assert.Equal(Interval.Fourth, Note.E - Note.A);
+      Assert.Equal(Interval.Fourth, Note.EFlat - Note.AFlat);
+      Assert.Equal(Interval.AugmentedThird, Note.EFlat - Note.GSharp);
+      Assert.Equal(Interval.MajorSixth, Note.F - Note.D);
+      Assert.Equal(Interval.Fifth, Note.G - Note.D);
+      Assert.Equal(Interval.Fifth, Note.F - Note.C);
+      Assert.Equal(Interval.Fifth, Note.A - Note.E);
+      Assert.Equal(Interval.Fifth, Note.AFlat - Note.EFlat);
+      Assert.Equal(Interval.DiminishedSixth, Note.GSharp - Note.EFlat);
+      Assert.Equal(Interval.AugmentedFourth, Note.C - Note.FSharp);
+      Assert.Equal(Interval.DiminishedFifth, Note.C - Note.GFlat);
+      Assert.Equal(Interval.AugmentedSecond, Note.C - Note.DSharp);
+      Assert.Equal(Interval.DiminishedFifth, Note.FSharp - Note.C);
+      Assert.Equal(Interval.AugmentedFourth, Note.GFlat - Note.C);
+      Assert.Equal(Interval.DiminishedSeventh, Note.DSharp - Note.C);
+      Assert.Equal(Interval.DiminishedThird, Note.C - new Note(NoteName.E, Accidental.DoubleFlat));
+      Assert.Equal(Interval.DiminishedFourth, new Note(NoteName.D, Accidental.DoubleSharp) - Note.GSharp);
+    }
+
+    [Fact]
+    public void NoteIntervalAdditionTest()
+    {
+      Assert.Equal(Note.E, Note.C + Interval.MajorThird);
+      Assert.Equal(Note.E, Note.CSharp + Interval.MinorThird);
+      Assert.Equal(Note.F, Note.D + Interval.MinorThird);
+      Assert.Equal(Note.G, Note.D + Interval.Fourth);
+      Assert.Equal(Note.A, Note.E + Interval.Fourth);
+      Assert.Equal(Note.AFlat, Note.EFlat + Interval.Fourth);
+      Assert.Equal(Note.GSharp, Note.EFlat + Interval.AugmentedThird);
+      Assert.Equal(Note.D, Note.F + Interval.MajorSixth);
+      Assert.Equal(Note.D, Note.G + Interval.Fifth);
+      Assert.Equal(Note.C, Note.F + Interval.Fifth);
+      Assert.Equal(Note.E, Note.A + Interval.Fifth);
+      Assert.Equal(Note.EFlat, Note.AFlat + Interval.Fifth);
+      Assert.Equal(Note.EFlat, Note.GSharp + Interval.DiminishedSixth);
+      Assert.Equal(Note.C, Note.FSharp + Interval.AugmentedFourth);
+      Assert.Equal(Note.C, Note.GFlat + Interval.DiminishedFifth);
+      Assert.Equal(Note.DSharp, Note.C + Interval.AugmentedSecond);
+      Assert.Equal(Note.FSharp, Note.C + Interval.DiminishedFifth);
+      Assert.Equal(Note.GFlat, Note.C + Interval.AugmentedFourth);
+      Assert.Equal(Note.C, Note.DSharp + Interval.DiminishedSeventh);
+      Assert.Equal(Note.F, Note.DSharp + Interval.DiminishedThird);
+      Assert.Equal(Note.GSharp, new Note(NoteName.D, Accidental.DoubleSharp) + Interval.DiminishedFourth);
+    }
+
     private static void ConstructorTestImpl(NoteName noteName,
                                             Accidental accidental,
                                             int interval)
@@ -313,8 +365,7 @@ namespace Bach.Model.Test
     private static void TryParseTestImpl(string value,
                                          Note expected)
     {
-      Note actual;
-      Assert.True(Note.TryParse(value, out actual));
+      Assert.True(Note.TryParse(value, out Note actual));
       Assert.Equal(expected, actual);
     }
 

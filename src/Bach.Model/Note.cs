@@ -231,6 +231,27 @@ namespace Bach.Model
       return result;
     }
 
+    /// <summary>
+    /// Calculate the number of semitones between two notes
+    /// </summary>
+    /// <param name="a">The first note.</param>
+    /// <param name="b">The second note.</param>
+    /// <returns>The number of semitones.</returns>
+    public static int SemitonesBetween(Note a,
+                                       Note b)
+    {
+      var current = a;
+      int count = 0;
+
+      while( current != b )
+      {
+        ++count;
+        current = current.Add(1);
+      }
+
+      return count;
+    }
+
     /// <summary>Adds a number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
     /// <param name="mode">(Optional) The accidental mode.</param>
@@ -240,6 +261,32 @@ namespace Bach.Model
     {
       int absoluteValue = ( AbsoluteValue + semitoneCount ) % AbsoluteValueCount;
       return GetNote(absoluteValue, mode == AccidentalMode.FavorSharps);
+    }
+
+    public static Note Add(Note note,
+                           Interval interval)
+    {
+      NoteName noteName = note.NoteName.Add((int)interval.Quantity);
+      int semitoneCount = interval.SemitoneCount;
+      Note calculatedNote = note.Add(semitoneCount);
+      if( calculatedNote.NoteName == noteName )
+      {
+        return calculatedNote;
+      }
+
+      //if (calculatedNote.NoteName > noteName)
+      //{
+      //  // Must be sharpen
+      //  return new Note(noteName, Accidental.Sharp);
+      //}
+
+      //// Next note flattened
+      //return new Note(noteName, Accidental.Flat);
+
+      // Deal with enharmonics
+      Link link = s_links[calculatedNote.AbsoluteValue];
+      Note? newNote = link.GetNote(noteName);
+      return newNote ?? calculatedNote;
     }
 
     /// <summary>Subtracts a number of semitones from the current instance.</summary>
@@ -259,6 +306,28 @@ namespace Bach.Model
       return GetNote(absoluteValue, mode == AccidentalMode.FavorSharps);
     }
 
+    /// <summary>Determines the interval between two notes.</summary>
+    /// <param name="a">The first note.</param>
+    /// <param name="b">The second note.</param>
+    /// <returns>An interval.</returns>
+    public static Interval Subtract(Note a,
+                                    Note b)
+    {
+      // First we determine the interval quantity
+      var quantity = IntervalQuantity.Unison;
+      NoteName current = a.NoteName;
+
+      while( current != b.NoteName )
+      {
+        ++quantity;
+        current = current.Next();
+      }
+
+      var semitoneCount = SemitonesBetween(a, b);
+      var interval = new Interval(quantity, semitoneCount);
+      return interval;
+    }
+
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
@@ -267,7 +336,7 @@ namespace Bach.Model
         return false;
       }
 
-      return obj.GetType() == GetType() && Equals((Note) obj);
+      return obj.GetType() == GetType() && Equals((Note)obj);
     }
 
     /// <inheritdoc />
@@ -350,10 +419,26 @@ namespace Bach.Model
     /// <returns>The result of the operation.</returns>
     public static Note operator--(Note note) => note.Subtract(1, AccidentalMode);
 
+    /// <summary>Addition operator.</summary>
+    /// <param name="note">The note.</param>
+    /// <param name="interval">An interval to add to the note.</param>
+    /// <returns>A note.</returns>
+    public static Note operator+(Note note,
+                                 Interval interval)
+      => Add(note, interval);
+
+    /// <summary>Subtraction operator.</summary>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">A value to subtract from it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static Interval operator-(Note a,
+                                     Note b)
+      => Subtract(a, b);
+
     private static int CalcAbsoluteValue(NoteName noteName,
                                          Accidental accidental)
     {
-      int absoluteValue = ( NoteName.C.SemitonesBetween(noteName) + (int) accidental ) % AbsoluteValueCount;
+      int absoluteValue = ( NoteName.C.SemitonesBetween(noteName) + (int)accidental ) % AbsoluteValueCount;
       if( absoluteValue < 0 )
       {
         absoluteValue = AbsoluteValueCount + absoluteValue;
@@ -385,9 +470,9 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
       Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
       Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-      var encoded = (ushort) ( ( ( (ushort) noteName & ToneNameMask ) << ToneNameShift )
-                               | ( ( (ushort) ( accidental + 2 ) & AccidentalMask ) << AccidentalShift )
-                               | ( (ushort) value & AbsoluteValueMask ) );
+      var encoded = (ushort)( ( ( (ushort)noteName & ToneNameMask ) << ToneNameShift )
+                              | ( ( (ushort)( accidental + 2 ) & AccidentalMask ) << AccidentalShift )
+                              | ( (ushort)value & AbsoluteValueMask ) );
       return encoded;
     }
 
@@ -400,13 +485,13 @@ namespace Bach.Model
     private static NoteName DecodeToneName(ushort encoded)
     {
       int result = ( encoded >> ToneNameShift ) & ToneNameMask;
-      return (NoteName) result;
+      return (NoteName)result;
     }
 
     private static Accidental DecodeAccidental(ushort encoded)
     {
       int result = ( ( encoded >> AccidentalShift ) & AccidentalMask ) - 2;
-      return (Accidental) result;
+      return (Accidental)result;
     }
 
     private class Link
@@ -414,6 +499,29 @@ namespace Bach.Model
       public Note? Natural { get; set; }
       public Note? Sharp { get; set; }
       public Note? Flat { get; set; }
+
+      public Note? GetNote(NoteName noteName)
+      {
+        var note = GetNote(Flat, noteName);
+        if (note.HasValue)
+        {
+          return note;
+        }
+
+        note = GetNote(Natural, noteName);
+        return note ?? GetNote(Sharp, noteName);
+      }
+
+      private Note? GetNote(Note? note,
+                            NoteName noteName)
+      {
+        if( note.HasValue && note.Value.NoteName == noteName )
+        {
+          return note;
+        }
+
+        return null;
+      }
     }
   }
 }

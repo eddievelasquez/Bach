@@ -78,29 +78,6 @@ namespace Bach.Model
     public static readonly Interval AugmentedSeventh = new Interval(IntervalQuantity.Seventh, IntervalQuality.Augmented);
     public static readonly Interval DiminishedOctave = new Interval(IntervalQuantity.Octave, IntervalQuality.Diminished);
     public static readonly Interval Octave = new Interval(IntervalQuantity.Octave, IntervalQuality.Perfect);
-    public static readonly Interval AugmentedOctave = new Interval(IntervalQuantity.Octave, IntervalQuality.Augmented);
-    public static readonly Interval DiminishedNinth = new Interval(IntervalQuantity.Ninth, IntervalQuality.Diminished);
-    public static readonly Interval MinorNinth = new Interval(IntervalQuantity.Ninth, IntervalQuality.Minor);
-    public static readonly Interval MajorNinth = new Interval(IntervalQuantity.Ninth, IntervalQuality.Major);
-    public static readonly Interval AugmentedNinth = new Interval(IntervalQuantity.Ninth, IntervalQuality.Augmented);
-    public static readonly Interval DiminishedTenth = new Interval(IntervalQuantity.Tenth, IntervalQuality.Diminished);
-    public static readonly Interval MinorTenth = new Interval(IntervalQuantity.Tenth, IntervalQuality.Minor);
-    public static readonly Interval MajorTenth = new Interval(IntervalQuantity.Tenth, IntervalQuality.Major);
-    public static readonly Interval AugmentedTenth = new Interval(IntervalQuantity.Tenth, IntervalQuality.Augmented);
-    public static readonly Interval DiminishedEleventh = new Interval(IntervalQuantity.Eleventh, IntervalQuality.Diminished);
-    public static readonly Interval Eleventh = new Interval(IntervalQuantity.Eleventh, IntervalQuality.Perfect);
-    public static readonly Interval AugmentedEleventh = new Interval(IntervalQuantity.Eleventh, IntervalQuality.Augmented);
-    public static readonly Interval Diminishedtwelfth = new Interval(IntervalQuantity.Twelfth, IntervalQuality.Diminished);
-    public static readonly Interval twelfth = new Interval(IntervalQuantity.Twelfth, IntervalQuality.Perfect);
-    public static readonly Interval Augmentedtwelfth = new Interval(IntervalQuantity.Twelfth, IntervalQuality.Augmented);
-    public static readonly Interval DiminishedThirteenth = new Interval(IntervalQuantity.Thirteenth, IntervalQuality.Diminished);
-    public static readonly Interval MinorThirteenth = new Interval(IntervalQuantity.Thirteenth, IntervalQuality.Minor);
-    public static readonly Interval MajorThirteenth = new Interval(IntervalQuantity.Thirteenth, IntervalQuality.Major);
-    public static readonly Interval AugmentedThirteenth = new Interval(IntervalQuantity.Thirteenth, IntervalQuality.Augmented);
-    public static readonly Interval DiminishedFourteenth = new Interval(IntervalQuantity.Fourteenth, IntervalQuality.Diminished);
-    public static readonly Interval MinorFourteenth = new Interval(IntervalQuantity.Fourteenth, IntervalQuality.Minor);
-    public static readonly Interval MajorFourteenth = new Interval(IntervalQuantity.Fourteenth, IntervalQuality.Major);
-    public static readonly Interval AugmentedFourteenth = new Interval(IntervalQuantity.Fourteenth, IntervalQuality.Augmented);
     public static readonly Interval Invalid = new Interval();
 
     private readonly byte _quantity;
@@ -115,6 +92,33 @@ namespace Bach.Model
       // Validate that the provided number and quality
       // refer to a valid interval
       GetSemitoneCount(quantity, quality);
+
+      _quantity = (byte)quantity;
+      _quality = (byte)quality;
+    }
+
+    /// <summary>Constructor.</summary>
+    /// <param name="quantity">The interval quantity.</param>
+    /// <param name="semitoneCount">The number of semitones in the interval.</param>
+    public Interval(IntervalQuantity quantity,
+                    int semitoneCount)
+    {
+      var quality = IntervalQuality.Diminished;
+      var found = false;
+
+      for (; quality <= IntervalQuality.Augmented; ++quality)
+      {
+        if (s_steps[(int)quantity, (int)quality] == semitoneCount)
+        {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found)
+      {
+        throw new ArgumentException($"A {quantity} with {semitoneCount} is not a valid interval");
+      }
 
       _quantity = (byte)quantity;
       _quality = (byte)quality;
@@ -139,12 +143,12 @@ namespace Bach.Model
     public static bool IsValid(IntervalQuantity quantity,
                                IntervalQuality quality)
     {
-      if( quantity < IntervalQuantity.Unison || quantity > IntervalQuantity.Fourteenth )
+      if (quantity < IntervalQuantity.Unison || quantity > IntervalQuantity.Fourteenth)
       {
         return false;
       }
 
-      if( quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented )
+      if (quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented)
       {
         return false;
       }
@@ -169,7 +173,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented);
 
       int steps = s_steps[(int)quantity, (int)quality];
-      if( steps == -1 )
+      if (steps == -1)
       {
         throw new ArgumentException($"{ToString(quantity, quality)} is not a valid interval");
       }
@@ -186,12 +190,12 @@ namespace Bach.Model
                                    bool suppressPerfectAndMajor = true)
     {
       var buf = new StringBuilder();
-      if( quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor )
+      if (quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor)
       {
         buf.Append(quality.Symbol());
       }
 
-      buf.Append((int)( quantity + 1 ));
+      buf.Append((int)(quantity + 1));
       return buf.ToString();
     }
 
@@ -203,7 +207,7 @@ namespace Bach.Model
     /// <exception cref="FormatException">value does not contain a valid string representation of an interval.</exception>
     public static Interval Parse(string value)
     {
-      if( !TryParse(value, out Interval interval) )
+      if (!TryParse(value, out Interval interval))
       {
         throw new FormatException(value + " is not a valid interval");
       }
@@ -226,7 +230,7 @@ namespace Bach.Model
     {
       interval = Invalid;
 
-      if( string.IsNullOrWhiteSpace(value) )
+      if (string.IsNullOrWhiteSpace(value))
       {
         return false;
       }
@@ -234,22 +238,22 @@ namespace Bach.Model
       var i = 0;
 
       // skip whitespaces
-      while( i < value.Length && char.IsWhiteSpace(value, i) )
+      while (i < value.Length && char.IsWhiteSpace(value, i))
       {
         ++i;
       }
 
-      var quality = (IntervalQuality)( -1 );
+      var quality = (IntervalQuality)(-1);
 
-      if( char.IsLetter(value, i) )
+      if (char.IsLetter(value, i))
       {
-        if( value[i] == 'R' )
+        if (value[i] == 'R')
         {
           interval = new Interval(IntervalQuantity.Unison, IntervalQuality.Perfect);
           return true;
         }
 
-        if( !IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality) )
+        if (!IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality))
         {
           return false;
         }
@@ -257,15 +261,15 @@ namespace Bach.Model
         ++i;
       }
 
-      if( !int.TryParse(value.Substring(i), out int number) )
+      if (!int.TryParse(value.Substring(i), out int number))
       {
         return false;
       }
 
-      if( quality == IntervalQuality.Unknown )
+      if (quality == IntervalQuality.Unknown)
       {
-        int temp = ( ( number - 1 ) % 7 ) + 1;
-        if( temp == 1 || temp == 4 || temp == 5 )
+        int temp = ((number - 1) % 7) + 1;
+        if (temp == 1 || temp == 4 || temp == 5)
         {
           quality = IntervalQuality.Perfect;
         }
@@ -275,8 +279,8 @@ namespace Bach.Model
         }
       }
 
-      var quantity = (IntervalQuantity)( number - 1 );
-      if( !IsValid(quantity, quality) )
+      var quantity = (IntervalQuantity)(number - 1);
+      if (!IsValid(quantity, quality))
       {
         return false;
       }
@@ -291,7 +295,7 @@ namespace Bach.Model
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(obj, null) || obj.GetType() != GetType() )
+      if (ReferenceEquals(obj, null) || obj.GetType() != GetType())
       {
         return false;
       }
@@ -302,7 +306,7 @@ namespace Bach.Model
     /// <inheritdoc />
     public override int GetHashCode()
     {
-      int hashCode = ( _quality << 8 ) | _quantity;
+      int hashCode = (_quality << 8) | _quantity;
       return hashCode;
     }
 
@@ -310,7 +314,7 @@ namespace Bach.Model
     public int CompareTo(Interval other)
     {
       int result = _quantity - other._quantity;
-      if( result != 0 )
+      if (result != 0)
       {
         return result;
       }
@@ -323,7 +327,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator==(Interval lhs,
+    public static bool operator ==(Interval lhs,
                                   Interval rhs)
       => Equals(lhs, rhs);
 
@@ -331,7 +335,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator!=(Interval lhs,
+    public static bool operator !=(Interval lhs,
                                   Interval rhs)
       => !Equals(lhs, rhs);
 
@@ -339,7 +343,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator<(Interval lhs,
+    public static bool operator <(Interval lhs,
                                  Interval rhs)
       => lhs.CompareTo(rhs) < 0;
 
@@ -347,7 +351,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator<=(Interval lhs,
+    public static bool operator <=(Interval lhs,
                                   Interval rhs)
       => lhs.CompareTo(rhs) <= 0;
 
@@ -355,7 +359,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator>(Interval lhs,
+    public static bool operator >(Interval lhs,
                                  Interval rhs)
       => lhs.CompareTo(rhs) > 0;
 
@@ -363,7 +367,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator>=(Interval lhs,
+    public static bool operator >=(Interval lhs,
                                   Interval rhs)
       => lhs.CompareTo(rhs) >= 0;
   }

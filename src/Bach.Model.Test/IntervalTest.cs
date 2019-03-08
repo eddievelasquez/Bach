@@ -59,7 +59,6 @@ namespace Bach.Model.Test
       Assert.Equal(12, Interval.AugmentedSeventh.SemitoneCount);
       Assert.Equal(11, Interval.DiminishedOctave.SemitoneCount);
       Assert.Equal(12, Interval.Octave.SemitoneCount);
-      Assert.Equal(13, Interval.AugmentedOctave.SemitoneCount);
     }
 
     [Fact]

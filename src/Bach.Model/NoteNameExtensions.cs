@@ -25,6 +25,8 @@
 
 namespace Bach.Model
 {
+  using System.Net;
+
   /// <summary>
   /// Provides extension to for <see cref="NoteName"/>.
   /// </summary>
@@ -48,12 +50,37 @@ namespace Bach.Model
     /// <returns>The next note name.</returns>
     public static NoteName Next(this NoteName noteName)
     {
-      if( noteName == NoteName.B )
+      return Add(noteName, 1);
+    }
+
+    /// <summary>Adds a number of steps to a note name.</summary>
+    /// <param name="noteName">The starting note name.</param>
+    /// <param name="steps">The number of steps to add.</param>
+    /// <returns>A NoteName.</returns>
+    public static NoteName Add(this NoteName noteName,
+                               int steps)
+    {
+      if( steps < 0 )
       {
-        return NoteName.C;
+        return Subtract(noteName, -steps);
       }
 
-      return noteName + 1;
+      // TODO: This needs optimizing
+      while( steps > 0 )
+      {
+        if( noteName == NoteName.B )
+        {
+          noteName = NoteName.C;
+        }
+        else
+        {
+          ++noteName;
+        }
+
+        --steps;
+      }
+
+      return noteName;
     }
 
     /// <summary>
@@ -63,12 +90,37 @@ namespace Bach.Model
     /// <returns>The previous note name.</returns>
     public static NoteName Previous(this NoteName noteName)
     {
-      if( noteName == NoteName.C )
+      return Subtract(noteName, 1);
+    }
+
+    /// <summary>Subtracts a number of steps from a note name.</summary>
+    /// <param name="noteName">The starting note name.</param>
+    /// <param name="steps">The number of steps to subtract.</param>
+    /// <returns>A NoteName.</returns>
+    public static NoteName Subtract(this NoteName noteName,
+                                    int steps)
+    {
+      if (steps < 0)
       {
-        return NoteName.B;
+        return Add(noteName, -steps);
       }
 
-      return noteName - 1;
+      // TODO: This needs optimizing
+      while( steps > 0 )
+      {
+        if( noteName == NoteName.C )
+        {
+          noteName = NoteName.B;
+        }
+        else
+        {
+          --noteName;
+        }
+
+        --steps;
+      }
+
+      return noteName;
     }
 
     /// <summary>
@@ -88,8 +140,8 @@ namespace Bach.Model
       var interval = 0;
       while( noteName != end )
       {
-        interval += s_intervals[(int) noteName];
-        noteName = (NoteName) ( ( (int) noteName + 1 ) % s_intervals.Length );
+        interval += s_intervals[(int)noteName];
+        noteName = (NoteName)( ( (int)noteName + 1 ) % s_intervals.Length );
       }
 
       return interval;
