@@ -46,14 +46,13 @@ namespace Bach.Model.Instruments
 
     public StringedInstrumentDefinitionBuilder AddTuning(string key,
                                                          string name,
-                                                         string notes,
-                                                         int defaultOctave = 4)
+                                                         string pitches)
     {
       Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
-      Contract.RequiresNotNullOrEmpty(notes, "Must provide tuning pitches");
+      Contract.RequiresNotNullOrEmpty(pitches, "Must provide tuning pitches");
 
-      PitchCollection collection = PitchCollection.Parse(notes, defaultOctave);
+      PitchCollection collection = PitchCollection.Parse(pitches);
       if( collection.Count != _state.StringCount )
       {
         throw new ArgumentException("Must provide exactly {_state.StringCount} pitches");

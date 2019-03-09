@@ -350,20 +350,19 @@ namespace Bach.Model.Test
     [Fact]
     public void TryParseTest()
     {
-      Pitch actual;
-      Assert.True(Pitch.TryParse("C", out actual));
+      Assert.True(Pitch.TryParse("C4", out Pitch actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.Natural, 4), actual);
 
-      Assert.True(Pitch.TryParse("C#", out actual));
+      Assert.True(Pitch.TryParse("C#4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.Sharp, 4), actual);
 
-      Assert.True(Pitch.TryParse("C##", out actual));
+      Assert.True(Pitch.TryParse("C##4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.DoubleSharp, 4), actual);
 
-      Assert.True(Pitch.TryParse("Cb", out actual));
+      Assert.True(Pitch.TryParse("Cb4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.Flat, 4), actual);
 
-      Assert.True(Pitch.TryParse("Cbb", out actual));
+      Assert.True(Pitch.TryParse("Cbb4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.DoubleFlat, 4), actual);
 
       Assert.True(Pitch.TryParse("C2", out actual));

@@ -225,8 +225,7 @@ namespace Bach.Model
     public override string ToString() => $"{_note}{Octave}";
 
     private static bool TryParseNotes(string value,
-                                      ref Pitch pitch,
-                                      int defaultOctave)
+                                      ref Pitch pitch)
     {
       if( !Enum.TryParse(value.Substring(0, 1), true, out NoteName toneName) )
       {
@@ -234,11 +233,9 @@ namespace Bach.Model
       }
 
       var index = 1;
-      int octave = defaultOctave;
-
       TryGetAccidental(value, ref index, out Accidental accidental);
-      TryGetOctave(value, ref index, ref octave);
-      if( index < value.Length )
+      TryGetOctave(value, ref index, out int octave);
+      if( index < value.Length || octave < MinOctave || octave > MaxOctave )
       {
         return false;
       }
@@ -317,10 +314,11 @@ namespace Bach.Model
 
     private static void TryGetOctave(string value,
                                      ref int index,
-                                     ref int octave)
+                                     out int octave)
     {
       if( index >= value.Length || !int.TryParse(value.Substring(index, 1), out octave) )
       {
+        octave = -1;
         return;
       }
 
@@ -396,8 +394,7 @@ namespace Bach.Model
       left.AbsoluteValue - right.AbsoluteValue;
 
     public static bool TryParse(string value,
-                                out Pitch pitch,
-                                int defaultOctave = 4)
+                                out Pitch pitch)
     {
       pitch = new Pitch();
       if( string.IsNullOrEmpty(value) )
@@ -410,11 +407,10 @@ namespace Bach.Model
         return TryParseMidi(value, ref pitch);
       }
 
-      return TryParseNotes(value, ref pitch, defaultOctave);
+      return TryParseNotes(value, ref pitch);
     }
 
-    public static Pitch Parse(string value,
-                              int defaultOctave = 4)
+    public static Pitch Parse(string value)
     {
       if( !TryParse(value, out Pitch result) )
       {
