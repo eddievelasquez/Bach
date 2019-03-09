@@ -424,5 +424,31 @@ namespace Bach.Model.Test
       Assert.Equal(127, Pitch.Parse("G9").Midi);
       Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.CreateFromMidi(11));
     }
+
+    [Fact]
+    public void PitchIntervalAdditionTest()
+    {
+      Assert.Equal(Pitch.Parse("E4"), Pitch.Parse("C4") + Interval.MajorThird);
+      Assert.Equal(Pitch.Parse("E4"), Pitch.Parse("C#4") + Interval.MinorThird);
+      Assert.Equal(Pitch.Parse("F4"), Pitch.Parse("D4") + Interval.MinorThird);
+      Assert.Equal(Pitch.Parse("G4"), Pitch.Parse("D4") + Interval.Fourth);
+      Assert.Equal(Pitch.Parse("A4"), Pitch.Parse("E4") + Interval.Fourth);
+      Assert.Equal(Pitch.Parse("Ab4"), Pitch.Parse("Eb4") + Interval.Fourth);
+      Assert.Equal(Pitch.Parse("G#4"), Pitch.Parse("Eb4") + Interval.AugmentedThird);
+      Assert.Equal(Pitch.Parse("D5"), Pitch.Parse("F4") + Interval.MajorSixth);
+      Assert.Equal(Pitch.Parse("D5"), Pitch.Parse("G4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("F4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("E5"), Pitch.Parse("A4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("Eb5"), Pitch.Parse("Ab4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("Eb5"), Pitch.Parse("G#4") + Interval.DiminishedSixth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("F#4") + Interval.AugmentedFourth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("Gb4") + Interval.DiminishedFifth);
+      Assert.Equal(Pitch.Parse("D#4"), Pitch.Parse("C4") + Interval.AugmentedSecond);
+      Assert.Equal(Pitch.Parse("F#4"), Pitch.Parse("C4") + Interval.DiminishedFifth);
+      Assert.Equal(Pitch.Parse("Gb4"), Pitch.Parse("C4") + Interval.AugmentedFourth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("D#4") + Interval.DiminishedSeventh);
+      Assert.Equal(Pitch.Parse("F4"), Pitch.Parse("D#4") + Interval.DiminishedThird);
+      Assert.Equal(Pitch.Parse("G#4"), Pitch.Parse("D##4") + Interval.DiminishedFourth);
+    }
   }
 }

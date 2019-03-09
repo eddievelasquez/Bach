@@ -26,6 +26,7 @@
 namespace Bach.Model
 {
   using System;
+  using System.ComponentModel;
   using System.Text;
 
   /// <summary>
@@ -248,6 +249,17 @@ namespace Bach.Model
       return result;
     }
 
+    public static Pitch Add(Pitch pitch,
+                            Interval interval)
+    {
+      byte absoluteValue = (byte)( pitch._absoluteValue + interval.SemitoneCount );
+      CalcNote(absoluteValue, out Note calculatedNote, out byte octave, AccidentalMode.FavorSharps);
+
+      var newNote = pitch.Note + interval;
+      var result = new Pitch(newNote, octave, absoluteValue);
+      return result;
+    }
+
     /// <summary>Subtracts a number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
     /// <param name="accidentalMode">(Optional) The accidental mode.</param>
@@ -332,6 +344,14 @@ namespace Bach.Model
     public static Pitch operator+(Pitch pitch,
                                   int semitoneCount)
       => pitch.Add(semitoneCount, AccidentalMode);
+
+    /// <summary>Addition operator.</summary>
+    /// <param name="pitch">The first value.</param>
+    /// <param name="interval">A value to add to it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static Pitch operator+(Pitch pitch,
+                                  Interval interval)
+      => Add(pitch, interval);
 
     /// <summary>Increment operator.</summary>
     /// <param name="pitch">The pitch.</param>
