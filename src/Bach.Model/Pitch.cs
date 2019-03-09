@@ -41,32 +41,28 @@ namespace Bach.Model
     : IEquatable<Pitch>,
       IComparable<Pitch>
   {
+    /// <summary>The minimum supported octave.</summary>
     public const int MinOctave = 0;
+
+    /// <summary>The maximum supported octave.</summary>
     public const int MaxOctave = 9;
+
     internal const double A4Frequency = 440.0;
     internal const int IntervalsPerOctave = 12;
 
-    private static readonly int[] s_intervals =
-    {
-      0, // C
-      2, // D
-      4, // E
-      5, // F
-      7, // G
-      9, // A
-      11, // B
-      12 // C
-    };
-
     // Midi supports C-1, but we only support C0 and above
-    private static readonly byte s_minAbsoluteValue = (byte) CalcAbsoluteValue(NoteName.C, Accidental.Natural, MinOctave);
+    private static readonly byte s_minAbsoluteValue = (byte)CalcAbsoluteValue(NoteName.C, Accidental.Natural, MinOctave);
 
     // G9 is the highest pitch supported by MIDI
-    private static readonly byte s_maxAbsoluteValue = (byte) CalcAbsoluteValue(NoteName.G, Accidental.Natural, MaxOctave);
+    private static readonly byte s_maxAbsoluteValue = (byte)CalcAbsoluteValue(NoteName.G, Accidental.Natural, MaxOctave);
 
     private static readonly Pitch s_a4 = Create(NoteName.A, Accidental.Natural, 4);
 
+    /// <summary>An empty pitch.</summary>
     public static readonly Pitch Empty = new Pitch();
+
+    /// <summary>The maximum possible pitch value.</summary>
+    //TODO: Why have this if G9 is the maximum supported pitch?
     public static readonly Pitch MaxValue = new Pitch(Note.B, MaxOctave, 128);
 
     private readonly byte _absoluteValue;
@@ -79,7 +75,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
-      _absoluteValue = (byte) absoluteValue;
+      _absoluteValue = (byte)absoluteValue;
       CalcNote(_absoluteValue, out _note, out _octave, accidentalMode);
     }
 
@@ -88,8 +84,8 @@ namespace Bach.Model
                   int absoluteValue)
     {
       _note = note;
-      _octave = (byte) octave;
-      _absoluteValue = (byte) absoluteValue;
+      _octave = (byte)octave;
+      _absoluteValue = (byte)absoluteValue;
     }
 
     private Pitch(NoteName noteName,
@@ -101,10 +97,15 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
       _note = new Note(noteName, accidental);
-      _octave = (byte) octave;
-      _absoluteValue = (byte) absoluteValue;
+      _octave = (byte)octave;
+      _absoluteValue = (byte)absoluteValue;
     }
 
+    /// <summary>Creates a new Pitch.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
+    /// <param name="note">The note.</param>
+    /// <param name="octave">The octave.</param>
+    /// <returns>A Pitch.</returns>
     public static Pitch Create(Note note,
                                int octave)
     {
@@ -125,31 +126,21 @@ namespace Bach.Model
       return new Pitch(note, octave, abs);
     }
 
+    /// <summary>Creates a new Pitch.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
+    /// <param name="noteName">Name of the note.</param>
+    /// <param name="accidental">The accidental.</param>
+    /// <param name="octave">The octave.</param>
+    /// <returns>A Pitch.</returns>
     public static Pitch Create(NoteName noteName,
                                Accidental accidental,
                                int octave)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C);
-      Contract.Requires<ArgumentOutOfRangeException>(noteName <= NoteName.B);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental <= Accidental.DoubleSharp);
-      Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
+      => Create(new Note(noteName, accidental), octave);
 
-      int abs = CalcAbsoluteValue(noteName, accidental, octave);
-      if( abs < s_minAbsoluteValue )
-      {
-        throw new ArgumentOutOfRangeException($"Must be equal to or greater than {new Pitch(s_minAbsoluteValue, AccidentalMode)}");
-      }
-
-      if( abs > s_maxAbsoluteValue )
-      {
-        throw new ArgumentOutOfRangeException($"Must be equal to or less than {new Pitch(s_maxAbsoluteValue, AccidentalMode)}");
-      }
-
-      return new Pitch(noteName, accidental, octave, abs);
-    }
-
+    /// <summary>Creates a pitch from a MIDI pitch value.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
+    /// <param name="midi">The MIDI pitch.</param>
+    /// <returns>A pitch.</returns>
     public static Pitch CreateFromMidi(int midi)
     {
       Contract.Requires<ArgumentOutOfRangeException>(midi >= 0);
@@ -165,40 +156,40 @@ namespace Bach.Model
       return note;
     }
 
+    /// <summary>Gets a value indicating whether this instance is a valid pitch.</summary>
+    /// <value>True if this instance is a valid false, false if it is not.</value>
     public bool IsValid
     {
       get
       {
-        int abs = _absoluteValue + (int) _note.Accidental;
+        int abs = _absoluteValue + (int)_note.Accidental;
         return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
       }
     }
 
+    /// <summary>Gets the pitch's note.</summary>
+    /// <value>The note.</value>
     public Note Note => _note;
 
-    public NoteName NoteName => _note.NoteName;
-
-    public Accidental Accidental => _note.Accidental;
-
+    /// <summary>Gets the pitch's octave.</summary>
+    /// <value>The octave.</value>
     public int Octave => _octave;
 
-    public int AbsoluteValue => _absoluteValue;
-
+    /// <summary>Gets the pitch's frequency.</summary>
+    /// <value>The frequency.</value>
     public double Frequency
     {
       get
       {
-        int interval = AbsoluteValue - s_a4.AbsoluteValue;
+        int interval = _absoluteValue - s_a4._absoluteValue;
         double freq = Math.Pow(2, interval / 12.0) * A4Frequency;
         return freq;
       }
     }
 
-    // The formula to convert a pitch to MIDI (according to http://en.wikipedia.org/wiki/Pitch)
-    // is p = 69 + 12 x log2(freq / 440). As it happens, our AbsoluteValue almost
-    // matches, but we don't support the -1 octave we must add 12 to obtain the
-    // MIDI number.
-    public int Midi => AbsoluteValue + 12;
+    /// <summary>Gets the pitch's MIDI value.</summary>
+    /// <value>The MIDI value.</value>
+    public int Midi => _absoluteValue + 12;
 
     public static AccidentalMode AccidentalMode
     {
@@ -206,67 +197,35 @@ namespace Bach.Model
       set => Note.AccidentalMode = value;
     }
 
-    public int CompareTo(Pitch other) => AbsoluteValue - other.AbsoluteValue;
+    /// <inheritdoc />
+    public int CompareTo(Pitch other) => _absoluteValue - other._absoluteValue;
 
-    public bool Equals(Pitch obj) => obj.AbsoluteValue == AbsoluteValue;
+    /// <inheritdoc />
+    public bool Equals(Pitch obj) => obj._absoluteValue == _absoluteValue;
 
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(obj, null) || obj.GetType() != GetType() )
+      if( obj is null || obj.GetType() != GetType() )
       {
         return false;
       }
 
-      return Equals((Pitch) obj);
+      return Equals((Pitch)obj);
     }
 
-    public override int GetHashCode() => AbsoluteValue;
+    /// <inheritdoc />
+    public override int GetHashCode() => _absoluteValue;
 
+    /// <inheritdoc />
     public override string ToString() => $"{_note}{Octave}";
-
-    private static bool TryParseNotes(string value,
-                                      ref Pitch pitch)
-    {
-      if( !Enum.TryParse(value.Substring(0, 1), true, out NoteName toneName) )
-      {
-        return false;
-      }
-
-      var index = 1;
-      TryGetAccidental(value, ref index, out Accidental accidental);
-      TryGetOctave(value, ref index, out int octave);
-      if( index < value.Length || octave < MinOctave || octave > MaxOctave )
-      {
-        return false;
-      }
-
-      pitch = Create(toneName, accidental, octave);
-      return true;
-    }
-
-    private static bool TryParseMidi(string value,
-                                     ref Pitch pitch)
-    {
-      if( !int.TryParse(value, out int midi) )
-      {
-        return false;
-      }
-
-      if( midi < 0 || midi > 127 )
-      {
-        return false;
-      }
-
-      pitch = CreateFromMidi(midi);
-      return true;
-    }
 
     private static int CalcAbsoluteValue(NoteName noteName,
                                          Accidental accidental,
                                          int octave)
     {
-      int value = ( octave * IntervalsPerOctave ) + s_intervals[(int) noteName] + (int) accidental;
-      return value;
+      int absoluteValue = ( octave * IntervalsPerOctave ) + NoteName.C.SemitonesBetween(noteName) + (int)accidental;
+      return absoluteValue;
     }
 
     private static void CalcNote(byte absoluteValue,
@@ -274,9 +233,135 @@ namespace Bach.Model
                                  out byte octave,
                                  AccidentalMode accidentalMode)
     {
-      octave = (byte) Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
+      octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
       note = Note.GetNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
     }
+
+    /// <summary>Adds number of semitones to the current instance.</summary>
+    /// <param name="semitoneCount">Number of semitones.</param>
+    /// <param name="accidentalMode">(Optional) The accidental mode.</param>
+    /// <returns>A Pitch.</returns>
+    public Pitch Add(int semitoneCount,
+                     AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+    {
+      var result = new Pitch(_absoluteValue + semitoneCount, accidentalMode);
+      return result;
+    }
+
+    /// <summary>Subtracts a number of semitones to the current instance.</summary>
+    /// <param name="semitoneCount">Number of semitones.</param>
+    /// <param name="accidentalMode">(Optional) The accidental mode.</param>
+    /// <returns>A Pitch.</returns>
+    public Pitch Subtract(int semitoneCount,
+                          AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+    {
+      var result = new Pitch(_absoluteValue - semitoneCount, accidentalMode);
+      return result;
+    }
+
+    /// <summary>Determines the minimum of the given pitches.</summary>
+    /// <param name="a">A Pitch to process.</param>
+    /// <param name="b">A Pitch to process.</param>
+    /// <returns>The minimum value.</returns>
+    public static Pitch Min(Pitch a,
+                            Pitch b)
+      => a._absoluteValue <= b._absoluteValue ? a : b;
+
+    /// <summary>Determines the maximum of the given pitches.</summary>
+    /// <param name="a">A Pitch to process.</param>
+    /// <param name="b">A Pitch to process.</param>
+    /// <returns>The maximum value.</returns>
+    public static Pitch Max(Pitch a,
+                            Pitch b)
+      => a._absoluteValue >= b._absoluteValue ? a : b;
+
+    #region Operators
+
+    /// <summary>Equality operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator==(Pitch lhs,
+                                  Pitch rhs)
+      => Equals(lhs, rhs);
+
+    /// <summary>Inequality operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator!=(Pitch lhs,
+                                  Pitch rhs)
+      => !Equals(lhs, rhs);
+
+    /// <summary>Greater-than comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator>(Pitch left,
+                                 Pitch right)
+      => left.CompareTo(right) > 0;
+
+    /// <summary>Lesser-than comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator<(Pitch left,
+                                 Pitch right)
+      => left.CompareTo(right) < 0;
+
+    /// <summary>Greater-than-or-equal comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator>=(Pitch left,
+                                  Pitch right)
+      => left.CompareTo(right) >= 0;
+
+    /// <summary>Lesser-than-or-equal comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator<=(Pitch left,
+                                  Pitch right)
+      => left.CompareTo(right) <= 0;
+
+    /// <summary>Addition operator.</summary>
+    /// <param name="pitch">The first value.</param>
+    /// <param name="semitoneCount">A value to add to it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static Pitch operator+(Pitch pitch,
+                                  int semitoneCount)
+      => pitch.Add(semitoneCount, AccidentalMode);
+
+    /// <summary>Increment operator.</summary>
+    /// <param name="pitch">The pitch.</param>
+    /// <returns>The result of the operation.</returns>
+    public static Pitch operator++(Pitch pitch) => pitch.Add(1, AccidentalMode);
+
+    /// <summary>Subtraction operator.</summary>
+    /// <param name="pitch">The first value.</param>
+    /// <param name="semitoneCount">A value to subtract from it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static Pitch operator-(Pitch pitch,
+                                  int semitoneCount)
+      => pitch.Subtract(semitoneCount, AccidentalMode);
+
+    /// <summary>Decrement operator.</summary>
+    /// <param name="pitch">The pitch.</param>
+    /// <returns>The result of the operation.</returns>
+    public static Pitch operator--(Pitch pitch) => pitch.Subtract(1, AccidentalMode);
+
+    /// <summary>Subtraction operator.</summary>
+    /// <param name="left">The first value.</param>
+    /// <param name="right">A value to subtract from it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static int operator-(Pitch left,
+                                Pitch right)
+      => left._absoluteValue - right._absoluteValue;
+
+    #endregion
+
+    #region Parsing
 
     private static void TryGetAccidental(string value,
                                          ref int index,
@@ -328,88 +413,66 @@ namespace Bach.Model
       }
     }
 
-    public Pitch ApplyAccidental(Accidental accidental)
+    private static bool TryParseNotes(string value,
+                                      ref Pitch pitch)
     {
-      CalcNote(
-        (byte) ( AbsoluteValue + accidental ),
-        out Note tone,
-        out byte octave,
-        accidental < Accidental.Natural ? AccidentalMode.FavorFlats : AccidentalMode.FavorSharps);
+      if( !Enum.TryParse(value.Substring(0, 1), out NoteName toneName) )
+      {
+        return false;
+      }
 
-      return Create(tone, octave);
+      var index = 1;
+      TryGetAccidental(value, ref index, out Accidental accidental);
+      TryGetOctave(value, ref index, out int octave);
+
+      if( index < value.Length || octave < MinOctave || octave > MaxOctave )
+      {
+        return false;
+      }
+
+      pitch = Create(toneName, accidental, octave);
+      return true;
     }
 
-    public static bool operator==(Pitch lhs,
-                                  Pitch rhs) =>
-      Equals(lhs, rhs);
-
-    public static bool operator!=(Pitch lhs,
-                                  Pitch rhs) =>
-      !Equals(lhs, rhs);
-
-    public static bool operator>(Pitch left,
-                                 Pitch right) =>
-      left.CompareTo(right) > 0;
-
-    public static bool operator<(Pitch left,
-                                 Pitch right) =>
-      left.CompareTo(right) < 0;
-
-    public static bool operator>=(Pitch left,
-                                  Pitch right) =>
-      left.CompareTo(right) >= 0;
-
-    public static bool operator<=(Pitch left,
-                                  Pitch right) =>
-      left.CompareTo(right) <= 0;
-
-    public Pitch Add(int interval,
-                     AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+    private static bool TryParseMidi(string value,
+                                     ref Pitch pitch)
     {
-      var result = new Pitch(AbsoluteValue + interval, accidentalMode);
-      return result;
+      if( !int.TryParse(value, out int midi) )
+      {
+        return false;
+      }
+
+      if( midi < 0 || midi > 127 )
+      {
+        return false;
+      }
+
+      pitch = CreateFromMidi(midi);
+      return true;
     }
 
-    public Pitch Subtract(int interval,
-                          AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
-    {
-      var result = new Pitch(AbsoluteValue - interval, accidentalMode);
-      return result;
-    }
-
-    public static Pitch operator+(Pitch pitch,
-                                  int interval) =>
-      pitch.Add(interval, AccidentalMode);
-
-    public static Pitch operator++(Pitch pitch) => pitch.Add(1, AccidentalMode);
-
-    public static Pitch operator-(Pitch pitch,
-                                  int interval) =>
-      pitch.Subtract(interval, AccidentalMode);
-
-    public static Pitch operator--(Pitch pitch) => pitch.Subtract(1, AccidentalMode);
-
-    public static int operator-(Pitch left,
-                                Pitch right) =>
-      left.AbsoluteValue - right.AbsoluteValue;
-
+    /// <summary>Attempts to parse a Pitch from the given string.</summary>
+    /// <param name="value">The value to parse.</param>
+    /// <param name="pitch">[out] The note.</param>
+    /// <returns>True if it succeeds, false if it fails.</returns>
     public static bool TryParse(string value,
                                 out Pitch pitch)
     {
-      pitch = new Pitch();
+      pitch = Empty;
       if( string.IsNullOrEmpty(value) )
       {
         return false;
       }
 
-      if( char.IsDigit(value, 0) )
-      {
-        return TryParseMidi(value, ref pitch);
-      }
-
-      return TryParseNotes(value, ref pitch);
+      return char.IsDigit(value, 0) ? TryParseMidi(value, ref pitch) : TryParseNotes(value, ref pitch);
     }
 
+    /// <summary>Parses the provided string.</summary>
+    /// <exception cref="FormatException">Thrown when the provided string doesn't represent a Pitch.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+    /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+    /// <param name="value">The value to parse.</param>
+    /// <returns>A Pitch.</returns>
     public static Pitch Parse(string value)
     {
       if( !TryParse(value, out Pitch result) )
@@ -420,8 +483,6 @@ namespace Bach.Model
       return result;
     }
 
-    public static Pitch Min(Pitch a,
-                            Pitch b) =>
-      a.AbsoluteValue < b.AbsoluteValue ? a : b;
+    #endregion
   }
 }

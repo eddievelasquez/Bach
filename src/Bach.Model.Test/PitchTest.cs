@@ -34,8 +34,8 @@ namespace Bach.Model.Test
     public void CreateWithToneAndAccidentalTest()
     {
       Pitch target = Pitch.Create(NoteName.A, Accidental.Natural, 1);
-      Assert.Equal(NoteName.A, target.NoteName);
-      Assert.Equal(Accidental.Natural, target.Accidental);
+      Assert.Equal(NoteName.A, target.Note.NoteName);
+      Assert.Equal(Accidental.Natural, target.Note.Accidental);
       Assert.Equal(1, target.Octave);
 
       Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(NoteName.C, Accidental.Flat, Pitch.MinOctave));
@@ -51,14 +51,10 @@ namespace Bach.Model.Test
       Assert.Equal(Note.A, target.Note);
       Assert.Equal(1, target.Octave);
 
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.C, Accidental.Flat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.C, Accidental.Flat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
     }
 
     [Fact]
@@ -238,18 +234,6 @@ namespace Bach.Model.Test
       Assert.True(b >= a);
       Assert.False(b < a);
       Assert.False(b <= a);
-    }
-
-    [Fact]
-    public void AbsoluteValueTest()
-    {
-      Assert.Equal(0, Pitch.Parse("C0").AbsoluteValue);
-      Assert.Equal(1, Pitch.Parse("C#0").AbsoluteValue);
-      Assert.Equal(2, Pitch.Parse("C##0").AbsoluteValue);
-      Assert.Equal(11, Pitch.Parse("B0").AbsoluteValue);
-      Assert.Equal(12, Pitch.Parse("C1").AbsoluteValue);
-      Assert.Equal(Pitch.Parse("Db1").AbsoluteValue, Pitch.Parse("C#1").AbsoluteValue);
-      Assert.Equal(Pitch.Parse("C2").AbsoluteValue, Pitch.Parse("B#1").AbsoluteValue);
     }
 
     [Fact]
@@ -439,17 +423,6 @@ namespace Bach.Model.Test
       Assert.Equal(120, Pitch.Parse("C9").Midi);
       Assert.Equal(127, Pitch.Parse("G9").Midi);
       Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.CreateFromMidi(11));
-    }
-
-    [Fact]
-    public void ApplyAccidentalTest()
-    {
-      Pitch expected = Pitch.Parse("C4");
-      Assert.Equal(Pitch.Parse("Bb3"), expected.ApplyAccidental(Accidental.DoubleFlat));
-      Assert.Equal(Pitch.Parse("B3"), expected.ApplyAccidental(Accidental.Flat));
-      Assert.Equal(Pitch.Parse("C4"), expected.ApplyAccidental(Accidental.Natural));
-      Assert.Equal(Pitch.Parse("C#4"), expected.ApplyAccidental(Accidental.Sharp));
-      Assert.Equal(Pitch.Parse("C##4"), expected.ApplyAccidental(Accidental.DoubleSharp));
     }
   }
 }
