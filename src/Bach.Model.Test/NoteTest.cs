@@ -119,9 +119,9 @@ namespace Bach.Model.Test
       NextTestImpl(Note.BFlat, Note.B);
       NextTestImpl(Note.B, Note.C);
 
-      NextTestImpl(new Note(NoteName.C, Accidental.DoubleSharp), Note.DSharp, Note.EFlat);
-      NextTestImpl(new Note(NoteName.E, Accidental.DoubleSharp), Note.G);
-      NextTestImpl(new Note(NoteName.B, Accidental.DoubleSharp), Note.D);
+      NextTestImpl(Note.Create(NoteName.C, Accidental.DoubleSharp), Note.DSharp, Note.EFlat);
+      NextTestImpl(Note.Create(NoteName.E, Accidental.DoubleSharp), Note.G);
+      NextTestImpl(Note.Create(NoteName.B, Accidental.DoubleSharp), Note.D);
     }
 
     [Fact]
@@ -162,8 +162,8 @@ namespace Bach.Model.Test
       PreviousTestImpl(Note.BFlat, Note.A);
       PreviousTestImpl(Note.B, Note.ASharp, Note.BFlat);
 
-      PreviousTestImpl(new Note(NoteName.B, Accidental.DoubleFlat), Note.GSharp, Note.AFlat);
-      PreviousTestImpl(new Note(NoteName.C, Accidental.DoubleFlat), Note.A);
+      PreviousTestImpl(Note.Create(NoteName.B, Accidental.DoubleFlat), Note.GSharp, Note.AFlat);
+      PreviousTestImpl(Note.Create(NoteName.C, Accidental.DoubleFlat), Note.A);
     }
 
     [Fact]
@@ -220,11 +220,11 @@ namespace Bach.Model.Test
     [Fact]
     public void ParseTest()
     {
-      Assert.Equal(new Note(NoteName.C, Accidental.DoubleFlat), Note.Parse("Cbb"));
-      Assert.Equal(new Note(NoteName.C, Accidental.Flat), Note.Parse("CB"));
+      Assert.Equal(Note.Create(NoteName.C, Accidental.DoubleFlat), Note.Parse("Cbb"));
+      Assert.Equal(Note.Create(NoteName.C, Accidental.Flat), Note.Parse("CB"));
       Assert.Equal(Note.C, Note.Parse("C"));
       Assert.Equal(Note.CSharp, Note.Parse("c#"));
-      Assert.Equal(new Note(NoteName.C, Accidental.DoubleSharp), Note.Parse("c##"));
+      Assert.Equal(Note.Create(NoteName.C, Accidental.DoubleSharp), Note.Parse("c##"));
     }
 
     [Fact]
@@ -239,7 +239,7 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsTest()
     {
-      object actual = new Note(NoteName.C);
+      object actual = Note.Create(NoteName.C);
       Assert.True(Note.C.Equals(actual));
       Assert.False(Note.C.Equals(null));
     }
@@ -256,7 +256,7 @@ namespace Bach.Model.Test
     [Fact]
     public void LogicalOperatorsTest()
     {
-      Assert.True(Note.C == new Note(NoteName.B, Accidental.Sharp));
+      Assert.True(Note.C == Note.Create(NoteName.B, Accidental.Sharp));
       Assert.True(Note.C != Note.B);
       Assert.True(Note.C < Note.B);
       Assert.True(Note.C <= Note.B);
@@ -286,11 +286,11 @@ namespace Bach.Model.Test
     [Fact]
     public void ToStringTest()
     {
-      Assert.Equal("Cbb", new Note(NoteName.C, Accidental.DoubleFlat).ToString());
-      Assert.Equal("Cb", new Note(NoteName.C, Accidental.Flat).ToString());
-      Assert.Equal("C", new Note(NoteName.C).ToString());
-      Assert.Equal("C#", new Note(NoteName.C, Accidental.Sharp).ToString());
-      Assert.Equal("C##", new Note(NoteName.C, Accidental.DoubleSharp).ToString());
+      Assert.Equal("Cbb", Note.Create(NoteName.C, Accidental.DoubleFlat).ToString());
+      Assert.Equal("Cb", Note.Create(NoteName.C, Accidental.Flat).ToString());
+      Assert.Equal("C", Note.Create(NoteName.C).ToString());
+      Assert.Equal("C#", Note.Create(NoteName.C, Accidental.Sharp).ToString());
+      Assert.Equal("C##", Note.Create(NoteName.C, Accidental.DoubleSharp).ToString());
     }
 
     [Fact]
@@ -315,8 +315,8 @@ namespace Bach.Model.Test
       Assert.Equal(Interval.DiminishedFifth, Note.FSharp - Note.C);
       Assert.Equal(Interval.AugmentedFourth, Note.GFlat - Note.C);
       Assert.Equal(Interval.DiminishedSeventh, Note.DSharp - Note.C);
-      Assert.Equal(Interval.DiminishedThird, Note.C - new Note(NoteName.E, Accidental.DoubleFlat));
-      Assert.Equal(Interval.DiminishedFourth, new Note(NoteName.D, Accidental.DoubleSharp) - Note.GSharp);
+      Assert.Equal(Interval.DiminishedThird, Note.C - Note.Create(NoteName.E, Accidental.DoubleFlat));
+      Assert.Equal(Interval.DiminishedFourth, Note.Create(NoteName.D, Accidental.DoubleSharp) - Note.GSharp);
     }
 
     [Fact]
@@ -342,14 +342,66 @@ namespace Bach.Model.Test
       Assert.Equal(Note.GFlat, Note.C + Interval.AugmentedFourth);
       Assert.Equal(Note.C, Note.DSharp + Interval.DiminishedSeventh);
       Assert.Equal(Note.F, Note.DSharp + Interval.DiminishedThird);
-      Assert.Equal(Note.GSharp, new Note(NoteName.D, Accidental.DoubleSharp) + Interval.DiminishedFourth);
+      Assert.Equal(Note.GSharp, Note.Create(NoteName.D, Accidental.DoubleSharp) + Interval.DiminishedFourth);
+    }
+
+    [Fact]
+    public void GetEnharmonicTest()
+    {
+      EnharmonicTestImpl(Note.C, "Dbb", "B#");
+      EnharmonicTestImpl(Note.CSharp, "Db", "B##");
+      EnharmonicTestImpl(Note.D, "Ebb", "C##");
+      EnharmonicTestImpl(Note.DSharp, "Fbb", "Eb");
+      EnharmonicTestImpl(Note.E, "Fb", "D##");
+      EnharmonicTestImpl(Note.F, "Gbb", "E#");
+      EnharmonicTestImpl(Note.FSharp, "Gb", "E##");
+      EnharmonicTestImpl(Note.G, "Abb", "F##");
+      EnharmonicTestImpl(Note.GSharp, "Ab");
+      EnharmonicTestImpl(Note.A, "Bbb", "G##");
+      EnharmonicTestImpl(Note.ASharp, "Cbb", "Bb");
+      EnharmonicTestImpl(Note.B, "Cb", "A##");
+
+      // Not enharmonic
+      NotEnharmonicTestImpl(Note.C, NoteName.E, NoteName.G);
+      NotEnharmonicTestImpl(Note.CSharp, NoteName.E, NoteName.G);
+      NotEnharmonicTestImpl(Note.D, NoteName.F, NoteName.C);
+      NotEnharmonicTestImpl(Note.DSharp, NoteName.G, NoteName.D);
+      NotEnharmonicTestImpl(Note.E, NoteName.G, NoteName.D);
+      NotEnharmonicTestImpl(Note.F, NoteName.A, NoteName.E);
+      NotEnharmonicTestImpl(Note.FSharp, NoteName.A, NoteName.E);
+      NotEnharmonicTestImpl(Note.G, NoteName.B, NoteName.F);
+      NotEnharmonicTestImpl(Note.GSharp, NoteName.B, NoteName.G);
+      NotEnharmonicTestImpl(Note.A, NoteName.C, NoteName.G);
+      NotEnharmonicTestImpl(Note.ASharp, NoteName.D, NoteName.A);
+      NotEnharmonicTestImpl(Note.B, NoteName.D, NoteName.A);
+    }
+
+    private static void NotEnharmonicTestImpl(Note note,
+                                              NoteName startInclusive,
+                                              NoteName lastExclusive)
+    {
+      while( startInclusive != lastExclusive )
+      {
+        Assert.Null(note.GetEnharmonic(startInclusive));
+        startInclusive = startInclusive.Next();
+      }
+    }
+
+    private static void EnharmonicTestImpl(Note note,
+                                           params string[] enharmonics)
+    {
+      foreach( string s in enharmonics )
+      {
+        Note enharmonic = Note.Parse(s);
+        Assert.Equal(enharmonic, note.GetEnharmonic(enharmonic.NoteName));
+      }
     }
 
     private static void ConstructorTestImpl(NoteName noteName,
                                             Accidental accidental,
                                             int interval)
     {
-      var note = new Note(noteName, accidental);
+      var note = Note.Create(noteName, accidental);
       ToneMemberTestImpl(note, noteName, accidental, interval);
     }
 

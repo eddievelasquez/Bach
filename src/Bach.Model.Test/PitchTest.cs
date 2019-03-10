@@ -51,10 +51,10 @@ namespace Bach.Model.Test
       Assert.Equal(Note.A, target.Note);
       Assert.Equal(1, target.Octave);
 
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.C, Accidental.Flat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(new Note(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.C, Accidental.Flat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
     }
 
     [Fact]

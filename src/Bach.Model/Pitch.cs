@@ -97,7 +97,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
-      _note = new Note(noteName, accidental);
+      _note = Note.Create(noteName, accidental);
       _octave = (byte)octave;
       _absoluteValue = (byte)absoluteValue;
     }
@@ -136,7 +136,7 @@ namespace Bach.Model
     public static Pitch Create(NoteName noteName,
                                Accidental accidental,
                                int octave)
-      => Create(new Note(noteName, accidental), octave);
+      => Create(Note.Create(noteName, accidental), octave);
 
     /// <summary>Creates a pitch from a MIDI pitch value.</summary>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
@@ -235,7 +235,7 @@ namespace Bach.Model
                                  AccidentalMode accidentalMode)
     {
       octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
-      note = Note.GetNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
+      note = Note.FindNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
     }
 
     /// <summary>Adds number of semitones to the current instance.</summary>
