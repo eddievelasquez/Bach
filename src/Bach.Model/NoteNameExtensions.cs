@@ -25,13 +25,13 @@
 
 namespace Bach.Model
 {
-  using System.Net;
-
   /// <summary>
   /// Provides extension to for <see cref="NoteName"/>.
   /// </summary>
   public static class NoteNameExtensions
   {
+    private const int NoteNameCount = (int)NoteName.B + 1;
+
     private static readonly int[] s_intervals =
     {
       2, // C-D
@@ -48,10 +48,7 @@ namespace Bach.Model
     /// </summary>
     /// <param name="noteName">The starting note name.</param>
     /// <returns>The next note name.</returns>
-    public static NoteName Next(this NoteName noteName)
-    {
-      return Add(noteName, 1);
-    }
+    public static NoteName Next(this NoteName noteName) => Add(noteName, 1);
 
     /// <summary>Adds a number of steps to a note name.</summary>
     /// <param name="noteName">The starting note name.</param>
@@ -60,27 +57,8 @@ namespace Bach.Model
     public static NoteName Add(this NoteName noteName,
                                int steps)
     {
-      if( steps < 0 )
-      {
-        return Subtract(noteName, -steps);
-      }
-
-      // TODO: This needs optimizing
-      while( steps > 0 )
-      {
-        if( noteName == NoteName.B )
-        {
-          noteName = NoteName.C;
-        }
-        else
-        {
-          ++noteName;
-        }
-
-        --steps;
-      }
-
-      return noteName;
+      var result = (NoteName)ArrayExtensions.WrapIndex(NoteNameCount, (int)noteName + steps);
+      return result;
     }
 
     /// <summary>
@@ -88,10 +66,7 @@ namespace Bach.Model
     /// </summary>
     /// <param name="noteName">The starting note name.</param>
     /// <returns>The previous note name.</returns>
-    public static NoteName Previous(this NoteName noteName)
-    {
-      return Subtract(noteName, 1);
-    }
+    public static NoteName Previous(this NoteName noteName) => Add(noteName, -1);
 
     /// <summary>Subtracts a number of steps from a note name.</summary>
     /// <param name="noteName">The starting note name.</param>
@@ -99,29 +74,7 @@ namespace Bach.Model
     /// <returns>A NoteName.</returns>
     public static NoteName Subtract(this NoteName noteName,
                                     int steps)
-    {
-      if (steps < 0)
-      {
-        return Add(noteName, -steps);
-      }
-
-      // TODO: This needs optimizing
-      while( steps > 0 )
-      {
-        if( noteName == NoteName.C )
-        {
-          noteName = NoteName.B;
-        }
-        else
-        {
-          --noteName;
-        }
-
-        --steps;
-      }
-
-      return noteName;
-    }
+      => Add(noteName, -steps);
 
     /// <summary>
     /// Calculates the semitone distance between two note names.
@@ -132,19 +85,14 @@ namespace Bach.Model
     public static int SemitonesBetween(this NoteName noteName,
                                        NoteName end)
     {
-      if( noteName == end )
-      {
-        return 0;
-      }
-
-      var interval = 0;
+      var semitones = 0;
       while( noteName != end )
       {
-        interval += s_intervals[(int)noteName];
-        noteName = (NoteName)( ( (int)noteName + 1 ) % s_intervals.Length );
+        semitones += s_intervals[(int)noteName];
+        noteName = (NoteName)s_intervals.WrapIndex((int)noteName + 1);
       }
 
-      return interval;
+      return semitones;
     }
   }
 }
