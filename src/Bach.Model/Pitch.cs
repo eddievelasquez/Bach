@@ -436,7 +436,7 @@ namespace Bach.Model
     private static bool TryParseNotes(string value,
                                       ref Pitch pitch)
     {
-      if( !Enum.TryParse(value.Substring(0, 1), out NoteName toneName) )
+      if( !NoteName.TryParse(value, out NoteName toneName) )
       {
         return false;
       }

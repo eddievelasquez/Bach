@@ -27,7 +27,7 @@ namespace Bach.Model.Test
 {
   using Xunit;
 
-  public class NoteNameExtensionsTest
+  public class NoteNameTest
   {
     [Fact]
     public void AddTest()
@@ -52,17 +52,28 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void NextTest()
+    public void AdditionOperatorTest()
     {
-      Assert.Equal(NoteName.D, NoteName.C.Next());
-      Assert.Equal(NoteName.C, NoteName.B.Next());
+      Assert.Equal(NoteName.C, NoteName.C + 0);
+      Assert.Equal(NoteName.D, NoteName.C + 1);
+      Assert.Equal(NoteName.E, NoteName.C + 2);
+      Assert.Equal(NoteName.B, NoteName.C + 6);
+      Assert.Equal(NoteName.C, NoteName.C + 7);
+      Assert.Equal(NoteName.D, NoteName.C + 8);
+      Assert.Equal(NoteName.C, NoteName.B + 1);
     }
 
     [Fact]
-    public void PreviousTest()
+    public void SubtractionOperatorTest()
     {
-      Assert.Equal(NoteName.C, NoteName.D.Previous());
-      Assert.Equal(NoteName.B, NoteName.C.Previous());
+      Assert.Equal(NoteName.B, NoteName.B - 0);
+      Assert.Equal(NoteName.A, NoteName.B - 1);
+      Assert.Equal(NoteName.G, NoteName.B - 2);
+      Assert.Equal(NoteName.C, NoteName.B - 6);
+      Assert.Equal(NoteName.B, NoteName.B - 7);
+      Assert.Equal(NoteName.A, NoteName.B - 8);
+      Assert.Equal(NoteName.C, NoteName.D - 1);
+      Assert.Equal(NoteName.B, NoteName.C - 1);
     }
 
     [Fact]

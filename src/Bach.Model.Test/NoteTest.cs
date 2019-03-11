@@ -383,7 +383,7 @@ namespace Bach.Model.Test
       while( startInclusive != lastExclusive )
       {
         Assert.Null(note.GetEnharmonic(startInclusive));
-        startInclusive = startInclusive.Next();
+        ++startInclusive;
       }
     }
 

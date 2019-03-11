@@ -253,7 +253,7 @@ namespace Bach.Model
         return false;
       }
 
-      if( !Enum.TryParse(value.Substring(0, 1), true, out NoteName toneName) )
+      if( !NoteName.TryParse(value, out NoteName toneName) )
       {
         note = C;
         return false;
@@ -378,7 +378,7 @@ namespace Bach.Model
       while( current != b.NoteName )
       {
         ++quantity;
-        current = current.Next();
+        ++current;
       }
 
       var semitoneCount = SemitonesBetween(a, b);
