@@ -27,20 +27,53 @@ namespace Bach.Model.Test
 {
   using Xunit;
 
-  public class NoteNameExtensionsTest
+  public class NoteNameTest
   {
     [Fact]
-    public void NextTest()
+    public void AddTest()
     {
-      Assert.Equal(NoteName.D, NoteName.C.Next());
-      Assert.Equal(NoteName.C, NoteName.B.Next());
+      Assert.Equal(NoteName.C, NoteName.C.Add(0));
+      Assert.Equal(NoteName.D, NoteName.C.Add(1));
+      Assert.Equal(NoteName.E, NoteName.C.Add(2));
+      Assert.Equal(NoteName.B, NoteName.C.Add(6));
+      Assert.Equal(NoteName.C, NoteName.C.Add(7));
+      Assert.Equal(NoteName.D, NoteName.C.Add(8));
     }
 
     [Fact]
-    public void PreviousTest()
+    public void SubtractTest()
     {
-      Assert.Equal(NoteName.C, NoteName.D.Previous());
-      Assert.Equal(NoteName.B, NoteName.C.Previous());
+      Assert.Equal(NoteName.B, NoteName.B.Subtract(0));
+      Assert.Equal(NoteName.A, NoteName.B.Subtract(1));
+      Assert.Equal(NoteName.G, NoteName.B.Subtract(2));
+      Assert.Equal(NoteName.C, NoteName.B.Subtract(6));
+      Assert.Equal(NoteName.B, NoteName.B.Subtract(7));
+      Assert.Equal(NoteName.A, NoteName.B.Subtract(8));
+    }
+
+    [Fact]
+    public void AdditionOperatorTest()
+    {
+      Assert.Equal(NoteName.C, NoteName.C + 0);
+      Assert.Equal(NoteName.D, NoteName.C + 1);
+      Assert.Equal(NoteName.E, NoteName.C + 2);
+      Assert.Equal(NoteName.B, NoteName.C + 6);
+      Assert.Equal(NoteName.C, NoteName.C + 7);
+      Assert.Equal(NoteName.D, NoteName.C + 8);
+      Assert.Equal(NoteName.C, NoteName.B + 1);
+    }
+
+    [Fact]
+    public void SubtractionOperatorTest()
+    {
+      Assert.Equal(NoteName.B, NoteName.B - 0);
+      Assert.Equal(NoteName.A, NoteName.B - 1);
+      Assert.Equal(NoteName.G, NoteName.B - 2);
+      Assert.Equal(NoteName.C, NoteName.B - 6);
+      Assert.Equal(NoteName.B, NoteName.B - 7);
+      Assert.Equal(NoteName.A, NoteName.B - 8);
+      Assert.Equal(NoteName.C, NoteName.D - 1);
+      Assert.Equal(NoteName.B, NoteName.C - 1);
     }
 
     [Fact]

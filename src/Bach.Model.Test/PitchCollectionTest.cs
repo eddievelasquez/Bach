@@ -38,8 +38,6 @@ namespace Bach.Model.Test
       Assert.Equal(expected, PitchCollection.Parse("60,72")); // Using midi
       Assert.Throws<ArgumentNullException>(() => PitchCollection.Parse(null));
       Assert.Throws<ArgumentException>(() => PitchCollection.Parse(""));
-      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.Parse("C4,C5", int.MinValue));
-      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.Parse("C4,C5", int.MaxValue));
       Assert.Throws<FormatException>(() => PitchCollection.Parse("C$4,Z5"));
     }
 
@@ -53,15 +51,12 @@ namespace Bach.Model.Test
     [Fact]
     public void TryParseTest()
     {
-      PitchCollection collection;
-      Assert.True(PitchCollection.TryParse("C4,E4", out collection));
+      Assert.True(PitchCollection.TryParse("C4,E4", out PitchCollection collection));
       Assert.Equal(new[] { Pitch.Parse("C4"), Pitch.Parse("E4") }, collection);
       Assert.False(PitchCollection.TryParse(null, out collection));
       Assert.Null(collection);
       Assert.False(PitchCollection.TryParse("", out collection));
       Assert.Null(collection);
-      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.TryParse("C4", out collection, int.MaxValue));
-      Assert.Throws<ArgumentOutOfRangeException>(() => PitchCollection.TryParse("C4", out collection, int.MinValue));
       Assert.False(PitchCollection.TryParse("C$4,Z5", out collection));
     }
 

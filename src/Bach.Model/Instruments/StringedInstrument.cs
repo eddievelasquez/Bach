@@ -66,7 +66,7 @@ namespace Bach.Model.Instruments
       return new StringedInstrument(definition, definition.Tunings[tuningName], fretCount);
     }
 
-    public new StringedInstrumentDefinition Definition => (StringedInstrumentDefinition) base.Definition;
+    public new StringedInstrumentDefinition Definition => (StringedInstrumentDefinition)base.Definition;
 
     public int FretCount { get; }
 
@@ -135,12 +135,12 @@ namespace Bach.Model.Instruments
         // Go through all the strings
         for( int currentString = startString; currentString >= 1; --currentString )
         {
-          Pitch low = GetNote(currentString, startFret);
+          Pitch low = GetPitchAt(currentString, startFret);
 
           // The maximum value that we will use for this string is the minimum
           // between the fret span on this string and the value of the pitch
           // before the start of the next string
-          Pitch high = Pitch.Min(low + fretSpan, GetNote(currentString - 1, startFret) - 1);
+          Pitch high = Pitch.Min(low + fretSpan, GetPitchAt(currentString - 1, startFret) - 1);
           while( true )
           {
             Pitch current = scaleEnumerator.Current;
@@ -175,7 +175,7 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals((StringedInstrument) obj);
+      return obj.GetType() == GetType() && Equals((StringedInstrument)obj);
     }
 
     public override int GetHashCode()
@@ -207,7 +207,7 @@ namespace Bach.Model.Instruments
                                         int startFret,
                                         int fretSpan)
     {
-      Pitch low = GetNote(@string, startFret);
+      Pitch low = GetPitchAt(@string, startFret);
       Pitch high = low + fretSpan;
       Pitch current = notes.Current;
 
@@ -231,8 +231,8 @@ namespace Bach.Model.Instruments
       return fingering;
     }
 
-    private Pitch GetNote(int @string,
-                          int fret)
+    private Pitch GetPitchAt(int @string,
+                             int fret)
     {
       if( @string < 1 || @string > Definition.StringCount )
       {

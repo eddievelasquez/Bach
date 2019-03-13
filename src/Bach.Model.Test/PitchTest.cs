@@ -34,8 +34,8 @@ namespace Bach.Model.Test
     public void CreateWithToneAndAccidentalTest()
     {
       Pitch target = Pitch.Create(NoteName.A, Accidental.Natural, 1);
-      Assert.Equal(NoteName.A, target.NoteName);
-      Assert.Equal(Accidental.Natural, target.Accidental);
+      Assert.Equal(NoteName.A, target.Note.NoteName);
+      Assert.Equal(Accidental.Natural, target.Note.Accidental);
       Assert.Equal(1, target.Octave);
 
       Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(NoteName.C, Accidental.Flat, Pitch.MinOctave));
@@ -51,14 +51,10 @@ namespace Bach.Model.Test
       Assert.Equal(Note.A, target.Note);
       Assert.Equal(1, target.Octave);
 
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.C, Accidental.Flat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => Pitch.Create(new Note(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.C, Accidental.Flat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
     }
 
     [Fact]
@@ -241,18 +237,6 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void AbsoluteValueTest()
-    {
-      Assert.Equal(0, Pitch.Parse("C0").AbsoluteValue);
-      Assert.Equal(1, Pitch.Parse("C#0").AbsoluteValue);
-      Assert.Equal(2, Pitch.Parse("C##0").AbsoluteValue);
-      Assert.Equal(11, Pitch.Parse("B0").AbsoluteValue);
-      Assert.Equal(12, Pitch.Parse("C1").AbsoluteValue);
-      Assert.Equal(Pitch.Parse("Db1").AbsoluteValue, Pitch.Parse("C#1").AbsoluteValue);
-      Assert.Equal(Pitch.Parse("C2").AbsoluteValue, Pitch.Parse("B#1").AbsoluteValue);
-    }
-
-    [Fact]
     public void op_SubtractionNoteTest()
     {
       Pitch cDoubleFlat2 = Pitch.Create(NoteName.C, Accidental.DoubleFlat, 2);
@@ -350,20 +334,19 @@ namespace Bach.Model.Test
     [Fact]
     public void TryParseTest()
     {
-      Pitch actual;
-      Assert.True(Pitch.TryParse("C", out actual));
+      Assert.True(Pitch.TryParse("C4", out Pitch actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.Natural, 4), actual);
 
-      Assert.True(Pitch.TryParse("C#", out actual));
+      Assert.True(Pitch.TryParse("C#4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.Sharp, 4), actual);
 
-      Assert.True(Pitch.TryParse("C##", out actual));
+      Assert.True(Pitch.TryParse("C##4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.DoubleSharp, 4), actual);
 
-      Assert.True(Pitch.TryParse("Cb", out actual));
+      Assert.True(Pitch.TryParse("Cb4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.Flat, 4), actual);
 
-      Assert.True(Pitch.TryParse("Cbb", out actual));
+      Assert.True(Pitch.TryParse("Cbb4", out actual));
       Assert.Equal(Pitch.Create(NoteName.C, Accidental.DoubleFlat, 4), actual);
 
       Assert.True(Pitch.TryParse("C2", out actual));
@@ -443,14 +426,29 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void ApplyAccidentalTest()
+    public void PitchIntervalAdditionTest()
     {
-      Pitch expected = Pitch.Parse("C4");
-      Assert.Equal(Pitch.Parse("Bb3"), expected.ApplyAccidental(Accidental.DoubleFlat));
-      Assert.Equal(Pitch.Parse("B3"), expected.ApplyAccidental(Accidental.Flat));
-      Assert.Equal(Pitch.Parse("C4"), expected.ApplyAccidental(Accidental.Natural));
-      Assert.Equal(Pitch.Parse("C#4"), expected.ApplyAccidental(Accidental.Sharp));
-      Assert.Equal(Pitch.Parse("C##4"), expected.ApplyAccidental(Accidental.DoubleSharp));
+      Assert.Equal(Pitch.Parse("E4"), Pitch.Parse("C4") + Interval.MajorThird);
+      Assert.Equal(Pitch.Parse("E4"), Pitch.Parse("C#4") + Interval.MinorThird);
+      Assert.Equal(Pitch.Parse("F4"), Pitch.Parse("D4") + Interval.MinorThird);
+      Assert.Equal(Pitch.Parse("G4"), Pitch.Parse("D4") + Interval.Fourth);
+      Assert.Equal(Pitch.Parse("A4"), Pitch.Parse("E4") + Interval.Fourth);
+      Assert.Equal(Pitch.Parse("Ab4"), Pitch.Parse("Eb4") + Interval.Fourth);
+      Assert.Equal(Pitch.Parse("G#4"), Pitch.Parse("Eb4") + Interval.AugmentedThird);
+      Assert.Equal(Pitch.Parse("D5"), Pitch.Parse("F4") + Interval.MajorSixth);
+      Assert.Equal(Pitch.Parse("D5"), Pitch.Parse("G4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("F4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("E5"), Pitch.Parse("A4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("Eb5"), Pitch.Parse("Ab4") + Interval.Fifth);
+      Assert.Equal(Pitch.Parse("Eb5"), Pitch.Parse("G#4") + Interval.DiminishedSixth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("F#4") + Interval.AugmentedFourth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("Gb4") + Interval.DiminishedFifth);
+      Assert.Equal(Pitch.Parse("D#4"), Pitch.Parse("C4") + Interval.AugmentedSecond);
+      Assert.Equal(Pitch.Parse("F#4"), Pitch.Parse("C4") + Interval.DiminishedFifth);
+      Assert.Equal(Pitch.Parse("Gb4"), Pitch.Parse("C4") + Interval.AugmentedFourth);
+      Assert.Equal(Pitch.Parse("C5"), Pitch.Parse("D#4") + Interval.DiminishedSeventh);
+      Assert.Equal(Pitch.Parse("F4"), Pitch.Parse("D#4") + Interval.DiminishedThird);
+      Assert.Equal(Pitch.Parse("G#4"), Pitch.Parse("D##4") + Interval.DiminishedFourth);
     }
   }
 }

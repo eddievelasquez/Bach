@@ -111,28 +111,28 @@ namespace Bach.Model
     public IEnumerable<Pitch> Generate(Pitch root,
                                        int skipCount = 0)
     {
-      // NOTE: By design, this iterator never returns.
       int intervalCount = _intervals.Length;
       int index = skipCount;
 
+      // NOTE: By design, this iterator never returns.
       while( true )
       {
         Interval interval = _intervals[index % intervalCount];
+        Pitch pitch = root + interval;
 
-        var accidentalMode = AccidentalMode.FavorSharps;
-        if( interval.Quality == IntervalQuality.Diminished || interval.Quality == IntervalQuality.Minor )
+        // Do we need to change the pitch's octave?
+        int octaveAdd = index / intervalCount;
+        if (octaveAdd > 0)
         {
-          accidentalMode = AccidentalMode.FavorFlats;
+          pitch += octaveAdd * Pitch.IntervalsPerOctave;
         }
 
-        int octaveAdd = index / intervalCount;
-
-        // TODO: Must ensure that enharmonic intervals are choosing the appropriate pitch
-        Pitch pitch = root.Add(interval.Steps + ( octaveAdd * Pitch.IntervalsPerOctave ), accidentalMode);
         yield return pitch;
 
         ++index;
       }
+
+      // ReSharper disable once IteratorNeverReturns
     }
 
     public IEnumerable<Note> Generate(Note root)
@@ -144,15 +144,7 @@ namespace Bach.Model
       while( true )
       {
         Interval interval = _intervals[index % intervalCount];
-
-        var accidentalMode = AccidentalMode.FavorSharps;
-        if( interval.Quality == IntervalQuality.Diminished || interval.Quality == IntervalQuality.Minor )
-        {
-          accidentalMode = AccidentalMode.FavorFlats;
-        }
-
-        // TODO: Must ensure that enharmonic intervals are choosing the appropriate pitch
-        Note note = root.Add(interval.Steps, accidentalMode);
+        Note note = root + interval;
         yield return note;
 
         ++index;

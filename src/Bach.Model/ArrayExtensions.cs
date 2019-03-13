@@ -1,7 +1,7 @@
-//
-// Module Name: ScaleFormula.cs
+﻿//
+// Module Name: ArrayExtensions.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,39 +25,21 @@
 
 namespace Bach.Model
 {
-  public class ScaleFormula: Formula
+  using System;
+
+  internal static class ArrayExtensions
   {
-    public ScaleFormula(string key,
-                        string name,
-                        Interval[] intervals)
-      : base(key, name, intervals)
-    {
-    }
+    public static int WrapIndex(int size,
+                                int index)
+      => ( ( index % size ) + size ) % size;
 
-    public ScaleFormula(string key,
-                        string name,
-                        string formula)
-      : base(key, name, formula)
-    {
-    }
+    public static int WrapIndex(this Array array,
+                                int index)
+      => WrapIndex(array.Length, index);
 
-    public int[] GetRelativeSteps()
-    {
-      var steps = new int[Intervals.Count];
-      var lastStep = 0;
-
-      for( var i = 1; i < Intervals.Count; i++ )
-      {
-        int currentIntervalSteps = Intervals[i].SemitoneCount;
-        int step = currentIntervalSteps - lastStep;
-        steps[i - 1] = step;
-        lastStep = currentIntervalSteps;
-      }
-
-      // Add last step between the root octave and the
-      // last interval
-      steps[steps.Length - 1] = 12 - lastStep;
-      return steps;
-    }
+    public static int WrapIndex(this Array array,
+                                int dimension,
+                                int index)
+      => WrapIndex(array.GetLength(dimension), index);
   }
 }

@@ -55,12 +55,8 @@ namespace Bach.Model
     }
 
     public static bool TryParse(string value,
-                                out PitchCollection pitches,
-                                int defaultOctave = 4)
+                                out PitchCollection pitches)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Pitch.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Pitch.MaxOctave);
-
       if( string.IsNullOrEmpty(value) )
       {
         pitches = null;
@@ -71,7 +67,7 @@ namespace Bach.Model
 
       foreach( string s in value.Split(',') )
       {
-        if( !Pitch.TryParse(s, out Pitch note, defaultOctave) )
+        if( !Pitch.TryParse(s, out Pitch note) )
         {
           pitches = null;
           return false;
@@ -83,15 +79,12 @@ namespace Bach.Model
       return true;
     }
 
-    public static PitchCollection Parse(string value,
-                                        int defaultOctave = 4)
+    public static PitchCollection Parse(string value)
     {
       Contract.Requires<ArgumentNullException>(value != null);
       Contract.Requires<ArgumentException>(value.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave >= Pitch.MinOctave);
-      Contract.Requires<ArgumentOutOfRangeException>(defaultOctave <= Pitch.MaxOctave);
 
-      if( !TryParse(value, out PitchCollection notes, defaultOctave) )
+      if( !TryParse(value, out PitchCollection notes) )
       {
         throw new FormatException($"{value} contains invalid pitches");
       }
@@ -137,7 +130,7 @@ namespace Bach.Model
         return false;
       }
 
-      return Equals((PitchCollection) other);
+      return Equals((PitchCollection)other);
     }
 
     public override int GetHashCode()

@@ -25,19 +25,254 @@
 
 namespace Bach.Model
 {
+  using System;
+  using System.Diagnostics.Contracts;
+
   /// <summary>
-  /// A NoteName represents a basic diatonic pitch
-  /// according to the English naming convention for
-  /// the 12 note chromatic scale.
+  ///   A NoteName represents a basic diatonic pitch
+  ///   according to the English naming convention for
+  ///   the 12 note chromatic scale.
   /// </summary>
-  public enum NoteName
+  public struct NoteName
+    : IEquatable<NoteName>,
+      IComparable<NoteName>
   {
-    C,
-    D,
-    E,
-    F,
-    G,
-    A,
-    B
+    public static readonly NoteName C = new NoteName(0);
+    public static readonly NoteName D = new NoteName(1);
+    public static readonly NoteName E = new NoteName(2);
+    public static readonly NoteName F = new NoteName(3);
+    public static readonly NoteName G = new NoteName(4);
+    public static readonly NoteName A = new NoteName(5);
+    public static readonly NoteName B = new NoteName(6);
+
+    private const int NoteNameCount = 7;
+    private static readonly string s_names = "CDEFGAB";
+
+    private static readonly int[] s_intervals =
+    {
+      2, // C-D
+      2, // D-E
+      1, // E-F
+      2, // F-G
+      2, // G-A
+      2, // A-B
+      1 // B-C
+    };
+
+    private readonly int _value;
+
+    private NoteName(int value)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value < NoteNameCount);
+      _value = value;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+      if( obj is null )
+      {
+        return false;
+      }
+
+      return obj is NoteName other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode() => _value;
+
+    /// <inheritdoc />
+    public override string ToString() => s_names[_value].ToString();
+
+    /// <inheritdoc />
+    public int CompareTo(NoteName other) => _value.CompareTo(other._value);
+
+    /// <inheritdoc />
+    public bool Equals(NoteName other) => _value == other._value;
+
+    /// <summary>Adds a number of steps to a note name.</summary>
+    /// <param name="steps">The number of steps to add.</param>
+    /// <returns>A NoteName.</returns>
+    [Pure]
+    public NoteName Add(int steps)
+    {
+      var result = (NoteName)ArrayExtensions.WrapIndex(NoteNameCount, _value + steps);
+      return result;
+    }
+
+    /// <summary>Subtracts a number of steps from a note name.</summary>
+    /// <param name="steps">The number of steps to subtract.</param>
+    /// <returns>A NoteName.</returns>
+    [Pure]
+    public NoteName Subtract(int steps) => Add(-steps);
+
+    /// <summary>Returns to number of semitones between two note names.</summary>
+    /// <param name="name">The last noted name.</param>
+    /// <returns>A NoteName.</returns>
+    public int Subtract(NoteName name)
+    {
+      var semitones = 0;
+      NoteName noteName = this;
+      while( noteName != name )
+      {
+        semitones += s_intervals[noteName._value];
+        noteName = (NoteName)s_intervals.WrapIndex(noteName._value + 1);
+      }
+
+      return semitones;
+    }
+
+    /// <summary>
+    /// Calculates the semitone distance between this instance and the provided note name.
+    /// </summary>
+    /// <param name="end">The note name</param>
+    /// <returns>The distance in semitones between the two note names.</returns>
+    [Pure]
+    public int SemitonesBetween(NoteName end)
+    {
+      var semitones = 0;
+      var noteName = this;
+      while( noteName != end )
+      {
+        semitones += s_intervals[(int)noteName];
+        noteName = (NoteName)s_intervals.WrapIndex((int)noteName + 1);
+      }
+
+      return semitones;
+    }
+
+    /// <summary>Attempts to parse a NoteName from the given string.</summary>
+    /// <param name="s">The value to parse.</param>
+    /// <param name="noteName">[out] The note name.</param>
+    /// <returns>True if it succeeds, false if it fails.</returns>
+    public static bool TryParse(string s,
+                                out NoteName noteName)
+    {
+      if( string.IsNullOrWhiteSpace(s) )
+      {
+        noteName = C;
+        return false;
+      }
+
+      int value = s_names.IndexOf(s.Substring(0, 1), StringComparison.InvariantCultureIgnoreCase);
+      if( value == -1 )
+      {
+        noteName = C;
+        return false;
+      }
+
+      noteName = new NoteName(value);
+      return true;
+    }
+
+    /// <summary>Parses the provided string.</summary>
+    /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a NoteName.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+    /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+    /// <param name="value">The value to parse.</param>
+    /// <returns>A Note.</returns>
+    public static NoteName Parse(string value)
+    {
+      Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
+
+      if( !TryParse(value, out NoteName result) )
+      {
+        throw new FormatException($"{value} is not a valid note name");
+      }
+
+      return result;
+    }
+
+    /// <summary>Explicit cast that converts the given NoteName to an int.</summary>
+    /// <param name="noteName">The note name.</param>
+    /// <returns>The result of the operation.</returns>
+    public static explicit operator int(NoteName noteName) => noteName._value;
+
+    /// <summary>Explicit cast that converts the given int to a NoteName.</summary>
+    /// <param name="value">The value.</param>
+    /// <returns>The result of the operation.</returns>
+    public static explicit operator NoteName(int value) => new NoteName(value);
+
+    /// <summary>Equality operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator==(NoteName left,
+                                  NoteName right)
+      => left.Equals(right);
+
+    /// <summary>Inequality operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator!=(NoteName left,
+                                  NoteName right)
+      => !left.Equals(right);
+
+    /// <summary>Lesser-than comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator<(NoteName left,
+                                 NoteName right)
+      => left.CompareTo(right) < 0;
+
+    /// <summary>Greater-than comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator>(NoteName left,
+                                 NoteName right)
+      => left.CompareTo(right) > 0;
+
+    /// <summary>Lesser-than-or-equal comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator<=(NoteName left,
+                                  NoteName right)
+      => left.CompareTo(right) <= 0;
+
+    /// <summary>Greater-than-or-equal comparison operator.</summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator>=(NoteName left,
+                                  NoteName right)
+      => left.CompareTo(right) >= 0;
+
+    /// <summary>Subtraction operator.</summary>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
+    /// <returns>The result of the operation.</returns>
+    public static int operator-(NoteName a,
+                                NoteName b)
+      => a.Subtract(b);
+
+    /// <summary>Addition operator.</summary>
+    /// <param name="noteName">The first value.</param>
+    /// <param name="semitoneCount">A number of semitones to add to it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static NoteName operator+(NoteName noteName,
+                                     int semitoneCount)
+      => noteName.Add(semitoneCount);
+
+    /// <summary>Increment operator.</summary>
+    /// <param name="noteName">The note.</param>
+    /// <returns>The result of the operation.</returns>
+    public static NoteName operator++(NoteName noteName) => noteName.Add(1);
+
+    /// <summary>Subtraction operator.</summary>
+    /// <param name="noteName">The first value.</param>
+    /// <param name="semitoneCount">A number of semitones to subtract from it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static NoteName operator-(NoteName noteName,
+                                     int semitoneCount)
+      => noteName.Subtract(semitoneCount);
+
+    /// <summary>Decrement operator.</summary>
+    /// <param name="noteName">The note.</param>
+    /// <returns>The result of the operation.</returns>
+    public static NoteName operator--(NoteName noteName) => noteName.Subtract(1);
   }
 }

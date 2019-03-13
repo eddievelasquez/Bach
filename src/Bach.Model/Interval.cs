@@ -28,13 +28,11 @@ namespace Bach.Model
   using System;
   using System.Text;
 
+  /// <summary>An interval.</summary>
   public struct Interval
     : IEquatable<Interval>,
       IComparable<Interval>
   {
-    public const int MinInterval = 1;
-    public const int MaxInterval = 15;
-
     private static readonly int[,] s_steps =
     {
       // Diminished, Minor, Perfect, Major, Augmented
@@ -45,118 +43,171 @@ namespace Bach.Model
       { 6, -1, 7, -1, 8 }, // Fifth
       { 7, 8, -1, 9, 10 }, // Sixth
       { 9, 10, -1, 11, 12 }, // Seventh
-      { 11, -1, 12, -1, 13 }, // Eighth
+      { 11, -1, 12, -1, 13 }, // Octave
       { 12, 13, -1, 14, 15 }, // Ninth (Second)
       { 14, 15, -1, 16, 17 }, // Tenth (Third)
       { 16, -1, 17, -1, 18 }, // Eleventh (Fourth)
       { 18, -1, 19, -1, 20 }, // Twelfth (Fifth)
       { 19, 20, -1, 21, 22 }, // Thirteenth (Sixth)
-      { 21, 22, -1, 23, 24 }, // Fourteenth (Seventh)
-      { 23, -1, 24, -1, 25 } // Fifteenth (Eighth)
+      { 21, 22, -1, 23, 24 } // Fourteenth (Seventh)
     };
 
-    public static readonly Interval Perfect1 = new Interval(1, IntervalQuality.Perfect);
-    public static readonly Interval Augmented1 = new Interval(1, IntervalQuality.Augmented);
-    public static readonly Interval Diminished2 = new Interval(2, IntervalQuality.Diminished);
-    public static readonly Interval Minor2 = new Interval(2, IntervalQuality.Minor);
-    public static readonly Interval Major2 = new Interval(2, IntervalQuality.Major);
-    public static readonly Interval Augmented2 = new Interval(2, IntervalQuality.Augmented);
-    public static readonly Interval Diminished3 = new Interval(3, IntervalQuality.Diminished);
-    public static readonly Interval Minor3 = new Interval(3, IntervalQuality.Minor);
-    public static readonly Interval Major3 = new Interval(3, IntervalQuality.Major);
-    public static readonly Interval Augmented3 = new Interval(3, IntervalQuality.Augmented);
-    public static readonly Interval Diminished4 = new Interval(4, IntervalQuality.Diminished);
-    public static readonly Interval Perfect4 = new Interval(4, IntervalQuality.Perfect);
-    public static readonly Interval Augmented4 = new Interval(4, IntervalQuality.Augmented);
-    public static readonly Interval Diminished5 = new Interval(5, IntervalQuality.Diminished);
-    public static readonly Interval Perfect5 = new Interval(5, IntervalQuality.Perfect);
-    public static readonly Interval Augmented5 = new Interval(5, IntervalQuality.Augmented);
-    public static readonly Interval Diminished6 = new Interval(6, IntervalQuality.Diminished);
-    public static readonly Interval Minor6 = new Interval(6, IntervalQuality.Minor);
-    public static readonly Interval Major6 = new Interval(6, IntervalQuality.Major);
-    public static readonly Interval Augmented6 = new Interval(6, IntervalQuality.Augmented);
-    public static readonly Interval Diminished7 = new Interval(7, IntervalQuality.Diminished);
-    public static readonly Interval Minor7 = new Interval(7, IntervalQuality.Minor);
-    public static readonly Interval Major7 = new Interval(7, IntervalQuality.Major);
-    public static readonly Interval Augmented7 = new Interval(7, IntervalQuality.Augmented);
-    public static readonly Interval Diminished8 = new Interval(8, IntervalQuality.Diminished);
-    public static readonly Interval Perfect8 = new Interval(8, IntervalQuality.Perfect);
-    public static readonly Interval Augmented8 = new Interval(8, IntervalQuality.Augmented);
+    public static readonly Interval Unison = new Interval(IntervalQuantity.Unison, IntervalQuality.Perfect);
+    public static readonly Interval AugmentedFirst = new Interval(IntervalQuantity.Unison, IntervalQuality.Augmented);
+    public static readonly Interval DiminishedSecond = new Interval(IntervalQuantity.Second, IntervalQuality.Diminished);
+    public static readonly Interval MinorSecond = new Interval(IntervalQuantity.Second, IntervalQuality.Minor);
+    public static readonly Interval MajorSecond = new Interval(IntervalQuantity.Second, IntervalQuality.Major);
+    public static readonly Interval AugmentedSecond = new Interval(IntervalQuantity.Second, IntervalQuality.Augmented);
+    public static readonly Interval DiminishedThird = new Interval(IntervalQuantity.Third, IntervalQuality.Diminished);
+    public static readonly Interval MinorThird = new Interval(IntervalQuantity.Third, IntervalQuality.Minor);
+    public static readonly Interval MajorThird = new Interval(IntervalQuantity.Third, IntervalQuality.Major);
+    public static readonly Interval AugmentedThird = new Interval(IntervalQuantity.Third, IntervalQuality.Augmented);
+    public static readonly Interval DiminishedFourth = new Interval(IntervalQuantity.Fourth, IntervalQuality.Diminished);
+    public static readonly Interval Fourth = new Interval(IntervalQuantity.Fourth, IntervalQuality.Perfect);
+    public static readonly Interval AugmentedFourth = new Interval(IntervalQuantity.Fourth, IntervalQuality.Augmented);
+    public static readonly Interval DiminishedFifth = new Interval(IntervalQuantity.Fifth, IntervalQuality.Diminished);
+    public static readonly Interval Fifth = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+    public static readonly Interval AugmentedFifth = new Interval(IntervalQuantity.Fifth, IntervalQuality.Augmented);
+    public static readonly Interval DiminishedSixth = new Interval(IntervalQuantity.Sixth, IntervalQuality.Diminished);
+    public static readonly Interval MinorSixth = new Interval(IntervalQuantity.Sixth, IntervalQuality.Minor);
+    public static readonly Interval MajorSixth = new Interval(IntervalQuantity.Sixth, IntervalQuality.Major);
+    public static readonly Interval AugmentedSixth = new Interval(IntervalQuantity.Sixth, IntervalQuality.Augmented);
+    public static readonly Interval DiminishedSeventh = new Interval(IntervalQuantity.Seventh, IntervalQuality.Diminished);
+    public static readonly Interval MinorSeventh = new Interval(IntervalQuantity.Seventh, IntervalQuality.Minor);
+    public static readonly Interval MajorSeventh = new Interval(IntervalQuantity.Seventh, IntervalQuality.Major);
+    public static readonly Interval AugmentedSeventh = new Interval(IntervalQuantity.Seventh, IntervalQuality.Augmented);
+    public static readonly Interval DiminishedOctave = new Interval(IntervalQuantity.Octave, IntervalQuality.Diminished);
+    public static readonly Interval Octave = new Interval(IntervalQuantity.Octave, IntervalQuality.Perfect);
     public static readonly Interval Invalid = new Interval();
 
-    private readonly byte _number;
+    private readonly byte _quantity;
     private readonly byte _quality;
 
-    public Interval(int number,
+    /// <summary>Constructor.</summary>
+    /// <param name="quantity">The interval quantity.</param>
+    /// <param name="quality">The interval quality.</param>
+    public Interval(IntervalQuantity quantity,
                     IntervalQuality quality)
     {
       // Validate that the provided number and quality
       // refer to a valid interval
-      GetSteps(number, quality);
+      GetSemitoneCount(quantity, quality);
 
-      _number = (byte) number;
-      _quality = (byte) quality;
+      _quantity = (byte)quantity;
+      _quality = (byte)quality;
     }
 
-    public int Number => _number;
+    /// <summary>Constructor.</summary>
+    /// <param name="quantity">The interval quantity.</param>
+    /// <param name="semitoneCount">The number of semitones in the interval.</param>
+    public Interval(IntervalQuantity quantity,
+                    int semitoneCount)
+    {
+      var quality = (int)IntervalQuality.Diminished;
+      var found = false;
 
-    public IntervalQuality Quality => (IntervalQuality) _quality;
+      for (; quality <= (int)IntervalQuality.Augmented; ++quality)
+      {
+        if (s_steps[(int)quantity, quality] == semitoneCount)
+        {
+          found = true;
+          break;
+        }
+      }
 
-    public int Steps => Number != 0 ? GetSteps(Number, Quality) : 0;
+      if (!found)
+      {
+        throw new ArgumentException($"A {quantity} with {semitoneCount} is not a valid interval");
+      }
 
-    public static bool IsValid(int number,
+      _quantity = (byte)quantity;
+      _quality = (byte)quality;
+    }
+
+    /// <summary>Gets the interval's quantity.</summary>
+    /// <value>The quantity.</value>
+    public IntervalQuantity Quantity => (IntervalQuantity)_quantity;
+
+    /// <summary>Gets the interval's quality.</summary>
+    /// <value>The quality.</value>
+    public IntervalQuality Quality => (IntervalQuality)_quality;
+
+    /// <summary>Gets the number of semitones in the interval.</summary>
+    /// <value>The number of semitones.</value>
+    public int SemitoneCount => GetSemitoneCount(Quantity, Quality);
+
+    /// <summary>Determine if the interval quantity and quality refer to a valid interval.</summary>
+    /// <param name="quantity">The interval quantity.</param>
+    /// <param name="quality">The interval quality.</param>
+    /// <returns>True if valid, false if not.</returns>
+    public static bool IsValid(IntervalQuantity quantity,
                                IntervalQuality quality)
     {
-      if( number < MinInterval || number > MaxInterval )
+      if (quantity < IntervalQuantity.Unison || quantity > IntervalQuantity.Fourteenth)
       {
         return false;
       }
 
-      if( quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented )
+      if (quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented)
       {
         return false;
       }
 
-      int steps = s_steps[number - 1, (int) quality];
+      int steps = s_steps[(int)quantity, (int)quality];
       return steps != -1;
     }
 
-    public static int GetSteps(int number,
-                               IntervalQuality quality)
+    /// <summary>Gets semitone count of the interval.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
+    ///                                               required range.</exception>
+    /// <exception cref="ArgumentException">Thrown when the interval quantity and quality combination doesn't refer to a valid interval.</exception>
+    /// <param name="quantity">The interval quantity.</param>
+    /// <param name="quality">The interval quality.</param>
+    /// <returns>The semitone count.</returns>
+    public static int GetSemitoneCount(IntervalQuantity quantity,
+                                       IntervalQuality quality)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(number >= MinInterval);
-      Contract.Requires<ArgumentOutOfRangeException>(number <= MaxInterval);
+      Contract.Requires<ArgumentOutOfRangeException>(quantity >= IntervalQuantity.Unison);
+      Contract.Requires<ArgumentOutOfRangeException>(quantity <= IntervalQuantity.Fourteenth);
       Contract.Requires<ArgumentOutOfRangeException>(quality >= IntervalQuality.Diminished);
       Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented);
 
-      int steps = s_steps[number - 1, (int) quality];
-      if( steps == -1 )
+      int steps = s_steps[(int)quantity, (int)quality];
+      if (steps == -1)
       {
-        throw new ArgumentException($"{ToString(number, quality)} is not a valid interval");
+        throw new ArgumentException($"{ToString(quantity, quality)} is not a valid interval");
       }
 
       return steps;
     }
 
-    public override string ToString() => Number == 0 ? string.Empty : ToString(Number, Quality);
+    /// <summary>Returns the fully qualified type name of this instance.</summary>
+    /// <returns>The fully qualified type name.</returns>
+    public override string ToString() => ToString(Quantity, Quality);
 
-    private static string ToString(int number,
+    private static string ToString(IntervalQuantity quantity,
                                    IntervalQuality quality,
                                    bool suppressPerfectAndMajor = true)
     {
       var buf = new StringBuilder();
-      if( quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor )
+      if (quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor)
       {
-        buf.Append(quality.Symbol());
+        buf.Append(quality.Symbol);
       }
 
-      buf.Append(number);
+      buf.Append((int)(quantity + 1));
       return buf.ToString();
     }
 
+    /// <summary>
+    /// Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent.
+    /// </summary>
+    /// <param name="value">A string containing the interval to convert.</param>
+    /// <returns>An object that is equivalent to the interval contained in value.</returns>
+    /// <exception cref="FormatException">value does not contain a valid string representation of an interval.</exception>
     public static Interval Parse(string value)
     {
-      if( !TryParse(value, out Interval interval) )
+      if (!TryParse(value, out Interval interval))
       {
         throw new FormatException(value + " is not a valid interval");
       }
@@ -164,12 +215,22 @@ namespace Bach.Model
       return interval;
     }
 
+    /// <summary>
+    /// Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent
+    /// and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="value">A string containing the interval quality to convert.</param>
+    /// <param name="interval">When this method returns, contains the Interval value equivalent to the interval
+    /// contained in value, if the conversion succeeded, or <see cref="Interval.Invalid"/> if the conversion failed.
+    /// The conversion fails if the value parameter is null or empty or does not contain a valid string
+    /// representation of an interval. This parameter is passed uninitialized.</param>
+    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
     public static bool TryParse(string value,
                                 out Interval interval)
     {
       interval = Invalid;
 
-      if( string.IsNullOrWhiteSpace(value) )
+      if (string.IsNullOrWhiteSpace(value))
       {
         return false;
       }
@@ -177,22 +238,22 @@ namespace Bach.Model
       var i = 0;
 
       // skip whitespaces
-      while( i < value.Length && char.IsWhiteSpace(value, i) )
+      while (i < value.Length && char.IsWhiteSpace(value, i))
       {
         ++i;
       }
 
-      var quality = (IntervalQuality) ( -1 );
+      var quality = (IntervalQuality)(-1);
 
-      if( char.IsLetter(value, i) )
+      if (char.IsLetter(value, i))
       {
-        if( value[i] == 'R' )
+        if (value[i] == 'R')
         {
-          interval = new Interval(1, IntervalQuality.Perfect);
+          interval = new Interval(IntervalQuantity.Unison, IntervalQuality.Perfect);
           return true;
         }
 
-        if( !IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality) )
+        if (!IntervalQuality.TryParse(value.Substring(i, 1), out quality))
         {
           return false;
         }
@@ -200,15 +261,15 @@ namespace Bach.Model
         ++i;
       }
 
-      if( !int.TryParse(value.Substring(i), out int number) )
+      if (!int.TryParse(value.Substring(i), out int number))
       {
         return false;
       }
 
-      if( quality == IntervalQuality.Unknown )
+      if (quality == IntervalQuality.Unknown)
       {
-        int temp = ( ( number - 1 ) % 7 ) + 1;
-        if( temp == 1 || temp == 4 || temp == 5 )
+        int temp = ((number - 1) % 7) + 1;
+        if (temp == 1 || temp == 4 || temp == 5)
         {
           quality = IntervalQuality.Perfect;
         }
@@ -218,37 +279,42 @@ namespace Bach.Model
         }
       }
 
-      if( !IsValid(number, quality) )
+      var quantity = (IntervalQuantity)(number - 1);
+      if (!IsValid(quantity, quality))
       {
         return false;
       }
 
-      interval = new Interval(number, quality);
+      interval = new Interval(quantity, quality);
       return true;
     }
 
-    public bool Equals(Interval obj) => obj.Number == Number && obj.Quality == Quality;
+    /// <inheritdoc />
+    public bool Equals(Interval other) => other.Quantity == Quantity && other.Quality == Quality;
 
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(obj, null) || obj.GetType() != GetType() )
+      if (ReferenceEquals(obj, null) || obj.GetType() != GetType())
       {
         return false;
       }
 
-      return Equals((Interval) obj);
+      return Equals((Interval)obj);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
-      int hashCode = ( _quality << 8 ) | _number;
+      int hashCode = (_quality << 8) | _quantity;
       return hashCode;
     }
 
+    /// <inheritdoc />
     public int CompareTo(Interval other)
     {
-      int result = _number - other._number;
-      if( result != 0 )
+      int result = _quantity - other._quantity;
+      if (result != 0)
       {
         return result;
       }
@@ -257,28 +323,52 @@ namespace Bach.Model
       return result;
     }
 
-    public static bool operator==(Interval lhs,
-                                  Interval rhs) =>
-      Equals(lhs, rhs);
+    /// <summary>Equality operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator ==(Interval lhs,
+                                  Interval rhs)
+      => Equals(lhs, rhs);
 
-    public static bool operator!=(Interval lhs,
-                                  Interval rhs) =>
-      !Equals(lhs, rhs);
+    /// <summary>Inequality operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator !=(Interval lhs,
+                                  Interval rhs)
+      => !Equals(lhs, rhs);
 
-    public static bool operator<(Interval lhs,
-                                 Interval rhs) =>
-      lhs.CompareTo(rhs) < 0;
+    /// <summary>Lesser-than comparison operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator <(Interval lhs,
+                                 Interval rhs)
+      => lhs.CompareTo(rhs) < 0;
 
-    public static bool operator<=(Interval lhs,
-                                  Interval rhs) =>
-      lhs.CompareTo(rhs) <= 0;
+    /// <summary>Lesser-than-or-equal comparison operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator <=(Interval lhs,
+                                  Interval rhs)
+      => lhs.CompareTo(rhs) <= 0;
 
-    public static bool operator>(Interval lhs,
-                                 Interval rhs) =>
-      lhs.CompareTo(rhs) > 0;
+    /// <summary>Greater-than comparison operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator >(Interval lhs,
+                                 Interval rhs)
+      => lhs.CompareTo(rhs) > 0;
 
-    public static bool operator>=(Interval lhs,
-                                  Interval rhs) =>
-      lhs.CompareTo(rhs) >= 0;
+    /// <summary>Greater-than-or-equal comparison operator.</summary>
+    /// <param name="lhs">The first instance to compare.</param>
+    /// <param name="rhs">The second instance to compare.</param>
+    /// <returns>The result of the operation.</returns>
+    public static bool operator >=(Interval lhs,
+                                  Interval rhs)
+      => lhs.CompareTo(rhs) >= 0;
   }
 }

@@ -37,13 +37,13 @@ namespace Bach.Model.Test
         "Major",
         new[]
         {
-          Interval.Perfect1,
-          Interval.Major2,
-          Interval.Major3,
-          Interval.Perfect4,
-          Interval.Perfect5,
-          Interval.Major6,
-          Interval.Major7
+          Interval.Unison,
+          Interval.MajorSecond,
+          Interval.MajorThird,
+          Interval.Fourth,
+          Interval.Fifth,
+          Interval.MajorSixth,
+          Interval.MajorSeventh
         });
       Assert.Equal("Major", actual.Key);
       Assert.Equal("Major", actual.Name);

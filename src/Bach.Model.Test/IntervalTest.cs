@@ -31,43 +31,42 @@ namespace Bach.Model.Test
   public class IntervalTest
   {
     [Fact]
-    public void StepTest()
+    public void SemitoneCountTest()
     {
-      Assert.Equal(0, Interval.Perfect1.Steps);
-      Assert.Equal(1, Interval.Augmented1.Steps);
-      Assert.Equal(0, Interval.Diminished2.Steps);
-      Assert.Equal(1, Interval.Minor2.Steps);
-      Assert.Equal(2, Interval.Major2.Steps);
-      Assert.Equal(3, Interval.Augmented2.Steps);
-      Assert.Equal(2, Interval.Diminished3.Steps);
-      Assert.Equal(3, Interval.Minor3.Steps);
-      Assert.Equal(4, Interval.Major3.Steps);
-      Assert.Equal(5, Interval.Augmented3.Steps);
-      Assert.Equal(4, Interval.Diminished4.Steps);
-      Assert.Equal(5, Interval.Perfect4.Steps);
-      Assert.Equal(6, Interval.Augmented4.Steps);
-      Assert.Equal(6, Interval.Diminished5.Steps);
-      Assert.Equal(7, Interval.Perfect5.Steps);
-      Assert.Equal(8, Interval.Augmented5.Steps);
-      Assert.Equal(7, Interval.Diminished6.Steps);
-      Assert.Equal(8, Interval.Minor6.Steps);
-      Assert.Equal(9, Interval.Major6.Steps);
-      Assert.Equal(10, Interval.Augmented6.Steps);
-      Assert.Equal(9, Interval.Diminished7.Steps);
-      Assert.Equal(10, Interval.Minor7.Steps);
-      Assert.Equal(11, Interval.Major7.Steps);
-      Assert.Equal(12, Interval.Augmented7.Steps);
-      Assert.Equal(11, Interval.Diminished8.Steps);
-      Assert.Equal(12, Interval.Perfect8.Steps);
-      Assert.Equal(13, Interval.Augmented8.Steps);
+      Assert.Equal(0, Interval.Unison.SemitoneCount);
+      Assert.Equal(1, Interval.AugmentedFirst.SemitoneCount);
+      Assert.Equal(0, Interval.DiminishedSecond.SemitoneCount);
+      Assert.Equal(1, Interval.MinorSecond.SemitoneCount);
+      Assert.Equal(2, Interval.MajorSecond.SemitoneCount);
+      Assert.Equal(3, Interval.AugmentedSecond.SemitoneCount);
+      Assert.Equal(2, Interval.DiminishedThird.SemitoneCount);
+      Assert.Equal(3, Interval.MinorThird.SemitoneCount);
+      Assert.Equal(4, Interval.MajorThird.SemitoneCount);
+      Assert.Equal(5, Interval.AugmentedThird.SemitoneCount);
+      Assert.Equal(4, Interval.DiminishedFourth.SemitoneCount);
+      Assert.Equal(5, Interval.Fourth.SemitoneCount);
+      Assert.Equal(6, Interval.AugmentedFourth.SemitoneCount);
+      Assert.Equal(6, Interval.DiminishedFifth.SemitoneCount);
+      Assert.Equal(7, Interval.Fifth.SemitoneCount);
+      Assert.Equal(8, Interval.AugmentedFifth.SemitoneCount);
+      Assert.Equal(7, Interval.DiminishedSixth.SemitoneCount);
+      Assert.Equal(8, Interval.MinorSixth.SemitoneCount);
+      Assert.Equal(9, Interval.MajorSixth.SemitoneCount);
+      Assert.Equal(10, Interval.AugmentedSixth.SemitoneCount);
+      Assert.Equal(9, Interval.DiminishedSeventh.SemitoneCount);
+      Assert.Equal(10, Interval.MinorSeventh.SemitoneCount);
+      Assert.Equal(11, Interval.MajorSeventh.SemitoneCount);
+      Assert.Equal(12, Interval.AugmentedSeventh.SemitoneCount);
+      Assert.Equal(11, Interval.DiminishedOctave.SemitoneCount);
+      Assert.Equal(12, Interval.Octave.SemitoneCount);
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new Interval(5, IntervalQuality.Perfect);
-      object y = new Interval(5, IntervalQuality.Perfect);
-      object z = new Interval(5, IntervalQuality.Perfect);
+      object x = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+      object y = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+      object z = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -80,9 +79,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new Interval(5, IntervalQuality.Perfect);
-      var y = new Interval(5, IntervalQuality.Perfect);
-      var z = new Interval(5, IntervalQuality.Perfect);
+      var x = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+      var y = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+      var z = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -95,43 +94,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new Interval(5, IntervalQuality.Perfect);
+      object actual = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new Interval(5, IntervalQuality.Perfect);
+      var actual = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new Interval(5, IntervalQuality.Perfect);
+      object actual = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new Interval(5, IntervalQuality.Perfect);
+      var actual = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new Interval(5, IntervalQuality.Perfect);
+      var actual = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new Interval(5, IntervalQuality.Perfect);
-      var expected = new Interval(5, IntervalQuality.Perfect);
+      var actual = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+      var expected = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -139,8 +138,8 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualitySucceedsWithTwoObjectsTest()
     {
-      var lhs = new Interval(5, IntervalQuality.Perfect);
-      var rhs = new Interval(5, IntervalQuality.Perfect);
+      var lhs = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+      var rhs = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.True(lhs == rhs);
     }
 
@@ -148,7 +147,7 @@ namespace Bach.Model.Test
     public void EqualitySucceedsWithSameObjectTest()
     {
 #pragma warning disable 1718
-      var lhs = new Interval(5, IntervalQuality.Perfect);
+      var lhs = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.True(lhs == lhs);
 #pragma warning restore 1718
     }
@@ -156,15 +155,15 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualityFailsWithNullTest()
     {
-      var lhs = new Interval(5, IntervalQuality.Perfect);
+      var lhs = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.False(lhs == null);
     }
 
     [Fact]
     public void InequalitySucceedsWithTwoObjectsTest()
     {
-      var lhs = new Interval(5, IntervalQuality.Perfect);
-      var rhs = new Interval(5, IntervalQuality.Augmented);
+      var lhs = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
+      var rhs = new Interval(IntervalQuantity.Fifth, IntervalQuality.Augmented);
       Assert.True(lhs != rhs);
     }
 
@@ -172,7 +171,7 @@ namespace Bach.Model.Test
     public void InequalityFailsWithSameObjectTest()
     {
 #pragma warning disable 1718
-      var lhs = new Interval(5, IntervalQuality.Perfect);
+      var lhs = new Interval(IntervalQuantity.Fifth, IntervalQuality.Perfect);
       Assert.False(lhs != lhs);
 #pragma warning restore 1718
     }
@@ -182,13 +181,13 @@ namespace Bach.Model.Test
     {
       Interval actual;
       Assert.True(Interval.TryParse("P1", out actual));
-      Assert.Equal(Interval.Perfect1, actual);
+      Assert.Equal(Interval.Unison, actual);
       Assert.True(Interval.TryParse("1", out actual));
-      Assert.Equal(Interval.Perfect1, actual);
+      Assert.Equal(Interval.Unison, actual);
       Assert.True(Interval.TryParse("M2", out actual));
-      Assert.Equal(Interval.Major2, actual);
+      Assert.Equal(Interval.MajorSecond, actual);
       Assert.True(Interval.TryParse("2", out actual));
-      Assert.Equal(Interval.Major2, actual);
+      Assert.Equal(Interval.MajorSecond, actual);
       Assert.False(Interval.TryParse("M1", out actual));
       Assert.Equal(Interval.Invalid, actual);
       Assert.False(Interval.TryParse("P2", out actual));
@@ -203,40 +202,38 @@ namespace Bach.Model.Test
     [Fact]
     public void ParseTest()
     {
-      Assert.Equal(Interval.Perfect1, Interval.Parse("P1"));
+      Assert.Equal(Interval.Unison, Interval.Parse("P1"));
       Assert.Throws<FormatException>(() => Interval.Parse("X2"));
     }
 
     [Fact]
-    public void GetStepsTest()
+    public void GetSemitoneCountTest()
     {
-      Assert.Throws<ArgumentException>(() => Interval.GetSteps(1, IntervalQuality.Diminished));
-      Assert.Throws<ArgumentException>(() => Interval.GetSteps(1, IntervalQuality.Minor));
-      Assert.Equal(0, Interval.GetSteps(1, IntervalQuality.Perfect));
-      Assert.Throws<ArgumentException>(() => Interval.GetSteps(1, IntervalQuality.Major));
-      Assert.Equal(1, Interval.GetSteps(1, IntervalQuality.Augmented));
+      Assert.Throws<ArgumentException>(() => Interval.GetSemitoneCount(IntervalQuantity.Unison, IntervalQuality.Diminished));
+      Assert.Throws<ArgumentException>(() => Interval.GetSemitoneCount(IntervalQuantity.Unison, IntervalQuality.Minor));
+      Assert.Equal(0, Interval.GetSemitoneCount(IntervalQuantity.Unison, IntervalQuality.Perfect));
+      Assert.Throws<ArgumentException>(() => Interval.GetSemitoneCount(IntervalQuantity.Unison, IntervalQuality.Major));
+      Assert.Equal(1, Interval.GetSemitoneCount(IntervalQuantity.Unison, IntervalQuality.Augmented));
     }
 
     [Fact]
     public void IsValidTest()
     {
-      Assert.False(Interval.IsValid(1, IntervalQuality.Diminished));
-      Assert.False(Interval.IsValid(Interval.MinInterval - 1, IntervalQuality.Perfect));
-      Assert.False(Interval.IsValid(Interval.MaxInterval + 1, IntervalQuality.Perfect));
-      Assert.False(Interval.IsValid(1, IntervalQuality.Diminished - 1));
-      Assert.False(Interval.IsValid(1, IntervalQuality.Augmented + 1));
+      Assert.False(Interval.IsValid(IntervalQuantity.Unison, IntervalQuality.Diminished));
+      Assert.False(Interval.IsValid(IntervalQuantity.Fourth, IntervalQuality.Minor));
+      Assert.False(Interval.IsValid(IntervalQuantity.Fifth, IntervalQuality.Major));
     }
 
     [Fact]
     public void LogicalOperatorsTest()
     {
-      Assert.True(Interval.Perfect1 == Interval.Parse("P1"));
-      Assert.True(Interval.Perfect1 != Interval.Perfect4);
-      Assert.True(Interval.Perfect1 < Interval.Perfect4);
-      Assert.True(Interval.Perfect1 <= Interval.Perfect4);
-      Assert.True(Interval.Perfect4 > Interval.Perfect1);
-      Assert.True(Interval.Perfect4 >= Interval.Perfect1);
-      Assert.True(Interval.Minor3 < Interval.Major3);
+      Assert.True(Interval.Unison == Interval.Parse("P1"));
+      Assert.True(Interval.Unison != Interval.Fourth);
+      Assert.True(Interval.Unison < Interval.Fourth);
+      Assert.True(Interval.Unison <= Interval.Fourth);
+      Assert.True(Interval.Fourth > Interval.Unison);
+      Assert.True(Interval.Fourth >= Interval.Unison);
+      Assert.True(Interval.MinorThird < Interval.MajorThird);
     }
   }
 }

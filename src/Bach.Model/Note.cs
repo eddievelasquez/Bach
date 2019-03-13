@@ -27,6 +27,7 @@ namespace Bach.Model
 {
   using System;
   using System.Diagnostics;
+  using System.Diagnostics.Contracts;
 
   /// <summary>
   /// A Note represents a combination of a <see cref="P:Bach.Model.Note.NoteName" />
@@ -44,7 +45,33 @@ namespace Bach.Model
     private const ushort AbsoluteValueMask = 0x0F;
     private const int AbsoluteValueCount = 12;
 
-    private static readonly Link[] s_links;
+    // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
+    private static readonly Note?[,] s_enharmonics =
+    {
+      { Create(0, NoteName.D, Accidental.DoubleFlat), null, Create(0, NoteName.C, Accidental.Natural), Create(0, NoteName.B, Accidental.Sharp), null },
+      { null, Create(1, NoteName.D, Accidental.Flat), null, Create(1, NoteName.C, Accidental.Sharp), Create(1, NoteName.B, Accidental.DoubleSharp) },
+      { Create(2, NoteName.E, Accidental.DoubleFlat), null, Create(2, NoteName.D, Accidental.Natural), null, Create(2, NoteName.C, Accidental.DoubleSharp) },
+      { Create(3, NoteName.F, Accidental.DoubleFlat), Create(3, NoteName.E, Accidental.Flat), null, Create(3, NoteName.D, Accidental.Sharp), null },
+      { null, Create(4, NoteName.F, Accidental.Flat), Create(4, NoteName.E, Accidental.Natural), null, Create(4, NoteName.D, Accidental.DoubleSharp) },
+      { Create(5, NoteName.G, Accidental.DoubleFlat), null, Create(5, NoteName.F, Accidental.Natural), Create(5, NoteName.E, Accidental.Sharp), null },
+      { null, Create(6, NoteName.G, Accidental.Flat), null, Create(6, NoteName.F, Accidental.Sharp), Create(6, NoteName.E, Accidental.DoubleSharp) },
+      { Create(7, NoteName.A, Accidental.DoubleFlat), null, Create(7, NoteName.G, Accidental.Natural), null, Create(7, NoteName.F, Accidental.DoubleSharp) },
+      { null, Create(8, NoteName.A, Accidental.Flat), null, Create(8, NoteName.G, Accidental.Sharp), null },
+      { Create(9, NoteName.B, Accidental.DoubleFlat), null, Create(9, NoteName.A, Accidental.Natural), null, Create(9, NoteName.G, Accidental.DoubleSharp) },
+      { Create(10, NoteName.C, Accidental.DoubleFlat), Create(10, NoteName.B, Accidental.Flat), null, Create(10, NoteName.A, Accidental.Sharp), null },
+      { null, Create(11, NoteName.C, Accidental.Flat), Create(11, NoteName.B, Accidental.Natural), null, Create(11, NoteName.A, Accidental.DoubleSharp) }
+    };
+
+    private static readonly int[] s_noteNameIndices =
+    {
+      0, // NoteName.C
+      2, // NoteName.D
+      4, // NoteName.E
+      5, // NoteName.F
+      7, // NoteName.G
+      9, // NoteName.A
+      11 // NoteName.B
+    };
 
     /// <summary>C note.</summary>
     public static readonly Note C;
@@ -101,67 +128,82 @@ namespace Bach.Model
 
     static Note()
     {
-      s_links = new Link[AbsoluteValueCount];
-
-      C = Create(NoteName.C);
-      CSharp = Create(NoteName.C, Accidental.Sharp);
-      DFlat = Create(NoteName.D, Accidental.Flat);
-      D = Create(NoteName.D);
-      DSharp = Create(NoteName.D, Accidental.Sharp);
-      EFlat = Create(NoteName.E, Accidental.Flat);
-      E = Create(NoteName.E);
-      F = Create(NoteName.F);
-      FSharp = Create(NoteName.F, Accidental.Sharp);
-      GFlat = Create(NoteName.G, Accidental.Flat);
-      G = Create(NoteName.G);
-      GSharp = Create(NoteName.G, Accidental.Sharp);
-      AFlat = Create(NoteName.A, Accidental.Flat);
-      A = Create(NoteName.A);
-      ASharp = Create(NoteName.A, Accidental.Sharp);
-      BFlat = Create(NoteName.B, Accidental.Flat);
-      B = Create(NoteName.B);
-
+      C = GetNote(0, Accidental.Natural);
+      CSharp = GetNote(1, Accidental.Sharp);
+      DFlat = GetNote(1, Accidental.Flat);
+      D = GetNote(2, Accidental.Natural);
+      DSharp = GetNote(3, Accidental.Sharp);
+      EFlat = GetNote(3, Accidental.Flat);
+      E = GetNote(4, Accidental.Natural);
+      F = GetNote(5, Accidental.Natural);
+      FSharp = GetNote(6, Accidental.Sharp);
+      GFlat = GetNote(6, Accidental.Flat);
+      G = GetNote(7, Accidental.Natural);
+      GSharp = GetNote(8, Accidental.Sharp);
+      AFlat = GetNote(8, Accidental.Flat);
+      A = GetNote(9, Accidental.Natural);
+      ASharp = GetNote(10, Accidental.Sharp);
+      BFlat = GetNote(10, Accidental.Flat);
+      B = GetNote(11, Accidental.Natural);
       AccidentalMode = AccidentalMode.FavorSharps;
     }
 
-    /// <summary>Constructor.</summary>
-    /// <param name="noteName">Name of the note.</param>
-    /// <param name="accidental">(Optional) The accidental.</param>
-    public Note(NoteName noteName,
-                Accidental accidental = Accidental.Natural)
+    private Note(int absoluteValue,
+                 NoteName noteName,
+                 Accidental accidental)
     {
-      int absoluteValue = CalcAbsoluteValue(noteName, accidental);
       _encoded = Encode(absoluteValue, noteName, accidental);
     }
 
-    private static Note Create(NoteName noteName,
-                               Accidental accidental = Accidental.Natural)
+    private static Note GetNote(int absoluteValue,
+                                Accidental accidental)
     {
-      var tone = new Note(noteName, accidental);
-      Link link = s_links[tone.AbsoluteValue];
-      if( link == null )
-      {
-        link = new Link();
-        s_links[tone.AbsoluteValue] = link;
-      }
+      int index = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
+      Note? note = s_enharmonics[absoluteValue, index];
+      Debug.Assert(note.HasValue);
 
-      switch( accidental )
-      {
-        case Accidental.Flat:
-          link.Flat = tone;
-          break;
-
-        case Accidental.Natural:
-          link.Natural = tone;
-          break;
-
-        case Accidental.Sharp:
-          link.Sharp = tone;
-          break;
-      }
-
-      return tone;
+      return note.Value;
     }
+
+    /// <summary>Creates a new Note.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
+    ///                                               required range.</exception>
+    /// <param name="noteName">The name of the note.</param>
+    /// <returns>A Note.</returns>
+    public static Note Create(NoteName noteName)
+    {
+      return Create(noteName, Accidental.Natural);
+    }
+
+    /// <summary>Creates a new Note.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
+    ///                                               required range.</exception>
+    /// <param name="noteName">The name of the note.</param>
+    /// <param name="accidental">(Optional) The accidental.</param>
+    /// <returns>A Note.</returns>
+    public static Note Create(NoteName noteName,
+                              Accidental accidental)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
+      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
+
+      // This really doesn't create a Note but returns one of the pre-created ones
+      // from the enharmonics table.
+      // TODO: Maybe we should change the name of Create to Lookup?
+      int accidentalIndex = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
+      int noteNameIndex = s_noteNameIndices[(int)noteName];
+      int noteIndex = s_enharmonics.WrapIndex(0, noteNameIndex + (int)accidental);
+      Note? note = s_enharmonics[noteIndex, accidentalIndex];
+      Debug.Assert(note.HasValue);
+
+      return note.Value;
+    }
+
+    // This is a helper function for creating notes for the enharmonic table
+    private static Note Create(int absoluteValue,
+                               NoteName noteName,
+                               Accidental accidental)
+      => new Note(absoluteValue, noteName, accidental);
 
     /// <summary>Gets or sets the accidental mode.</summary>
     /// <value>The accidental mode.</value>
@@ -183,6 +225,31 @@ namespace Bach.Model
     /// <inheritdoc/>
     public bool Equals(Note other) => AbsoluteValue == other.AbsoluteValue;
 
+    /// <summary>Gets the enharmonic note for this instance or null if non exists.</summary>
+    /// <param name="noteName">The name of the enharmonic note.</param>
+    /// <returns>The enharmonic.</returns>
+    [Pure]
+    public Note? GetEnharmonic(NoteName noteName)
+    {
+      int absoluteValue = AbsoluteValue;
+      for( var accidental = (int)Accidental.DoubleFlat; accidental <= (int)Accidental.DoubleSharp; ++accidental )
+      {
+        int index = accidental + Math.Abs((int)Accidental.DoubleFlat);
+        Note? note = s_enharmonics[absoluteValue, index];
+        if( !note.HasValue )
+        {
+          continue;
+        }
+
+        if( note.Value.NoteName == noteName )
+        {
+          return note;
+        }
+      }
+
+      return null;
+    }
+
     /// <summary>Attempts to parse a Note from the given string.</summary>
     /// <param name="value">The value to parse.</param>
     /// <param name="note">[out] The note.</param>
@@ -196,20 +263,20 @@ namespace Bach.Model
         return false;
       }
 
-      if( !Enum.TryParse(value.Substring(0, 1), true, out NoteName toneName) )
+      if( !NoteName.TryParse(value, out NoteName toneName) )
       {
         note = C;
         return false;
       }
 
       var accidental = Accidental.Natural;
-      if( value.Length > 1 && !AccidentalExtensions.TryParse(value.Substring(1), out accidental) )
+      if( value.Length > 1 && !Accidental.TryParse(value.Substring(1), out accidental) )
       {
         note = C;
         return false;
       }
 
-      note = new Note(toneName, accidental);
+      note = Create(toneName, accidental);
       return true;
     }
 
@@ -231,6 +298,27 @@ namespace Bach.Model
       return result;
     }
 
+    /// <summary>
+    /// Calculate the number of semitones between two notes
+    /// </summary>
+    /// <param name="a">The first note.</param>
+    /// <param name="b">The second note.</param>
+    /// <returns>The number of semitones.</returns>
+    public static int SemitonesBetween(Note a,
+                                       Note b)
+    {
+      var current = a;
+      int count = 0;
+
+      while( current != b )
+      {
+        ++count;
+        current = current.Add(1);
+      }
+
+      return count;
+    }
+
     /// <summary>Adds a number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
     /// <param name="mode">(Optional) The accidental mode.</param>
@@ -239,7 +327,34 @@ namespace Bach.Model
                     AccidentalMode mode = AccidentalMode.FavorSharps)
     {
       int absoluteValue = ( AbsoluteValue + semitoneCount ) % AbsoluteValueCount;
-      return GetNote(absoluteValue, mode == AccidentalMode.FavorSharps);
+      return FindNote(absoluteValue, mode == AccidentalMode.FavorSharps);
+    }
+
+    /// <summary>Adds an interval to a note.</summary>
+    /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or
+    ///                                     illegal values.</exception>
+    /// <param name="note">A note.</param>
+    /// <param name="interval">An interval to add to the note.</param>
+    /// <returns>A Note.</returns>
+    public static Note Add(Note note,
+                           Interval interval)
+    {
+      NoteName noteName = note.NoteName.Add((int)interval.Quantity);
+      int semitoneCount = interval.SemitoneCount;
+      Note calculatedNote = note.Add(semitoneCount);
+      if( calculatedNote.NoteName == noteName )
+      {
+        return calculatedNote;
+      }
+
+      // Deal with enharmonics
+      Note? enharmonic = calculatedNote.GetEnharmonic(noteName);
+      if( !enharmonic.HasValue )
+      {
+        throw new ArgumentException("Do something!");
+      }
+
+      return enharmonic.Value;
     }
 
     /// <summary>Subtracts a number of semitones from the current instance.</summary>
@@ -256,7 +371,29 @@ namespace Bach.Model
         absoluteValue = AbsoluteValueCount - semitoneCount;
       }
 
-      return GetNote(absoluteValue, mode == AccidentalMode.FavorSharps);
+      return FindNote(absoluteValue, mode == AccidentalMode.FavorSharps);
+    }
+
+    /// <summary>Determines the interval between two notes.</summary>
+    /// <param name="a">The first note.</param>
+    /// <param name="b">The second note.</param>
+    /// <returns>An interval.</returns>
+    public static Interval Subtract(Note a,
+                                    Note b)
+    {
+      // First we determine the interval quantity
+      var quantity = IntervalQuantity.Unison;
+      NoteName current = a.NoteName;
+
+      while( current != b.NoteName )
+      {
+        ++quantity;
+        ++current;
+      }
+
+      var semitoneCount = SemitonesBetween(a, b);
+      var interval = new Interval(quantity, semitoneCount);
+      return interval;
     }
 
     /// <inheritdoc />
@@ -267,7 +404,7 @@ namespace Bach.Model
         return false;
       }
 
-      return obj.GetType() == GetType() && Equals((Note) obj);
+      return obj.GetType() == GetType() && Equals((Note)obj);
     }
 
     /// <inheritdoc />
@@ -350,32 +487,57 @@ namespace Bach.Model
     /// <returns>The result of the operation.</returns>
     public static Note operator--(Note note) => note.Subtract(1, AccidentalMode);
 
-    private static int CalcAbsoluteValue(NoteName noteName,
-                                         Accidental accidental)
+    /// <summary>Addition operator.</summary>
+    /// <param name="note">The note.</param>
+    /// <param name="interval">An interval to add to the note.</param>
+    /// <returns>A note.</returns>
+    public static Note operator+(Note note,
+                                 Interval interval)
+      => Add(note, interval);
+
+    /// <summary>Subtraction operator.</summary>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">A value to subtract from it.</param>
+    /// <returns>The result of the operation.</returns>
+    public static Interval operator-(Note a,
+                                     Note b)
+      => Subtract(a, b);
+
+    // Finds a note that corresponds to the provided absolute value,
+    // attempting to match the desired accidental mode
+    internal static Note FindNote(int absoluteValue,
+                                  bool favorSharps)
     {
-      int absoluteValue = ( NoteName.C.SemitonesBetween(noteName) + (int) accidental ) % AbsoluteValueCount;
-      if( absoluteValue < 0 )
+      var index = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
+      if( favorSharps )
       {
-        absoluteValue = AbsoluteValueCount + absoluteValue;
+        int max = (int)Accidental.DoubleSharp + Math.Abs((int)Accidental.DoubleFlat);
+        while( index <= max )
+        {
+          Note? current = s_enharmonics[absoluteValue, index];
+          if( current.HasValue )
+          {
+            return current.Value;
+          }
+
+          ++index;
+        }
+      }
+      else
+      {
+        while( index >= 0 )
+        {
+          Note? current = s_enharmonics[absoluteValue, index];
+          if( current.HasValue )
+          {
+            return current.Value;
+          }
+
+          --index;
+        }
       }
 
-      return absoluteValue;
-    }
-
-    internal static Note GetNote(int index,
-                                 bool favorSharps)
-    {
-      Link link = s_links[index];
-
-      if( link.Natural != null )
-      {
-        return link.Natural.Value;
-      }
-
-      Debug.Assert(link.Sharp.HasValue);
-      Debug.Assert(link.Flat.HasValue);
-
-      return favorSharps ? link.Sharp.Value : link.Flat.Value;
+      throw new Exception("Must be able to find enharmonic");
     }
 
     private static ushort Encode(int value,
@@ -385,9 +547,10 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
       Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
       Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-      var encoded = (ushort) ( ( ( (ushort) noteName & ToneNameMask ) << ToneNameShift )
-                               | ( ( (ushort) ( accidental + 2 ) & AccidentalMask ) << AccidentalShift )
-                               | ( (ushort) value & AbsoluteValueMask ) );
+
+      var encoded = (ushort)( ( ( (ushort)noteName & ToneNameMask ) << ToneNameShift )
+                              | ( ( (ushort)( (int)accidental + 2 ) & AccidentalMask ) << AccidentalShift )
+                              | ( (ushort)value & AbsoluteValueMask ) );
       return encoded;
     }
 
@@ -400,20 +563,13 @@ namespace Bach.Model
     private static NoteName DecodeToneName(ushort encoded)
     {
       int result = ( encoded >> ToneNameShift ) & ToneNameMask;
-      return (NoteName) result;
+      return (NoteName)result;
     }
 
     private static Accidental DecodeAccidental(ushort encoded)
     {
       int result = ( ( encoded >> AccidentalShift ) & AccidentalMask ) - 2;
-      return (Accidental) result;
-    }
-
-    private class Link
-    {
-      public Note? Natural { get; set; }
-      public Note? Sharp { get; set; }
-      public Note? Flat { get; set; }
+      return (Accidental)result;
     }
   }
 }

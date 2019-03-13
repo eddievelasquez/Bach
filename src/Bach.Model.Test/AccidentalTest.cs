@@ -28,7 +28,7 @@ namespace Bach.Model.Test
   using System;
   using Xunit;
 
-  public class AccidentalExtensionsTest
+  public class AccidentalTest
   {
     [Fact]
     public void ToSymbolTest()
@@ -43,40 +43,39 @@ namespace Bach.Model.Test
     [Fact]
     public void ParseTest()
     {
-      Assert.Equal(Accidental.DoubleFlat, AccidentalExtensions.Parse("bb"));
-      Assert.Equal(Accidental.Flat, AccidentalExtensions.Parse("b"));
-      Assert.Equal(Accidental.Natural, AccidentalExtensions.Parse(""));
-      Assert.Equal(Accidental.Sharp, AccidentalExtensions.Parse("#"));
-      Assert.Equal(Accidental.DoubleSharp, AccidentalExtensions.Parse("##"));
+      Assert.Equal(Accidental.DoubleFlat, Accidental.Parse("bb"));
+      Assert.Equal(Accidental.Flat, Accidental.Parse("b"));
+      Assert.Equal(Accidental.Natural, Accidental.Parse(""));
+      Assert.Equal(Accidental.Sharp, Accidental.Parse("#"));
+      Assert.Equal(Accidental.DoubleSharp, Accidental.Parse("##"));
     }
 
     [Fact]
     public void TryParseTest()
     {
-      Accidental accidental;
-      Assert.True(AccidentalExtensions.TryParse("bb", out accidental));
+      Assert.True(Accidental.TryParse("bb", out Accidental accidental));
       Assert.Equal(Accidental.DoubleFlat, accidental);
-      Assert.True(AccidentalExtensions.TryParse("b", out accidental));
+      Assert.True(Accidental.TryParse("b", out accidental));
       Assert.Equal(Accidental.Flat, accidental);
-      Assert.True(AccidentalExtensions.TryParse(null, out accidental));
+      Assert.True(Accidental.TryParse(null, out accidental));
       Assert.Equal(Accidental.Natural, accidental);
-      Assert.True(AccidentalExtensions.TryParse("", out accidental));
+      Assert.True(Accidental.TryParse("", out accidental));
       Assert.Equal(Accidental.Natural, accidental);
-      Assert.True(AccidentalExtensions.TryParse("#", out accidental));
+      Assert.True(Accidental.TryParse("#", out accidental));
       Assert.Equal(Accidental.Sharp, accidental);
-      Assert.True(AccidentalExtensions.TryParse("##", out accidental));
+      Assert.True(Accidental.TryParse("##", out accidental));
       Assert.Equal(Accidental.DoubleSharp, accidental);
-      Assert.False(AccidentalExtensions.TryParse("b#", out accidental));
-      Assert.False(AccidentalExtensions.TryParse("#b", out accidental));
-      Assert.False(AccidentalExtensions.TryParse("bbb", out accidental));
-      Assert.False(AccidentalExtensions.TryParse("###", out accidental));
-      Assert.False(AccidentalExtensions.TryParse("$", out accidental));
+      Assert.False(Accidental.TryParse("b#", out accidental));
+      Assert.False(Accidental.TryParse("#b", out accidental));
+      Assert.False(Accidental.TryParse("bbb", out accidental));
+      Assert.False(Accidental.TryParse("###", out accidental));
+      Assert.False(Accidental.TryParse("$", out accidental));
     }
 
     [Fact]
     public void ParseThrowsWithInvalidAccidentalSymbolTest()
     {
-      Assert.Throws<FormatException>(() => { AccidentalExtensions.Parse("&"); });
+      Assert.Throws<FormatException>(() => { Accidental.Parse("&"); });
     }
   }
 }
