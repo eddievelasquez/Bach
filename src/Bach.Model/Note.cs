@@ -169,10 +169,20 @@ namespace Bach.Model
     /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
     ///                                               required range.</exception>
     /// <param name="noteName">The name of the note.</param>
+    /// <returns>A Note.</returns>
+    public static Note Create(NoteName noteName)
+    {
+      return Create(noteName, Accidental.Natural);
+    }
+
+    /// <summary>Creates a new Note.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
+    ///                                               required range.</exception>
+    /// <param name="noteName">The name of the note.</param>
     /// <param name="accidental">(Optional) The accidental.</param>
     /// <returns>A Note.</returns>
     public static Note Create(NoteName noteName,
-                              Accidental accidental = Accidental.Natural)
+                              Accidental accidental)
     {
       Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
       Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
@@ -221,10 +231,10 @@ namespace Bach.Model
     [Pure]
     public Note? GetEnharmonic(NoteName noteName)
     {
-      var absoluteValue = AbsoluteValue;
-      for( var accidental = Accidental.DoubleFlat; accidental <= Accidental.DoubleSharp; ++accidental )
+      int absoluteValue = AbsoluteValue;
+      for( var accidental = (int)Accidental.DoubleFlat; accidental <= (int)Accidental.DoubleSharp; ++accidental )
       {
-        int index = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
+        int index = accidental + Math.Abs((int)Accidental.DoubleFlat);
         Note? note = s_enharmonics[absoluteValue, index];
         if( !note.HasValue )
         {
@@ -260,7 +270,7 @@ namespace Bach.Model
       }
 
       var accidental = Accidental.Natural;
-      if( value.Length > 1 && !AccidentalExtensions.TryParse(value.Substring(1), out accidental) )
+      if( value.Length > 1 && !Accidental.TryParse(value.Substring(1), out accidental) )
       {
         note = C;
         return false;
@@ -496,7 +506,7 @@ namespace Bach.Model
     // Finds a note that corresponds to the provided absolute value,
     // attempting to match the desired accidental mode
     internal static Note FindNote(int absoluteValue,
-                                 bool favorSharps)
+                                  bool favorSharps)
     {
       var index = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
       if( favorSharps )
@@ -537,8 +547,9 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
       Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
       Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
+
       var encoded = (ushort)( ( ( (ushort)noteName & ToneNameMask ) << ToneNameShift )
-                              | ( ( (ushort)( accidental + 2 ) & AccidentalMask ) << AccidentalShift )
+                              | ( ( (ushort)( (int)accidental + 2 ) & AccidentalMask ) << AccidentalShift )
                               | ( (ushort)value & AbsoluteValueMask ) );
       return encoded;
     }

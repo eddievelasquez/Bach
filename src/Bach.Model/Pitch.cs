@@ -411,7 +411,7 @@ namespace Bach.Model
         return;
       }
 
-      if( AccidentalExtensions.TryParse(buf.ToString(), out accidental) )
+      if( Accidental.TryParse(buf.ToString(), out accidental) )
       {
         index += buf.Length;
       }
