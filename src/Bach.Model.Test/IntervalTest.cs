@@ -220,8 +220,8 @@ namespace Bach.Model.Test
     public void IsValidTest()
     {
       Assert.False(Interval.IsValid(IntervalQuantity.Unison, IntervalQuality.Diminished));
-      Assert.False(Interval.IsValid(IntervalQuantity.Unison, IntervalQuality.Diminished - 1));
-      Assert.False(Interval.IsValid(IntervalQuantity.Unison, IntervalQuality.Augmented + 1));
+      Assert.False(Interval.IsValid(IntervalQuantity.Fourth, IntervalQuality.Minor));
+      Assert.False(Interval.IsValid(IntervalQuantity.Fifth, IntervalQuality.Major));
     }
 
     [Fact]

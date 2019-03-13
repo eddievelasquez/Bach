@@ -103,12 +103,12 @@ namespace Bach.Model
     public Interval(IntervalQuantity quantity,
                     int semitoneCount)
     {
-      var quality = IntervalQuality.Diminished;
+      var quality = (int)IntervalQuality.Diminished;
       var found = false;
 
-      for (; quality <= IntervalQuality.Augmented; ++quality)
+      for (; quality <= (int)IntervalQuality.Augmented; ++quality)
       {
-        if (s_steps[(int)quantity, (int)quality] == semitoneCount)
+        if (s_steps[(int)quantity, quality] == semitoneCount)
         {
           found = true;
           break;
@@ -192,7 +192,7 @@ namespace Bach.Model
       var buf = new StringBuilder();
       if (quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor)
       {
-        buf.Append(quality.Symbol());
+        buf.Append(quality.Symbol);
       }
 
       buf.Append((int)(quantity + 1));
@@ -253,7 +253,7 @@ namespace Bach.Model
           return true;
         }
 
-        if (!IntervalQualityExtensions.TryParse(value.Substring(i, 1), out quality))
+        if (!IntervalQuality.TryParse(value.Substring(i, 1), out quality))
         {
           return false;
         }

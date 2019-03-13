@@ -28,37 +28,33 @@ namespace Bach.Model.Test
   using System;
   using Xunit;
 
-  public class IntervalQualityExtensionsTest
+  public class IntervalQualityTest
   {
     [Fact]
     public void ParseTest()
     {
-      Assert.Equal(IntervalQuality.Perfect, IntervalQualityExtensions.Parse("P"));
-      Assert.Throws<FormatException>(() => IntervalQualityExtensions.Parse("X"));
+      Assert.Equal(IntervalQuality.Perfect, IntervalQuality.Parse("P"));
+      Assert.Throws<FormatException>(() => IntervalQuality.Parse("X"));
     }
 
     [Fact]
     public void ShortNameTest()
     {
-      Assert.Equal("dim", IntervalQuality.Diminished.ShortName());
-      Assert.Equal("min", IntervalQuality.Minor.ShortName());
-      Assert.Equal("Perf", IntervalQuality.Perfect.ShortName());
-      Assert.Equal("Maj", IntervalQuality.Major.ShortName());
-      Assert.Equal("Aug", IntervalQuality.Augmented.ShortName());
-      Assert.Throws<ArgumentOutOfRangeException>(() => (IntervalQuality.Diminished - 1).ShortName());
-      Assert.Throws<ArgumentOutOfRangeException>(() => (IntervalQuality.Augmented + 1).ShortName());
+      Assert.Equal("dim", IntervalQuality.Diminished.ShortName);
+      Assert.Equal("min", IntervalQuality.Minor.ShortName);
+      Assert.Equal("Perf", IntervalQuality.Perfect.ShortName);
+      Assert.Equal("Maj", IntervalQuality.Major.ShortName);
+      Assert.Equal("Aug", IntervalQuality.Augmented.ShortName);
     }
 
     [Fact]
     public void LongNameTest()
     {
-      Assert.Equal("diminished", IntervalQuality.Diminished.LongName());
-      Assert.Equal("minor", IntervalQuality.Minor.LongName());
-      Assert.Equal("perfect", IntervalQuality.Perfect.LongName());
-      Assert.Equal("major", IntervalQuality.Major.LongName());
-      Assert.Equal("augmented", IntervalQuality.Augmented.LongName());
-      Assert.Throws<ArgumentOutOfRangeException>(() => (IntervalQuality.Diminished - 1).LongName());
-      Assert.Throws<ArgumentOutOfRangeException>(() => (IntervalQuality.Augmented + 1).LongName());
+      Assert.Equal("diminished", IntervalQuality.Diminished.LongName);
+      Assert.Equal("minor", IntervalQuality.Minor.LongName);
+      Assert.Equal("perfect", IntervalQuality.Perfect.LongName);
+      Assert.Equal("major", IntervalQuality.Major.LongName);
+      Assert.Equal("augmented", IntervalQuality.Augmented.LongName);
     }
   }
 }
