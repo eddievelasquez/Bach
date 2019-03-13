@@ -52,7 +52,7 @@ namespace Bach.Model
     /// <summary>
     ///   Natural (♮)
     /// </summary>
-    public static readonly Accidental Natural = new Accidental(-0);
+    public static readonly Accidental Natural = new Accidental(0);
 
     /// <summary>
     ///   Sharp (♯)
@@ -65,6 +65,7 @@ namespace Bach.Model
     public static readonly Accidental DoubleSharp = new Accidental(2);
 
     private static readonly string[] s_symbols = { "bb", "b", "", "#", "##" };
+    private static readonly string[] s_names = { "DoubleFlat", "Flat", "Natural", "Sharp", "DoubleSharp" };
     private static readonly int s_doubleFlatOffset = Math.Abs((int)DoubleFlat);
 
     #endregion
@@ -136,6 +137,7 @@ namespace Bach.Model
     ///   Returns this instance's symbolic representation.
     /// </summary>
     /// <returns>String representation of the accidental.</returns>
+    [Pure]
     public string ToSymbol() => s_symbols[_value + s_doubleFlatOffset];
 
     /// <summary>
@@ -217,6 +219,9 @@ namespace Bach.Model
     #endregion
 
     #region Overrides
+
+    /// <inheritdoc />
+    public override string ToString() => s_names[_value + s_doubleFlatOffset];
 
     /// <inheritdoc />
     public override bool Equals(object obj)

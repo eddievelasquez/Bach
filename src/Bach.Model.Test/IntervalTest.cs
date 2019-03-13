@@ -222,6 +222,8 @@ namespace Bach.Model.Test
       Assert.False(Interval.IsValid(IntervalQuantity.Unison, IntervalQuality.Diminished));
       Assert.False(Interval.IsValid(IntervalQuantity.Fourth, IntervalQuality.Minor));
       Assert.False(Interval.IsValid(IntervalQuantity.Fifth, IntervalQuality.Major));
+      Assert.False(Interval.IsValid((IntervalQuantity)(-1), IntervalQuality.Major));
+      Assert.False(Interval.IsValid((IntervalQuantity)(14), IntervalQuality.Major));
     }
 
     [Fact]

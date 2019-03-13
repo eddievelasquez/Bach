@@ -46,9 +46,11 @@ namespace Bach.Model
     public static readonly NoteName B = new NoteName(6);
 
     private const int NoteNameCount = 7;
+
+    // ReSharper disable once StringLiteralTypo
     private static readonly string s_names = "CDEFGAB";
 
-    private static readonly int[] s_intervals =
+    private static readonly int[] s_semitonesBetween =
     {
       2, // C-D
       2, // D-E
@@ -109,17 +111,10 @@ namespace Bach.Model
     /// <summary>Returns to number of semitones between two note names.</summary>
     /// <param name="name">The last noted name.</param>
     /// <returns>A NoteName.</returns>
+    [Pure]
     public int Subtract(NoteName name)
     {
-      var semitones = 0;
-      NoteName noteName = this;
-      while( noteName != name )
-      {
-        semitones += s_intervals[noteName._value];
-        noteName = (NoteName)s_intervals.WrapIndex(noteName._value + 1);
-      }
-
-      return semitones;
+      return (int)Add(-(int)name);
     }
 
     /// <summary>
@@ -134,8 +129,8 @@ namespace Bach.Model
       var noteName = this;
       while( noteName != end )
       {
-        semitones += s_intervals[(int)noteName];
-        noteName = (NoteName)s_intervals.WrapIndex((int)noteName + 1);
+        semitones += s_semitonesBetween[(int)noteName];
+        noteName = (NoteName)s_semitonesBetween.WrapIndex((int)noteName + 1);
       }
 
       return semitones;

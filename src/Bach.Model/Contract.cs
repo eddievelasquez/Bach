@@ -1,6 +1,7 @@
 namespace Bach.Model
 {
   using System;
+  using System.Diagnostics;
 
   internal static class Contract
   {
@@ -29,6 +30,7 @@ namespace Bach.Model
           exception = new TException();
         }
 
+        Debug.Assert(exception != null, nameof(exception) + " != null");
         throw exception;
       }
     }

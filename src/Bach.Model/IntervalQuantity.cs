@@ -28,9 +28,6 @@ namespace Bach.Model
   /// <summary>Values that represent interval quantities.</summary>
   public enum IntervalQuantity
   {
-    /// <summary>An enum constant representing an unknown quantity.</summary>
-    Unknown = -1,
-
     /// <summary>An enum constant representing a unison.</summary>
     Unison,
 

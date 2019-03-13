@@ -26,22 +26,23 @@
 namespace Bach.Model
 {
   using System;
-  using System.ComponentModel;
   using System.Text;
 
   /// <summary>
-  /// A Pitch represents the pitch of a sound (<see cref="Note"/>)
-  /// on a given octave.
+  ///   A Pitch represents the pitch of a sound (<see cref="Note" />)
+  ///   on a given octave.
   /// </summary>
   /// <remarks>
-  /// The octave of a Pitch ranges from 0 to 9,
-  /// which corresponds to MIDI pitches from 12 (C0)
-  /// to 127 (B9).
+  ///   The octave of a Pitch ranges from 0 to 9,
+  ///   which corresponds to MIDI pitches from 12 (C0)
+  ///   to 127 (B9).
   /// </remarks>
   public struct Pitch
     : IEquatable<Pitch>,
       IComparable<Pitch>
   {
+    #region Constants
+
     /// <summary>The minimum supported octave.</summary>
     public const int MinOctave = 0;
 
@@ -66,9 +67,17 @@ namespace Bach.Model
     //TODO: Why have this if G9 is the maximum supported pitch?
     public static readonly Pitch MaxValue = new Pitch(Note.B, MaxOctave, 128);
 
+    #endregion
+
+    #region Data Members
+
     private readonly byte _absoluteValue;
-    private readonly byte _octave;
     private readonly Note _note;
+    private readonly byte _octave;
+
+    #endregion
+
+    #region Constructors
 
     private Pitch(int absoluteValue,
                   AccidentalMode accidentalMode)
@@ -89,18 +98,68 @@ namespace Bach.Model
       _absoluteValue = (byte)absoluteValue;
     }
 
-    private Pitch(NoteName noteName,
-                  Accidental accidental,
-                  int octave,
-                  int absoluteValue)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
-      Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
+    #endregion
 
-      _note = Note.Create(noteName, accidental);
-      _octave = (byte)octave;
-      _absoluteValue = (byte)absoluteValue;
+    #region Properties
+
+    /// <summary>Gets a value indicating whether this instance is a valid pitch.</summary>
+    /// <value>True if this instance is a valid false, false if it is not.</value>
+    public bool IsValid
+    {
+      get
+      {
+        int abs = _absoluteValue + (int)_note.Accidental;
+        return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
+      }
     }
+
+    /// <summary>Gets the pitch's note.</summary>
+    /// <value>The note.</value>
+    public Note Note => _note;
+
+    /// <summary>Gets the pitch's octave.</summary>
+    /// <value>The octave.</value>
+    public int Octave => _octave;
+
+    /// <summary>Gets the pitch's frequency.</summary>
+    /// <value>The frequency.</value>
+    public double Frequency
+    {
+      get
+      {
+        int interval = _absoluteValue - s_a4._absoluteValue;
+        double freq = Math.Pow(2, interval / 12.0) * A4Frequency;
+        return freq;
+      }
+    }
+
+    /// <summary>Gets the pitch's MIDI value.</summary>
+    /// <value>The MIDI value.</value>
+    public int Midi => _absoluteValue + 12;
+
+    public static AccidentalMode AccidentalMode
+    {
+      get => Note.AccidentalMode;
+      set => Note.AccidentalMode = value;
+    }
+
+    #endregion
+
+    #region IComparable<Pitch> Members
+
+    /// <inheritdoc />
+    public int CompareTo(Pitch other) => _absoluteValue - other._absoluteValue;
+
+    #endregion
+
+    #region IEquatable<Pitch> Members
+
+    /// <inheritdoc />
+    public bool Equals(Pitch obj) => obj._absoluteValue == _absoluteValue;
+
+    #endregion
+
+    #region Public Methods
 
     /// <summary>Creates a new Pitch.</summary>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
@@ -157,87 +216,6 @@ namespace Bach.Model
       return note;
     }
 
-    /// <summary>Gets a value indicating whether this instance is a valid pitch.</summary>
-    /// <value>True if this instance is a valid false, false if it is not.</value>
-    public bool IsValid
-    {
-      get
-      {
-        int abs = _absoluteValue + (int)_note.Accidental;
-        return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
-      }
-    }
-
-    /// <summary>Gets the pitch's note.</summary>
-    /// <value>The note.</value>
-    public Note Note => _note;
-
-    /// <summary>Gets the pitch's octave.</summary>
-    /// <value>The octave.</value>
-    public int Octave => _octave;
-
-    /// <summary>Gets the pitch's frequency.</summary>
-    /// <value>The frequency.</value>
-    public double Frequency
-    {
-      get
-      {
-        int interval = _absoluteValue - s_a4._absoluteValue;
-        double freq = Math.Pow(2, interval / 12.0) * A4Frequency;
-        return freq;
-      }
-    }
-
-    /// <summary>Gets the pitch's MIDI value.</summary>
-    /// <value>The MIDI value.</value>
-    public int Midi => _absoluteValue + 12;
-
-    public static AccidentalMode AccidentalMode
-    {
-      get => Note.AccidentalMode;
-      set => Note.AccidentalMode = value;
-    }
-
-    /// <inheritdoc />
-    public int CompareTo(Pitch other) => _absoluteValue - other._absoluteValue;
-
-    /// <inheritdoc />
-    public bool Equals(Pitch obj) => obj._absoluteValue == _absoluteValue;
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
-    {
-      if( obj is null || obj.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Pitch)obj);
-    }
-
-    /// <inheritdoc />
-    public override int GetHashCode() => _absoluteValue;
-
-    /// <inheritdoc />
-    public override string ToString() => $"{_note}{Octave}";
-
-    private static int CalcAbsoluteValue(NoteName noteName,
-                                         Accidental accidental,
-                                         int octave)
-    {
-      int absoluteValue = ( octave * IntervalsPerOctave ) + NoteName.C.SemitonesBetween(noteName) + (int)accidental;
-      return absoluteValue;
-    }
-
-    private static void CalcNote(byte absoluteValue,
-                                 out Note note,
-                                 out byte octave,
-                                 AccidentalMode accidentalMode)
-    {
-      octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
-      note = Note.FindNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
-    }
-
     /// <summary>Adds number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
     /// <param name="accidentalMode">(Optional) The accidental mode.</param>
@@ -249,13 +227,17 @@ namespace Bach.Model
       return result;
     }
 
+    /// <summary>Adds an Interval to a given Pitch.</summary>
+    /// <param name="pitch">The pitch.</param>
+    /// <param name="interval">A interval to add to it.</param>
+    /// <returns>A Pitch.</returns>
     public static Pitch Add(Pitch pitch,
                             Interval interval)
     {
-      byte absoluteValue = (byte)( pitch._absoluteValue + interval.SemitoneCount );
-      CalcNote(absoluteValue, out Note calculatedNote, out byte octave, AccidentalMode.FavorSharps);
+      var absoluteValue = (byte)( pitch._absoluteValue + interval.SemitoneCount );
+      CalcNote(absoluteValue, out Note _, out byte octave, AccidentalMode.FavorSharps);
 
-      var newNote = pitch.Note + interval;
+      Note newNote = pitch.Note + interval;
       var result = new Pitch(newNote, octave, absoluteValue);
       return result;
     }
@@ -286,6 +268,50 @@ namespace Bach.Model
     public static Pitch Max(Pitch a,
                             Pitch b)
       => a._absoluteValue >= b._absoluteValue ? a : b;
+
+    #endregion
+
+    #region Overrides
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+      if( obj is null || obj.GetType() != GetType() )
+      {
+        return false;
+      }
+
+      return Equals((Pitch)obj);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode() => _absoluteValue;
+
+    /// <inheritdoc />
+    public override string ToString() => $"{_note}{Octave}";
+
+    #endregion
+
+    #region  Implementation
+
+    private static int CalcAbsoluteValue(NoteName noteName,
+                                         Accidental accidental,
+                                         int octave)
+    {
+      int absoluteValue = ( octave * IntervalsPerOctave ) + NoteName.C.SemitonesBetween(noteName) + (int)accidental;
+      return absoluteValue;
+    }
+
+    private static void CalcNote(byte absoluteValue,
+                                 out Note note,
+                                 out byte octave,
+                                 AccidentalMode accidentalMode)
+    {
+      octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
+      note = Note.FindNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
+    }
+
+    #endregion
 
     #region Operators
 

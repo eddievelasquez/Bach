@@ -26,6 +26,7 @@
 namespace Bach.Model
 {
   using System;
+  using System.Diagnostics;
   using System.Text;
 
   /// <summary>An interval.</summary>
@@ -33,6 +34,8 @@ namespace Bach.Model
     : IEquatable<Interval>,
       IComparable<Interval>
   {
+    #region Constants
+
     private static readonly int[,] s_steps =
     {
       // Diminished, Minor, Perfect, Major, Augmented
@@ -80,8 +83,17 @@ namespace Bach.Model
     public static readonly Interval Octave = new Interval(IntervalQuantity.Octave, IntervalQuality.Perfect);
     public static readonly Interval Invalid = new Interval();
 
-    private readonly byte _quantity;
+    #endregion
+
+    #region Data Members
+
     private readonly byte _quality;
+
+    private readonly byte _quantity;
+
+    #endregion
+
+    #region Constructors
 
     /// <summary>Constructor.</summary>
     /// <param name="quantity">The interval quantity.</param>
@@ -100,29 +112,29 @@ namespace Bach.Model
     /// <summary>Constructor.</summary>
     /// <param name="quantity">The interval quantity.</param>
     /// <param name="semitoneCount">The number of semitones in the interval.</param>
-    public Interval(IntervalQuantity quantity,
-                    int semitoneCount)
+    internal Interval(IntervalQuantity quantity,
+                      int semitoneCount)
     {
       var quality = (int)IntervalQuality.Diminished;
       var found = false;
 
-      for (; quality <= (int)IntervalQuality.Augmented; ++quality)
+      for( ; quality <= (int)IntervalQuality.Augmented; ++quality )
       {
-        if (s_steps[(int)quantity, quality] == semitoneCount)
+        if( s_steps[(int)quantity, quality] == semitoneCount )
         {
           found = true;
           break;
         }
       }
 
-      if (!found)
-      {
-        throw new ArgumentException($"A {quantity} with {semitoneCount} is not a valid interval");
-      }
-
+      Debug.Assert(found, $"A {quantity} with {semitoneCount} is not a valid interval");
       _quantity = (byte)quantity;
       _quality = (byte)quality;
     }
+
+    #endregion
+
+    #region Properties
 
     /// <summary>Gets the interval's quantity.</summary>
     /// <value>The quantity.</value>
@@ -136,6 +148,34 @@ namespace Bach.Model
     /// <value>The number of semitones.</value>
     public int SemitoneCount => GetSemitoneCount(Quantity, Quality);
 
+    #endregion
+
+    #region IComparable<Interval> Members
+
+    /// <inheritdoc />
+    public int CompareTo(Interval other)
+    {
+      int result = _quantity - other._quantity;
+      if( result != 0 )
+      {
+        return result;
+      }
+
+      result = _quality - other._quality;
+      return result;
+    }
+
+    #endregion
+
+    #region IEquatable<Interval> Members
+
+    /// <inheritdoc />
+    public bool Equals(Interval other) => other.Quantity == Quantity && other.Quality == Quality;
+
+    #endregion
+
+    #region Public Methods
+
     /// <summary>Determine if the interval quantity and quality refer to a valid interval.</summary>
     /// <param name="quantity">The interval quantity.</param>
     /// <param name="quality">The interval quality.</param>
@@ -143,12 +183,8 @@ namespace Bach.Model
     public static bool IsValid(IntervalQuantity quantity,
                                IntervalQuality quality)
     {
-      if (quantity < IntervalQuantity.Unison || quantity > IntervalQuantity.Fourteenth)
-      {
-        return false;
-      }
-
-      if (quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented)
+      // No need to check the interval quality because it doesn't allow invalid values.
+      if( quantity < IntervalQuantity.Unison || quantity > IntervalQuantity.Fourteenth )
       {
         return false;
       }
@@ -158,9 +194,14 @@ namespace Bach.Model
     }
 
     /// <summary>Gets semitone count of the interval.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
-    ///                                               required range.</exception>
-    /// <exception cref="ArgumentException">Thrown when the interval quantity and quality combination doesn't refer to a valid interval.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   Thrown when one or more arguments are outside the
+    ///   required range.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    ///   Thrown when the interval quantity and quality combination doesn't refer to a valid
+    ///   interval.
+    /// </exception>
     /// <param name="quantity">The interval quantity.</param>
     /// <param name="quality">The interval quality.</param>
     /// <returns>The semitone count.</returns>
@@ -173,7 +214,7 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(quality <= IntervalQuality.Augmented);
 
       int steps = s_steps[(int)quantity, (int)quality];
-      if (steps == -1)
+      if( steps == -1 )
       {
         throw new ArgumentException($"{ToString(quantity, quality)} is not a valid interval");
       }
@@ -181,33 +222,15 @@ namespace Bach.Model
       return steps;
     }
 
-    /// <summary>Returns the fully qualified type name of this instance.</summary>
-    /// <returns>The fully qualified type name.</returns>
-    public override string ToString() => ToString(Quantity, Quality);
-
-    private static string ToString(IntervalQuantity quantity,
-                                   IntervalQuality quality,
-                                   bool suppressPerfectAndMajor = true)
-    {
-      var buf = new StringBuilder();
-      if (quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor)
-      {
-        buf.Append(quality.Symbol);
-      }
-
-      buf.Append((int)(quantity + 1));
-      return buf.ToString();
-    }
-
     /// <summary>
-    /// Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent.
+    ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent.
     /// </summary>
     /// <param name="value">A string containing the interval to convert.</param>
     /// <returns>An object that is equivalent to the interval contained in value.</returns>
     /// <exception cref="FormatException">value does not contain a valid string representation of an interval.</exception>
     public static Interval Parse(string value)
     {
-      if (!TryParse(value, out Interval interval))
+      if( !TryParse(value, out Interval interval) )
       {
         throw new FormatException(value + " is not a valid interval");
       }
@@ -216,21 +239,26 @@ namespace Bach.Model
     }
 
     /// <summary>
-    /// Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent
-    /// and returns a value that indicates whether the conversion succeeded.
+    ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent
+    ///   and returns a value that indicates whether the conversion succeeded.
     /// </summary>
     /// <param name="value">A string containing the interval quality to convert.</param>
-    /// <param name="interval">When this method returns, contains the Interval value equivalent to the interval
-    /// contained in value, if the conversion succeeded, or <see cref="Interval.Invalid"/> if the conversion failed.
-    /// The conversion fails if the value parameter is null or empty or does not contain a valid string
-    /// representation of an interval. This parameter is passed uninitialized.</param>
-    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+    /// <param name="interval">
+    ///   When this method returns, contains the Interval value equivalent to the interval
+    ///   contained in value, if the conversion succeeded, or <see cref="Interval.Invalid" /> if the conversion failed.
+    ///   The conversion fails if the value parameter is null or empty or does not contain a valid string
+    ///   representation of an interval. This parameter is passed uninitialized.
+    /// </param>
+    /// <returns>
+    ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
+    ///   .
+    /// </returns>
     public static bool TryParse(string value,
                                 out Interval interval)
     {
       interval = Invalid;
 
-      if (string.IsNullOrWhiteSpace(value))
+      if( string.IsNullOrWhiteSpace(value) )
       {
         return false;
       }
@@ -238,22 +266,22 @@ namespace Bach.Model
       var i = 0;
 
       // skip whitespaces
-      while (i < value.Length && char.IsWhiteSpace(value, i))
+      while( i < value.Length && char.IsWhiteSpace(value, i) )
       {
         ++i;
       }
 
-      var quality = (IntervalQuality)(-1);
+      var quality = (IntervalQuality)( -1 );
 
-      if (char.IsLetter(value, i))
+      if( char.IsLetter(value, i) )
       {
-        if (value[i] == 'R')
+        if( value[i] == 'R' )
         {
           interval = new Interval(IntervalQuantity.Unison, IntervalQuality.Perfect);
           return true;
         }
 
-        if (!IntervalQuality.TryParse(value.Substring(i, 1), out quality))
+        if( !IntervalQuality.TryParse(value.Substring(i, 1), out quality) )
         {
           return false;
         }
@@ -261,15 +289,15 @@ namespace Bach.Model
         ++i;
       }
 
-      if (!int.TryParse(value.Substring(i), out int number))
+      if( !int.TryParse(value.Substring(i), out int number) )
       {
         return false;
       }
 
-      if (quality == IntervalQuality.Unknown)
+      if( quality == IntervalQuality.Unknown )
       {
-        int temp = ((number - 1) % 7) + 1;
-        if (temp == 1 || temp == 4 || temp == 5)
+        int temp = ( ( number - 1 ) % 7 ) + 1;
+        if( temp == 1 || temp == 4 || temp == 5 )
         {
           quality = IntervalQuality.Perfect;
         }
@@ -279,8 +307,8 @@ namespace Bach.Model
         }
       }
 
-      var quantity = (IntervalQuantity)(number - 1);
-      if (!IsValid(quantity, quality))
+      var quantity = (IntervalQuantity)( number - 1 );
+      if( !IsValid(quantity, quality) )
       {
         return false;
       }
@@ -289,13 +317,18 @@ namespace Bach.Model
       return true;
     }
 
-    /// <inheritdoc />
-    public bool Equals(Interval other) => other.Quantity == Quantity && other.Quality == Quality;
+    #endregion
+
+    #region Overrides
+
+    /// <summary>Returns the fully qualified type name of this instance.</summary>
+    /// <returns>The fully qualified type name.</returns>
+    public override string ToString() => ToString(Quantity, Quality);
 
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if (ReferenceEquals(obj, null) || obj.GetType() != GetType())
+      if( ReferenceEquals(obj, null) || obj.GetType() != GetType() )
       {
         return false;
       }
@@ -306,28 +339,37 @@ namespace Bach.Model
     /// <inheritdoc />
     public override int GetHashCode()
     {
-      int hashCode = (_quality << 8) | _quantity;
+      int hashCode = ( _quality << 8 ) | _quantity;
       return hashCode;
     }
 
-    /// <inheritdoc />
-    public int CompareTo(Interval other)
+    #endregion
+
+    #region  Implementation
+
+    private static string ToString(IntervalQuantity quantity,
+                                   IntervalQuality quality,
+                                   bool suppressPerfectAndMajor = true)
     {
-      int result = _quantity - other._quantity;
-      if (result != 0)
+      var buf = new StringBuilder();
+      if( quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor )
       {
-        return result;
+        buf.Append(quality.Symbol);
       }
 
-      result = _quality - other._quality;
-      return result;
+      buf.Append((int)( quantity + 1 ));
+      return buf.ToString();
     }
+
+    #endregion
+
+    #region Operators
 
     /// <summary>Equality operator.</summary>
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator ==(Interval lhs,
+    public static bool operator==(Interval lhs,
                                   Interval rhs)
       => Equals(lhs, rhs);
 
@@ -335,7 +377,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator !=(Interval lhs,
+    public static bool operator!=(Interval lhs,
                                   Interval rhs)
       => !Equals(lhs, rhs);
 
@@ -343,7 +385,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator <(Interval lhs,
+    public static bool operator<(Interval lhs,
                                  Interval rhs)
       => lhs.CompareTo(rhs) < 0;
 
@@ -351,7 +393,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator <=(Interval lhs,
+    public static bool operator<=(Interval lhs,
                                   Interval rhs)
       => lhs.CompareTo(rhs) <= 0;
 
@@ -359,7 +401,7 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator >(Interval lhs,
+    public static bool operator>(Interval lhs,
                                  Interval rhs)
       => lhs.CompareTo(rhs) > 0;
 
@@ -367,8 +409,10 @@ namespace Bach.Model
     /// <param name="lhs">The first instance to compare.</param>
     /// <param name="rhs">The second instance to compare.</param>
     /// <returns>The result of the operation.</returns>
-    public static bool operator >=(Interval lhs,
+    public static bool operator>=(Interval lhs,
                                   Interval rhs)
       => lhs.CompareTo(rhs) >= 0;
+
+    #endregion
   }
 }

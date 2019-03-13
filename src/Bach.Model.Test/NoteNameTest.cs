@@ -25,6 +25,7 @@
 
 namespace Bach.Model.Test
 {
+  using System;
   using Xunit;
 
   public class NoteNameTest
@@ -41,14 +42,16 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void SubtractTest()
+    public void IncrementOperatorTest()
     {
-      Assert.Equal(NoteName.B, NoteName.B.Subtract(0));
-      Assert.Equal(NoteName.A, NoteName.B.Subtract(1));
-      Assert.Equal(NoteName.G, NoteName.B.Subtract(2));
-      Assert.Equal(NoteName.C, NoteName.B.Subtract(6));
-      Assert.Equal(NoteName.B, NoteName.B.Subtract(7));
-      Assert.Equal(NoteName.A, NoteName.B.Subtract(8));
+      NoteName noteName = NoteName.C;
+      Assert.Equal(NoteName.D, ++noteName);
+      Assert.Equal(NoteName.E, ++noteName);
+      Assert.Equal(NoteName.F, ++noteName);
+      Assert.Equal(NoteName.G, ++noteName);
+      Assert.Equal(NoteName.A, ++noteName);
+      Assert.Equal(NoteName.B, ++noteName);
+      Assert.Equal(NoteName.C, ++noteName);
     }
 
     [Fact]
@@ -64,7 +67,41 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void SubtractionOperatorTest()
+    public void DecrementOperatorTest()
+    {
+      NoteName noteName = NoteName.C;
+      Assert.Equal(NoteName.B, --noteName);
+      Assert.Equal(NoteName.A, --noteName);
+      Assert.Equal(NoteName.G, --noteName);
+      Assert.Equal(NoteName.F, --noteName);
+      Assert.Equal(NoteName.E, --noteName);
+      Assert.Equal(NoteName.D, --noteName);
+      Assert.Equal(NoteName.C, --noteName);
+      Assert.Equal(NoteName.B, --noteName);
+    }
+
+    [Fact]
+    public void SubtractIntegerTest()
+    {
+      Assert.Equal(NoteName.B, NoteName.B.Subtract(0));
+      Assert.Equal(NoteName.A, NoteName.B.Subtract(1));
+      Assert.Equal(NoteName.G, NoteName.B.Subtract(2));
+      Assert.Equal(NoteName.C, NoteName.B.Subtract(6));
+      Assert.Equal(NoteName.B, NoteName.B.Subtract(7));
+      Assert.Equal(NoteName.A, NoteName.B.Subtract(8));
+    }
+
+    [Fact]
+    public void SubtractNoteNameTest()
+    {
+      Assert.Equal(0, NoteName.B.Subtract(NoteName.B));
+      Assert.Equal(1, NoteName.B.Subtract(NoteName.A));
+      Assert.Equal(2, NoteName.B.Subtract(NoteName.G));
+      Assert.Equal(6, NoteName.B.Subtract(NoteName.C));
+    }
+
+    [Fact]
+    public void IntegerSubtractionOperatorTest()
     {
       Assert.Equal(NoteName.B, NoteName.B - 0);
       Assert.Equal(NoteName.A, NoteName.B - 1);
@@ -74,6 +111,17 @@ namespace Bach.Model.Test
       Assert.Equal(NoteName.A, NoteName.B - 8);
       Assert.Equal(NoteName.C, NoteName.D - 1);
       Assert.Equal(NoteName.B, NoteName.C - 1);
+    }
+
+    [Fact]
+    public void NoteNameSubtractionOperatorTest()
+    {
+      Assert.Equal(0, NoteName.B - NoteName.B);
+      Assert.Equal(1, NoteName.B - NoteName.A);
+      Assert.Equal(2, NoteName.B - NoteName.G);
+      Assert.Equal(6, NoteName.B - NoteName.C);
+      Assert.Equal(1, NoteName.D - NoteName.C);
+      Assert.Equal(1, NoteName.C - NoteName.B);
     }
 
     [Fact]
@@ -94,6 +142,145 @@ namespace Bach.Model.Test
       Assert.Equal(7, NoteName.C.SemitonesBetween(NoteName.G));
       Assert.Equal(9, NoteName.C.SemitonesBetween(NoteName.A));
       Assert.Equal(11, NoteName.C.SemitonesBetween(NoteName.B));
+    }
+
+    [Fact]
+    public void ParseUppercaseTest()
+    {
+      Assert.Equal(NoteName.C, NoteName.Parse("C"));
+      Assert.Equal(NoteName.D, NoteName.Parse("D"));
+      Assert.Equal(NoteName.E, NoteName.Parse("E"));
+      Assert.Equal(NoteName.F, NoteName.Parse("F"));
+      Assert.Equal(NoteName.G, NoteName.Parse("G"));
+      Assert.Equal(NoteName.A, NoteName.Parse("A"));
+      Assert.Equal(NoteName.B, NoteName.Parse("B"));
+    }
+
+    [Fact]
+    public void ParseLowercaseTest()
+    {
+      Assert.Equal(NoteName.C, NoteName.Parse("c"));
+      Assert.Equal(NoteName.D, NoteName.Parse("d"));
+      Assert.Equal(NoteName.E, NoteName.Parse("e"));
+      Assert.Equal(NoteName.F, NoteName.Parse("f"));
+      Assert.Equal(NoteName.G, NoteName.Parse("g"));
+      Assert.Equal(NoteName.A, NoteName.Parse("a"));
+      Assert.Equal(NoteName.B, NoteName.Parse("b"));
+    }
+
+    [Fact]
+    public void ParseNullThrowsTest()
+    {
+      Assert.Throws<ArgumentNullException>(() => NoteName.Parse(null));
+    }
+
+    [Fact]
+    public void ParseEmptyThrowsTest()
+    {
+      Assert.Throws<ArgumentException>(() => NoteName.Parse(""));
+    }
+
+    [Fact]
+    public void ParseInvalidThrowsTest()
+    {
+      Assert.Throws<FormatException>(() => NoteName.Parse("Z"));
+    }
+
+    [Fact]
+    public void TryParseNullFailsTest()
+    {
+      Assert.False(NoteName.TryParse(null, out NoteName _));
+    }
+
+    [Fact]
+    public void TryParseEmptyFailsTest()
+    {
+      Assert.False(NoteName.TryParse("", out NoteName _));
+    }
+
+    [Fact]
+    public void EqualsContractTest()
+    {
+      object x = NoteName.C;
+      object y = new NoteName();
+      object z = (NoteName)0;
+
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
+    }
+
+    [Fact]
+    public void TypeSafeEqualsContractTest()
+    {
+      var x = NoteName.C;
+      var y = new NoteName();
+      var z = (NoteName)0;
+
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
+    }
+
+    [Fact]
+    public void EqualsFailsWithDifferentTypeTest()
+    {
+      object actual = NoteName.C;
+      Assert.False(actual.Equals(int.MinValue));
+    }
+
+    [Fact]
+    public void TypeSafeEqualsFailsWithDifferentTypeTest()
+    {
+      var actual = NoteName.C;
+      Assert.False(actual.Equals(int.MinValue));
+    }
+
+    [Fact]
+    public void EqualsFailsWithNullTest()
+    {
+      object actual = NoteName.C;
+      Assert.False(actual.Equals(null));
+    }
+
+    [Fact]
+    public void TypeSafeEqualsFailsWithNullTest()
+    {
+      var actual = NoteName.C;
+      Assert.False(actual.Equals(null));
+    }
+
+    [Fact]
+    public void EqualsSucceedsWithSameObjectTest()
+    {
+      var actual = NoteName.C;
+      Assert.True(actual.Equals(actual));
+    }
+
+    [Fact]
+    public void GetHashcodeTest()
+    {
+      var actual = NoteName.C;
+      var expected = new NoteName();
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+    }
+
+    [Fact]
+    public void RelationalOperatorsTest()
+    {
+      Assert.True(NoteName.B > NoteName.C);
+      Assert.True(NoteName.B >= NoteName.C);
+      Assert.True(NoteName.C < NoteName.B);
+      Assert.True(NoteName.C <= NoteName.B);
+      Assert.True(NoteName.C == NoteName.C);
+      Assert.True(NoteName.C != NoteName.B);
     }
   }
 }

@@ -349,10 +349,7 @@ namespace Bach.Model
 
       // Deal with enharmonics
       Note? enharmonic = calculatedNote.GetEnharmonic(noteName);
-      if( !enharmonic.HasValue )
-      {
-        throw new ArgumentException("Do something!");
-      }
+      Debug.Assert(enharmonic.HasValue, "Enharmonic not found!");
 
       return enharmonic.Value;
     }
@@ -508,7 +505,7 @@ namespace Bach.Model
     internal static Note FindNote(int absoluteValue,
                                   bool favorSharps)
     {
-      var index = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
+      int index = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
       if( favorSharps )
       {
         int max = (int)Accidental.DoubleSharp + Math.Abs((int)Accidental.DoubleFlat);
