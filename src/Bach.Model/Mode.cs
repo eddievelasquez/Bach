@@ -1,21 +1,20 @@
-﻿//
-// Module Name: Mode.cs
+﻿// Module Name: Mode.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2019  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
-//
+// portions of the Software.
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -35,7 +34,13 @@ namespace Bach.Model
     : IEquatable<Mode>,
       IEnumerable<Note>
   {
+    #region Data Members
+
     private readonly NoteCollection _notes;
+
+    #endregion
+
+    #region Constructors
 
     public Mode(Scale scale,
                 ModeFormula formula)
@@ -56,13 +61,25 @@ namespace Bach.Model
       _notes = new NoteCollection(scale.Skip(Formula.Tonic - 1).Take(scale.ToneCount).ToArray());
     }
 
+    #endregion
+
+    #region Properties
+
     public Scale Scale { get; }
     public string Name { get; }
     public ModeFormula Formula { get; }
 
+    #endregion
+
+    #region IEnumerable<Note> Members
+
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public IEnumerator<Note> GetEnumerator() => _notes.GetEnumerator();
+
+    #endregion
+
+    #region IEquatable<Mode> Members
 
     public bool Equals(Mode other)
     {
@@ -79,6 +96,10 @@ namespace Bach.Model
       return Scale.Equals(other.Scale) && Formula.Equals(other.Formula);
     }
 
+    #endregion
+
+    #region Overrides
+
     public override bool Equals(object other)
     {
       if( ReferenceEquals(other, this) )
@@ -91,7 +112,7 @@ namespace Bach.Model
         return false;
       }
 
-      return Equals((Mode) other);
+      return Equals((Mode)other);
     }
 
     public override int GetHashCode()
@@ -101,5 +122,7 @@ namespace Bach.Model
     }
 
     public override string ToString() => _notes.ToString();
+
+    #endregion
   }
 }

@@ -1,21 +1,20 @@
-//
 // Module Name: NoteName.cs
 // Project:     Bach.Model
-// Copyright (c) 2013, 2016  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2019  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
-//
+// portions of the Software.
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -37,6 +36,9 @@ namespace Bach.Model
     : IEquatable<NoteName>,
       IComparable<NoteName>
   {
+    #region Constants
+
+    private const int NoteNameCount = 7;
     public static readonly NoteName C = new NoteName(0);
     public static readonly NoteName D = new NoteName(1);
     public static readonly NoteName E = new NoteName(2);
@@ -44,8 +46,6 @@ namespace Bach.Model
     public static readonly NoteName G = new NoteName(4);
     public static readonly NoteName A = new NoteName(5);
     public static readonly NoteName B = new NoteName(6);
-
-    private const int NoteNameCount = 7;
 
     // ReSharper disable once StringLiteralTypo
     private static readonly string s_names = "CDEFGAB";
@@ -61,7 +61,15 @@ namespace Bach.Model
       1 // B-C
     };
 
+    #endregion
+
+    #region Data Members
+
     private readonly int _value;
+
+    #endregion
+
+    #region Constructors
 
     private NoteName(int value)
     {
@@ -69,28 +77,23 @@ namespace Bach.Model
       _value = value;
     }
 
-    /// <inheritdoc />
-    public override bool Equals(object obj)
-    {
-      if( obj is null )
-      {
-        return false;
-      }
+    #endregion
 
-      return obj is NoteName other && Equals(other);
-    }
-
-    /// <inheritdoc />
-    public override int GetHashCode() => _value;
-
-    /// <inheritdoc />
-    public override string ToString() => s_names[_value].ToString();
+    #region IComparable<NoteName> Members
 
     /// <inheritdoc />
     public int CompareTo(NoteName other) => _value.CompareTo(other._value);
 
+    #endregion
+
+    #region IEquatable<NoteName> Members
+
     /// <inheritdoc />
     public bool Equals(NoteName other) => _value == other._value;
+
+    #endregion
+
+    #region Public Methods
 
     /// <summary>Adds a number of steps to a note name.</summary>
     /// <param name="steps">The number of steps to add.</param>
@@ -112,13 +115,10 @@ namespace Bach.Model
     /// <param name="name">The last noted name.</param>
     /// <returns>A NoteName.</returns>
     [Pure]
-    public int Subtract(NoteName name)
-    {
-      return (int)Add(-(int)name);
-    }
+    public int Subtract(NoteName name) => (int)Add(-(int)name);
 
     /// <summary>
-    /// Calculates the semitone distance between this instance and the provided note name.
+    ///   Calculates the semitone distance between this instance and the provided note name.
     /// </summary>
     /// <param name="end">The note name</param>
     /// <returns>The distance in semitones between the two note names.</returns>
@@ -177,6 +177,31 @@ namespace Bach.Model
 
       return result;
     }
+
+    #endregion
+
+    #region Overrides
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+      if( obj is null )
+      {
+        return false;
+      }
+
+      return obj is NoteName other && Equals(other);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode() => _value;
+
+    /// <inheritdoc />
+    public override string ToString() => s_names[_value].ToString();
+
+    #endregion
+
+    #region Operators
 
     /// <summary>Explicit cast that converts the given NoteName to an int.</summary>
     /// <param name="noteName">The note name.</param>
@@ -269,5 +294,7 @@ namespace Bach.Model
     /// <param name="noteName">The note.</param>
     /// <returns>The result of the operation.</returns>
     public static NoteName operator--(NoteName noteName) => noteName.Subtract(1);
+
+    #endregion
   }
 }

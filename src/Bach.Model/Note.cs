@@ -1,21 +1,20 @@
-﻿//
-// Module Name: Note.cs
+﻿// Module Name: Note.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2019  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
-//
+// portions of the Software.
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -30,14 +29,16 @@ namespace Bach.Model
   using System.Diagnostics.Contracts;
 
   /// <summary>
-  /// A Note represents a combination of a <see cref="P:Bach.Model.Note.NoteName" />
-  /// and an optional <see cref="P:Bach.Model.Note.Accidental" /> following the English naming
-  /// convention for the 12 note chromatic scale.
+  ///   A Note represents a combination of a <see cref="P:Bach.Model.Note.NoteName" />
+  ///   and an optional <see cref="P:Bach.Model.Note.Accidental" /> following the English naming
+  ///   convention for the 12 note chromatic scale.
   /// </summary>
   public struct Note
     : IEquatable<Note>,
       IComparable<Note>
   {
+    #region Constants
+
     private const ushort ToneNameMask = 7;
     private const ushort ToneNameShift = 7;
     private const ushort AccidentalMask = 7;
@@ -124,7 +125,15 @@ namespace Bach.Model
     /// <summary>B note.</summary>
     public static readonly Note B;
 
+    #endregion
+
+    #region Data Members
+
     private readonly ushort _encoded;
+
+    #endregion
+
+    #region Constructors
 
     static Note()
     {
@@ -155,29 +164,56 @@ namespace Bach.Model
       _encoded = Encode(absoluteValue, noteName, accidental);
     }
 
-    private static Note GetNote(int absoluteValue,
-                                Accidental accidental)
-    {
-      int index = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
-      Note? note = s_enharmonics[absoluteValue, index];
-      Debug.Assert(note.HasValue);
+    #endregion
 
-      return note.Value;
-    }
+    #region Properties
+
+    /// <summary>Gets or sets the accidental mode.</summary>
+    /// <value>The accidental mode.</value>
+    public static AccidentalMode AccidentalMode { get; set; }
+
+    private int AbsoluteValue => DecodeAbsoluteValue(_encoded);
+
+    /// <summary>Gets the name of the note.</summary>
+    /// <value>The name of the note.</value>
+    public NoteName NoteName => DecodeToneName(_encoded);
+
+    /// <summary>Gets the accidental.</summary>
+    /// <value>The accidental.</value>
+    public Accidental Accidental => DecodeAccidental(_encoded);
+
+    #endregion
+
+    #region IComparable<Note> Members
+
+    /// <inheritdoc />
+    public int CompareTo(Note other) => AbsoluteValue - other.AbsoluteValue;
+
+    #endregion
+
+    #region IEquatable<Note> Members
+
+    /// <inheritdoc />
+    public bool Equals(Note other) => AbsoluteValue == other.AbsoluteValue;
+
+    #endregion
+
+    #region Public Methods
 
     /// <summary>Creates a new Note.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
-    ///                                               required range.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   Thrown when one or more arguments are outside the
+    ///   required range.
+    /// </exception>
     /// <param name="noteName">The name of the note.</param>
     /// <returns>A Note.</returns>
-    public static Note Create(NoteName noteName)
-    {
-      return Create(noteName, Accidental.Natural);
-    }
+    public static Note Create(NoteName noteName) => Create(noteName, Accidental.Natural);
 
     /// <summary>Creates a new Note.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when one or more arguments are outside the
-    ///                                               required range.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   Thrown when one or more arguments are outside the
+    ///   required range.
+    /// </exception>
     /// <param name="noteName">The name of the note.</param>
     /// <param name="accidental">(Optional) The accidental.</param>
     /// <returns>A Note.</returns>
@@ -198,32 +234,6 @@ namespace Bach.Model
 
       return note.Value;
     }
-
-    // This is a helper function for creating notes for the enharmonic table
-    private static Note Create(int absoluteValue,
-                               NoteName noteName,
-                               Accidental accidental)
-      => new Note(absoluteValue, noteName, accidental);
-
-    /// <summary>Gets or sets the accidental mode.</summary>
-    /// <value>The accidental mode.</value>
-    public static AccidentalMode AccidentalMode { get; set; }
-
-    private int AbsoluteValue => DecodeAbsoluteValue(_encoded);
-
-    /// <summary>Gets the name of the note.</summary>
-    /// <value>The name of the note.</value>
-    public NoteName NoteName => DecodeToneName(_encoded);
-
-    /// <summary>Gets the accidental.</summary>
-    /// <value>The accidental.</value>
-    public Accidental Accidental => DecodeAccidental(_encoded);
-
-    /// <inheritdoc/>
-    public int CompareTo(Note other) => AbsoluteValue - other.AbsoluteValue;
-
-    /// <inheritdoc/>
-    public bool Equals(Note other) => AbsoluteValue == other.AbsoluteValue;
 
     /// <summary>Gets the enharmonic note for this instance or null if non exists.</summary>
     /// <param name="noteName">The name of the enharmonic note.</param>
@@ -299,7 +309,7 @@ namespace Bach.Model
     }
 
     /// <summary>
-    /// Calculate the number of semitones between two notes
+    ///   Calculate the number of semitones between two notes
     /// </summary>
     /// <param name="a">The first note.</param>
     /// <param name="b">The second note.</param>
@@ -331,8 +341,10 @@ namespace Bach.Model
     }
 
     /// <summary>Adds an interval to a note.</summary>
-    /// <exception cref="ArgumentException">Thrown when one or more arguments have unsupported or
-    ///                                     illegal values.</exception>
+    /// <exception cref="ArgumentException">
+    ///   Thrown when one or more arguments have unsupported or
+    ///   illegal values.
+    /// </exception>
     /// <param name="note">A note.</param>
     /// <param name="interval">An interval to add to the note.</param>
     /// <returns>A Note.</returns>
@@ -393,6 +405,10 @@ namespace Bach.Model
       return interval;
     }
 
+    #endregion
+
+    #region Overrides
+
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
@@ -409,6 +425,99 @@ namespace Bach.Model
 
     /// <inheritdoc />
     public override string ToString() => $"{NoteName}{Accidental.ToSymbol()}";
+
+    #endregion
+
+    #region  Implementation
+
+    private static Note GetNote(int absoluteValue,
+                                Accidental accidental)
+    {
+      int index = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
+      Note? note = s_enharmonics[absoluteValue, index];
+      Debug.Assert(note.HasValue);
+
+      return note.Value;
+    }
+
+    // This is a helper function for creating notes for the enharmonic table
+    private static Note Create(int absoluteValue,
+                               NoteName noteName,
+                               Accidental accidental)
+      => new Note(absoluteValue, noteName, accidental);
+
+    // Finds a note that corresponds to the provided absolute value,
+    // attempting to match the desired accidental mode
+    internal static Note FindNote(int absoluteValue,
+                                  bool favorSharps)
+    {
+      int index = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
+      if( favorSharps )
+      {
+        int max = (int)Accidental.DoubleSharp + Math.Abs((int)Accidental.DoubleFlat);
+        while( index <= max )
+        {
+          Note? current = s_enharmonics[absoluteValue, index];
+          if( current.HasValue )
+          {
+            return current.Value;
+          }
+
+          ++index;
+        }
+      }
+      else
+      {
+        while( index >= 0 )
+        {
+          Note? current = s_enharmonics[absoluteValue, index];
+          if( current.HasValue )
+          {
+            return current.Value;
+          }
+
+          --index;
+        }
+      }
+
+      throw new Exception("Must be able to find enharmonic");
+    }
+
+    private static ushort Encode(int value,
+                                 NoteName noteName,
+                                 Accidental accidental)
+    {
+      Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
+      Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
+      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
+
+      var encoded = (ushort)( ( ( (ushort)noteName & ToneNameMask ) << ToneNameShift )
+                              | ( ( (ushort)( (int)accidental + 2 ) & AccidentalMask ) << AccidentalShift )
+                              | ( (ushort)value & AbsoluteValueMask ) );
+      return encoded;
+    }
+
+    private static int DecodeAbsoluteValue(ushort encoded)
+    {
+      int result = encoded & AbsoluteValueMask;
+      return result;
+    }
+
+    private static NoteName DecodeToneName(ushort encoded)
+    {
+      int result = ( encoded >> ToneNameShift ) & ToneNameMask;
+      return (NoteName)result;
+    }
+
+    private static Accidental DecodeAccidental(ushort encoded)
+    {
+      int result = ( ( encoded >> AccidentalShift ) & AccidentalMask ) - 2;
+      return (Accidental)result;
+    }
+
+    #endregion
+
+    #region Operators
 
     /// <summary>Equality operator.</summary>
     /// <param name="left">The first instance to compare.</param>
@@ -500,73 +609,6 @@ namespace Bach.Model
                                      Note b)
       => Subtract(a, b);
 
-    // Finds a note that corresponds to the provided absolute value,
-    // attempting to match the desired accidental mode
-    internal static Note FindNote(int absoluteValue,
-                                  bool favorSharps)
-    {
-      int index = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
-      if( favorSharps )
-      {
-        int max = (int)Accidental.DoubleSharp + Math.Abs((int)Accidental.DoubleFlat);
-        while( index <= max )
-        {
-          Note? current = s_enharmonics[absoluteValue, index];
-          if( current.HasValue )
-          {
-            return current.Value;
-          }
-
-          ++index;
-        }
-      }
-      else
-      {
-        while( index >= 0 )
-        {
-          Note? current = s_enharmonics[absoluteValue, index];
-          if( current.HasValue )
-          {
-            return current.Value;
-          }
-
-          --index;
-        }
-      }
-
-      throw new Exception("Must be able to find enharmonic");
-    }
-
-    private static ushort Encode(int value,
-                                 NoteName noteName,
-                                 Accidental accidental)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
-      Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-
-      var encoded = (ushort)( ( ( (ushort)noteName & ToneNameMask ) << ToneNameShift )
-                              | ( ( (ushort)( (int)accidental + 2 ) & AccidentalMask ) << AccidentalShift )
-                              | ( (ushort)value & AbsoluteValueMask ) );
-      return encoded;
-    }
-
-    private static int DecodeAbsoluteValue(ushort encoded)
-    {
-      int result = encoded & AbsoluteValueMask;
-      return result;
-    }
-
-    private static NoteName DecodeToneName(ushort encoded)
-    {
-      int result = ( encoded >> ToneNameShift ) & ToneNameMask;
-      return (NoteName)result;
-    }
-
-    private static Accidental DecodeAccidental(ushort encoded)
-    {
-      int result = ( ( encoded >> AccidentalShift ) & AccidentalMask ) - 2;
-      return (Accidental)result;
-    }
+    #endregion
   }
 }

@@ -1,21 +1,20 @@
-﻿//
-// Module Name: Formula.cs
+﻿// Module Name: Formula.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2019  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
-//
+// portions of the Software.
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -35,9 +34,19 @@ namespace Bach.Model
     : IKeyedObject,
       IEquatable<Formula>
   {
+    #region Constants
+
     private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
 
+    #endregion
+
+    #region Data Members
+
     private readonly Interval[] _intervals;
+
+    #endregion
+
+    #region Constructors
 
     public Formula(string key,
                    string name,
@@ -60,11 +69,93 @@ namespace Bach.Model
     {
     }
 
+    #endregion
+
+    #region Properties
+
     public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
 
     public int IntervalCount => _intervals.Length;
 
     public string Name { get; }
+
+    #endregion
+
+    #region IEquatable<Formula> Members
+
+    public bool Equals(Formula other)
+    {
+      if( ReferenceEquals(other, this) )
+      {
+        return true;
+      }
+
+      if( ReferenceEquals(other, null) )
+      {
+        return false;
+      }
+
+      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
+    }
+
+    #endregion
+
+    #region IKeyedObject Members
+
+    public string Key { get; }
+
+    #endregion
+
+    #region Public Methods
+
+    public IEnumerable<Pitch> Generate(Pitch root,
+                                       int skipCount = 0)
+    {
+      int intervalCount = _intervals.Length;
+      int index = skipCount;
+
+      // NOTE: By design, this iterator never returns.
+      while( true )
+      {
+        Interval interval = _intervals[index % intervalCount];
+        Pitch pitch = root + interval;
+
+        // Do we need to change the pitch's octave?
+        int octaveAdd = index / intervalCount;
+        if( octaveAdd > 0 )
+        {
+          pitch += octaveAdd * Pitch.IntervalsPerOctave;
+        }
+
+        yield return pitch;
+
+        ++index;
+      }
+
+      // ReSharper disable once IteratorNeverReturns
+    }
+
+    public IEnumerable<Note> Generate(Note root)
+    {
+      int intervalCount = _intervals.Length;
+      var index = 0;
+
+      // NOTE: By design, this iterator never returns.
+      while( true )
+      {
+        Interval interval = _intervals[index % intervalCount];
+        Note note = root + interval;
+        yield return note;
+
+        ++index;
+      }
+
+      // ReSharper disable once IteratorNeverReturns
+    }
+
+    #endregion
+
+    #region Overrides
 
     public override string ToString()
     {
@@ -103,72 +194,14 @@ namespace Bach.Model
         return false;
       }
 
-      return Equals((Formula) other);
+      return Equals((Formula)other);
     }
 
     public override int GetHashCode() => s_comparer.GetHashCode(Key);
 
-    public IEnumerable<Pitch> Generate(Pitch root,
-                                       int skipCount = 0)
-    {
-      int intervalCount = _intervals.Length;
-      int index = skipCount;
+    #endregion
 
-      // NOTE: By design, this iterator never returns.
-      while( true )
-      {
-        Interval interval = _intervals[index % intervalCount];
-        Pitch pitch = root + interval;
-
-        // Do we need to change the pitch's octave?
-        int octaveAdd = index / intervalCount;
-        if (octaveAdd > 0)
-        {
-          pitch += octaveAdd * Pitch.IntervalsPerOctave;
-        }
-
-        yield return pitch;
-
-        ++index;
-      }
-
-      // ReSharper disable once IteratorNeverReturns
-    }
-
-    public IEnumerable<Note> Generate(Note root)
-    {
-      int intervalCount = _intervals.Length;
-      var index = 0;
-
-      // NOTE: By design, this iterator never returns.
-      while( true )
-      {
-        Interval interval = _intervals[index % intervalCount];
-        Note note = root + interval;
-        yield return note;
-
-        ++index;
-      }
-
-      // ReSharper disable once IteratorNeverReturns
-    }
-
-    public bool Equals(Formula other)
-    {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
-    }
-
-    public string Key { get; }
+    #region  Implementation
 
     private static Interval[] ParseIntervals(string formula)
     {
@@ -177,5 +210,7 @@ namespace Bach.Model
       string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
       return values.Select(Interval.Parse).ToArray();
     }
+
+    #endregion
   }
 }

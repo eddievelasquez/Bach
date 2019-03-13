@@ -1,21 +1,20 @@
-﻿//
-// Module Name: StringedInstrumentDefinitionBuilder.cs
+﻿// Module Name: StringedInstrumentDefinitionBuilder.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2019  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
-//
+// portions of the Software.
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -31,11 +30,31 @@ namespace Bach.Model.Instruments
 
   public class StringedInstrumentDefinitionBuilder
   {
+    #region Nested type: TuningInfo
+
+    private struct TuningInfo
+    {
+      #region Properties
+
+      public string Name { get; set; }
+      public PitchCollection Pitches { get; set; }
+
+      #endregion
+    }
+
+    #endregion
+
+    #region Data Members
+
     private readonly StringedInstrumentDefinitionState _state;
 
     private readonly Dictionary<string, TuningInfo> _tuningInfo = new Dictionary<string, TuningInfo>(StringComparer.CurrentCultureIgnoreCase);
 
     private bool _built;
+
+    #endregion
+
+    #region Constructors
 
     public StringedInstrumentDefinitionBuilder(string key,
                                                string name,
@@ -43,6 +62,10 @@ namespace Bach.Model.Instruments
     {
       _state = new StringedInstrumentDefinitionState(Guid.NewGuid(), key, name, stringCount);
     }
+
+    #endregion
+
+    #region Public Methods
 
     public StringedInstrumentDefinitionBuilder AddTuning(string key,
                                                          string name,
@@ -128,6 +151,10 @@ namespace Bach.Model.Instruments
       return definition;
     }
 
+    #endregion
+
+    #region  Implementation
+
     private void CheckBuilderReuse()
     {
       if( _built )
@@ -136,10 +163,6 @@ namespace Bach.Model.Instruments
       }
     }
 
-    private struct TuningInfo
-    {
-      public string Name { get; set; }
-      public PitchCollection Pitches { get; set; }
-    }
+    #endregion
   }
 }

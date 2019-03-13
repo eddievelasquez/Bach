@@ -1,21 +1,20 @@
-﻿//
-// Module Name: Chord.cs
+﻿// Module Name: Chord.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2019  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
-//
+// portions of the Software.
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -35,6 +34,20 @@ namespace Bach.Model
     : IEquatable<Chord>,
       IEnumerable<Note>
   {
+    #region Constructors
+
+    public Chord(Note root,
+                 ChordFormula formula)
+      : this(root, formula, 0)
+    {
+    }
+
+    public Chord(Note root,
+                 string formulaName)
+      : this(root, Registry.ChordFormulas[formulaName], 0)
+    {
+    }
+
     private Chord(Note root,
                   ChordFormula formula,
                   int inversion)
@@ -50,17 +63,9 @@ namespace Bach.Model
       Name = GenerateName(root, formula, Notes.First());
     }
 
-    public Chord(Note root,
-                 ChordFormula formula)
-      : this(root, formula, 0)
-    {
-    }
+    #endregion
 
-    public Chord(Note root,
-                 string formulaName)
-      : this(root, Registry.ChordFormulas[formulaName], 0)
-    {
-    }
+    #region Properties
 
     public Note Root { get; }
 
@@ -70,6 +75,37 @@ namespace Bach.Model
     public string Name { get; }
     public ChordFormula Formula { get; }
     public Note[] Notes { get; }
+
+    #endregion
+
+    #region IEnumerable<Note> Members
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).Take(Formula.IntervalCount).GetEnumerator();
+
+    #endregion
+
+    #region IEquatable<Chord> Members
+
+    public bool Equals(Chord other)
+    {
+      if( ReferenceEquals(other, this) )
+      {
+        return true;
+      }
+
+      if( ReferenceEquals(other, null) )
+      {
+        return false;
+      }
+
+      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
+    }
+
+    #endregion
+
+    #region Public Methods
 
     public IEnumerable<Pitch> Render(int octave)
     {
@@ -92,6 +128,10 @@ namespace Bach.Model
       return result;
     }
 
+    #endregion
+
+    #region Overrides
+
     public override bool Equals(object other)
     {
       if( ReferenceEquals(other, this) )
@@ -104,7 +144,7 @@ namespace Bach.Model
         return false;
       }
 
-      return Equals((Chord) other);
+      return Equals((Chord)other);
     }
 
     public override int GetHashCode()
@@ -115,24 +155,9 @@ namespace Bach.Model
 
     public override string ToString() => Name;
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    #endregion
 
-    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).Take(Formula.IntervalCount).GetEnumerator();
-
-    public bool Equals(Chord other)
-    {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
-    }
+    #region  Implementation
 
     private static string GenerateName(Note root,
                                        ChordFormula formula,
@@ -151,5 +176,7 @@ namespace Bach.Model
       string result = buf.ToString();
       return result;
     }
+
+    #endregion
   }
 }

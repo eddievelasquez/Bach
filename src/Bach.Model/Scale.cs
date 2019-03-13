@@ -1,21 +1,20 @@
-﻿//
-// Module Name: Scale.cs
+﻿// Module Name: Scale.cs
 // Project:     Bach.Model
-// Copyright (c) 2016  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2019  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
-//
+// portions of the Software.
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -35,6 +34,8 @@ namespace Bach.Model
     : IEquatable<Scale>,
       IEnumerable<Note>
   {
+    #region Constructors
+
     public Scale(Note root,
                  ScaleFormula formula)
     {
@@ -63,6 +64,10 @@ namespace Bach.Model
       Contract.RequiresNotNullOrEmpty(formulaName, "Must provide a formula name");
     }
 
+    #endregion
+
+    #region Properties
+
     public Note Root { get; }
     public string Name { get; }
     public ScaleFormula Formula { get; }
@@ -70,6 +75,37 @@ namespace Bach.Model
     public int ToneCount => Formula.IntervalCount;
 
     public Note this[int i] => this.Skip(i).Take(1).Single();
+
+    #endregion
+
+    #region IEnumerable<Note> Members
+
+    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    #endregion
+
+    #region IEquatable<Scale> Members
+
+    public bool Equals(Scale other)
+    {
+      if( ReferenceEquals(other, this) )
+      {
+        return true;
+      }
+
+      if( ReferenceEquals(other, null) )
+      {
+        return false;
+      }
+
+      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
+    }
+
+    #endregion
+
+    #region Public Methods
 
     public IEnumerable<Pitch> Render(Pitch startPitch)
     {
@@ -95,6 +131,10 @@ namespace Bach.Model
 
     public int IndexOf(Pitch pitch) => Array.IndexOf(GetNotes(), pitch.Note);
 
+    #endregion
+
+    #region Overrides
+
     public override bool Equals(object other)
     {
       if( ReferenceEquals(other, this) )
@@ -107,7 +147,7 @@ namespace Bach.Model
         return false;
       }
 
-      return Equals((Scale) other);
+      return Equals((Scale)other);
     }
 
     public override int GetHashCode()
@@ -125,23 +165,6 @@ namespace Bach.Model
 
     public override string ToString() => NoteCollection.ToString(this.Take(ToneCount));
 
-    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    public bool Equals(Scale other)
-    {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
-    }
+    #endregion
   }
 }
