@@ -336,35 +336,19 @@ namespace Bach.Model
     public Note Add(int semitoneCount,
                     AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      int absoluteValue = ( AbsoluteValue + semitoneCount ) % AbsoluteValueCount;
+      int absoluteValue = ArrayExtensions.WrapIndex(AbsoluteValueCount, AbsoluteValue + semitoneCount);
       return FindNote(absoluteValue, mode == AccidentalMode.FavorSharps);
     }
 
-    /// <summary>Adds an interval to a note.</summary>
-    /// <exception cref="ArgumentException">
-    ///   Thrown when one or more arguments have unsupported or
-    ///   illegal values.
-    /// </exception>
-    /// <param name="note">A note.</param>
-    /// <param name="interval">An interval to add to the note.</param>
+    /// <summary>Adds an interval to the current instance.</summary>
+    /// <param name="interval">An interval to add.</param>
     /// <returns>A Note.</returns>
-    public static Note Add(Note note,
-                           Interval interval)
-    {
-      NoteName noteName = note.NoteName.Add((int)interval.Quantity);
-      int semitoneCount = interval.SemitoneCount;
-      Note calculatedNote = note.Add(semitoneCount);
-      if( calculatedNote.NoteName == noteName )
-      {
-        return calculatedNote;
-      }
+    public Note Add(Interval interval) => AddInterval((int)interval.Quantity, interval.SemitoneCount);
 
-      // Deal with enharmonics
-      Note? enharmonic = calculatedNote.GetEnharmonic(noteName);
-      Debug.Assert(enharmonic.HasValue, "Enharmonic not found!");
-
-      return enharmonic.Value;
-    }
+    /// <summary>Subtracts an interval from the current instance.</summary>
+    /// <param name="interval">An interval to subtract.</param>
+    /// <returns>A Note.</returns>
+    public Note Subtract(Interval interval) => AddInterval(-(int)interval.Quantity, -interval.SemitoneCount);
 
     /// <summary>Subtracts a number of semitones from the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
@@ -373,13 +357,7 @@ namespace Bach.Model
     public Note Subtract(int semitoneCount,
                          AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      semitoneCount %= AbsoluteValueCount;
-      int absoluteValue = AbsoluteValue - semitoneCount;
-      if( absoluteValue < 0 )
-      {
-        absoluteValue = AbsoluteValueCount - semitoneCount;
-      }
-
+      int absoluteValue = ArrayExtensions.WrapIndex(AbsoluteValueCount, AbsoluteValue - semitoneCount);
       return FindNote(absoluteValue, mode == AccidentalMode.FavorSharps);
     }
 
@@ -429,6 +407,23 @@ namespace Bach.Model
     #endregion
 
     #region  Implementation
+
+    private Note AddInterval(int intervalQuantity,
+                             int semitoneCount)
+    {
+      NoteName calculatedNoteName = NoteName + intervalQuantity;
+      Note calculatedNote = this + semitoneCount;
+      if( calculatedNote.NoteName == calculatedNoteName )
+      {
+        return calculatedNote;
+      }
+
+      // Deal with enharmonics
+      Note? enharmonic = calculatedNote.GetEnharmonic(calculatedNoteName);
+      Debug.Assert(enharmonic.HasValue, "Enharmonic not found!");
+
+      return enharmonic.Value;
+    }
 
     private static Note GetNote(int absoluteValue,
                                 Accidental accidental)
@@ -599,7 +594,15 @@ namespace Bach.Model
     /// <returns>A note.</returns>
     public static Note operator+(Note note,
                                  Interval interval)
-      => Add(note, interval);
+      => note.Add(interval);
+
+    /// <summary>Addition operator.</summary>
+    /// <param name="note">The note.</param>
+    /// <param name="interval">An interval to add to the note.</param>
+    /// <returns>A note.</returns>
+    public static Note operator-(Note note,
+                                 Interval interval)
+      => note.Subtract(interval);
 
     /// <summary>Subtraction operator.</summary>
     /// <param name="a">The first value.</param>

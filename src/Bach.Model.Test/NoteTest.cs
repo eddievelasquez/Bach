@@ -342,7 +342,34 @@ namespace Bach.Model.Test
       Assert.Equal(Note.GFlat, Note.C + Interval.AugmentedFourth);
       Assert.Equal(Note.C, Note.DSharp + Interval.DiminishedSeventh);
       Assert.Equal(Note.F, Note.DSharp + Interval.DiminishedThird);
-      Assert.Equal(Note.GSharp, Note.Create(NoteName.D, Accidental.DoubleSharp) + Interval.DiminishedFourth);
+      Assert.Equal(Note.GSharp, Note.Parse("D##") + Interval.DiminishedFourth);
+    }
+
+    [Fact]
+    public void NoteSubtractIntervalTest()
+    {
+      Assert.Equal(Note.Parse("Cb"), Note.F - Interval.AugmentedFourth);
+      Assert.Equal(Note.C, Note.E - Interval.MajorThird);
+      Assert.Equal(Note.CSharp, Note.E - Interval.MinorThird);
+      Assert.Equal(Note.D, Note.F - Interval.MinorThird);
+      Assert.Equal(Note.D, Note.G - Interval.Fourth);
+      Assert.Equal(Note.E, Note.A - Interval.Fourth);
+      Assert.Equal(Note.EFlat, Note.AFlat - Interval.Fourth);
+      Assert.Equal(Note.EFlat, Note.GSharp - Interval.AugmentedThird);
+      Assert.Equal(Note.F, Note.D - Interval.MajorSixth);
+      Assert.Equal(Note.G, Note.D - Interval.Fifth);
+      Assert.Equal(Note.F, Note.C - Interval.Fifth);
+      Assert.Equal(Note.A, Note.E - Interval.Fifth);
+      Assert.Equal(Note.AFlat, Note.EFlat - Interval.Fifth);
+      Assert.Equal(Note.GSharp, Note.EFlat - Interval.DiminishedSixth);
+      Assert.Equal(Note.FSharp, Note.C - Interval.AugmentedFourth);
+      Assert.Equal(Note.GFlat, Note.C - Interval.DiminishedFifth);
+      Assert.Equal(Note.C, Note.DSharp - Interval.AugmentedSecond);
+      Assert.Equal(Note.C, Note.FSharp - Interval.DiminishedFifth);
+      Assert.Equal(Note.C, Note.GFlat - Interval.AugmentedFourth);
+      Assert.Equal(Note.DSharp, Note.C - Interval.DiminishedSeventh);
+      Assert.Equal(Note.DSharp, Note.F - Interval.DiminishedThird);
+      Assert.Equal(Note.Parse("D##"), Note.GSharp - Interval.DiminishedFourth);
     }
 
     [Fact]
