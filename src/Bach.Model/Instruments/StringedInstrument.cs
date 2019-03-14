@@ -26,6 +26,7 @@ namespace Bach.Model.Instruments
 {
   using System;
   using System.Collections.Generic;
+  using Model.Internal;
 
   public class StringedInstrument
     : Instrument,

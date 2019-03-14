@@ -26,6 +26,7 @@ namespace Bach.Model.Instruments
 {
   using System;
   using System.Linq;
+  using Model.Internal;
 
   public class Tuning: IEquatable<Tuning>
   {

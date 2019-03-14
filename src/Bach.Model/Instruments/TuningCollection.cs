@@ -28,6 +28,7 @@ namespace Bach.Model.Instruments
   using System.Collections;
   using System.Collections.Generic;
   using System.Diagnostics;
+  using Model.Internal;
 
   public class TuningCollection: IReadOnlyDictionary<string, Tuning>
   {

@@ -25,6 +25,7 @@
 namespace Bach.Model.Instruments
 {
   using System;
+  using Model.Internal;
 
   public struct Fingering: IEquatable<Fingering>
   {

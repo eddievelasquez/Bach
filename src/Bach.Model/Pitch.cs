@@ -26,6 +26,7 @@ namespace Bach.Model
 {
   using System;
   using System.Text;
+  using Internal;
 
   /// <summary>
   ///   A Pitch represents the pitch of a sound (<see cref="Note" />)

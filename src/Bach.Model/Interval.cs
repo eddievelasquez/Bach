@@ -27,6 +27,7 @@ namespace Bach.Model
   using System;
   using System.Diagnostics;
   using System.Text;
+  using Internal;
 
   /// <summary>An interval.</summary>
   public struct Interval

@@ -26,6 +26,7 @@ namespace Bach.Model
 {
   using System;
   using System.Diagnostics.Contracts;
+  using Contract = Internal.Contract;
 
   /// <summary>Values that represent interval qualities.</summary>
   public struct IntervalQuality

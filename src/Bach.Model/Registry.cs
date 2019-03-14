@@ -27,6 +27,7 @@ namespace Bach.Model
   using System;
   using System.IO;
   using System.Reflection;
+  using Internal;
   using Instruments;
   using Newtonsoft.Json;
   using Serialization;

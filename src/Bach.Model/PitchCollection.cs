@@ -29,6 +29,7 @@ namespace Bach.Model
   using System.Collections.ObjectModel;
   using System.Linq;
   using System.Text;
+  using Internal;
 
   public class PitchCollection
     : Collection<Pitch>,

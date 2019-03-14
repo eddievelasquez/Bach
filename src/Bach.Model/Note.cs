@@ -27,6 +27,8 @@ namespace Bach.Model
   using System;
   using System.Diagnostics;
   using System.Diagnostics.Contracts;
+  using Internal;
+  using Contract = Internal.Contract;
 
   /// <summary>
   ///   A Note represents a combination of a <see cref="P:Bach.Model.Note.NoteName" />

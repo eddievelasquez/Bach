@@ -26,6 +26,7 @@ namespace Bach.Model
 {
   using System;
   using System.Diagnostics.Contracts;
+  using Contract = Internal.Contract;
 
   /// <summary>
   ///   An Accidental represents a modification to a <see cref="Accidental" />

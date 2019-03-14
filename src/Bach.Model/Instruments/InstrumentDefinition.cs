@@ -25,6 +25,7 @@
 namespace Bach.Model.Instruments
 {
   using System;
+  using Model.Internal;
   using Internal;
 
   public abstract class InstrumentDefinition
