@@ -30,7 +30,7 @@ namespace Bach.Model
   using Internal;
 
   /// <summary>An interval.</summary>
-  public struct Interval
+  public readonly struct Interval
     : IEquatable<Interval>,
       IComparable<Interval>
   {

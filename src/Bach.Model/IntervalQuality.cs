@@ -29,7 +29,7 @@ namespace Bach.Model
   using Contract = Internal.Contract;
 
   /// <summary>Values that represent interval qualities.</summary>
-  public struct IntervalQuality
+  public readonly struct IntervalQuality
     : IEquatable<IntervalQuality>,
       IComparable<IntervalQuality>,
       IComparable

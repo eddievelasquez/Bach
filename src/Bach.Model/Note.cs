@@ -35,7 +35,7 @@ namespace Bach.Model
   ///   and an optional <see cref="P:Bach.Model.Note.Accidental" /> following the English naming
   ///   convention for the 12 note chromatic scale.
   /// </summary>
-  public struct Note
+  public readonly struct Note
     : IEquatable<Note>,
       IComparable<Note>
   {

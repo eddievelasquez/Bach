@@ -34,7 +34,7 @@ namespace Bach.Model
   ///   according to the English naming convention for
   ///   the 12 note chromatic scale.
   /// </summary>
-  public struct NoteName
+  public readonly struct NoteName
     : IEquatable<NoteName>,
       IComparable<NoteName>
   {
