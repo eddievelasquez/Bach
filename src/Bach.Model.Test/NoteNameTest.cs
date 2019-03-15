@@ -125,26 +125,6 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void SemitonesBetweenTest()
-    {
-      Assert.Equal(2, NoteName.C.SemitonesBetween(NoteName.D));
-      Assert.Equal(2, NoteName.D.SemitonesBetween(NoteName.E));
-      Assert.Equal(1, NoteName.E.SemitonesBetween(NoteName.F));
-      Assert.Equal(2, NoteName.F.SemitonesBetween(NoteName.G));
-      Assert.Equal(2, NoteName.G.SemitonesBetween(NoteName.A));
-      Assert.Equal(2, NoteName.A.SemitonesBetween(NoteName.B));
-      Assert.Equal(1, NoteName.B.SemitonesBetween(NoteName.C));
-
-      Assert.Equal(0, NoteName.C.SemitonesBetween(NoteName.C));
-      Assert.Equal(2, NoteName.C.SemitonesBetween(NoteName.D));
-      Assert.Equal(4, NoteName.C.SemitonesBetween(NoteName.E));
-      Assert.Equal(5, NoteName.C.SemitonesBetween(NoteName.F));
-      Assert.Equal(7, NoteName.C.SemitonesBetween(NoteName.G));
-      Assert.Equal(9, NoteName.C.SemitonesBetween(NoteName.A));
-      Assert.Equal(11, NoteName.C.SemitonesBetween(NoteName.B));
-    }
-
-    [Fact]
     public void ParseUppercaseTest()
     {
       Assert.Equal(NoteName.C, NoteName.Parse("C"));

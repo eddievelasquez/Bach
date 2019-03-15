@@ -52,6 +52,17 @@ namespace Bach.Model
     internal const double A4Frequency = 440.0;
     internal const int IntervalsPerOctave = 12;
 
+    private static readonly int[] s_semitonesBetween =
+    {
+      2, // C-D
+      2, // D-E
+      1, // E-F
+      2, // F-G
+      2, // G-A
+      2, // A-B
+      1 // B-C
+    };
+
     // Midi supports C-1, but we only support C0 and above
     private static readonly byte s_minAbsoluteValue = (byte)CalcAbsoluteValue(NoteName.C, Accidental.Natural, MinOctave);
 
@@ -298,7 +309,7 @@ namespace Bach.Model
                                          Accidental accidental,
                                          int octave)
     {
-      int absoluteValue = ( octave * IntervalsPerOctave ) + NoteName.C.SemitonesBetween(noteName) + (int)accidental;
+      int absoluteValue = ( octave * IntervalsPerOctave ) + SemitonesBetween(NoteName.C, noteName) + (int)accidental;
       return absoluteValue;
     }
 
@@ -309,6 +320,20 @@ namespace Bach.Model
     {
       octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
       note = Note.FindNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
+    }
+
+    private static int SemitonesBetween(NoteName start,
+                                        NoteName end)
+    {
+      var semitones = 0;
+      var noteName = start;
+      while( noteName != end )
+      {
+        semitones += s_semitonesBetween[(int)noteName];
+        noteName = (NoteName)s_semitonesBetween.WrapIndex((int)noteName + 1);
+      }
+
+      return semitones;
     }
 
     #endregion

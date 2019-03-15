@@ -52,17 +52,6 @@ namespace Bach.Model
     // ReSharper disable once StringLiteralTypo
     private static readonly string s_names = "CDEFGAB";
 
-    private static readonly int[] s_semitonesBetween =
-    {
-      2, // C-D
-      2, // D-E
-      1, // E-F
-      2, // F-G
-      2, // G-A
-      2, // A-B
-      1 // B-C
-    };
-
     #endregion
 
     #region Data Members
@@ -118,25 +107,6 @@ namespace Bach.Model
     /// <returns>A NoteName.</returns>
     [Pure]
     public int Subtract(NoteName name) => (int)Add(-(int)name);
-
-    /// <summary>
-    ///   Calculates the semitone distance between this instance and the provided note name.
-    /// </summary>
-    /// <param name="end">The note name</param>
-    /// <returns>The distance in semitones between the two note names.</returns>
-    [Pure]
-    public int SemitonesBetween(NoteName end)
-    {
-      var semitones = 0;
-      var noteName = this;
-      while( noteName != end )
-      {
-        semitones += s_semitonesBetween[(int)noteName];
-        noteName = (NoteName)s_semitonesBetween.WrapIndex((int)noteName + 1);
-      }
-
-      return semitones;
-    }
 
     /// <summary>Attempts to parse a NoteName from the given string.</summary>
     /// <param name="s">The value to parse.</param>
