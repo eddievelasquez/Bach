@@ -161,11 +161,21 @@ namespace Bach.Model.Test
     [Fact]
     public void LongNameTest()
     {
-      Assert.Equal("diminished", IntervalQuality.Diminished.LongName);
-      Assert.Equal("minor", IntervalQuality.Minor.LongName);
-      Assert.Equal("perfect", IntervalQuality.Perfect.LongName);
-      Assert.Equal("major", IntervalQuality.Major.LongName);
-      Assert.Equal("augmented", IntervalQuality.Augmented.LongName);
+      Assert.Equal("Diminished", IntervalQuality.Diminished.LongName);
+      Assert.Equal("Minor", IntervalQuality.Minor.LongName);
+      Assert.Equal("Perfect", IntervalQuality.Perfect.LongName);
+      Assert.Equal("Major", IntervalQuality.Major.LongName);
+      Assert.Equal("Augmented", IntervalQuality.Augmented.LongName);
+    }
+
+    [Fact]
+    public void ToStringTest()
+    {
+      Assert.Equal("Diminished", IntervalQuality.Diminished.ToString());
+      Assert.Equal("Minor", IntervalQuality.Minor.ToString());
+      Assert.Equal("Perfect", IntervalQuality.Perfect.ToString());
+      Assert.Equal("Major", IntervalQuality.Major.ToString());
+      Assert.Equal("Augmented", IntervalQuality.Augmented.ToString());
     }
 
     [Fact]

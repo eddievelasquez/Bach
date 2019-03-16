@@ -53,7 +53,7 @@ namespace Bach.Model
 
     private static readonly string[] s_symbols = { "d", "m", "P", "M", "A" };
     private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
-    private static readonly string[] s_long = { "diminished", "minor", "perfect", "major", "augmented" };
+    private static readonly string[] s_long = { "Diminished", "Minor", "Perfect", "Major", "Augmented" };
 
     #endregion
 
@@ -191,6 +191,9 @@ namespace Bach.Model
     #endregion
 
     #region Overrides
+
+    /// <inheritdoc />
+    public override string ToString() => LongName;
 
     /// <inheritdoc />
     public override bool Equals(object obj)
