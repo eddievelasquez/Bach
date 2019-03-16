@@ -35,8 +35,7 @@ namespace Bach.Model.Test
     [Fact]
     public void AddTest()
     {
-      Assert.Equal(IntervalQuality.Unknown, IntervalQuality.Unknown.Add(0));
-      Assert.Equal(IntervalQuality.Diminished, IntervalQuality.Unknown.Add(1));
+      Assert.Equal(IntervalQuality.Diminished, IntervalQuality.Diminished.Add(0));
       Assert.Equal(IntervalQuality.Minor, IntervalQuality.Diminished.Add(1));
       Assert.Equal(IntervalQuality.Perfect, IntervalQuality.Minor.Add(1));
       Assert.Equal(IntervalQuality.Major, IntervalQuality.Perfect.Add(1));
@@ -44,10 +43,16 @@ namespace Bach.Model.Test
     }
 
     [Fact]
+    public void AddThrowsWhenOutOfRangeTest()
+    {
+      Assert.Throws<ArgumentOutOfRangeException>(() => IntervalQuality.Diminished.Add(-1));
+      Assert.Throws<ArgumentOutOfRangeException>(() => IntervalQuality.Augmented.Add(1));
+    }
+
+    [Fact]
     public void AdditionOperatorTest()
     {
-      Assert.Equal(IntervalQuality.Unknown, IntervalQuality.Unknown + 0);
-      Assert.Equal(IntervalQuality.Diminished, IntervalQuality.Unknown + 1);
+      Assert.Equal(IntervalQuality.Diminished, IntervalQuality.Diminished + 0);
       Assert.Equal(IntervalQuality.Minor, IntervalQuality.Diminished + 1);
       Assert.Equal(IntervalQuality.Perfect, IntervalQuality.Minor + 1);
       Assert.Equal(IntervalQuality.Major, IntervalQuality.Perfect + 1);
@@ -55,14 +60,26 @@ namespace Bach.Model.Test
     }
 
     [Fact]
+    public void AdditionOperatorThrowsWhenOutOfRangeTest()
+    {
+      Assert.Throws<ArgumentOutOfRangeException>(() => IntervalQuality.Augmented + 1);
+    }
+
+    [Fact]
     public void IncrementOperatorTest()
     {
-      IntervalQuality quality = IntervalQuality.Unknown;
-      Assert.Equal(IntervalQuality.Diminished, ++quality);
+      IntervalQuality quality = IntervalQuality.Diminished;
       Assert.Equal(IntervalQuality.Minor, ++quality);
       Assert.Equal(IntervalQuality.Perfect, ++quality);
       Assert.Equal(IntervalQuality.Major, ++quality);
       Assert.Equal(IntervalQuality.Augmented, ++quality);
+    }
+
+    [Fact]
+    public void IncrementOperatorThrowsWhenOutOfRangeTest()
+    {
+      IntervalQuality quality = IntervalQuality.Augmented;
+      Assert.Throws<ArgumentOutOfRangeException>(() => ++quality);
     }
 
     [Fact]
@@ -73,7 +90,13 @@ namespace Bach.Model.Test
       Assert.Equal(IntervalQuality.Perfect, IntervalQuality.Major.Subtract(1));
       Assert.Equal(IntervalQuality.Minor, IntervalQuality.Perfect.Subtract(1));
       Assert.Equal(IntervalQuality.Diminished, IntervalQuality.Minor.Subtract(1));
-      Assert.Equal(IntervalQuality.Unknown, IntervalQuality.Diminished.Subtract(1));
+    }
+
+    [Fact]
+    public void SubtractThrowsWhenOutOfRangeTest()
+    {
+      Assert.Throws<ArgumentOutOfRangeException>(() => IntervalQuality.Diminished.Subtract(1));
+      Assert.Throws<ArgumentOutOfRangeException>(() => IntervalQuality.Augmented.Subtract(-1));
     }
 
     [Fact]
@@ -84,7 +107,13 @@ namespace Bach.Model.Test
       Assert.Equal(IntervalQuality.Perfect, --quality);
       Assert.Equal(IntervalQuality.Minor, --quality);
       Assert.Equal(IntervalQuality.Diminished, --quality);
-      Assert.Equal(IntervalQuality.Unknown, --quality);
+    }
+
+    [Fact]
+    public void DecrementOperatorThrowsWhenOutOfRangeTest()
+    {
+      IntervalQuality quality = IntervalQuality.Diminished;
+      Assert.Throws<ArgumentOutOfRangeException>(() => --quality);
     }
 
     [Fact]
@@ -95,13 +124,27 @@ namespace Bach.Model.Test
       Assert.Equal(IntervalQuality.Perfect, IntervalQuality.Major - 1);
       Assert.Equal(IntervalQuality.Minor, IntervalQuality.Perfect - 1);
       Assert.Equal(IntervalQuality.Diminished, IntervalQuality.Minor - 1);
-      Assert.Equal(IntervalQuality.Unknown, IntervalQuality.Diminished - 1);
+    }
+
+    [Fact]
+    public void SubtractOperatorThrowsWhenOutOfRangeTest()
+    {
+      Assert.Throws<ArgumentOutOfRangeException>(() => IntervalQuality.Diminished - 1);
     }
 
     [Fact]
     public void ParseTest()
     {
+      Assert.Equal(IntervalQuality.Diminished, IntervalQuality.Parse("d"));
+      Assert.Equal(IntervalQuality.Minor, IntervalQuality.Parse("m"));
       Assert.Equal(IntervalQuality.Perfect, IntervalQuality.Parse("P"));
+      Assert.Equal(IntervalQuality.Major, IntervalQuality.Parse("M"));
+      Assert.Equal(IntervalQuality.Augmented, IntervalQuality.Parse("A"));
+    }
+
+    [Fact]
+    public void ParseThrowsWithInvalidValuesTest()
+    {
       Assert.Throws<FormatException>(() => IntervalQuality.Parse("X"));
     }
 

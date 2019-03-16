@@ -179,24 +179,58 @@ namespace Bach.Model.Test
     [Fact]
     public void TryParseTest()
     {
-      Interval actual;
-      Assert.True(Interval.TryParse("P1", out actual));
+      Assert.True(Interval.TryParse("P1", out Interval actual));
+      Assert.Equal(Interval.Unison, actual);
+      Assert.True(Interval.TryParse("R", out actual));
       Assert.Equal(Interval.Unison, actual);
       Assert.True(Interval.TryParse("1", out actual));
       Assert.Equal(Interval.Unison, actual);
-      Assert.True(Interval.TryParse("M2", out actual));
-      Assert.Equal(Interval.MajorSecond, actual);
-      Assert.True(Interval.TryParse("2", out actual));
-      Assert.Equal(Interval.MajorSecond, actual);
-      Assert.False(Interval.TryParse("M1", out actual));
-      Assert.Equal(Interval.Invalid, actual);
-      Assert.False(Interval.TryParse("P2", out actual));
-      Assert.Equal(Interval.Invalid, actual);
-      Assert.False(Interval.TryParse(null, out actual));
-      Assert.False(Interval.TryParse("", out actual));
-      Assert.True(Interval.TryParse("  P1", out actual));
-      Assert.False(Interval.TryParse("L2", out actual));
-      Assert.False(Interval.TryParse("Px", out actual));
+
+      Assert.True(Interval.TryParse("A1", out actual));
+      Assert.Equal(Interval.AugmentedFirst, actual);
+
+      Assert.True(Interval.TryParse("d3", out actual));
+      Assert.Equal(Interval.DiminishedThird, actual);
+
+      Assert.True(Interval.TryParse("m3", out actual));
+      Assert.Equal(Interval.MinorThird, actual);
+
+      Assert.True(Interval.TryParse("M3", out actual));
+      Assert.Equal(Interval.MajorThird, actual);
+      Assert.True(Interval.TryParse("3", out actual));
+      Assert.Equal(Interval.MajorThird, actual);
+
+      Assert.True(Interval.TryParse("A3", out actual));
+      Assert.Equal(Interval.AugmentedThird, actual);
+    }
+
+    [Fact]
+    public void TryParseSkipsLeadingWhitespaceTest()
+    {
+      Assert.True(Interval.TryParse("  P5", out Interval actual));
+      Assert.Equal(Interval.Fifth, actual);
+    }
+
+    [Fact]
+    public void TryParseReturnsFalseWithNullTest()
+    {
+      Assert.False(Interval.TryParse(null, out Interval _));
+    }
+
+    [Fact]
+    public void TryParseReturnsFalseBlankStringTest()
+    {
+      Assert.False(Interval.TryParse("", out Interval _));
+      Assert.False(Interval.TryParse("   ", out Interval _));
+    }
+
+    [Fact]
+    public void TryParseReturnsFalseWithNonsensicalIntervalsTest()
+    {
+      Assert.False(Interval.TryParse("M1", out Interval _));
+      Assert.False(Interval.TryParse("P2", out Interval _));
+      Assert.False(Interval.TryParse("L2", out Interval _));
+      Assert.False(Interval.TryParse("Px", out Interval _));
     }
 
     [Fact]
@@ -222,8 +256,8 @@ namespace Bach.Model.Test
       Assert.False(Interval.IsValid(IntervalQuantity.Unison, IntervalQuality.Diminished));
       Assert.False(Interval.IsValid(IntervalQuantity.Fourth, IntervalQuality.Minor));
       Assert.False(Interval.IsValid(IntervalQuantity.Fifth, IntervalQuality.Major));
-      Assert.False(Interval.IsValid((IntervalQuantity)(-1), IntervalQuality.Major));
-      Assert.False(Interval.IsValid((IntervalQuantity)(14), IntervalQuality.Major));
+      Assert.False(Interval.IsValid((IntervalQuantity)( -1 ), IntervalQuality.Major));
+      Assert.False(Interval.IsValid((IntervalQuantity)( 14 ), IntervalQuality.Major));
     }
 
     [Fact]

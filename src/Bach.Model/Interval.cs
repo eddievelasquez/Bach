@@ -81,14 +81,12 @@ namespace Bach.Model
     public static readonly Interval AugmentedSeventh = new Interval(IntervalQuantity.Seventh, IntervalQuality.Augmented);
     public static readonly Interval DiminishedOctave = new Interval(IntervalQuantity.Octave, IntervalQuality.Diminished);
     public static readonly Interval Octave = new Interval(IntervalQuantity.Octave, IntervalQuality.Perfect);
-    public static readonly Interval Invalid = new Interval();
 
     #endregion
 
     #region Data Members
 
     private readonly byte _quality;
-
     private readonly byte _quantity;
 
     #endregion
@@ -245,7 +243,7 @@ namespace Bach.Model
     /// <param name="value">A string containing the interval quality to convert.</param>
     /// <param name="interval">
     ///   When this method returns, contains the Interval value equivalent to the interval
-    ///   contained in value, if the conversion succeeded, or <see cref="Interval.Invalid" /> if the conversion failed.
+    ///   contained in value, if the conversion succeeded; otherwise, the value is undefined if the conversion failed.
     ///   The conversion fails if the value parameter is null or empty or does not contain a valid string
     ///   representation of an interval. This parameter is passed uninitialized.
     /// </param>
@@ -256,7 +254,7 @@ namespace Bach.Model
     public static bool TryParse(string value,
                                 out Interval interval)
     {
-      interval = Invalid;
+      interval = Unison;
 
       if( string.IsNullOrWhiteSpace(value) )
       {
@@ -271,13 +269,14 @@ namespace Bach.Model
         ++i;
       }
 
-      var quality = (IntervalQuality)( -1 );
+      IntervalQuality quality = IntervalQuality.Perfect;
+      bool hasExplicitQuality = char.IsLetter(value, i);
 
-      if( char.IsLetter(value, i) )
+      if( hasExplicitQuality )
       {
         if( value[i] == 'R' )
         {
-          interval = new Interval(IntervalQuantity.Unison, IntervalQuality.Perfect);
+          interval = Unison;
           return true;
         }
 
@@ -294,7 +293,7 @@ namespace Bach.Model
         return false;
       }
 
-      if( quality == IntervalQuality.Unknown )
+      if( !hasExplicitQuality )
       {
         int temp = ( ( number - 1 ) % 7 ) + 1;
         if( temp == 1 || temp == 4 || temp == 5 )
