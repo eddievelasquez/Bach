@@ -83,8 +83,8 @@ namespace Bach.Model
     #region Data Members
 
     private readonly byte _absoluteValue;
-    private readonly Note _note;
     private readonly byte _octave;
+    private readonly Note _note;
 
     #endregion
 
