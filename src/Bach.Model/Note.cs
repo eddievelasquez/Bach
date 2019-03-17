@@ -1,20 +1,20 @@
 ﻿// Module Name: Note.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -41,162 +41,180 @@ namespace Bach.Model
   {
     #region Constants
 
-    private const ushort ToneNameMask = 7;
-    private const ushort ToneNameShift = 7;
-    private const ushort AccidentalMask = 7;
-    private const ushort AccidentalShift = 4;
-    private const ushort AbsoluteValueMask = 0x0F;
-    private const int AbsoluteValueCount = 12;
-
-    // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
-    private static readonly Note?[,] s_enharmonics =
+    private static readonly Note[] s_notes =
     {
-      { Create(0, NoteName.D, Accidental.DoubleFlat), null, Create(0, NoteName.C, Accidental.Natural), Create(0, NoteName.B, Accidental.Sharp), null },
-      { null, Create(1, NoteName.D, Accidental.Flat), null, Create(1, NoteName.C, Accidental.Sharp), Create(1, NoteName.B, Accidental.DoubleSharp) },
-      { Create(2, NoteName.E, Accidental.DoubleFlat), null, Create(2, NoteName.D, Accidental.Natural), null, Create(2, NoteName.C, Accidental.DoubleSharp) },
-      { Create(3, NoteName.F, Accidental.DoubleFlat), Create(3, NoteName.E, Accidental.Flat), null, Create(3, NoteName.D, Accidental.Sharp), null },
-      { null, Create(4, NoteName.F, Accidental.Flat), Create(4, NoteName.E, Accidental.Natural), null, Create(4, NoteName.D, Accidental.DoubleSharp) },
-      { Create(5, NoteName.G, Accidental.DoubleFlat), null, Create(5, NoteName.F, Accidental.Natural), Create(5, NoteName.E, Accidental.Sharp), null },
-      { null, Create(6, NoteName.G, Accidental.Flat), null, Create(6, NoteName.F, Accidental.Sharp), Create(6, NoteName.E, Accidental.DoubleSharp) },
-      { Create(7, NoteName.A, Accidental.DoubleFlat), null, Create(7, NoteName.G, Accidental.Natural), null, Create(7, NoteName.F, Accidental.DoubleSharp) },
-      { null, Create(8, NoteName.A, Accidental.Flat), null, Create(8, NoteName.G, Accidental.Sharp), null },
-      { Create(9, NoteName.B, Accidental.DoubleFlat), null, Create(9, NoteName.A, Accidental.Natural), null, Create(9, NoteName.G, Accidental.DoubleSharp) },
-      { Create(10, NoteName.C, Accidental.DoubleFlat), Create(10, NoteName.B, Accidental.Flat), null, Create(10, NoteName.A, Accidental.Sharp), null },
-      { null, Create(11, NoteName.C, Accidental.Flat), Create(11, NoteName.B, Accidental.Natural), null, Create(11, NoteName.A, Accidental.DoubleSharp) }
+      new Note(0, 0, NoteName.D, Accidental.DoubleFlat),
+      new Note(1, 0, NoteName.C, Accidental.Natural),
+      new Note(2, 0, NoteName.B, Accidental.Sharp),
+      new Note(3, 1, NoteName.D, Accidental.Flat),
+      new Note(4, 1, NoteName.C, Accidental.Sharp),
+      new Note(5, 1, NoteName.B, Accidental.DoubleSharp),
+      new Note(6, 2, NoteName.E, Accidental.DoubleFlat),
+      new Note(7, 2, NoteName.D, Accidental.Natural),
+      new Note(8, 2, NoteName.C, Accidental.DoubleSharp),
+      new Note(9, 3, NoteName.F, Accidental.DoubleFlat),
+      new Note(10, 3, NoteName.E, Accidental.Flat),
+      new Note(11, 3, NoteName.D, Accidental.Sharp),
+      new Note(12, 4, NoteName.F, Accidental.Flat),
+      new Note(13, 4, NoteName.E, Accidental.Natural),
+      new Note(14, 4, NoteName.D, Accidental.DoubleSharp),
+      new Note(15, 5, NoteName.G, Accidental.DoubleFlat),
+      new Note(16, 5, NoteName.F, Accidental.Natural),
+      new Note(17, 5, NoteName.E, Accidental.Sharp),
+      new Note(18, 6, NoteName.G, Accidental.Flat),
+      new Note(19, 6, NoteName.F, Accidental.Sharp),
+      new Note(20, 6, NoteName.E, Accidental.DoubleSharp),
+      new Note(21, 7, NoteName.A, Accidental.DoubleFlat),
+      new Note(22, 7, NoteName.G, Accidental.Natural),
+      new Note(23, 7, NoteName.F, Accidental.DoubleSharp),
+      new Note(24, 8, NoteName.A, Accidental.Flat),
+      new Note(25, 8, NoteName.G, Accidental.Sharp),
+      new Note(26, 9, NoteName.B, Accidental.DoubleFlat),
+      new Note(27, 9, NoteName.A, Accidental.Natural),
+      new Note(28, 9, NoteName.G, Accidental.DoubleSharp),
+      new Note(29, 10, NoteName.C, Accidental.DoubleFlat),
+      new Note(30, 10, NoteName.B, Accidental.Flat),
+      new Note(31, 10, NoteName.A, Accidental.Sharp),
+      new Note(32, 11, NoteName.C, Accidental.Flat),
+      new Note(33, 11, NoteName.B, Accidental.Natural),
+      new Note(34, 11, NoteName.A, Accidental.DoubleSharp)
     };
 
     private static readonly int[] s_noteNameIndices =
     {
-      0, // NoteName.C
-      2, // NoteName.D
-      4, // NoteName.E
-      5, // NoteName.F
-      7, // NoteName.G
-      9, // NoteName.A
-      11 // NoteName.B
+      1, // NoteName.C
+      7, // NoteName.D
+      13, // NoteName.E
+      16, // NoteName.F
+      22, // NoteName.G
+      27, // NoteName.A
+      33 // NoteName.B
     };
 
-    /// <summary>C note.</summary>
-    public static readonly Note C;
-
-    /// <summary>C♯ note.</summary>
-    public static readonly Note CSharp;
-
-    /// <summary>D♭ note.</summary>
-    public static readonly Note DFlat;
-
-    /// <summary>D note.</summary>
-    public static readonly Note D;
-
-    /// <summary>D♯ note.</summary>
-    public static readonly Note DSharp;
-
-    /// <summary>E♭ note.</summary>
-    public static readonly Note EFlat;
-
-    /// <summary>E note.</summary>
-    public static readonly Note E;
-
-    /// <summary>F note.</summary>
-    public static readonly Note F;
-
-    /// <summary>F♯ note.</summary>
-    public static readonly Note FSharp;
-
-    /// <summary>G♭ note.</summary>
-    public static readonly Note GFlat;
-
-    /// <summary>G note.</summary>
-    public static readonly Note G;
-
-    /// <summary>G♯ note.</summary>
-    public static readonly Note GSharp;
-
-    /// <summary>A♭ note.</summary>
-    public static readonly Note AFlat;
-
-    /// <summary>A note.</summary>
-    public static readonly Note A;
-
-    /// <summary>A♯ note.</summary>
-    public static readonly Note ASharp;
-
-    /// <summary>B♭ note.</summary>
-    public static readonly Note BFlat;
-
-    /// <summary>B note.</summary>
-    public static readonly Note B;
+    // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
+    private static readonly int[,] s_enharmonics =
+    {
+      { 0, -1, 1, 2, -1 }, // Dbb, C, B#
+      { -1, 3, -1, 4, 5 }, // Db, C#, B##
+      { 6, -1, 7, -1, 8 }, // Ebb, D, C##
+      { 9, 10, -1, 11, -1 }, // Fbb, Eb, D#
+      { -1, 12, 13, -1, 14 }, // Fb, E, D##
+      { 15, -1, 16, 17, -1 }, // Gbb, F, E#
+      { -1, 18, -1, 19, 20 }, // Gb, F#, E##
+      { 21, -1, 22, -1, 23 }, // Abb, G, F##
+      { -1, 24, -1, 25, -1 }, // Ab, G#
+      { 26, -1, 27, -1, 28 }, // Bbb, A, G##
+      { 29, 30, -1, 31, -1 }, // Cbb, Bb, A#
+      { -1, 32, 33, -1, 34 } // Cb, B, A##
+    };
 
     #endregion
 
     #region Data Members
 
-    private readonly ushort _encoded;
+    private readonly sbyte _accidental;
+    private readonly byte _enharmonicIndex;
+    private readonly byte _noteIndex;
+    private readonly byte _noteName;
 
     #endregion
 
     #region Constructors
 
-    static Note()
-    {
-      C = GetNote(0, Accidental.Natural);
-      CSharp = GetNote(1, Accidental.Sharp);
-      DFlat = GetNote(1, Accidental.Flat);
-      D = GetNote(2, Accidental.Natural);
-      DSharp = GetNote(3, Accidental.Sharp);
-      EFlat = GetNote(3, Accidental.Flat);
-      E = GetNote(4, Accidental.Natural);
-      F = GetNote(5, Accidental.Natural);
-      FSharp = GetNote(6, Accidental.Sharp);
-      GFlat = GetNote(6, Accidental.Flat);
-      G = GetNote(7, Accidental.Natural);
-      GSharp = GetNote(8, Accidental.Sharp);
-      AFlat = GetNote(8, Accidental.Flat);
-      A = GetNote(9, Accidental.Natural);
-      ASharp = GetNote(10, Accidental.Sharp);
-      BFlat = GetNote(10, Accidental.Flat);
-      B = GetNote(11, Accidental.Natural);
-      AccidentalMode = AccidentalMode.FavorSharps;
-    }
-
-    private Note(int absoluteValue,
+    private Note(int noteIndex,
+                 int enharmonicIndex,
                  NoteName noteName,
                  Accidental accidental)
     {
-      _encoded = Encode(absoluteValue, noteName, accidental);
+      Debug.Assert(noteIndex >= 0 && noteIndex <= 34);
+      Debug.Assert(enharmonicIndex >= 0 && enharmonicIndex <= 11);
+
+      _noteIndex = (byte)noteIndex;
+      _enharmonicIndex = (byte)enharmonicIndex;
+      _noteName = (byte)noteName;
+      _accidental = (sbyte)accidental;
     }
 
     #endregion
 
     #region Properties
 
+    /// <summary>C note.</summary>
+    public static Note C => s_notes[1];
+
+    /// <summary>C♯ note.</summary>
+    public static Note CSharp => s_notes[4];
+
+    /// <summary>D♭ note.</summary>
+    public static Note DFlat => s_notes[3];
+
+    /// <summary>D note.</summary>
+    public static Note D => s_notes[7];
+
+    /// <summary>D♯ note.</summary>
+    public static Note DSharp => s_notes[11];
+
+    /// <summary>E♭ note.</summary>
+    public static Note EFlat => s_notes[10];
+
+    /// <summary>E note.</summary>
+    public static Note E => s_notes[13];
+
+    /// <summary>F note.</summary>
+    public static Note F => s_notes[16];
+
+    /// <summary>F♯ note.</summary>
+    public static Note FSharp => s_notes[19];
+
+    /// <summary>G♭ note.</summary>
+    public static Note GFlat => s_notes[18];
+
+    /// <summary>G note.</summary>
+    public static Note G => s_notes[22];
+
+    /// <summary>G♯ note.</summary>
+    public static Note GSharp => s_notes[25];
+
+    /// <summary>A♭ note.</summary>
+    public static Note AFlat => s_notes[24];
+
+    /// <summary>A note.</summary>
+    public static Note A => s_notes[27];
+
+    /// <summary>A♯ note.</summary>
+    public static Note ASharp => s_notes[31];
+
+    /// <summary>B♭ note.</summary>
+    public static Note BFlat => s_notes[30];
+
+    /// <summary>B note.</summary>
+    public static Note B => s_notes[33];
+
     /// <summary>Gets or sets the accidental mode.</summary>
     /// <value>The accidental mode.</value>
-    public static AccidentalMode AccidentalMode { get; set; }
-
-    private int AbsoluteValue => DecodeAbsoluteValue(_encoded);
+    public static AccidentalMode AccidentalMode { get; set; } = AccidentalMode.FavorSharps;
 
     /// <summary>Gets the name of the note.</summary>
     /// <value>The name of the note.</value>
-    public NoteName NoteName => DecodeToneName(_encoded);
+    public NoteName NoteName => (NoteName)_noteName;
 
     /// <summary>Gets the accidental.</summary>
     /// <value>The accidental.</value>
-    public Accidental Accidental => DecodeAccidental(_encoded);
+    public Accidental Accidental => (Accidental)_accidental;
 
     #endregion
 
     #region IComparable<Note> Members
 
     /// <inheritdoc />
-    public int CompareTo(Note other) => AbsoluteValue - other.AbsoluteValue;
+    public int CompareTo(Note other) => _enharmonicIndex - other._enharmonicIndex;
 
     #endregion
 
     #region IEquatable<Note> Members
 
     /// <inheritdoc />
-    public bool Equals(Note other) => AbsoluteValue == other.AbsoluteValue;
+    public bool Equals(Note other) => _enharmonicIndex == other._enharmonicIndex;
 
     #endregion
 
@@ -222,38 +240,52 @@ namespace Bach.Model
     public static Note Create(NoteName noteName,
                               Accidental accidental)
     {
-      Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-
       // This really doesn't create a Note but returns one of the pre-created ones
       // from the enharmonics table.
-      // TODO: Maybe we should change the name of Create to Lookup?
-      int accidentalIndex = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
-      int noteNameIndex = s_noteNameIndices[(int)noteName];
-      int noteIndex = s_enharmonics.WrapIndex(0, noteNameIndex + (int)accidental);
-      Note? note = s_enharmonics[noteIndex, accidentalIndex];
-      Debug.Assert(note.HasValue);
 
-      return note.Value;
+      // First we determine the row in the enharmonics table that corresponds to the
+      // note name.
+      int noteIndex = s_noteNameIndices[(int)noteName];
+      Note note = s_notes[noteIndex];
+      if( accidental == Accidental.Natural )
+      {
+        return note;
+      }
+
+      int enharmonicIndex = note._enharmonicIndex;
+
+      // Next we ensure that the enharmonic index wraps around when added to the accidental (-2 .. 2)
+      enharmonicIndex = s_enharmonics.WrapIndex(0, enharmonicIndex + (int)accidental);
+
+      // Next we determine the index of the note in the note table (Offset by DoubleFlat, so 0..3)
+      int accidentalIndex = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
+      noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+      Debug.Assert(noteIndex != -1);
+
+      note = s_notes[noteIndex];
+      return note;
     }
 
-    /// <summary>Gets the enharmonic note for this instance or null if non exists.</summary>
+    /// <summary>Gets the enharmonic note for this instance or null if none exists.</summary>
     /// <param name="noteName">The name of the enharmonic note.</param>
     /// <returns>The enharmonic.</returns>
     [Pure]
     public Note? GetEnharmonic(NoteName noteName)
     {
-      int absoluteValue = AbsoluteValue;
+      int accidentalOffset = Math.Abs((int)Accidental.DoubleFlat);
+      int enharmonicIndex = _enharmonicIndex;
+
       for( var accidental = (int)Accidental.DoubleFlat; accidental <= (int)Accidental.DoubleSharp; ++accidental )
       {
-        int index = accidental + Math.Abs((int)Accidental.DoubleFlat);
-        Note? note = s_enharmonics[absoluteValue, index];
-        if( !note.HasValue )
+        int accidentalIndex = accidental + accidentalOffset;
+        int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+        if( noteIndex == -1 )
         {
           continue;
         }
 
-        if( note.Value.NoteName == noteName )
+        Note note = s_notes[noteIndex];
+        if( note.NoteName == noteName )
         {
           return note;
         }
@@ -281,7 +313,7 @@ namespace Bach.Model
         return false;
       }
 
-      var accidental = Accidental.Natural;
+      Accidental accidental = Accidental.Natural;
       if( value.Length > 1 && !Accidental.TryParse(value.Substring(1), out accidental) )
       {
         note = C;
@@ -319,13 +351,13 @@ namespace Bach.Model
     public static int SemitonesBetween(Note a,
                                        Note b)
     {
-      var current = a;
-      int count = 0;
+      Note current = a;
+      var count = 0;
 
       while( current != b )
       {
         ++count;
-        current = current.Add(1);
+        ++current;
       }
 
       return count;
@@ -338,8 +370,8 @@ namespace Bach.Model
     public Note Add(int semitoneCount,
                     AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      int absoluteValue = ArrayExtensions.WrapIndex(AbsoluteValueCount, AbsoluteValue + semitoneCount);
-      return FindNote(absoluteValue, mode == AccidentalMode.FavorSharps);
+      int enharmonicIndex = s_enharmonics.WrapIndex(0, _enharmonicIndex + semitoneCount);
+      return LookupNote(enharmonicIndex, mode == AccidentalMode.FavorSharps);
     }
 
     /// <summary>Adds an interval to the current instance.</summary>
@@ -359,8 +391,8 @@ namespace Bach.Model
     public Note Subtract(int semitoneCount,
                          AccidentalMode mode = AccidentalMode.FavorSharps)
     {
-      int absoluteValue = ArrayExtensions.WrapIndex(AbsoluteValueCount, AbsoluteValue - semitoneCount);
-      return FindNote(absoluteValue, mode == AccidentalMode.FavorSharps);
+      int enharmonicIndex = s_enharmonics.WrapIndex(0, _enharmonicIndex - semitoneCount);
+      return LookupNote(enharmonicIndex, mode == AccidentalMode.FavorSharps);
     }
 
     /// <summary>Determines the interval between two notes.</summary>
@@ -380,7 +412,8 @@ namespace Bach.Model
         ++current;
       }
 
-      var semitoneCount = SemitonesBetween(a, b);
+      // Then we determine the semitone count
+      int semitoneCount = SemitonesBetween(a, b);
       var interval = new Interval(quantity, semitoneCount);
       return interval;
     }
@@ -401,7 +434,7 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override int GetHashCode() => AbsoluteValue;
+    public override int GetHashCode() => _enharmonicIndex;
 
     /// <inheritdoc />
     public override string ToString() => $"{NoteName}{Accidental.ToSymbol()}";
@@ -427,94 +460,58 @@ namespace Bach.Model
       return enharmonic.Value;
     }
 
-    private static Note GetNote(int absoluteValue,
-                                Accidental accidental)
-    {
-      int index = (int)accidental + Math.Abs((int)Accidental.DoubleFlat);
-      Note? note = s_enharmonics[absoluteValue, index];
-      Debug.Assert(note.HasValue);
-
-      return note.Value;
-    }
-
-    // This is a helper function for creating notes for the enharmonic table
-    private static Note Create(int absoluteValue,
-                               NoteName noteName,
-                               Accidental accidental)
-      => new Note(absoluteValue, noteName, accidental);
-
-    // Finds a note that corresponds to the provided absolute value,
+    // Finds a note that corresponds to the provided enharmonic index,
     // attempting to match the desired accidental mode
-    internal static Note FindNote(int absoluteValue,
-                                  bool favorSharps)
+    internal static Note LookupNote(int enharmonicIndex,
+                                    bool favorSharps)
     {
-      int index = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
+      int accidentalIndex = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
       if( favorSharps )
       {
+        // Starting from Natural all the way up to DoubleSharp, find the corresponding enharmonic
         int max = (int)Accidental.DoubleSharp + Math.Abs((int)Accidental.DoubleFlat);
-        while( index <= max )
+        while( accidentalIndex <= max )
         {
-          Note? current = s_enharmonics[absoluteValue, index];
-          if( current.HasValue )
+          int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+          if( noteIndex != -1 )
           {
-            return current.Value;
+            return s_notes[noteIndex];
           }
 
-          ++index;
+          ++accidentalIndex;
         }
       }
       else
       {
-        while( index >= 0 )
+        // Starting from Natural all the way down to DoubleFlat, find the corresponding enharmonic
+        while( accidentalIndex >= 0 )
         {
-          Note? current = s_enharmonics[absoluteValue, index];
-          if( current.HasValue )
+          int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+          if( noteIndex != -1 )
           {
-            return current.Value;
+            return s_notes[noteIndex];
           }
 
-          --index;
+          --accidentalIndex;
         }
       }
 
       throw new Exception("Must be able to find enharmonic");
     }
 
-    private static ushort Encode(int value,
-                                 NoteName noteName,
-                                 Accidental accidental)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(value >= 0 && value <= 11);
-      Contract.Requires<ArgumentOutOfRangeException>(noteName >= NoteName.C && noteName <= NoteName.B);
-      Contract.Requires<ArgumentOutOfRangeException>(accidental >= Accidental.DoubleFlat && accidental <= Accidental.DoubleSharp);
-
-      var encoded = (ushort)( ( ( (ushort)noteName & ToneNameMask ) << ToneNameShift )
-                              | ( ( (ushort)( (int)accidental + 2 ) & AccidentalMask ) << AccidentalShift )
-                              | ( (ushort)value & AbsoluteValueMask ) );
-      return encoded;
-    }
-
-    private static int DecodeAbsoluteValue(ushort encoded)
-    {
-      int result = encoded & AbsoluteValueMask;
-      return result;
-    }
-
-    private static NoteName DecodeToneName(ushort encoded)
-    {
-      int result = ( encoded >> ToneNameShift ) & ToneNameMask;
-      return (NoteName)result;
-    }
-
-    private static Accidental DecodeAccidental(ushort encoded)
-    {
-      int result = ( ( encoded >> AccidentalShift ) & AccidentalMask ) - 2;
-      return (Accidental)result;
-    }
-
     #endregion
 
     #region Operators
+
+    /// <summary>Explicit cast that converts the given note to an int.</summary>
+    /// <param name="note">The note.</param>
+    /// <returns>The result of the operation.</returns>
+    public static explicit operator int(Note note) => note._noteIndex;
+
+    /// <summary>Explicit cast that converts the given int to a Note.</summary>
+    /// <param name="value">The value.</param>
+    /// <returns>The result of the operation.</returns>
+    public static explicit operator Note(int value) => s_notes[value];
 
     /// <summary>Equality operator.</summary>
     /// <param name="left">The first instance to compare.</param>

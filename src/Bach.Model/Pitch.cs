@@ -319,7 +319,7 @@ namespace Bach.Model
                                  AccidentalMode accidentalMode)
     {
       octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
-      note = Note.FindNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
+      note = Note.LookupNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
     }
 
     private static int SemitonesBetween(NoteName start,
