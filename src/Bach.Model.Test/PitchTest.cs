@@ -450,5 +450,19 @@ namespace Bach.Model.Test
       Assert.Equal(Pitch.Parse("F4"), Pitch.Parse("D#4") + Interval.DiminishedThird);
       Assert.Equal(Pitch.Parse("G#4"), Pitch.Parse("D##4") + Interval.DiminishedFourth);
     }
+
+    [Fact]
+    public void MinTest()
+    {
+      Assert.Equal(Pitch.Parse("A4"), Pitch.Min(Pitch.Parse("A4"), Pitch.Parse("B4")));
+      Assert.Equal(Pitch.Parse("A4"), Pitch.Min(Pitch.Parse("B4"), Pitch.Parse("A4")));
+    }
+
+    [Fact]
+    public void MaxTest()
+    {
+      Assert.Equal(Pitch.Parse("B4"), Pitch.Max(Pitch.Parse("A4"), Pitch.Parse("B4")));
+      Assert.Equal(Pitch.Parse("B4"), Pitch.Max(Pitch.Parse("B4"), Pitch.Parse("A4")));
+    }
   }
 }

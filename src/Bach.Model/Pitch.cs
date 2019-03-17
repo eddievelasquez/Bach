@@ -74,8 +74,11 @@ namespace Bach.Model
     /// <summary>An empty pitch.</summary>
     public static readonly Pitch Empty = new Pitch(Note.B, 9, 128);
 
+    /// <summary>The minimum possible pitch value.</summary>
+    public static readonly Pitch MinValue = Create(Note.C, MinOctave);
+
     /// <summary>The maximum possible pitch value.</summary>
-    public static readonly Pitch MaxValue = Create(Model.Note.G, MaxOctave);
+    public static readonly Pitch MaxValue = Create(Note.G, MaxOctave);
 
     #endregion
 
@@ -455,11 +458,6 @@ namespace Bach.Model
         }
 
         buf.Append(ch);
-      }
-
-      if( buf.Length == 0 )
-      {
-        return;
       }
 
       if( Accidental.TryParse(buf.ToString(), out accidental) )

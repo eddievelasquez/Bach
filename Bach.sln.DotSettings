@@ -28,7 +28,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&#xD;
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=5CD7D1896CE76E41A25F72223B2FD70E/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File5CD7D1896CE76E41A25F72223B2FD70E/@KeyIndexDefined">True</s:Boolean>
 	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File5CD7D1896CE76E41A25F72223B2FD70E/RelativePriority/@EntryValue">1</s:Double>
-	<s:String x:Key="/Default/FilterSettingsManager/CoverageFilterXml/@EntryValue">&lt;data&gt;&lt;IncludeFilters /&gt;&lt;ExcludeFilters&gt;&lt;Filter ModuleMask="Bach.Model" ModuleVersionMask="*" ClassMask="Bach.Model.Contract" FunctionMask="*" IsEnabled="True" /&gt;&lt;/ExcludeFilters&gt;&lt;/data&gt;</s:String>
+	<s:String x:Key="/Default/FilterSettingsManager/CoverageFilterXml/@EntryValue">&lt;data&gt;&lt;IncludeFilters /&gt;&lt;ExcludeFilters&gt;&lt;Filter ModuleMask="Bach.Model" ModuleVersionMask="*" ClassMask="Bach.Model.Contract" FunctionMask="*" IsEnabled="True" /&gt;&lt;Filter ModuleMask="Bach.Model" ModuleVersionMask="*" ClassMask="Bach.Model.Internal.Contract" FunctionMask="*" IsEnabled="True" /&gt;&lt;/ExcludeFilters&gt;&lt;/data&gt;</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Hirojoshi/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Iwato/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Kumoi/@EntryIndexedValue">True</s:Boolean>

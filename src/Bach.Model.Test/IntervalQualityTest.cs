@@ -282,6 +282,31 @@ namespace Bach.Model.Test
       Assert.NotEqual(0, x.CompareTo(null)); // Never equal to null
     }
 
+    [Fact]
+    public void LogicalOperatorsTest()
+    {
+      Assert.True(IntervalQuality.Diminished == (IntervalQuality)0);
+      Assert.True(IntervalQuality.Perfect != IntervalQuality.Major);
+
+      Assert.True(IntervalQuality.Diminished < IntervalQuality.Minor);
+      Assert.True(IntervalQuality.Diminished <= IntervalQuality.Minor);
+      Assert.True(IntervalQuality.Minor < IntervalQuality.Perfect);
+      Assert.True(IntervalQuality.Minor <= IntervalQuality.Perfect);
+      Assert.True(IntervalQuality.Perfect < IntervalQuality.Major);
+      Assert.True(IntervalQuality.Perfect <= IntervalQuality.Major);
+      Assert.True(IntervalQuality.Major < IntervalQuality.Augmented);
+      Assert.True(IntervalQuality.Major <= IntervalQuality.Augmented);
+
+      Assert.True(IntervalQuality.Augmented > IntervalQuality.Major);
+      Assert.True(IntervalQuality.Augmented >= IntervalQuality.Major);
+      Assert.True(IntervalQuality.Major > IntervalQuality.Perfect);
+      Assert.True(IntervalQuality.Major >= IntervalQuality.Perfect);
+      Assert.True(IntervalQuality.Perfect > IntervalQuality.Minor);
+      Assert.True(IntervalQuality.Perfect >= IntervalQuality.Minor);
+      Assert.True(IntervalQuality.Minor > IntervalQuality.Diminished);
+      Assert.True(IntervalQuality.Minor >= IntervalQuality.Diminished);
+    }
+
     #endregion
   }
 }

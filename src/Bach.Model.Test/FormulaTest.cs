@@ -25,6 +25,7 @@
 
 namespace Bach.Model.Test
 {
+  using System.Collections.Generic;
   using Xunit;
 
   public class FormulaTest
@@ -32,19 +33,18 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorTest()
     {
-      var actual = new Formula(
-        "Major",
-        "Major",
-        new[]
-        {
-          Interval.Unison,
-          Interval.MajorSecond,
-          Interval.MajorThird,
-          Interval.Fourth,
-          Interval.Fifth,
-          Interval.MajorSixth,
-          Interval.MajorSeventh
-        });
+      var actual = new Formula("Major",
+                               "Major",
+                               new[]
+                               {
+                                 Interval.Unison,
+                                 Interval.MajorSecond,
+                                 Interval.MajorThird,
+                                 Interval.Fourth,
+                                 Interval.Fifth,
+                                 Interval.MajorSixth,
+                                 Interval.MajorSeventh
+                               });
       Assert.Equal("Major", actual.Key);
       Assert.Equal("Major", actual.Name);
       Assert.Equal(7, actual.IntervalCount);
@@ -122,6 +122,24 @@ namespace Bach.Model.Test
       var expected = new Formula("Key", "Test", "R,2,3");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+    }
+
+    [Fact]
+    public void GenerateTest()
+    {
+      var formula = new Formula("Key", "Test", "R,2,3");
+      using( var pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
+      {
+        var count = 0;
+        while( pitches.MoveNext() )
+        {
+          Assert.True(pitches.Current <= Pitch.MaxValue);
+          ++count;
+        }
+
+        // 3 notes per octave, 10 octaves total.
+        Assert.Equal(30, count);
+      }
     }
   }
 }

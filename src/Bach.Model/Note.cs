@@ -465,38 +465,48 @@ namespace Bach.Model
     internal static Note LookupNote(int enharmonicIndex,
                                     bool favorSharps)
     {
+      return favorSharps ? LookupSharp(enharmonicIndex) : LookupFlat(enharmonicIndex);
+    }
+
+    private static Note LookupSharp(int enharmonicIndex)
+    {
+      // Starting from Natural all the way up to DoubleSharp, find the corresponding enharmonic
       int accidentalIndex = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
-      if( favorSharps )
-      {
-        // Starting from Natural all the way up to DoubleSharp, find the corresponding enharmonic
-        int max = (int)Accidental.DoubleSharp + Math.Abs((int)Accidental.DoubleFlat);
-        while( accidentalIndex <= max )
-        {
-          int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
-          if( noteIndex != -1 )
-          {
-            return s_notes[noteIndex];
-          }
+      int maxAccidentalIndex = (int)Accidental.DoubleSharp + Math.Abs((int)Accidental.DoubleFlat);
 
-          ++accidentalIndex;
-        }
-      }
-      else
+      while( accidentalIndex <= maxAccidentalIndex )
       {
-        // Starting from Natural all the way down to DoubleFlat, find the corresponding enharmonic
-        while( accidentalIndex >= 0 )
+        int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+        if( noteIndex != -1 )
         {
-          int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
-          if( noteIndex != -1 )
-          {
-            return s_notes[noteIndex];
-          }
-
-          --accidentalIndex;
+          return s_notes[noteIndex];
         }
+
+        ++accidentalIndex;
       }
 
-      throw new Exception("Must be able to find enharmonic");
+      Trace.Assert(false, "Internal error! Must always find a note");
+      return C;
+    }
+
+    private static Note LookupFlat(int enharmonicIndex)
+    {
+      // Starting from Natural all the way down to DoubleFlat, find the corresponding enharmonic
+      int accidentalIndex = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
+
+      while( accidentalIndex >= 0 )
+      {
+        int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+        if( noteIndex != -1 )
+        {
+          return s_notes[noteIndex];
+        }
+
+        --accidentalIndex;
+      }
+
+      Trace.Assert(false, "Internal error! Must always find a note");
+      return C;
     }
 
     #endregion
