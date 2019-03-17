@@ -64,19 +64,18 @@ namespace Bach.Model
     };
 
     // Midi supports C-1, but we only support C0 and above
-    private static readonly byte s_minAbsoluteValue = (byte)CalcAbsoluteValue(NoteName.C, Accidental.Natural, MinOctave);
+    private static readonly int s_minAbsoluteValue = CalcAbsoluteValue(NoteName.C, Accidental.Natural, MinOctave);
 
     // G9 is the highest pitch supported by MIDI
-    private static readonly byte s_maxAbsoluteValue = (byte)CalcAbsoluteValue(NoteName.G, Accidental.Natural, MaxOctave);
+    private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue(NoteName.G, Accidental.Natural, MaxOctave);
 
     private static readonly Pitch s_a4 = Create(NoteName.A, Accidental.Natural, 4);
 
     /// <summary>An empty pitch.</summary>
-    public static readonly Pitch Empty = new Pitch();
+    public static readonly Pitch Empty = new Pitch(Note.B, 9, 128);
 
     /// <summary>The maximum possible pitch value.</summary>
-    //TODO: Why have this if G9 is the maximum supported pitch?
-    public static readonly Pitch MaxValue = new Pitch(Note.B, MaxOctave, 128);
+    public static readonly Pitch MaxValue = Create(Model.Note.G, MaxOctave);
 
     #endregion
 
@@ -84,7 +83,7 @@ namespace Bach.Model
 
     private readonly byte _absoluteValue;
     private readonly byte _octave;
-    private readonly Note _note;
+    private readonly ushort _note;
 
     #endregion
 
@@ -97,14 +96,15 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
       _absoluteValue = (byte)absoluteValue;
-      CalcNote(_absoluteValue, out _note, out _octave, accidentalMode);
+      CalcNote(_absoluteValue, out Note note, out _octave, accidentalMode);
+      _note = (ushort)note;
     }
 
     private Pitch(Note note,
                   int octave,
                   int absoluteValue)
     {
-      _note = note;
+      _note = (ushort)note;
       _octave = (byte)octave;
       _absoluteValue = (byte)absoluteValue;
     }
@@ -119,14 +119,14 @@ namespace Bach.Model
     {
       get
       {
-        int abs = _absoluteValue + (int)_note.Accidental;
+        int abs = _absoluteValue + (int)Note.Accidental;
         return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
       }
     }
 
     /// <summary>Gets the pitch's note.</summary>
     /// <value>The note.</value>
-    public Note Note => _note;
+    public Note Note => (Note)_note;
 
     /// <summary>Gets the pitch's octave.</summary>
     /// <value>The octave.</value>
@@ -299,7 +299,7 @@ namespace Bach.Model
     public override int GetHashCode() => _absoluteValue;
 
     /// <inheritdoc />
-    public override string ToString() => $"{_note}{Octave}";
+    public override string ToString() => $"{Note}{Octave}";
 
     #endregion
 
