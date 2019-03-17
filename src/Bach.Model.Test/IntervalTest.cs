@@ -271,5 +271,24 @@ namespace Bach.Model.Test
       Assert.True(Interval.Fourth >= Interval.Unison);
       Assert.True(Interval.MinorThird < Interval.MajorThird);
     }
+
+    [Fact]
+    public void GetInversionTest()
+    {
+      Assert.Equal(Interval.Octave, Interval.Unison.GetInversion());
+      Assert.Equal(Interval.MajorSeventh, Interval.MinorSecond.GetInversion());
+      Assert.Equal(Interval.MinorSeventh, Interval.MajorSecond.GetInversion());
+      Assert.Equal(Interval.MajorSixth, Interval.MinorThird.GetInversion());
+      Assert.Equal(Interval.MinorSixth, Interval.MajorThird.GetInversion());
+      Assert.Equal(Interval.Fifth, Interval.Fourth.GetInversion());
+      Assert.Equal(Interval.DiminishedFifth, Interval.AugmentedFourth.GetInversion());
+      Assert.Equal(Interval.Fourth, Interval.Fifth.GetInversion());
+      Assert.Equal(Interval.DiminishedFourth, Interval.AugmentedFifth.GetInversion());
+      Assert.Equal(Interval.MajorThird, Interval.MinorSixth.GetInversion());
+      Assert.Equal(Interval.MinorThird, Interval.MajorSixth.GetInversion());
+      Assert.Equal(Interval.MajorSecond, Interval.MinorSeventh.GetInversion());
+      Assert.Equal(Interval.MinorSecond, Interval.MajorSeventh.GetInversion());
+      Assert.Equal(Interval.Unison, Interval.Octave.GetInversion());
+    }
   }
 }
