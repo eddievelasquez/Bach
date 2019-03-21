@@ -190,10 +190,6 @@ namespace Bach.Model
     /// <summary>B note.</summary>
     public static Note B => s_notes[33];
 
-    /// <summary>Gets or sets the accidental mode.</summary>
-    /// <value>The accidental mode.</value>
-    public static AccidentalMode AccidentalMode { get; set; } = AccidentalMode.FavorSharps;
-
     /// <summary>Gets the name of the note.</summary>
     /// <value>The name of the note.</value>
     public NoteName NoteName => (NoteName)_noteName;
@@ -365,13 +361,11 @@ namespace Bach.Model
 
     /// <summary>Adds a number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
-    /// <param name="mode">(Optional) The accidental mode.</param>
     /// <returns>A Note.</returns>
-    public Note Add(int semitoneCount,
-                    AccidentalMode mode = AccidentalMode.FavorSharps)
+    public Note Add(int semitoneCount)
     {
       int enharmonicIndex = s_enharmonics.WrapIndex(0, _enharmonicIndex + semitoneCount);
-      return LookupNote(enharmonicIndex, mode == AccidentalMode.FavorSharps);
+      return LookupNote(enharmonicIndex);
     }
 
     /// <summary>Adds an interval to the current instance.</summary>
@@ -386,13 +380,11 @@ namespace Bach.Model
 
     /// <summary>Subtracts a number of semitones from the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
-    /// <param name="mode">(Optional) The accidental mode.</param>
     /// <returns>A Note.</returns>
-    public Note Subtract(int semitoneCount,
-                         AccidentalMode mode = AccidentalMode.FavorSharps)
+    public Note Subtract(int semitoneCount)
     {
       int enharmonicIndex = s_enharmonics.WrapIndex(0, _enharmonicIndex - semitoneCount);
-      return LookupNote(enharmonicIndex, mode == AccidentalMode.FavorSharps);
+      return LookupNote(enharmonicIndex);
     }
 
     /// <summary>Determines the interval between two notes.</summary>
@@ -462,13 +454,7 @@ namespace Bach.Model
 
     // Finds a note that corresponds to the provided enharmonic index,
     // attempting to match the desired accidental mode
-    internal static Note LookupNote(int enharmonicIndex,
-                                    bool favorSharps)
-    {
-      return favorSharps ? LookupSharp(enharmonicIndex) : LookupFlat(enharmonicIndex);
-    }
-
-    private static Note LookupSharp(int enharmonicIndex)
+    internal static Note LookupNote(int enharmonicIndex)
     {
       // Starting from Natural all the way up to DoubleSharp, find the corresponding enharmonic
       int accidentalIndex = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
@@ -483,26 +469,6 @@ namespace Bach.Model
         }
 
         ++accidentalIndex;
-      }
-
-      Trace.Assert(false, "Internal error! Must always find a note");
-      return C;
-    }
-
-    private static Note LookupFlat(int enharmonicIndex)
-    {
-      // Starting from Natural all the way down to DoubleFlat, find the corresponding enharmonic
-      int accidentalIndex = (int)Accidental.Natural + Math.Abs((int)Accidental.DoubleFlat);
-
-      while( accidentalIndex >= 0 )
-      {
-        int noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
-        if( noteIndex != -1 )
-        {
-          return s_notes[noteIndex];
-        }
-
-        --accidentalIndex;
       }
 
       Trace.Assert(false, "Internal error! Must always find a note");
@@ -577,12 +543,12 @@ namespace Bach.Model
     /// <returns>The result of the operation.</returns>
     public static Note operator+(Note note,
                                  int semitoneCount)
-      => note.Add(semitoneCount, AccidentalMode);
+      => note.Add(semitoneCount);
 
     /// <summary>Increment operator.</summary>
     /// <param name="note">The note.</param>
     /// <returns>The result of the operation.</returns>
-    public static Note operator++(Note note) => note.Add(1, AccidentalMode);
+    public static Note operator++(Note note) => note.Add(1);
 
     /// <summary>Subtraction operator.</summary>
     /// <param name="note">The first value.</param>
@@ -590,12 +556,12 @@ namespace Bach.Model
     /// <returns>The result of the operation.</returns>
     public static Note operator-(Note note,
                                  int semitoneCount)
-      => note.Subtract(semitoneCount, AccidentalMode);
+      => note.Subtract(semitoneCount);
 
     /// <summary>Decrement operator.</summary>
     /// <param name="note">The note.</param>
     /// <returns>The result of the operation.</returns>
-    public static Note operator--(Note note) => note.Subtract(1, AccidentalMode);
+    public static Note operator--(Note note) => note.Subtract(1);
 
     /// <summary>Addition operator.</summary>
     /// <param name="note">The note.</param>

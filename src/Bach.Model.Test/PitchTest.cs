@@ -300,38 +300,6 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void op_AdditionIntAccidentalModeTest()
-    {
-      Pitch c2 = Pitch.Create(NoteName.C, Accidental.Natural, 2);
-
-      Pitch.AccidentalMode = AccidentalMode.FavorSharps;
-
-      Pitch actual = c2 + 1;
-      Assert.Equal("C#2", actual.ToString());
-
-      Pitch.AccidentalMode = AccidentalMode.FavorFlats;
-
-      actual = c2 + 1;
-      Assert.Equal("Db2", actual.ToString());
-    }
-
-    [Fact]
-    public void op_SubtractionIntAccidentalModeTest()
-    {
-      Pitch c2 = Pitch.Create(NoteName.C, Accidental.Natural, 2);
-
-      Pitch.AccidentalMode = AccidentalMode.FavorSharps;
-
-      Pitch actual = c2 - 2;
-      Assert.Equal("A#1", actual.ToString());
-
-      Pitch.AccidentalMode = AccidentalMode.FavorFlats;
-
-      actual = c2 - 2;
-      Assert.Equal("Bb1", actual.ToString());
-    }
-
-    [Fact]
     public void TryParseTest()
     {
       Assert.True(Pitch.TryParse("C4", out Pitch actual));

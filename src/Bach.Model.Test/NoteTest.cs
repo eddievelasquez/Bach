@@ -245,15 +245,6 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void AccidentalModeTest()
-    {
-      Note.AccidentalMode = AccidentalMode.FavorFlats;
-      Assert.Equal(AccidentalMode.FavorFlats, Note.AccidentalMode);
-      Note.AccidentalMode = AccidentalMode.FavorSharps;
-      Assert.Equal(AccidentalMode.FavorSharps, Note.AccidentalMode);
-    }
-
-    [Fact]
     public void LogicalOperatorsTest()
     {
       Assert.True(Note.C == Note.Create(NoteName.B, Accidental.Sharp));
@@ -467,8 +458,8 @@ namespace Bach.Model.Test
                                     Note expectedSharp,
                                     Note? expectedFlat = null)
     {
-      Assert.Equal(expectedSharp, note.Add(interval, AccidentalMode.FavorSharps));
-      Assert.Equal(expectedFlat ?? expectedSharp, note.Add(interval, AccidentalMode.FavorFlats));
+      Assert.Equal(expectedSharp, note.Add(interval));
+      Assert.Equal(expectedFlat ?? expectedSharp, note.Add(interval));
     }
 
     private static void SubtractTestImpl(Note note,
@@ -476,8 +467,8 @@ namespace Bach.Model.Test
                                          Note expectedSharp,
                                          Note? expectedFlat = null)
     {
-      Assert.Equal(expectedSharp, note.Subtract(interval, AccidentalMode.FavorSharps));
-      Assert.Equal(expectedFlat ?? expectedSharp, note.Subtract(interval, AccidentalMode.FavorFlats));
+      Assert.Equal(expectedSharp, note.Subtract(interval));
+      Assert.Equal(expectedFlat ?? expectedSharp, note.Subtract(interval));
     }
   }
 }

@@ -92,14 +92,13 @@ namespace Bach.Model
 
     #region Constructors
 
-    private Pitch(int absoluteValue,
-                  AccidentalMode accidentalMode)
+    private Pitch(int absoluteValue)
     {
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue >= 0);
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
       _absoluteValue = (byte)absoluteValue;
-      CalcNote(_absoluteValue, out Note note, out _octave, accidentalMode);
+      CalcNote(_absoluteValue, out Note note, out _octave);
       _note = (ushort)note;
     }
 
@@ -151,12 +150,6 @@ namespace Bach.Model
     /// <value>The MIDI value.</value>
     public int Midi => _absoluteValue + 12;
 
-    public static AccidentalMode AccidentalMode
-    {
-      get => Note.AccidentalMode;
-      set => Note.AccidentalMode = value;
-    }
-
     #endregion
 
     #region IComparable<Pitch> Members
@@ -189,12 +182,12 @@ namespace Bach.Model
       int abs = CalcAbsoluteValue(note.NoteName, note.Accidental, octave);
       if( abs < s_minAbsoluteValue )
       {
-        throw new ArgumentOutOfRangeException($"Must be equal to or greater than {new Pitch(s_minAbsoluteValue, AccidentalMode)}");
+        throw new ArgumentOutOfRangeException($"Must be equal to or greater than {new Pitch(s_minAbsoluteValue)}");
       }
 
       if( abs > s_maxAbsoluteValue )
       {
-        throw new ArgumentOutOfRangeException($"Must be equal to or less than {new Pitch(s_maxAbsoluteValue, AccidentalMode)}");
+        throw new ArgumentOutOfRangeException($"Must be equal to or less than {new Pitch(s_maxAbsoluteValue)}");
       }
 
       return new Pitch(note, octave, abs);
@@ -226,18 +219,16 @@ namespace Bach.Model
         throw new ArgumentOutOfRangeException(nameof(midi), "midi is out of range");
       }
 
-      var note = new Pitch(absoluteValue, AccidentalMode);
+      var note = new Pitch(absoluteValue);
       return note;
     }
 
     /// <summary>Adds number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
-    /// <param name="accidentalMode">(Optional) The accidental mode.</param>
     /// <returns>A Pitch.</returns>
-    public Pitch Add(int semitoneCount,
-                     AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+    public Pitch Add(int semitoneCount)
     {
-      var result = new Pitch(_absoluteValue + semitoneCount, accidentalMode);
+      var result = new Pitch(_absoluteValue + semitoneCount);
       return result;
     }
 
@@ -249,7 +240,7 @@ namespace Bach.Model
                             Interval interval)
     {
       var absoluteValue = (byte)( pitch._absoluteValue + interval.SemitoneCount );
-      CalcNote(absoluteValue, out Note _, out byte octave, AccidentalMode.FavorSharps);
+      CalcNote(absoluteValue, out Note _, out byte octave);
 
       Note newNote = pitch.Note + interval;
       var result = new Pitch(newNote, octave, absoluteValue);
@@ -258,12 +249,10 @@ namespace Bach.Model
 
     /// <summary>Subtracts a number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
-    /// <param name="accidentalMode">(Optional) The accidental mode.</param>
     /// <returns>A Pitch.</returns>
-    public Pitch Subtract(int semitoneCount,
-                          AccidentalMode accidentalMode = AccidentalMode.FavorSharps)
+    public Pitch Subtract(int semitoneCount)
     {
-      var result = new Pitch(_absoluteValue - semitoneCount, accidentalMode);
+      var result = new Pitch(_absoluteValue - semitoneCount);
       return result;
     }
 
@@ -318,11 +307,10 @@ namespace Bach.Model
 
     private static void CalcNote(byte absoluteValue,
                                  out Note note,
-                                 out byte octave,
-                                 AccidentalMode accidentalMode)
+                                 out byte octave)
     {
       octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
-      note = Note.LookupNote(remainder, accidentalMode == AccidentalMode.FavorSharps);
+      note = Note.LookupNote(remainder);
     }
 
     private static int SemitonesBetween(NoteName start,
@@ -397,7 +385,7 @@ namespace Bach.Model
     /// <returns>The result of the operation.</returns>
     public static Pitch operator+(Pitch pitch,
                                   int semitoneCount)
-      => pitch.Add(semitoneCount, AccidentalMode);
+      => pitch.Add(semitoneCount);
 
     /// <summary>Addition operator.</summary>
     /// <param name="pitch">The first value.</param>
@@ -410,7 +398,7 @@ namespace Bach.Model
     /// <summary>Increment operator.</summary>
     /// <param name="pitch">The pitch.</param>
     /// <returns>The result of the operation.</returns>
-    public static Pitch operator++(Pitch pitch) => pitch.Add(1, AccidentalMode);
+    public static Pitch operator++(Pitch pitch) => pitch.Add(1);
 
     /// <summary>Subtraction operator.</summary>
     /// <param name="pitch">The first value.</param>
@@ -418,12 +406,12 @@ namespace Bach.Model
     /// <returns>The result of the operation.</returns>
     public static Pitch operator-(Pitch pitch,
                                   int semitoneCount)
-      => pitch.Subtract(semitoneCount, AccidentalMode);
+      => pitch.Subtract(semitoneCount);
 
     /// <summary>Decrement operator.</summary>
     /// <param name="pitch">The pitch.</param>
     /// <returns>The result of the operation.</returns>
-    public static Pitch operator--(Pitch pitch) => pitch.Subtract(1, AccidentalMode);
+    public static Pitch operator--(Pitch pitch) => pitch.Subtract(1);
 
     /// <summary>Subtraction operator.</summary>
     /// <param name="left">The first value.</param>
