@@ -1,7 +1,6 @@
-//
 // Module Name: StringedInstrumentTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -32,6 +31,8 @@ namespace Bach.Model.Test.Instruments
 
   public class StringedInstrumentTest
   {
+    #region Public Methods
+
     [Fact]
     public void CreateWithDefinitionTest()
     {
@@ -41,7 +42,7 @@ namespace Bach.Model.Test.Instruments
       StringedInstrument instrument = StringedInstrument.Create(definition, 22, expectedTuning);
       Assert.NotNull(instrument);
       Assert.Equal(definition, instrument.Definition);
-      Assert.Equal(22, instrument.FretCount);
+      Assert.Equal(22, instrument.PositionCount);
       Assert.Equal(expectedTuning, instrument.Tuning);
     }
 
@@ -54,7 +55,7 @@ namespace Bach.Model.Test.Instruments
       StringedInstrument instrument = StringedInstrument.Create(definition, 22);
       Assert.NotNull(instrument);
       Assert.Equal(definition, instrument.Definition);
-      Assert.Equal(22, instrument.FretCount);
+      Assert.Equal(22, instrument.PositionCount);
       Assert.Equal(expectedTuning, instrument.Tuning);
     }
 
@@ -84,15 +85,13 @@ namespace Bach.Model.Test.Instruments
     [Fact]
     public void TestFactoryNullDefinition()
     {
-      Assert.Throws<ArgumentNullException>(
-        () => { StringedInstrument.Create((StringedInstrumentDefinition)null, 22); });
+      Assert.Throws<ArgumentNullException>(() => { StringedInstrument.Create((StringedInstrumentDefinition)null, 22); });
     }
 
     [Fact]
-    public void TestFactoryInvalidFretCount()
+    public void TestFactoryInvalidPositionCount()
     {
-      Assert.Throws<ArgumentOutOfRangeException>(
-        () => { StringedInstrument.Create(Registry.StringedInstrumentDefinitions["bass"], 0); });
+      Assert.Throws<ArgumentOutOfRangeException>(() => { StringedInstrument.Create(Registry.StringedInstrumentDefinitions["bass"], 0); });
     }
 
     [Fact]
@@ -104,7 +103,7 @@ namespace Bach.Model.Test.Instruments
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22, "standard");
       Assert.NotNull(instrument);
       Assert.Equal(definition, instrument.Definition);
-      Assert.Equal(22, instrument.FretCount);
+      Assert.Equal(22, instrument.PositionCount);
       Assert.Equal(expectedTuning, instrument.Tuning);
     }
 
@@ -117,7 +116,7 @@ namespace Bach.Model.Test.Instruments
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
       Assert.NotNull(instrument);
       Assert.Equal(definition, instrument.Definition);
-      Assert.Equal(22, instrument.FretCount);
+      Assert.Equal(22, instrument.PositionCount);
       Assert.Equal(expectedTuning, instrument.Tuning);
     }
 
@@ -128,7 +127,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void CreateWithNamesThrowsOnInvalidFretCountTest()
+    public void CreateWithNamesThrowsOnInvalidPositionCountTest()
     {
       Assert.Throws<ArgumentOutOfRangeException>(() => StringedInstrument.Create("guitar", 0));
     }
@@ -228,7 +227,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderMinorPentatonicStartOpenFourFretSpanTest()
+    public void RenderMinorPentatonicStartOpenFourPositionSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -240,7 +239,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderMinorPentatonicStartFifthFretFourFretSpanTest()
+    public void RenderMinorPentatonicStartFifthPositionFourPositionSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -252,7 +251,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderMelodicMinorStartOpenFourFretSpanTest()
+    public void RenderMelodicMinorStartOpenFourPositionSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -264,7 +263,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderMelodicMinorStartFifthFretFourFretSpanTest()
+    public void RenderMelodicMinorStartFifthPositionFourPositionSpanTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -276,7 +275,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderMustSkipSeveralFretsForStartingNoteTest()
+    public void RenderMustSkipSeveralPositionsForStartingNoteTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -285,7 +284,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorChordFret0Test()
+    public void RenderCMajorChordPosition0Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -294,7 +293,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorChordFret3Test()
+    public void RenderCMajorChordPosition3Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -303,7 +302,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorChordFret5Test()
+    public void RenderCMajorChordPosition5Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -312,7 +311,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorChordFret8Test()
+    public void RenderCMajorChordPosition8Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -321,7 +320,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorChordFret12Test()
+    public void RenderCMajorChordPosition12Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -330,7 +329,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderDMajorChordFret0Test()
+    public void RenderDMajorChordPosition0Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -339,7 +338,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderDMajorChordFret5Test()
+    public void RenderDMajorChordPosition5Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -348,7 +347,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderDMajorChordFret7Test()
+    public void RenderDMajorChordPosition7Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -357,7 +356,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderDMajorChordFret12Test()
+    public void RenderDMajorChordPosition12Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -366,7 +365,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorEChordFret0Test()
+    public void RenderCMajorEChordPosition0Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -375,7 +374,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorEChordFret3Test()
+    public void RenderCMajorEChordPosition3Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -384,7 +383,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorEChordFret5Test()
+    public void RenderCMajorEChordPosition5Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -393,7 +392,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorEChordFret8Test()
+    public void RenderCMajorEChordPosition8Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -402,7 +401,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void RenderCMajorEChordFret12Test()
+    public void RenderCMajorEChordPosition12Test()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
@@ -410,26 +409,28 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal("6x 515 414 312 213 112", RenderChord(instrument, chord, 12, 4));
     }
 
+    #endregion
+
+    #region  Implementation
+
     private static string RenderScale(StringedInstrument instrument,
                                       Scale scale,
-                                      int startFret,
-                                      int fretSpan)
+                                      int startPosition,
+                                      int positionSpan)
     {
-      string result = string.Join(
-        " ",
-        Array.ConvertAll(instrument.Render(scale, startFret, fretSpan).ToArray(), f => f.ToString()));
+      string result = string.Join(" ", Array.ConvertAll(instrument.Render(scale, startPosition, positionSpan).ToArray(), f => f.ToString()));
       return result;
     }
 
     private static string RenderChord(StringedInstrument instrument,
                                       Chord chord,
-                                      int startFret,
-                                      int fretSpan)
+                                      int startPosition,
+                                      int positionSpan)
     {
-      string result = string.Join(
-        " ",
-        Array.ConvertAll(instrument.Render(chord, startFret, fretSpan).ToArray(), f => f.ToString()));
+      string result = string.Join(" ", Array.ConvertAll(instrument.Render(chord, startPosition, positionSpan).ToArray(), f => f.ToString()));
       return result;
     }
+
+    #endregion
   }
 }

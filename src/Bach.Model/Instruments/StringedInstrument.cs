@@ -1,20 +1,20 @@
 ﻿// Module Name: StringedInstrument.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -36,14 +36,14 @@ namespace Bach.Model.Instruments
 
     private StringedInstrument(StringedInstrumentDefinition definition,
                                Tuning tuning,
-                               int fretCount)
+                               int positionCount)
       : base(definition)
     {
       Contract.Requires<ArgumentNullException>(tuning != null);
-      Contract.Requires<ArgumentOutOfRangeException>(fretCount > 0);
+      Contract.Requires<ArgumentOutOfRangeException>(positionCount > 0);
 
       Tuning = tuning;
-      FretCount = fretCount;
+      PositionCount = positionCount;
     }
 
     #endregion
@@ -52,7 +52,7 @@ namespace Bach.Model.Instruments
 
     public new StringedInstrumentDefinition Definition => (StringedInstrumentDefinition)base.Definition;
 
-    public int FretCount { get; }
+    public int PositionCount { get; }
 
     public Tuning Tuning { get; }
 
@@ -72,7 +72,7 @@ namespace Bach.Model.Instruments
         return true;
       }
 
-      return Equals(Tuning, other.Tuning) && FretCount == other.FretCount && base.Equals(other);
+      return Equals(Tuning, other.Tuning) && PositionCount == other.PositionCount && base.Equals(other);
     }
 
     #endregion
@@ -80,16 +80,16 @@ namespace Bach.Model.Instruments
     #region Public Methods
 
     public static StringedInstrument Create(StringedInstrumentDefinition definition,
-                                            int fretCount,
+                                            int positionCount,
                                             Tuning tuning = null)
     {
       Contract.Requires<ArgumentNullException>(definition != null);
 
-      return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard, fretCount);
+      return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard, positionCount);
     }
 
     public static StringedInstrument Create(string instrumentKey,
-                                            int fretCount,
+                                            int positionCount,
                                             string tuningName = null)
     {
       StringedInstrumentDefinition definition = Registry.StringedInstrumentDefinitions[instrumentKey];
@@ -98,20 +98,20 @@ namespace Bach.Model.Instruments
         tuningName = "Standard";
       }
 
-      return new StringedInstrument(definition, definition.Tunings[tuningName], fretCount);
+      return new StringedInstrument(definition, definition.Tunings[tuningName], positionCount);
     }
 
     public IEnumerable<Fingering> Render(Chord chord,
-                                         int startFret,
-                                         int fretSpan = 4)
+                                         int startPosition,
+                                         int positionSpan = 4)
     {
       Contract.Requires<ArgumentNullException>(chord != null);
-      Contract.Requires<ArgumentOutOfRangeException>(fretSpan > 1 && startFret + fretSpan <= FretCount);
+      Contract.Requires<ArgumentOutOfRangeException>(positionSpan > 1 && startPosition + positionSpan <= PositionCount);
 
       // Always start at the lowest string
       int startString = Definition.StringCount;
 
-      Pitch startPitch = Tuning[startString] + startFret;
+      Pitch startPitch = Tuning[startString] + startPosition;
       int octave = startPitch.Octave;
       if( startPitch.Note > chord.Bass )
       {
@@ -124,12 +124,12 @@ namespace Bach.Model.Instruments
       // Go through all the strings
       for( int currentString = startString; currentString >= 1; --currentString )
       {
-        Fingering fingering = GetChordFingering(notes, currentString, startFret, fretSpan);
+        Fingering fingering = GetChordFingering(notes, currentString, startPosition, positionSpan);
         yield return fingering;
 
         // Only go to the next pitch in the chord if a pitch
         // is to be played in the current string
-        if( fingering.Fret >= 0 )
+        if( fingering.Position >= 0 )
         {
           notes.MoveNext();
         }
@@ -137,24 +137,24 @@ namespace Bach.Model.Instruments
     }
 
     public IEnumerable<Fingering> Render(Scale scale,
-                                         int startFret,
-                                         int fretSpan = 4)
+                                         int startPosition,
+                                         int positionSpan = 4)
     {
       Contract.Requires<ArgumentNullException>(scale != null);
-      Contract.Requires<ArgumentOutOfRangeException>(fretSpan > 1 && startFret + fretSpan <= FretCount);
+      Contract.Requires<ArgumentOutOfRangeException>(positionSpan > 1 && startPosition + positionSpan <= PositionCount);
 
       // Always start at the lowest string
       int startString = Definition.StringCount;
 
-      // Find scale pitch closest to start string and start fret
-      Pitch startPitch = Tuning[startString] + startFret;
+      // Find scale pitch closest to start string and start position
+      Pitch startPitch = Tuning[startString] + startPosition;
       while( scale.IndexOf(startPitch) == -1 )
       {
         ++startPitch;
       }
 
       // Start rendering the scale at the pitch closest to the
-      // start string and fret
+      // start string and position
       IEnumerator<Pitch> scaleEnumerator = scale.Render(startPitch).GetEnumerator();
 
       try
@@ -164,12 +164,12 @@ namespace Bach.Model.Instruments
         // Go through all the strings
         for( int currentString = startString; currentString >= 1; --currentString )
         {
-          Pitch low = GetPitchAt(currentString, startFret);
+          Pitch low = GetPitchAt(currentString, startPosition);
 
           // The maximum value that we will use for this string is the minimum
-          // between the fret span on this string and the value of the pitch
+          // between the position span on this string and the value of the pitch
           // before the start of the next string
-          Pitch high = Pitch.Min(low + fretSpan, GetPitchAt(currentString - 1, startFret) - 1);
+          Pitch high = Pitch.Min(low + positionSpan, GetPitchAt(currentString - 1, startPosition) - 1);
           while( true )
           {
             Pitch current = scaleEnumerator.Current;
@@ -178,8 +178,8 @@ namespace Bach.Model.Instruments
               break;
             }
 
-            int fret = ( current - low ) + startFret;
-            Fingering fingering = Fingering.Create(this, currentString, fret);
+            int position = ( current - low ) + startPosition;
+            Fingering fingering = Fingering.Create(this, currentString, position);
             yield return fingering;
 
             scaleEnumerator.MoveNext(); // Will never return false.
@@ -216,7 +216,7 @@ namespace Bach.Model.Instruments
       var hash = 17;
       hash = ( hash * 23 ) + base.GetHashCode();
       hash = ( hash * 23 ) + Tuning.GetHashCode();
-      hash = ( hash * 23 ) + FretCount.GetHashCode();
+      hash = ( hash * 23 ) + PositionCount.GetHashCode();
       return hash;
     }
 
@@ -226,11 +226,11 @@ namespace Bach.Model.Instruments
 
     private Fingering GetChordFingering(IEnumerator<Pitch> notes,
                                         int @string,
-                                        int startFret,
-                                        int fretSpan)
+                                        int startPosition,
+                                        int positionSpan)
     {
-      Pitch low = GetPitchAt(@string, startFret);
-      Pitch high = low + fretSpan;
+      Pitch low = GetPitchAt(@string, startPosition);
+      Pitch high = low + positionSpan;
       Pitch current = notes.Current;
 
       while( current < low )
@@ -242,8 +242,8 @@ namespace Bach.Model.Instruments
       Fingering fingering;
       if( current >= low && current <= high )
       {
-        int fret = ( current - low ) + startFret;
-        fingering = Fingering.Create(this, @string, fret);
+        int position = ( current - low ) + startPosition;
+        fingering = Fingering.Create(this, @string, position);
       }
       else
       {
@@ -254,14 +254,14 @@ namespace Bach.Model.Instruments
     }
 
     private Pitch GetPitchAt(int @string,
-                             int fret)
+                             int position)
     {
       if( @string < 1 || @string > Definition.StringCount )
       {
         return Pitch.MaxValue;
       }
 
-      return Tuning[@string] + fret;
+      return Tuning[@string] + position;
     }
 
     #endregion

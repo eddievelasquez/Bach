@@ -1,7 +1,6 @@
-﻿//
-// Module Name: FingeringTest.cs
+﻿// Module Name: FingeringTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -31,13 +30,15 @@ namespace Bach.Model.Test.Instruments
 
   public class FingeringTest
   {
+    #region Public Methods
+
     [Fact]
     public void CreateTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
       Fingering actual = Fingering.Create(instrument, 6, 5);
       Assert.Equal(6, actual.String);
-      Assert.Equal(5, actual.Fret);
+      Assert.Equal(5, actual.Position);
       Assert.Equal(Pitch.Parse("A2"), actual.Pitch);
     }
 
@@ -50,7 +51,7 @@ namespace Bach.Model.Test.Instruments
     }
 
     [Fact]
-    public void CreateThrowsWithOutOfRangeFretNumberTest()
+    public void CreateThrowsWithOutOfRangePositionNumberTest()
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
       Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 6, -1));
@@ -146,5 +147,7 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal("65", Fingering.Create(instrument, 6, 5).ToString());
       Assert.Equal("612", Fingering.Create(instrument, 6, 12).ToString());
     }
+
+    #endregion
   }
 }
