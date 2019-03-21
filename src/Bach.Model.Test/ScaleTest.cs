@@ -207,6 +207,58 @@ namespace Bach.Model.Test
     }
 
     [Fact]
+    public void RenderUsesChoosesAppropriateAccidentalForMajorScaleTest()
+    {
+      TestScale("C,D,E,F,G,A,B", Note.C, "Major");
+      TestScale("C#,D#,E#,F#,G#,A#,B#", Note.CSharp, "Major");
+      TestScale("Db,Eb,F,Gb,Ab,Bb,C", Note.DFlat, "Major");
+      TestScale("D,E,F#,G,A,B,C#", Note.D, "Major");
+      TestScale("D#,E#,F##,G#,A#,B#,C##", Note.DSharp, "Major");
+      TestScale("Eb,F,G,Ab,Bb,C,D", Note.EFlat, "Major");
+      TestScale("E,F#,G#,A,B,C#,D#", Note.E, "Major");
+      TestScale("E#,F##,G##,A#,B#,C##,D##", Note.Parse("E#"), "Major");
+      TestScale("Fb,Gb,Ab,Bbb,Cb,Db,Eb", Note.Parse("Fb"), "Major");
+      TestScale("F,G,A,Bb,C,D,E", Note.F, "Major");
+      TestScale("F#,G#,A#,B,C#,D#,E#", Note.FSharp, "Major");
+      TestScale("Gb,Ab,Bb,Cb,Db,Eb,F", Note.GFlat, "Major");
+      TestScale("G,A,B,C,D,E,F#", Note.G, "Major");
+      TestScale("G#,A#,B#,C#,D#,E#,F##", Note.GSharp, "Major");
+      TestScale("Ab,Bb,C,Db,Eb,F,G", Note.AFlat, "Major");
+      TestScale("A,B,C#,D,E,F#,G#", Note.A, "Major");
+      TestScale("A#,B#,C##,D#,E#,F##,G##", Note.ASharp, "Major");
+      TestScale("Bb,C,D,Eb,F,G,A", Note.BFlat, "Major");
+      TestScale("B,C#,D#,E,F#,G#,A#", Note.B, "Major");
+      TestScale("B#,C##,D##,E#,F##,G##,A##", Note.Parse("B#"), "Major");
+      TestScale("Cb,Db,Eb,Fb,Gb,Ab,Bb", Note.Parse("Cb"), "Major");
+    }
+
+    [Fact]
+    public void RenderUsesChoosesAppropriateAccidentalForNaturalMinorScaleTest()
+    {
+      TestScale("C,D,Eb,F,G,Ab,Bb", Note.C, "NaturalMinor");
+      TestScale("C#,D#,E,F#,G#,A,B", Note.CSharp, "NaturalMinor");
+      TestScale("Db,Eb,Fb,Gb,Ab,Bbb,Cb", Note.DFlat, "NaturalMinor");
+      TestScale("D,E,F,G,A,Bb,C", Note.D, "NaturalMinor");
+      TestScale("D#,E#,F#,G#,A#,B,C#", Note.DSharp, "NaturalMinor");
+      TestScale("EB,F,Gb,Ab,Bb,Cb,Db", Note.EFlat, "NaturalMinor");
+      TestScale("E,F#,G,A,B,C,D", Note.E, "NaturalMinor");
+      TestScale("E#,F##,G#,A#,B#,C#,D#", Note.Parse("E#"), "NaturalMinor");
+      TestScale("Fb,Gb,Abb,Bbb,Cb,Dbb,Ebb", Note.Parse("Fb"), "NaturalMinor");
+      TestScale("F,G,Ab,Bb,C,Db,Eb", Note.F, "NaturalMinor");
+      TestScale("F#,G#,A,B,C#,D,E", Note.FSharp, "NaturalMinor");
+      TestScale("Gb,Ab,Bbb,Cb,Db,Ebb,Fb", Note.GFlat, "NaturalMinor");
+      TestScale("G,A,Bb,C,D,Eb,F", Note.G, "NaturalMinor");
+      TestScale("G#,A#,B,C#,D#,E,F#", Note.GSharp, "NaturalMinor");
+      TestScale("Ab,Bb,Cb,Db,Eb,Fb,Gb", Note.AFlat, "NaturalMinor");
+      TestScale("A,B,C,D,E,F,G", Note.A, "NaturalMinor");
+      TestScale("A#,B#,C#,D#,E#,F#,G#", Note.ASharp, "NaturalMinor");
+      TestScale("Bb,C,Db,Eb,F,Gb,Ab", Note.BFlat, "NaturalMinor");
+      TestScale("B,C#,D,E,F#,G,A", Note.B, "NaturalMinor");
+      TestScale("B#,C##,D#,E#,F##,G#,A#", Note.Parse("B#"), "NaturalMinor");
+      TestScale("Cb,Db,Ebb,Fb,Gb,Abb,Bbb", Note.Parse("Cb"), "NaturalMinor");
+    }
+
+    [Fact]
     public void RenderReturnsEmptyIfNotNoteInScaleTest()
     {
       var scale = new Scale(Note.C, "MinorPentatonic");
