@@ -118,7 +118,7 @@ namespace Bach.Model.Instruments
 
       if( pitches.Count != _state.StringCount )
       {
-        throw new ArgumentException("Must provide exactly {_state.StringCount} pitches");
+        throw new ArgumentException($"Must provide exactly {_state.StringCount} pitches");
       }
 
       CheckBuilderReuse();
