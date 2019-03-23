@@ -44,7 +44,7 @@ namespace Bach.Model.Test
     [Fact]
     public void StringConstructorThrowsOnNullFormulaNameTest()
     {
-      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (string) null));
+      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (string)null));
     }
 
     [Fact]
@@ -66,14 +66,14 @@ namespace Bach.Model.Test
     [Fact]
     public void FormulaConstructorThrowsOnNullFormulaTest()
     {
-      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (ScaleFormula) null));
+      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (ScaleFormula)null));
     }
 
     [Fact]
     public void GetEnumeratorTest()
     {
       var scale = new Scale(Note.C, "Major");
-      IEnumerator enumerator = ((IEnumerable) scale).GetEnumerator();
+      IEnumerator enumerator = ( (IEnumerable)scale ).GetEnumerator();
       Assert.True(enumerator.MoveNext());
       Assert.Equal(Note.C, enumerator.Current);
       Assert.True(enumerator.MoveNext());
@@ -270,6 +270,41 @@ namespace Bach.Model.Test
     {
       var scale = new Scale(Note.C, "MinorPentatonic");
       Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].IntervalCount, scale.ToneCount);
+    }
+
+    [Fact]
+    public void IsTheoreticalTest()
+    {
+      Assert.False(new Scale(Note.C, "major").IsTheoretical());
+      Assert.True(new Scale(Note.DSharp, "major").IsTheoretical());
+      Assert.True(new Scale(Note.Parse("E#"), "major").IsTheoretical());
+      Assert.True(new Scale(Note.Parse("Fb"), "major").IsTheoretical());
+      Assert.True(new Scale(Note.GSharp, "major").IsTheoretical());
+      Assert.True(new Scale(Note.ASharp, "major").IsTheoretical());
+      Assert.True(new Scale(Note.Parse("B#"), "major").IsTheoretical());
+    }
+
+    [Fact]
+    public void EnharmonicScaleTest()
+    {
+      TestEnharmonic(Note.C, Note.C, "major");
+      TestEnharmonic(Note.CSharp, Note.DFlat, "major");
+      TestEnharmonic(Note.DSharp, Note.EFlat, "major");
+      TestEnharmonic(Note.Parse("E#"), Note.F, "major");
+      TestEnharmonic(Note.Parse("Fb"), Note.E, "major");
+      TestEnharmonic(Note.GSharp, Note.AFlat, "major");
+      TestEnharmonic(Note.ASharp, Note.BFlat, "major");
+      TestEnharmonic(Note.Parse("B#"), Note.C, "major");
+    }
+
+    static void TestEnharmonic(Note root,
+                               Note enharmonicRoot,
+                               string scaleKey)
+    {
+      var scale = new Scale(root, scaleKey);
+      var actual = scale.GetEnharmonicScale();
+      var expected = new Scale(enharmonicRoot, scaleKey);
+      Assert.Equal(expected, actual);
     }
 
     [Fact]
