@@ -1,7 +1,6 @@
-﻿//
-// Module Name: ModeFormulaTest.cs
+﻿// Module Name: ModeFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -29,31 +28,20 @@ namespace Bach.Model.Test
 
   public class ModeFormulaTest
   {
-    [Fact]
-    public void ChordFormulaConstructorTest()
-    {
-      const string NAME = "Name";
-      const int TONIC = 2;
-      var target = new ModeFormula(NAME, TONIC);
-
-      Assert.Equal(NAME, target.Name);
-      Assert.Equal(TONIC, target.Tonic);
-    }
+    #region Public Methods
 
     [Fact]
     public void ToStringTest()
     {
-      const string EXPECTED = "Name";
-      var formula = new ModeFormula(EXPECTED, 2);
-      Assert.Equal(EXPECTED, formula.ToString());
+      Assert.Equal("Mixolydian", ModeFormula.Mixolydian.ToString());
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new ModeFormula("Name", 2);
-      object y = new ModeFormula("Name", 2);
-      object z = new ModeFormula("Name", 2);
+      object x = ModeFormula.Dorian;
+      object y = ModeFormula.Dorian;
+      object z = ModeFormula.Dorian;
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -66,9 +54,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new ModeFormula("Name", 2);
-      var y = new ModeFormula("Name", 2);
-      var z = new ModeFormula("Name", 2);
+      ModeFormula x = ModeFormula.Dorian;
+      ModeFormula y = ModeFormula.Dorian;
+      ModeFormula z = ModeFormula.Dorian;
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -81,45 +69,47 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new ModeFormula("Name", 2);
+      object actual = ModeFormula.Dorian;
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new ModeFormula("Name", 2);
+      ModeFormula actual = ModeFormula.Dorian;
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new ModeFormula("Name", 2);
+      object actual = ModeFormula.Dorian;
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new ModeFormula("Name", 2);
+      ModeFormula actual = ModeFormula.Dorian;
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new ModeFormula("Name", 2);
+      ModeFormula actual = ModeFormula.Dorian;
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new ModeFormula("Name", 2);
-      var expected = new ModeFormula("Name", 2);
+      ModeFormula actual = ModeFormula.Dorian;
+      ModeFormula expected = ModeFormula.Dorian;
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
+
+    #endregion
   }
 }

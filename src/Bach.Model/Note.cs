@@ -320,7 +320,7 @@ namespace Bach.Model
       return true;
     }
 
-    /// <summary>Parses te provided string.</summary>
+    /// <summary>Parses the provided string.</summary>
     /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a Note.</exception>
     /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
     /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
