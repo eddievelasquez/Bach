@@ -269,7 +269,7 @@ namespace Bach.Model.Test
     public void NoteCountTest()
     {
       var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].IntervalCount, scale.ToneCount);
+      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].IntervalCount, scale.NoteCount);
     }
 
     [Fact]
@@ -305,17 +305,6 @@ namespace Bach.Model.Test
       var actual = scale.GetEnharmonicScale();
       var expected = new Scale(enharmonicRoot, scaleKey);
       Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void IndexOfTest()
-    {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(0, scale.IndexOf(Note.C));
-      Assert.Equal(1, scale.IndexOf(Note.EFlat));
-      Assert.Equal(2, scale.IndexOf(Note.F));
-      Assert.Equal(3, scale.IndexOf(Note.G));
-      Assert.Equal(4, scale.IndexOf(Note.BFlat));
     }
 
     [Fact]
