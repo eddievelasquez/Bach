@@ -1,20 +1,20 @@
 ﻿// Module Name: StringedInstrument.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -28,6 +28,7 @@ namespace Bach.Model.Instruments
   using System.Collections.Generic;
   using Model.Internal;
 
+  /// <summary>Represents a stringed instrument, such as guitars, basses, ukeleles, etc.</summary>
   public class StringedInstrument
     : Instrument,
       IEquatable<StringedInstrument>
@@ -50,16 +51,23 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
+    /// <summary>Gets the stringed instruments definition.</summary>
+    /// <value>The definition.</value>
     public new StringedInstrumentDefinition Definition => (StringedInstrumentDefinition)base.Definition;
 
+    /// <summary>Gets the number of positions for a string.</summary>
+    /// <value>The number of positions.</value>
     public int PositionCount { get; }
 
+    /// <summary>Gets the stringed instruments tuning.</summary>
+    /// <value>The tuning.</value>
     public Tuning Tuning { get; }
 
     #endregion
 
     #region IEquatable<StringedInstrument> Members
 
+    /// <inheritdoc />
     public bool Equals(StringedInstrument other)
     {
       if( ReferenceEquals(null, other) )
@@ -79,6 +87,12 @@ namespace Bach.Model.Instruments
 
     #region Public Methods
 
+    /// <summary>Creates a new StringedInstrument.</summary>
+    /// <param name="definition">The stringed instruments definition.</param>
+    /// <param name="positionCount">The number of positions per string.</param>
+    /// <param name="tuning">(Optional) The tuning of the instrument. If null, the standard tuning for the instrument is used.</param>
+    /// <exception cref="ArgumentNullException">Thrown when instrument definition is null.</exception>
+    /// <returns>A StringedInstrument.</returns>
     public static StringedInstrument Create(StringedInstrumentDefinition definition,
                                             int positionCount,
                                             Tuning tuning = null)
@@ -88,6 +102,11 @@ namespace Bach.Model.Instruments
       return new StringedInstrument(definition, tuning ?? definition.Tunings.Standard, positionCount);
     }
 
+    /// <summary>Creates a new StringedInstrument.</summary>
+    /// <param name="instrumentKey">The instruments language-neutral key.</param>
+    /// <param name="positionCount">The number of positions per string.</param>
+    /// <param name="tuningName">(Optional) Name of the tuning. If null, the standard tuning for the instrument is used.</param>
+    /// <returns>A StringedInstrument.</returns>
     public static StringedInstrument Create(string instrumentKey,
                                             int positionCount,
                                             string tuningName = null)
@@ -101,6 +120,16 @@ namespace Bach.Model.Instruments
       return new StringedInstrument(definition, definition.Tunings[tuningName], positionCount);
     }
 
+    /// <summary>Render a chord in the starting position with an optional position span.</summary>
+    /// <param name="chord">The chord.</param>
+    /// <param name="startPosition">The starting position.</param>
+    /// <param name="positionSpan">(Optional) The position span.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the chord is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   Thrown when the position span is greater than the number of positions in
+    ///   a string.
+    /// </exception>
+    /// <returns>An enumerator for a fingering sequence for the chord.</returns>
     public IEnumerable<Fingering> Render(Chord chord,
                                          int startPosition,
                                          int positionSpan = 4)
@@ -136,6 +165,16 @@ namespace Bach.Model.Instruments
       }
     }
 
+    /// <summary>Render a scale in the starting position with an optional position span.</summary>
+    /// <param name="scale">The scale.</param>
+    /// <param name="startPosition">The starting position.</param>
+    /// <param name="positionSpan">(Optional) The position span.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the scale is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   Thrown when the position span is greater than the number of positions in
+    ///   a string.
+    /// </exception>
+    /// <returns>An enumerator for a fingering sequence for the scale.</returns>
     public IEnumerable<Fingering> Render(Scale scale,
                                          int startPosition,
                                          int positionSpan = 4)
@@ -196,6 +235,7 @@ namespace Bach.Model.Instruments
 
     #region Overrides
 
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
       if( ReferenceEquals(null, obj) )
@@ -211,6 +251,7 @@ namespace Bach.Model.Instruments
       return obj.GetType() == GetType() && Equals((StringedInstrument)obj);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       var hash = 17;

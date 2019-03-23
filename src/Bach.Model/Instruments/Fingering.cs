@@ -27,6 +27,7 @@ namespace Bach.Model.Instruments
   using System;
   using Model.Internal;
 
+  /// <summary>In a stringed instrument, A fingering describes the position in a given string to produce a particular pitch.</summary>
   public struct Fingering: IEquatable<Fingering>
   {
     #region Constructors
@@ -44,20 +45,40 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
+    /// <summary>Gets the fingering's pitch.</summary>
+    /// <value>The pitch.</value>
     public Pitch Pitch { get; }
+
+    /// <summary>Gets the string number.</summary>
+    /// <value>The string.</value>
     public int String { get; }
+
+    /// <summary>Gets the position on the string.</summary>
+    /// <note>For fretted instruments this corresponds to the fret number.</note>
+    /// <value>The position.</value>
     public int Position { get; }
 
     #endregion
 
     #region IEquatable<Fingering> Members
 
+    /// <inheritdoc />
     public bool Equals(Fingering other) => String == other.String && Position == other.Position;
 
     #endregion
 
     #region Public Methods
 
+    /// <summary>Creates a new Fingering.</summary>
+    /// <param name="instrument">The instrument.</param>
+    /// <param name="string">The string number.</param>
+    /// <param name="position">The position.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the instrument is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   Thrown when either the string or the position are out of range for the
+    ///   given instrument.
+    /// </exception>
+    /// <returns>A Fingering.</returns>
     public static Fingering Create(StringedInstrument instrument,
                                    int @string,
                                    int position)
@@ -71,31 +92,17 @@ namespace Bach.Model.Instruments
       return result;
     }
 
-    public static Fingering Create(StringedInstrument instrument,
-                                   int @string)
-    {
-      Contract.Requires<ArgumentNullException>(instrument != null);
-      Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
-
-      Pitch pitch = Pitch.Empty;
-      var result = new Fingering(pitch, @string, -1);
-      return result;
-    }
-
     #endregion
 
     #region Overrides
 
+    /// <inheritdoc />
     public override string ToString()
     {
-      if( Position < 0 )
-      {
-        return $"{String}x";
-      }
-
-      return $"{String}{Position}";
+      return Position < 0 ? $"{String}x" : $"{String}{Position}";
     }
 
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
       if( ReferenceEquals(null, obj) )
@@ -106,12 +113,28 @@ namespace Bach.Model.Instruments
       return obj is Fingering fingering && Equals(fingering);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       unchecked
       {
         return ( String * 397 ) ^ Position;
       }
+    }
+
+    #endregion
+
+    #region  Implementation
+
+    internal static Fingering Create(StringedInstrument instrument,
+                                     int @string)
+    {
+      Contract.Requires<ArgumentNullException>(instrument != null);
+      Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
+
+      Pitch pitch = Pitch.Empty;
+      var result = new Fingering(pitch, @string, -1);
+      return result;
     }
 
     #endregion

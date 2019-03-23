@@ -1,20 +1,20 @@
 // Module Name: Tuning.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -28,6 +28,7 @@ namespace Bach.Model.Instruments
   using System.Linq;
   using Model.Internal;
 
+  /// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
   public class Tuning: IEquatable<Tuning>
   {
     #region Constants
@@ -60,11 +61,29 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
+    /// <summary>Gets the instruments definition.</summary>
+    /// <value>The instrument definition.</value>
     public StringedInstrumentDefinition InstrumentDefinition { get; }
+
+    /// <summary>Gets the language-neutral key for the tuning.</summary>
+    /// <value>The key.</value>
     public string Key { get; }
+
+    /// <summary>Gets the localizable name for the tuning.</summary>
+    /// <value>The name.</value>
     public string Name { get; }
+
+    /// <summary>Gets the tunings pitches.</summary>
+    /// <value>The pitches.</value>
     public Pitch[] Pitches { get; }
 
+    /// <summary>Indexer to get pitches within this tuning using array index syntax.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///   Thrown when the string number is outside the
+    ///   string range.
+    /// </exception>
+    /// <param name="stringNumber">The string number.</param>
+    /// <returns>A pitch.</returns>
     public Pitch this[int stringNumber]
     {
       get
@@ -79,6 +98,7 @@ namespace Bach.Model.Instruments
 
     #region IEquatable<Tuning> Members
 
+    /// <inheritdoc />
     public bool Equals(Tuning other)
     {
       if( ReferenceEquals(null, other) )
@@ -101,6 +121,7 @@ namespace Bach.Model.Instruments
 
     #region Overrides
 
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
       if( ReferenceEquals(null, obj) )
@@ -116,6 +137,7 @@ namespace Bach.Model.Instruments
       return obj.GetType() == GetType() && Equals((Tuning)obj);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
       var hash = 17;
