@@ -24,11 +24,19 @@
 
 namespace Bach.Model
 {
+  /// <summary>Values that represent triad qualities.</summary>
   public enum TriadQuality
   {
+    /// <summary>A triad that contains a major third and a perfect fifth.</summary>
     Major,
+
+    /// <summary>A triad that contains a minor third and a perfect fifth.</summary>
     Minor,
+
+    /// <summary>A triad that contains a minor third and a diminished fifth.</summary>
     Diminished,
+
+    /// <summary>A triad that contains a major third and an augmented fifth.</summary>
     Augmented
   }
 }

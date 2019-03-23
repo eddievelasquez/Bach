@@ -96,7 +96,7 @@ namespace Bach.Model.Test
     public void FirstInversionTest()
     {
       var triad = new Triad(Note.G, TriadQuality.Major);
-      var inversion = triad.Invert(1);
+      var inversion = triad.GetInversion(1);
       Assert.Equal("G/B", inversion.Name);
       Assert.Equal(TriadQuality.Major, inversion.Quality);
       Assert.Equal(Note.G, inversion.Root);
@@ -112,7 +112,7 @@ namespace Bach.Model.Test
     public void SecondInversionTest()
     {
       var triad = new Triad(Note.G, TriadQuality.Major);
-      var inversion = triad.Invert(2);
+      var inversion = triad.GetInversion(2);
       Assert.Equal("G/D", inversion.Name);
       Assert.Equal(TriadQuality.Major, inversion.Quality);
       Assert.Equal(Note.G, inversion.Root);
@@ -128,8 +128,8 @@ namespace Bach.Model.Test
     public void InvertThrowsWithInvalidInversionNumberTest()
     {
       var triad = new Triad(Note.G, TriadQuality.Major);
-      Assert.Throws<ArgumentOutOfRangeException>(() => triad.Invert(-1));
-      Assert.Throws<ArgumentOutOfRangeException>(() => triad.Invert(3));
+      Assert.Throws<ArgumentOutOfRangeException>(() => triad.GetInversion(-1));
+      Assert.Throws<ArgumentOutOfRangeException>(() => triad.GetInversion(3));
     }
 
     #endregion

@@ -26,6 +26,7 @@ namespace Bach.Model
 {
   using System;
 
+  /// <summary>A triad is a set of three notes stacked in thirds.</summary>
   public class Triad: Chord
   {
     #region Constants
@@ -46,6 +47,9 @@ namespace Bach.Model
 
     #region Constructors
 
+    /// <summary>Constructor.</summary>
+    /// <param name="root">The triad's root note.</param>
+    /// <param name="quality">The triad's quality.</param>
     public Triad(Note root,
                  TriadQuality quality)
       : base(root, GetFormula(quality))
@@ -64,13 +68,18 @@ namespace Bach.Model
 
     #region Properties
 
+    /// <summary>Gets the triad's quality.</summary>
+    /// <value>The quality.</value>
     public TriadQuality Quality { get; }
 
     #endregion
 
     #region Public Methods
 
-    public new Triad Invert(int inversion = 1)
+    /// <summary>Generates an inversion for the current triad.</summary>
+    /// <param name="inversion">The inversion to generate.</param>
+    /// <returns>A Triad.</returns>
+    public new Triad GetInversion(int inversion)
     {
       var result = new Triad(Root, Formula, inversion);
       return result;
