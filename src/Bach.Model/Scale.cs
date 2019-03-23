@@ -92,7 +92,7 @@ namespace Bach.Model
 
     /// <summary>Gets the number of unique notes in the scale.</summary>
     /// <value>The number of notes.</value>
-    public int NoteCount => Formula.IntervalCount;
+    public int NoteCount => Formula.Intervals.Count;
 
     /// <summary>Indexer to get notes within this scale using array index syntax.</summary>
     /// <param name="i">Zero-based index of the entry to access.</param>
@@ -135,9 +135,7 @@ namespace Bach.Model
 
     /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
     /// <param name="startPitch">The starting pitch.</param>
-    /// <returns>
-    ///   An enumerator that allows to the pitch sequence fort this scale.
-    /// </returns>
+    /// <returns>An enumerator for a pitch sequence for this scale.</returns>
     public IEnumerable<Pitch> Render(Pitch startPitch)
     {
       int pos = Array.IndexOf(GetNotes(), startPitch.Note);
@@ -159,7 +157,7 @@ namespace Bach.Model
     /// <summary>Gets the notes that form this scale.</summary>
     /// <param name="start">(Optional) The starting note.</param>
     /// <returns>An array of notes.</returns>
-    public Note[] GetNotes(int start = 0) => this.Skip(start).Take(Formula.IntervalCount).ToArray();
+    public Note[] GetNotes(int start = 0) => this.Skip(start).Take(Formula.Intervals.Count).ToArray();
 
     /// <summary>Determines if this scale is theoretical.</summary>
     /// <notes>
@@ -171,7 +169,7 @@ namespace Bach.Model
     /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
     public bool IsTheoretical()
     {
-      return this.Take(Formula.IntervalCount).Any(note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp);
+      return this.Take(Formula.Intervals.Count).Any(note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp);
     }
 
     /// <summary>Gets a enharmonic scale for this instance.</summary>

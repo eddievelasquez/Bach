@@ -30,7 +30,7 @@ namespace Bach.Model.Test
   public class ChordFormulaTest
   {
     [Fact]
-    public void ChordFormulaConstructorTest()
+    public void ConstructorWithFormulaTest()
     {
       const string KEY = "Key";
       const string NAME = "Name";
@@ -41,11 +41,12 @@ namespace Bach.Model.Test
       Assert.Equal(KEY, actual.Key);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(SYMBOL, actual.Symbol);
+      Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
       Assert.Equal("Name: P1,M2,M3", actual.ToString());
     }
 
     [Fact]
-    public void ChordFormulaConstructorWithIntervalsTest()
+    public void ConstructorWithIntervalsTest()
     {
       const string KEY = "Key";
       const string NAME = "Name";
@@ -55,6 +56,7 @@ namespace Bach.Model.Test
       Assert.Equal(KEY, actual.Key);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(SYMBOL, actual.Symbol);
+      Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
       Assert.Equal("Name: P1,M2,M3", actual.ToString());
     }
 
@@ -130,6 +132,24 @@ namespace Bach.Model.Test
       var expected = new ChordFormula("Key", "Name", "Symbol", "R,2,3");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+    }
+
+    [Fact]
+    public void GenerateTest()
+    {
+      var formula = new ChordFormula("Key", "Test", "Symbol", "R,2,3");
+      using( var pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
+      {
+        var count = 0;
+        while( pitches.MoveNext() )
+        {
+          Assert.True(pitches.Current <= Pitch.MaxValue);
+          ++count;
+        }
+
+        // 3 notes per octave, 10 octaves total.
+        Assert.Equal(30, count);
+      }
     }
   }
 }

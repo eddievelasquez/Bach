@@ -369,7 +369,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      Chord chord = new Chord(Note.C, Registry.ChordFormulas["Major"]).Invert(1);
+      Chord chord = new Chord(Note.C, Registry.ChordFormulas["Major"]).GetInversion(1);
       Assert.Equal("60 53 42 30 21 10", RenderChord(instrument, chord, 0, 4));
     }
 

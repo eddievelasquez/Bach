@@ -1,7 +1,6 @@
-﻿//
-// Module Name: ScaleFormulaTest.cs
+﻿// Module Name: ScaleFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -25,29 +24,112 @@
 
 namespace Bach.Model.Test
 {
+  using System.Collections.Generic;
   using Xunit;
 
   public class ScaleFormulaTest
   {
+    #region Public Methods
+
     [Fact]
-    public void ConstructorTest()
+    public void ConstructorWithFormulaTest()
     {
-      var actual = new ScaleFormula("Major", "Major", "R,2,3,4,5,6,7");
-      Assert.Equal(Registry.ScaleFormulas["Major"], actual);
-      actual = new ScaleFormula(
-        "Major",
-        "Major",
-        new[]
-        {
-          Interval.Unison,
-          Interval.MajorSecond,
-          Interval.MajorThird,
-          Interval.Fourth,
-          Interval.Fifth,
-          Interval.MajorSixth,
-          Interval.MajorSeventh
-        });
-      Assert.Equal(Registry.ScaleFormulas["Major"], actual);
+      const string KEY = "Key";
+      const string NAME = "Name";
+      const string FORMULA = "R,2,3";
+      var actual = new ScaleFormula(KEY, NAME, FORMULA);
+
+      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(NAME, actual.Name);
+      Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
+      Assert.Equal("Name: P1,M2,M3", actual.ToString());
+    }
+
+    [Fact]
+    public void ConstructorWithIntervalsTest()
+    {
+      const string KEY = "Key";
+      const string NAME = "Name";
+      var actual = new ScaleFormula(KEY, NAME, new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird });
+
+      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(NAME, actual.Name);
+      Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
+      Assert.Equal("Name: P1,M2,M3", actual.ToString());
+    }
+
+    [Fact]
+    public void EqualsContractTest()
+    {
+      object x = new ScaleFormula("Key", "Name", "R,2,3");
+      object y = new ScaleFormula("Key", "Name", "R,2,3");
+      object z = new ScaleFormula("Key", "Name", "R,2,3");
+
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symmetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
+    }
+
+    [Fact]
+    public void TypeSafeEqualsContractTest()
+    {
+      var x = new ScaleFormula("Key", "Name", "R,2,3");
+      var y = new ScaleFormula("Key", "Name", "R,2,3");
+      var z = new ScaleFormula("Key", "Name", "R,2,3");
+
+      Assert.True(x.Equals(x)); // Reflexive
+      Assert.True(x.Equals(y)); // Symmetric
+      Assert.True(y.Equals(x));
+      Assert.True(y.Equals(z)); // Transitive
+      Assert.True(x.Equals(z));
+      Assert.False(x.Equals(null)); // Never equal to null
+    }
+
+    [Fact]
+    public void EqualsFailsWithDifferentTypeTest()
+    {
+      object actual = new ScaleFormula("Key", "Name", "R,2,3");
+      Assert.False(actual.Equals(int.MinValue));
+    }
+
+    [Fact]
+    public void TypeSafeEqualsFailsWithDifferentTypeTest()
+    {
+      var actual = new ScaleFormula("Key", "Name", "R,2,3");
+      Assert.False(actual.Equals(int.MinValue));
+    }
+
+    [Fact]
+    public void EqualsFailsWithNullTest()
+    {
+      object actual = new ScaleFormula("Key", "Name", "R,2,3");
+      Assert.False(actual.Equals(null));
+    }
+
+    [Fact]
+    public void TypeSafeEqualsFailsWithNullTest()
+    {
+      var actual = new ScaleFormula("Key", "Name", "R,2,3");
+      Assert.False(actual.Equals(null));
+    }
+
+    [Fact]
+    public void EqualsSucceedsWithSameObjectTest()
+    {
+      var actual = new ScaleFormula("Key", "Name", "R,2,3");
+      Assert.True(actual.Equals(actual));
+    }
+
+    [Fact]
+    public void GetHashcodeTest()
+    {
+      var actual = new ScaleFormula("Key", "Name", "R,2,3");
+      var expected = new ScaleFormula("Key", "Name", "R,2,3");
+      Assert.True(expected.Equals(actual));
+      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     [Fact]
@@ -64,11 +146,35 @@ namespace Bach.Model.Test
       TestGetSteps("Pentatonic", 2, 2, 3, 2, 3);
     }
 
+    [Fact]
+    public void GenerateTest()
+    {
+      var formula = new ScaleFormula("Key", "Test", "R,2,3");
+      using( var pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
+      {
+        var count = 0;
+        while( pitches.MoveNext() )
+        {
+          Assert.True(pitches.Current <= Pitch.MaxValue);
+          ++count;
+        }
+
+        // 3 notes per octave, 10 octaves total.
+        Assert.Equal(30, count);
+      }
+    }
+
+    #endregion
+
+    #region  Implementation
+
     private static void TestGetSteps(string scaleName,
                                      params int[] expected)
     {
       ScaleFormula scale = Registry.ScaleFormulas[scaleName];
       Assert.Equal(expected, scale.GetRelativeSteps());
     }
+
+    #endregion
   }
 }

@@ -31,7 +31,8 @@ namespace Bach.Model
   using System.Text;
   using Internal;
 
-  public class Formula
+  /// <summary>A formula is a base class for constructing a sequence of notes based on a series of intervals.</summary>
+  public abstract class Formula
     : IKeyedObject,
       IEquatable<Formula>
   {
@@ -49,9 +50,19 @@ namespace Bach.Model
 
     #region Constructors
 
-    public Formula(string key,
-                   string name,
-                   Interval[] intervals)
+    /// <summary>Specialized constructor for use only by derived classes.</summary>
+    /// <exception cref="ArgumentNullException">Thrown when either the key, name or interval arguments are null.</exception>
+    /// <exception cref="ArgumentException">Thrown when teh key or name are empty.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval array is empty.</exception>
+    /// <param name="key">
+    ///   The language-neutral key for the formula. The key is used as the unique identifier for a formula in
+    ///   the registry.
+    /// </param>
+    /// <param name="name">The localizable name for the formula.</param>
+    /// <param name="intervals">The intervals that compose the formula.</param>
+    protected Formula(string key,
+                      string name,
+                      Interval[] intervals)
     {
       Contract.RequiresNotNullOrEmpty(key, "Must provide a key");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a name");
@@ -63,9 +74,20 @@ namespace Bach.Model
       _intervals = intervals;
     }
 
-    public Formula(string key,
-                   string name,
-                   string formula)
+    /// <summary>Specialized constructor for use only by derived classed.</summary>
+    /// <param name="key">
+    ///   The language-neutral key for the formula. The key is used as the unique
+    ///   identifier for a formula in the registry.
+    /// </param>
+    /// <param name="name">The localizable name for the formula.</param>
+    /// <param name="formula">
+    ///   The string representation of the formula for the scale. The formula is a
+    ///   sequence of comma-separated intervals. See
+    ///   <see cref="Interval.ToString" /> for the format of an interval.
+    /// </param>
+    protected Formula(string key,
+                      string name,
+                      string formula)
       : this(key, name, ParseIntervals(formula))
     {
     }
@@ -74,16 +96,19 @@ namespace Bach.Model
 
     #region Properties
 
+    /// <summary>Gets the intervals that compose this formula.</summary>
+    /// <value>The intervals.</value>
     public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
 
-    public int IntervalCount => _intervals.Length;
-
+    /// <summary>Gets the localizable name for the formula.</summary>
+    /// <value>The name.</value>
     public string Name { get; }
 
     #endregion
 
     #region IEquatable<Formula> Members
 
+    /// <inheritdoc />
     public bool Equals(Formula other)
     {
       if( ReferenceEquals(other, this) )
@@ -103,12 +128,18 @@ namespace Bach.Model
 
     #region IKeyedObject Members
 
+    /// <summary>Returns the language-neutral key for the formula.</summary>
+    /// <value>The key.</value>
     public string Key { get; }
 
     #endregion
 
     #region Public Methods
 
+    /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
+    /// <param name="root">The root pitch.</param>
+    /// <param name="skipCount">(Optional) Number of pitches to skip.</param>
+    /// <returns> An enumerator for a sequence of pitches.</returns>
     public IEnumerable<Pitch> Generate(Pitch root,
                                        int skipCount = 0)
     {
@@ -127,16 +158,21 @@ namespace Bach.Model
           pitch += octaveAdd * Pitch.IntervalsPerOctave;
         }
 
-        if (pitch > Pitch.MaxValue)
+        if( pitch > Pitch.MaxValue )
         {
           yield break;
         }
 
         yield return pitch;
+
         ++index;
       }
     }
 
+    /// <summary>Generates a sequence of notes based on the formula's intervals.</summary>
+    /// <notes>Warning! By design, this enumerator never ends.</notes>
+    /// <param name="root">The root note.</param>
+    /// <returns> An enumerator for a sequence of notes.</returns>
     public IEnumerable<Note> Generate(Note root)
     {
       int intervalCount = _intervals.Length;
@@ -159,6 +195,7 @@ namespace Bach.Model
 
     #region Overrides
 
+    /// <inheritdoc />
     public override string ToString()
     {
       var buf = new StringBuilder();
@@ -184,6 +221,7 @@ namespace Bach.Model
       return buf.ToString();
     }
 
+    /// <inheritdoc />
     public override bool Equals(object other)
     {
       if( ReferenceEquals(other, this) )
@@ -199,6 +237,7 @@ namespace Bach.Model
       return Equals((Formula)other);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode() => s_comparer.GetHashCode(Key);
 
     #endregion

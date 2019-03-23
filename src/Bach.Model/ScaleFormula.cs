@@ -32,7 +32,8 @@ namespace Bach.Model
     /// <summary>Constructor.</summary>
     /// <param name="key">The language-neutral key of the scale.</param>
     /// <param name="name">The localizable name of the scale.</param>
-    /// <param name="intervals">The intervals that describe the relationship between the notes that compose the scale.</param>
+    /// <param name="intervals">The intervals that describe the relationship between the notes that
+    ///                         compose the scale.</param>
     public ScaleFormula(string key,
                         string name,
                         Interval[] intervals)
@@ -43,10 +44,9 @@ namespace Bach.Model
     /// <summary>Constructor.</summary>
     /// <param name="key">The language-neutral key of the scale.</param>
     /// <param name="name">The localizable name of the scale.</param>
-    /// <param name="formula">
-    ///   The string representation of the formula for the scale. The formula is a sequence of
-    ///   comma-separated intervals. See <see cref="Interval.ToString" /> for the format of an interval.
-    /// </param>
+    /// <param name="formula">The string representation of the formula for the scale. The formula is a
+    ///                       sequence of comma-separated intervals. See
+    ///                       <see cref="Interval.ToString" /> for the format of an interval.</param>
     public ScaleFormula(string key,
                         string name,
                         string formula)
