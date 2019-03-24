@@ -252,6 +252,7 @@ namespace Bach.Model.Test
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
+    #pragma warning disable 1718
     [Fact]
     public void RelationalOperatorsTest()
     {
