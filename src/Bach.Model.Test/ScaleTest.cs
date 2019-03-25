@@ -88,7 +88,7 @@ namespace Bach.Model.Test
       Assert.Equal(Note.A, enumerator.Current);
       Assert.True(enumerator.MoveNext());
       Assert.Equal(Note.B, enumerator.Current);
-      Assert.True(enumerator.MoveNext()); // Scale enumerator wraps around infintely
+      Assert.True(enumerator.MoveNext()); // Scale enumerator wraps around infinitely
       Assert.Equal(Note.C, enumerator.Current);
     }
 
@@ -184,26 +184,11 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void GetNotesTest()
-    {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(new[] { Note.C, Note.EFlat, Note.F, Note.G, Note.BFlat }, scale.GetNotes());
-      Assert.Equal(new[] { Note.EFlat, Note.F, Note.G, Note.BFlat, Note.C }, scale.GetNotes(1));
-      Assert.Equal(new[] { Note.F, Note.G, Note.BFlat, Note.C, Note.EFlat }, scale.GetNotes(2));
-      Assert.Equal(new[] { Note.G, Note.BFlat, Note.C, Note.EFlat, Note.F }, scale.GetNotes(3));
-      Assert.Equal(new[] { Note.BFlat, Note.C, Note.EFlat, Note.F, Note.G }, scale.GetNotes(4));
-      Assert.Equal(new[] { Note.C, Note.EFlat, Note.F, Note.G, Note.BFlat }, scale.GetNotes(5));
-    }
-
-    [Fact]
     public void RenderTest()
     {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      TestRender(scale, "C4", "C4,Eb4,F4,G4,Bb4");
-      TestRender(scale, "Eb4", "Eb4,F4,G4,Bb4,C5");
-      TestRender(scale, "F4", "F4,G4,Bb4,C5,Eb5");
-      TestRender(scale, "G4", "G4,Bb4,C5,Eb5,F5");
-      TestRender(scale, "Bb4", "Bb4,C5,Eb5,F5,G5");
+      TestRender(new Scale(Note.C, "MinorPentatonic"), 1, "C1,Eb1,F1,G1,Bb1");
+      TestRender(new Scale(Note.D, "MinorPentatonic"), 1, "D1,F1,G1,A1,C2");
+      TestRender(new Scale(Note.B, "MinorPentatonic"), 1, "B1,D2,E2,F#2,A2");
     }
 
     [Fact]
@@ -259,17 +244,10 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void RenderReturnsEmptyIfNotNoteInScaleTest()
-    {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Empty(scale.Render(Pitch.Parse("D4")));
-    }
-
-    [Fact]
     public void NoteCountTest()
     {
       var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count, scale.NoteCount);
+      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count, scale.Notes.Length);
     }
 
     [Fact]
@@ -315,21 +293,21 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void IndexerTest()
+    public void NotesTest()
     {
       var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Note.C, scale[0]);
-      Assert.Equal(Note.EFlat, scale[1]);
-      Assert.Equal(Note.F, scale[2]);
-      Assert.Equal(Note.G, scale[3]);
-      Assert.Equal(Note.BFlat, scale[4]);
+      Assert.Equal(Note.C, scale.Notes[0]);
+      Assert.Equal(Note.EFlat, scale.Notes[1]);
+      Assert.Equal(Note.F, scale.Notes[2]);
+      Assert.Equal(Note.G, scale.Notes[3]);
+      Assert.Equal(Note.BFlat, scale.Notes[4]);
     }
 
     private static void TestRender(Scale scale,
-                                   string startNote,
+                                   int octave,
                                    string expectedNotes)
     {
-      Pitch[] actual = scale.Render(Pitch.Parse(startNote)).Take(scale.Formula.Intervals.Count).ToArray();
+      Pitch[] actual = scale.Render(octave).Take(scale.Formula.Intervals.Count).ToArray();
       Assert.Equal(PitchCollection.Parse(expectedNotes), actual);
     }
 

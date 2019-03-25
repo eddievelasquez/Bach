@@ -50,6 +50,7 @@ namespace Bach.Model
 
       Root = root;
       Formula = formula;
+      Notes = Formula.Generate(Root).Take(Formula.Intervals.Count).ToArray();
 
       var buf = new StringBuilder();
       buf.Append(root.NoteName);
@@ -90,21 +91,27 @@ namespace Bach.Model
     /// <value>The formula.</value>
     public ScaleFormula Formula { get; }
 
-    /// <summary>Gets the number of unique notes in the scale.</summary>
-    /// <value>The number of notes.</value>
-    public int NoteCount => Formula.Intervals.Count;
-
-    /// <summary>Indexer to get notes within this scale using array index syntax.</summary>
-    /// <param name="i">Zero-based index of the entry to access.</param>
-    /// <returns>The indexed item.</returns>
-    public Note this[int i] => this.Skip(i).Take(1).Single();
+    /// <summary>Gets the notes that form this scale.</summary>
+    /// <value>An array of notes.</value>
+    public Note[] Notes { get; }
 
     #endregion
 
     #region IEnumerable<Note> Members
 
     /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).GetEnumerator();
+    public IEnumerator<Note> GetEnumerator()
+    {
+      var index = 0;
+      while( true )
+      {
+        yield return Notes[index];
+
+        index = Notes.WrapIndex(++index);
+      }
+
+      // ReSharper disable once IteratorNeverReturns
+    }
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -134,30 +141,9 @@ namespace Bach.Model
     #region Public Methods
 
     /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
-    /// <param name="startPitch">The starting pitch.</param>
+    /// <param name="octave">The octave for the first pitch.</param>
     /// <returns>An enumerator for a pitch sequence for this scale.</returns>
-    public IEnumerable<Pitch> Render(Pitch startPitch)
-    {
-      int pos = Array.IndexOf(GetNotes(), startPitch.Note);
-      if( pos == -1 )
-      {
-        return Enumerable.Empty<Pitch>();
-      }
-
-      int octave = startPitch.Octave;
-      if( startPitch.Note < Root )
-      {
-        --octave;
-      }
-
-      Pitch root = Pitch.Create(Root, octave);
-      return Formula.Generate(root).Skip(pos);
-    }
-
-    /// <summary>Gets the notes that form this scale.</summary>
-    /// <param name="start">(Optional) The starting note.</param>
-    /// <returns>An array of notes.</returns>
-    public Note[] GetNotes(int start = 0) => this.Skip(start).Take(Formula.Intervals.Count).ToArray();
+    public IEnumerable<Pitch> Render(int octave) => Formula.Generate(Pitch.Create(Root, octave));
 
     /// <summary>Determines if this scale is theoretical.</summary>
     /// <notes>
@@ -169,7 +155,7 @@ namespace Bach.Model
     /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
     public bool IsTheoretical()
     {
-      return this.Take(Formula.Intervals.Count).Any(note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp);
+      return Notes.Any(note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp);
     }
 
     /// <summary>Gets a enharmonic scale for this instance.</summary>
@@ -224,13 +210,7 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override string ToString() => NoteCollection.ToString(this.Take(NoteCount));
-
-    #endregion
-
-    #region  Implementation
-
-    internal int IndexOf(Pitch pitch) => Array.IndexOf(GetNotes(), pitch.Note);
+    public override string ToString() => NoteCollection.ToString(Notes);
 
     #endregion
   }
