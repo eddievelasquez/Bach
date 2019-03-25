@@ -116,7 +116,7 @@ namespace Bach.Model
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator() => Formula.Generate(Root).Take(Formula.Intervals.Count).GetEnumerator();
+    public IEnumerator<Note> GetEnumerator() => ( (IEnumerable<Note>)Notes ).GetEnumerator();
 
     #endregion
 
