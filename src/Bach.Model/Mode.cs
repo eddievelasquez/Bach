@@ -36,12 +36,6 @@ namespace Bach.Model
     : IEquatable<Mode>,
       IEnumerable<Note>
   {
-    #region Data Members
-
-    private readonly NoteCollection _notes;
-
-    #endregion
-
     #region Constructors
 
     /// <summary>Constructor.</summary>
@@ -63,13 +57,14 @@ namespace Bach.Model
       buf.Append(formula.Name);
 
       Name = buf.ToString();
-
-      _notes = new NoteCollection(scale.Skip(Formula.Tonic - 1).Take(scale.Notes.Length).ToArray());
+      Notes = scale.Skip(Formula.Tonic - 1).Take(scale.Notes.Length).ToArray();
     }
 
     #endregion
 
     #region Properties
+
+    public Note[] Notes { get; }
 
     /// <summary>Gets the mode's scale.</summary>
     /// <value>The scale.</value>
@@ -91,7 +86,18 @@ namespace Bach.Model
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator() => _notes.GetEnumerator();
+    public IEnumerator<Note> GetEnumerator()
+    {
+      var index = 0;
+      while( true )
+      {
+        yield return Notes[index];
+
+        index = Notes.WrapIndex(++index);
+      }
+
+      // ReSharper disable once IteratorNeverReturns
+    }
 
     #endregion
 
@@ -140,7 +146,8 @@ namespace Bach.Model
       return hashCode;
     }
 
-    public override string ToString() => _notes.ToString();
+    /// <inheritdoc />
+    public override string ToString() => NoteCollection.ToString(Notes);
 
     #endregion
   }

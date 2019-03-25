@@ -1,7 +1,6 @@
-﻿//
-// Module Name: ModeTest.cs
+﻿// Module Name: ModeTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -31,6 +30,8 @@ namespace Bach.Model.Test
 
   public class ModeTest
   {
+    #region Public Methods
+
     [Fact]
     public void ModeConstructorTest()
     {
@@ -41,7 +42,7 @@ namespace Bach.Model.Test
       Assert.Equal(scale, target.Scale);
       Assert.Equal(formula, target.Formula);
       Assert.Equal("C Phrygian", target.Name);
-      Assert.Equal(target.ToArray(), NoteCollection.Parse("E,F,G,A,B,C,D"));
+      Assert.Equal(target.Notes, NoteCollection.Parse("E,F,G,A,B,C,D"));
     }
 
     [Fact]
@@ -144,7 +145,7 @@ namespace Bach.Model.Test
     {
       var scale = new Scale(Note.C, "Major");
       var mode = new Mode(scale, ModeFormula.Ionian);
-      IEnumerator enumerator = ((IEnumerable) mode).GetEnumerator();
+      IEnumerator enumerator = ( (IEnumerable)mode ).GetEnumerator();
       Assert.True(enumerator.MoveNext());
       Assert.Equal(Note.C, enumerator.Current);
       Assert.True(enumerator.MoveNext());
@@ -159,8 +160,13 @@ namespace Bach.Model.Test
       Assert.Equal(Note.A, enumerator.Current);
       Assert.True(enumerator.MoveNext());
       Assert.Equal(Note.B, enumerator.Current);
-      Assert.False(enumerator.MoveNext());
+      Assert.True(enumerator.MoveNext()); // Mode enumerator wraps around infinitely
+      Assert.Equal(Note.C, enumerator.Current);
     }
+
+    #endregion
+
+    #region  Implementation
 
     private static void TestMode(string expectedNotes,
                                  Scale root,
@@ -168,9 +174,10 @@ namespace Bach.Model.Test
     {
       Note[] expected = NoteCollection.Parse(expectedNotes).ToArray();
       var mode = new Mode(root, formula);
-      Note[] actualNotes = mode.ToArray();
-      Assert.Equal(expected, actualNotes);
+      Assert.Equal(expected, mode.Notes);
       Assert.Equal(expectedNotes, mode.ToString());
     }
+
+    #endregion
   }
 }
