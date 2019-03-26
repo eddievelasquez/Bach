@@ -47,7 +47,7 @@ namespace Bach.Model.Test.Instruments
       Assert.Equal(guitar, actual.InstrumentDefinition);
       Assert.Equal(EXPECTED_TUNING_NAME, actual.Name);
       Assert.NotNull(actual.Pitches);
-      Assert.Equal(6, actual.Pitches.Length);
+      Assert.Equal(6, actual.Pitches.Count);
     }
 
     [Fact]

@@ -27,6 +27,7 @@ namespace Bach.Model
   using System;
   using System.Collections;
   using System.Collections.Generic;
+  using System.Collections.ObjectModel;
   using System.Linq;
   using System.Text;
   using Internal;
@@ -36,6 +37,12 @@ namespace Bach.Model
     : IEquatable<Chord>,
       IEnumerable<Note>
   {
+    #region Data Members
+
+    private readonly Note[] _notes;
+
+    #endregion
+
     #region Constructors
 
     /// <summary>Constructor.</summary>
@@ -76,7 +83,7 @@ namespace Bach.Model
       Root = root;
       Formula = formula;
       Inversion = inversion;
-      Notes = Formula.Generate(Root).Skip(inversion).Take(Formula.Intervals.Count).ToArray();
+      _notes = Formula.Generate(Root).Skip(inversion).Take(Formula.Intervals.Count).ToArray();
       Name = GenerateName(root, formula, Notes.First());
     }
 
@@ -106,7 +113,7 @@ namespace Bach.Model
 
     /// <summary>Gets the notes that compose the current chord.</summary>
     /// <value>The notes.</value>
-    public Note[] Notes { get; }
+    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
 
     /// <summary>An extended chord uses intervals whose quantity extends beyond the octave.</summary>
     /// <value>True if this instance is an extended chord, false if not.</value>

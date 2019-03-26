@@ -25,6 +25,7 @@
 namespace Bach.Model.Instruments
 {
   using System;
+  using System.Collections.ObjectModel;
   using System.Linq;
   using Model.Internal;
 
@@ -34,6 +35,12 @@ namespace Bach.Model.Instruments
     #region Constants
 
     private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
+
+    #endregion
+
+    #region Data Members
+
+    private readonly Pitch[] _pitches;
 
     #endregion
 
@@ -54,7 +61,7 @@ namespace Bach.Model.Instruments
       InstrumentDefinition = instrumentDefinition;
       Key = key;
       Name = name;
-      Pitches = pitches.ToArray();
+      _pitches = pitches.ToArray();
     }
 
     #endregion
@@ -75,7 +82,7 @@ namespace Bach.Model.Instruments
 
     /// <summary>Gets the tunings pitches.</summary>
     /// <value>The pitches.</value>
-    public Pitch[] Pitches { get; }
+    public ReadOnlyCollection<Pitch> Pitches => new ReadOnlyCollection<Pitch>(_pitches);
 
     /// <summary>Indexer to get pitches within this tuning using array index syntax.</summary>
     /// <exception cref="ArgumentOutOfRangeException">

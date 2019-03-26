@@ -55,6 +55,7 @@ namespace Bach.Model
     #region Data Members
 
     private readonly ScaleCategory _categories;
+    private readonly Note[] _notes;
 
     #endregion
 
@@ -71,7 +72,7 @@ namespace Bach.Model
 
       Root = root;
       Formula = formula;
-      Notes = Formula.Generate(Root).Take(Formula.Intervals.Count).ToArray();
+      _notes = Formula.Generate(Root).Take(Formula.Intervals.Count).ToArray();
 
       var buf = new StringBuilder();
       buf.Append(root.NoteName);
@@ -116,7 +117,7 @@ namespace Bach.Model
 
     /// <summary>Gets the notes that form this scale.</summary>
     /// <value>An array of notes.</value>
-    public Note[] Notes { get; }
+    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
 
     /// <summary>Determines if this scale is diatonic.</summary>
     /// <notes>A diatonic scale is one that includes 5 whole steps and 2 semitones.</notes>
@@ -150,12 +151,14 @@ namespace Bach.Model
     /// <inheritdoc />
     public IEnumerator<Note> GetEnumerator()
     {
+      ReadOnlyCollection<Note> notes = Notes;
       var index = 0;
+
       while( true )
       {
-        yield return Notes[index];
+        yield return notes[index];
 
-        index = Notes.WrapIndex(++index);
+        index = ArrayExtensions.WrapIndex(notes.Count, ++index);
       }
 
       // ReSharper disable once IteratorNeverReturns

@@ -294,7 +294,7 @@ namespace Bach.Model.Test
     public void NoteCountTest()
     {
       var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count, scale.Notes.Length);
+      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count, scale.Notes.Count);
     }
 
     [Fact]

@@ -41,7 +41,7 @@ namespace Bach.Model.Test
       Assert.Equal(Note.C, triad.Root);
       Assert.Equal(Note.C, triad.Bass);
       Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Length);
+      Assert.Equal(3, triad.Notes.Count);
       Assert.Equal(Note.C, triad.Notes[0]);
       Assert.Equal(Note.E, triad.Notes[1]);
       Assert.Equal(Note.G, triad.Notes[2]);
@@ -56,7 +56,7 @@ namespace Bach.Model.Test
       Assert.Equal(Note.C, triad.Root);
       Assert.Equal(Note.C, triad.Bass);
       Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Length);
+      Assert.Equal(3, triad.Notes.Count);
       Assert.Equal(Note.C, triad.Notes[0]);
       Assert.Equal(Note.EFlat, triad.Notes[1]);
       Assert.Equal(Note.G, triad.Notes[2]);
@@ -71,7 +71,7 @@ namespace Bach.Model.Test
       Assert.Equal(Note.C, triad.Root);
       Assert.Equal(Note.C, triad.Bass);
       Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Length);
+      Assert.Equal(3, triad.Notes.Count);
       Assert.Equal(Note.C, triad.Notes[0]);
       Assert.Equal(Note.EFlat, triad.Notes[1]);
       Assert.Equal(Note.GFlat, triad.Notes[2]);
@@ -86,7 +86,7 @@ namespace Bach.Model.Test
       Assert.Equal(Note.C, triad.Root);
       Assert.Equal(Note.C, triad.Bass);
       Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Length);
+      Assert.Equal(3, triad.Notes.Count);
       Assert.Equal(Note.C, triad.Notes[0]);
       Assert.Equal(Note.E, triad.Notes[1]);
       Assert.Equal(Note.GSharp, triad.Notes[2]);
@@ -102,7 +102,7 @@ namespace Bach.Model.Test
       Assert.Equal(Note.G, inversion.Root);
       Assert.Equal(Note.B, inversion.Bass);
       Assert.Equal(1, inversion.Inversion);
-      Assert.Equal(3, inversion.Notes.Length);
+      Assert.Equal(3, inversion.Notes.Count);
       Assert.Equal(Note.B, inversion.Notes[0]);
       Assert.Equal(Note.D, inversion.Notes[1]);
       Assert.Equal(Note.G, inversion.Notes[2]);
@@ -118,7 +118,7 @@ namespace Bach.Model.Test
       Assert.Equal(Note.G, inversion.Root);
       Assert.Equal(Note.D, inversion.Bass);
       Assert.Equal(2, inversion.Inversion);
-      Assert.Equal(3, inversion.Notes.Length);
+      Assert.Equal(3, inversion.Notes.Count);
       Assert.Equal(Note.D, inversion.Notes[0]);
       Assert.Equal(Note.G, inversion.Notes[1]);
       Assert.Equal(Note.B, inversion.Notes[2]);
