@@ -1,7 +1,6 @@
-﻿//
-// Module Name: ChordFormulaTest.cs
+﻿// Module Name: ChordFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -25,10 +24,14 @@
 
 namespace Bach.Model.Test
 {
+  using System;
+  using System.Collections.Generic;
   using Xunit;
 
   public class ChordFormulaTest
   {
+    #region Public Methods
+
     [Fact]
     public void ConstructorWithFormulaTest()
     {
@@ -138,7 +141,7 @@ namespace Bach.Model.Test
     public void GenerateTest()
     {
       var formula = new ChordFormula("Key", "Test", "Symbol", "R,2,3");
-      using( var pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
+      using( IEnumerator<Pitch> pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
       {
         var count = 0;
         while( pitches.MoveNext() )
@@ -151,5 +154,19 @@ namespace Bach.Model.Test
         Assert.Equal(30, count);
       }
     }
+
+    [Fact]
+    public void IntervalsMustHaveNoDuplicatesTest()
+    {
+      Assert.Throws<ArgumentException>(() => new ChordFormula("Key", "Name", "Symbol", "R,2,2,3"));
+    }
+
+    [Fact]
+    public void IntervalsMustBeSortedTest()
+    {
+      Assert.Throws<ArgumentException>(() => new ChordFormula("Key", "Name", "Symbol", "R,3,2"));
+    }
+
+    #endregion
   }
 }

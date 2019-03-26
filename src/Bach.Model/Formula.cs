@@ -68,6 +68,7 @@ namespace Bach.Model
       Contract.RequiresNotNullOrEmpty(name, "Must provide a name");
       Contract.Requires<ArgumentNullException>(intervals != null, "Must provide an interval array");
       Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0, "Must provide at least one interval");
+      Contract.Requires<ArgumentException>(intervals.IsSortedWithoutDuplicates());
 
       Key = key;
       Name = name;

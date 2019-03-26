@@ -24,6 +24,7 @@
 
 namespace Bach.Model.Test
 {
+  using System;
   using System.Collections.Generic;
   using Xunit;
 
@@ -150,7 +151,7 @@ namespace Bach.Model.Test
     public void GenerateTest()
     {
       var formula = new ScaleFormula("Key", "Test", "R,2,3");
-      using( var pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
+      using( IEnumerator<Pitch> pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
       {
         var count = 0;
         while( pitches.MoveNext() )
@@ -162,6 +163,18 @@ namespace Bach.Model.Test
         // 3 notes per octave, 10 octaves total.
         Assert.Equal(30, count);
       }
+    }
+
+    [Fact]
+    public void IntervalsMustHaveNoDuplicatesTest()
+    {
+      Assert.Throws<ArgumentException>(() => new ScaleFormula("Key", "Test", "R,2,2,3"));
+    }
+
+    [Fact]
+    public void IntervalsMustBeSortedTest()
+    {
+      Assert.Throws<ArgumentException>(() => new ScaleFormula("Key", "Test", "R,3,2"));
     }
 
     #endregion
