@@ -1,7 +1,6 @@
-﻿//
-// Module Name: ScaleTest.cs
+﻿// Module Name: ScaleTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -27,11 +26,14 @@ namespace Bach.Model.Test
 {
   using System;
   using System.Collections;
+  using System.Collections.Generic;
   using System.Linq;
   using Xunit;
 
   public class ScaleTest
   {
+    #region Public Methods
+
     [Fact]
     public void StringConstructorTest()
     {
@@ -50,7 +52,7 @@ namespace Bach.Model.Test
     [Fact]
     public void StringConstructorThrowsOnEmptyFormulaNameTest()
     {
-      Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => new Scale(Note.C, ""));
+      Assert.Throws<KeyNotFoundException>(() => new Scale(Note.C, ""));
     }
 
     [Fact]
@@ -107,6 +109,51 @@ namespace Bach.Model.Test
       TestScale("C,Eb,F,G,Bb", root, "MinorPentatonic");
       TestScale("C,Eb,F,Gb,G,Bb", root, "Blues");
       TestScale("C,D,Eb,E,G,A", root, "Gospel");
+    }
+
+    [Fact]
+    public void IsDiatonicTest()
+    {
+      TestPredicate(Note.C, "Major", scale => scale.Diatonic);
+      TestPredicate(Note.C, "LeadingTone", scale => scale.Diatonic);
+      TestPredicate(Note.C, "Overtone", scale => scale.Diatonic);
+      TestPredicate(Note.C, "Hindu", scale => scale.Diatonic);
+      TestPredicate(Note.C, "Arabian", scale => scale.Diatonic);
+      TestPredicate(Note.C, "NaturalMinor", scale => scale.Diatonic);
+      TestPredicate(Note.C, "Javanese", scale => scale.Diatonic);
+      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Diatonic);
+
+      TestPredicate(Note.C, "HungarianFolk", scale => !scale.Diatonic);
+      TestPredicate(Note.C, "Gypsy", scale => !scale.Diatonic);
+      TestPredicate(Note.C, "Enigmatic", scale => !scale.Diatonic);
+      TestPredicate(Note.C, "Persian", scale => !scale.Diatonic);
+      TestPredicate(Note.C, "Mongolian", scale => !scale.Diatonic);
+    }
+
+    [Fact]
+    public void IsMajorTest()
+    {
+      TestPredicate(Note.C, "Major", scale => scale.Major);
+      TestPredicate(Note.C, "HungarianFolk", scale => scale.Major);
+      TestPredicate(Note.C, "Gypsy", scale => scale.Major);
+      //TestPredicate(Note.C, "LeadingTone", scale => scale.Major);
+      //TestPredicate(Note.C, "Enigmatic", scale => scale.Major);
+      //TestPredicate(Note.C, "Persian", scale => scale.Major);
+      TestPredicate(Note.C, "Mongolian", scale => scale.Major);
+    }
+
+    [Fact]
+    public void IsMinorTest()
+    {
+      TestPredicate(Note.C, "NaturalMinor", scale => scale.Minor);
+      TestPredicate(Note.C, "GypsyMinor", scale => scale.Minor);
+      TestPredicate(Note.C, "Javanese", scale => scale.Minor);
+      TestPredicate(Note.C, "NeapolitanMinor", scale => scale.Minor);
+      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Minor);
+      TestPredicate(Note.C, "HungarianMinor", scale => scale.Minor);
+      TestPredicate(Note.C, "Yo", scale => scale.Minor);
+      TestPredicate(Note.C, "Hirojoshi", scale => scale.Minor);
+      TestPredicate(Note.C, "Balinese", scale => scale.Minor);
     }
 
     [Fact]
@@ -253,13 +300,13 @@ namespace Bach.Model.Test
     [Fact]
     public void IsTheoreticalTest()
     {
-      Assert.False(new Scale(Note.C, "major").IsTheoretical());
-      Assert.True(new Scale(Note.DSharp, "major").IsTheoretical());
-      Assert.True(new Scale(Note.Parse("E#"), "major").IsTheoretical());
-      Assert.True(new Scale(Note.Parse("Fb"), "major").IsTheoretical());
-      Assert.True(new Scale(Note.GSharp, "major").IsTheoretical());
-      Assert.True(new Scale(Note.ASharp, "major").IsTheoretical());
-      Assert.True(new Scale(Note.Parse("B#"), "major").IsTheoretical());
+      Assert.False(new Scale(Note.C, "major").Theoretical);
+      Assert.True(new Scale(Note.DSharp, "major").Theoretical);
+      Assert.True(new Scale(Note.Parse("E#"), "major").Theoretical);
+      Assert.True(new Scale(Note.Parse("Fb"), "major").Theoretical);
+      Assert.True(new Scale(Note.GSharp, "major").Theoretical);
+      Assert.True(new Scale(Note.ASharp, "major").Theoretical);
+      Assert.True(new Scale(Note.Parse("B#"), "major").Theoretical);
     }
 
     [Fact]
@@ -273,16 +320,6 @@ namespace Bach.Model.Test
       TestEnharmonic(Note.GSharp, Note.AFlat, "major");
       TestEnharmonic(Note.ASharp, Note.BFlat, "major");
       TestEnharmonic(Note.Parse("B#"), Note.C, "major");
-    }
-
-    static void TestEnharmonic(Note root,
-                               Note enharmonicRoot,
-                               string scaleKey)
-    {
-      var scale = new Scale(root, scaleKey);
-      var actual = scale.GetEnharmonicScale();
-      var expected = new Scale(enharmonicRoot, scaleKey);
-      Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -303,6 +340,20 @@ namespace Bach.Model.Test
       Assert.Equal(Note.BFlat, scale.Notes[4]);
     }
 
+    #endregion
+
+    #region  Implementation
+
+    private static void TestEnharmonic(Note root,
+                                       Note enharmonicRoot,
+                                       string scaleKey)
+    {
+      var scale = new Scale(root, scaleKey);
+      Scale actual = scale.GetEnharmonicScale();
+      var expected = new Scale(enharmonicRoot, scaleKey);
+      Assert.Equal(expected, actual);
+    }
+
     private static void TestRender(Scale scale,
                                    int octave,
                                    string expectedNotes)
@@ -320,5 +371,15 @@ namespace Bach.Model.Test
       Note[] actual = scale.Take(expected.Count).ToArray();
       Assert.Equal(expected, actual);
     }
+
+    private static void TestPredicate(Note root,
+                                      string formulaName,
+                                      Predicate<Scale> pred)
+    {
+      var scale = new Scale(root, formulaName);
+      Assert.True(pred(scale));
+    }
+
+    #endregion
   }
 }
