@@ -1,7 +1,6 @@
-﻿//
-// Module Name: ChordTest.cs
+﻿// Module Name: ChordTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2019  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -27,11 +26,14 @@ namespace Bach.Model.Test
 {
   using System;
   using System.Collections;
+  using System.Collections.Generic;
   using System.Linq;
   using Xunit;
 
   public class ChordTest
   {
+    #region Public Methods
+
     [Fact]
     public void StringConstructorTest()
     {
@@ -46,13 +48,13 @@ namespace Bach.Model.Test
     [Fact]
     public void StringConstructorThrowsOnNullFormulaNameTest()
     {
-      Assert.Throws<ArgumentNullException>(() => new Chord(Note.C, (string) null));
+      Assert.Throws<ArgumentNullException>(() => new Chord(Note.C, (string)null));
     }
 
     [Fact]
     public void StringConstructorThrowsOnEmptyFormulaNameTest()
     {
-      Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => new Chord(Note.C, ""));
+      Assert.Throws<KeyNotFoundException>(() => new Chord(Note.C, ""));
     }
 
     [Fact]
@@ -70,7 +72,7 @@ namespace Bach.Model.Test
     [Fact]
     public void FormulaConstructorThrowsOnNullFormulaTest()
     {
-      Assert.Throws<ArgumentNullException>(() => new Chord(Note.C, (ChordFormula) null));
+      Assert.Throws<ArgumentNullException>(() => new Chord(Note.C, (ChordFormula)null));
     }
 
     [Fact]
@@ -96,6 +98,31 @@ namespace Bach.Model.Test
       ChordTestImpl("C,Eb,Gb,A", Note.C, "Diminished7");
       ChordTestImpl("C,Eb,Gb,Bb", Note.C, "HalfDiminished");
       ChordTestImpl("C,E,G#", Note.C, "Augmented");
+    }
+
+    [Fact]
+    public void ChordIsExtendedTest()
+    {
+      ChordIsExtended(Note.C, "Major", false);
+      ChordIsExtended(Note.C, "Major7", false);
+      ChordIsExtended(Note.C, "Major9", true);
+      ChordIsExtended(Note.C, "Major11", true);
+      ChordIsExtended(Note.C, "Major13", true);
+      ChordIsExtended(Note.C, "Minor", false);
+      ChordIsExtended(Note.C, "Minor7", false);
+      ChordIsExtended(Note.C, "Minor9", true);
+      ChordIsExtended(Note.C, "Minor11", true);
+      ChordIsExtended(Note.C, "Minor13", true);
+      ChordIsExtended(Note.C, "Dominant7", false);
+      ChordIsExtended(Note.C, "Dominant9", true);
+      ChordIsExtended(Note.C, "Dominant11", true);
+      ChordIsExtended(Note.C, "Dominant13", true);
+      ChordIsExtended(Note.C, "SixNine", true);
+      ChordIsExtended(Note.C, "AddNine", true);
+      ChordIsExtended(Note.C, "Diminished", false);
+      ChordIsExtended(Note.C, "Diminished7", false);
+      ChordIsExtended(Note.C, "HalfDiminished", false);
+      ChordIsExtended(Note.C, "Augmented", false);
     }
 
     [Fact]
@@ -193,7 +220,7 @@ namespace Bach.Model.Test
     public void EnumeratorTest()
     {
       var cMajor = new Chord(Note.C, "Major");
-      IEnumerator enumerator = ((IEnumerable) cMajor).GetEnumerator();
+      IEnumerator enumerator = ( (IEnumerable)cMajor ).GetEnumerator();
       Assert.NotNull(enumerator);
       Assert.True(enumerator.MoveNext());
       Assert.Equal(Note.C, enumerator.Current);
@@ -204,6 +231,10 @@ namespace Bach.Model.Test
       Assert.False(enumerator.MoveNext());
     }
 
+    #endregion
+
+    #region  Implementation
+
     private static void ChordTestImpl(string expectedNotes,
                                       Note root,
                                       string formulaName)
@@ -212,5 +243,15 @@ namespace Bach.Model.Test
       Note[] actualNotes = chord.Take(NoteCollection.Parse(expectedNotes).Count).ToArray();
       Assert.Equal(NoteCollection.Parse(expectedNotes), actualNotes);
     }
+
+    private static void ChordIsExtended(Note root,
+                                        string formulaName,
+                                        bool expected)
+    {
+      var chord = new Chord(root, formulaName);
+      Assert.Equal(expected, chord.IsExtended);
+    }
+
+    #endregion
   }
 }

@@ -108,6 +108,17 @@ namespace Bach.Model
     /// <value>The notes.</value>
     public Note[] Notes { get; }
 
+    /// <summary>An extended chord uses intervals whose quantity extends beyond the octave.</summary>
+    /// <value>True if this instance is an extended chord, false if not.</value>
+    public bool IsExtended
+    {
+      get
+      {
+        Interval lastInterval = Formula.Intervals[Formula.Intervals.Count - 1];
+        return lastInterval.Quantity > IntervalQuantity.Octave;
+      }
+    }
+
     #endregion
 
     #region IEnumerable<Note> Members
