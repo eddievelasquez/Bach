@@ -54,7 +54,7 @@ namespace Bach.Model.Test
       const string KEY = "Key";
       const string NAME = "Name";
       const string SYMBOL = "Symbol";
-      var actual = new ChordFormula(KEY, NAME, SYMBOL, new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird });
+      var actual = new ChordFormula(KEY, NAME, SYMBOL, Interval.Unison, Interval.MajorSecond, Interval.MajorThird);
 
       Assert.Equal(KEY, actual.Key);
       Assert.Equal(NAME, actual.Name);

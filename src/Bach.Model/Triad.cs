@@ -31,17 +31,15 @@ namespace Bach.Model
   {
     #region Constants
 
-    private static readonly ChordFormula s_majorTriad =
-      new ChordFormula("MajorTriad", "MajorTriad", "", new[] { Interval.Unison, Interval.MajorThird, Interval.Fifth });
+    private static readonly ChordFormula s_majorTriad = new ChordFormula("MajorTriad", "MajorTriad", "", Interval.Unison, Interval.MajorThird, Interval.Fifth);
 
-    private static readonly ChordFormula s_minorTriad =
-      new ChordFormula("MinorTriad", "MinorTriad", "m", new[] { Interval.Unison, Interval.MinorThird, Interval.Fifth });
+    private static readonly ChordFormula s_minorTriad = new ChordFormula("MinorTriad", "MinorTriad", "m", Interval.Unison, Interval.MinorThird, Interval.Fifth);
 
     private static readonly ChordFormula s_diminishedTriad =
-      new ChordFormula("DiminishedTriad", "DiminishedTriad", "dim", new[] { Interval.Unison, Interval.MinorThird, Interval.DiminishedFifth });
+      new ChordFormula("DiminishedTriad", "DiminishedTriad", "dim", Interval.Unison, Interval.MinorThird, Interval.DiminishedFifth);
 
     private static readonly ChordFormula s_augmentedTriad =
-      new ChordFormula("AugmentedTriad", "AugmentedTriad", "aug", new[] { Interval.Unison, Interval.MajorThird, Interval.AugmentedFifth });
+      new ChordFormula("AugmentedTriad", "AugmentedTriad", "aug", Interval.Unison, Interval.MajorThird, Interval.AugmentedFifth);
 
     #endregion
 

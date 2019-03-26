@@ -51,7 +51,7 @@ namespace Bach.Model.Test
     {
       const string KEY = "Key";
       const string NAME = "Name";
-      var actual = new ScaleFormula(KEY, NAME, new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird });
+      var actual = new ScaleFormula(KEY, NAME, Interval.Unison, Interval.MajorSecond, Interval.MajorThird);
 
       Assert.Equal(KEY, actual.Key);
       Assert.Equal(NAME, actual.Name);

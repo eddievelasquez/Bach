@@ -38,7 +38,7 @@ namespace Bach.Model
     public ChordFormula(string key,
                         string name,
                         string symbol,
-                        Interval[] intervals)
+                        params Interval[] intervals)
       : base(key, name, intervals)
     {
       Symbol = symbol ?? string.Empty;

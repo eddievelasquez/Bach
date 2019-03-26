@@ -36,7 +36,7 @@ namespace Bach.Model
     ///                         compose the scale.</param>
     public ScaleFormula(string key,
                         string name,
-                        Interval[] intervals)
+                        params Interval[] intervals)
       : base(key, name, intervals)
     {
     }
