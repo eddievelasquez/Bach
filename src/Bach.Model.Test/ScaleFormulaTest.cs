@@ -37,7 +37,7 @@ namespace Bach.Model.Test
     {
       const string KEY = "Key";
       const string NAME = "Name";
-      const string FORMULA = "R,2,3";
+      const string FORMULA = "R,M2,M3";
       var actual = new ScaleFormula(KEY, NAME, FORMULA);
 
       Assert.Equal(KEY, actual.Key);
@@ -62,9 +62,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new ScaleFormula("Key", "Name", "R,2,3");
-      object y = new ScaleFormula("Key", "Name", "R,2,3");
-      object z = new ScaleFormula("Key", "Name", "R,2,3");
+      object x = new ScaleFormula("Key", "Name", "R,M2,M3");
+      object y = new ScaleFormula("Key", "Name", "R,M2,M3");
+      object z = new ScaleFormula("Key", "Name", "R,M2,M3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symmetric
@@ -77,9 +77,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new ScaleFormula("Key", "Name", "R,2,3");
-      var y = new ScaleFormula("Key", "Name", "R,2,3");
-      var z = new ScaleFormula("Key", "Name", "R,2,3");
+      var x = new ScaleFormula("Key", "Name", "R,M2,M3");
+      var y = new ScaleFormula("Key", "Name", "R,M2,M3");
+      var z = new ScaleFormula("Key", "Name", "R,M2,M3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symmetric
@@ -92,43 +92,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new ScaleFormula("Key", "Name", "R,2,3");
+      object actual = new ScaleFormula("Key", "Name", "R,M2,M3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new ScaleFormula("Key", "Name", "R,2,3");
+      var actual = new ScaleFormula("Key", "Name", "R,M2,M3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new ScaleFormula("Key", "Name", "R,2,3");
+      object actual = new ScaleFormula("Key", "Name", "R,M2,M3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new ScaleFormula("Key", "Name", "R,2,3");
+      var actual = new ScaleFormula("Key", "Name", "R,M2,M3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new ScaleFormula("Key", "Name", "R,2,3");
+      var actual = new ScaleFormula("Key", "Name", "R,M2,M3");
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new ScaleFormula("Key", "Name", "R,2,3");
-      var expected = new ScaleFormula("Key", "Name", "R,2,3");
+      var actual = new ScaleFormula("Key", "Name", "R,M2,M3");
+      var expected = new ScaleFormula("Key", "Name", "R,M2,M3");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -150,7 +150,7 @@ namespace Bach.Model.Test
     [Fact]
     public void GenerateTest()
     {
-      var formula = new ScaleFormula("Key", "Test", "R,2,3");
+      var formula = new ScaleFormula("Key", "Test", "R,M2,M3");
       using( IEnumerator<Pitch> pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
       {
         var count = 0;
@@ -168,13 +168,13 @@ namespace Bach.Model.Test
     [Fact]
     public void IntervalsMustHaveNoDuplicatesTest()
     {
-      Assert.Throws<ArgumentException>(() => new ScaleFormula("Key", "Test", "R,2,2,3"));
+      Assert.Throws<ArgumentException>(() => new ScaleFormula("Key", "Test", "R,M2,M2,M3"));
     }
 
     [Fact]
     public void IntervalsMustBeSortedTest()
     {
-      Assert.Throws<ArgumentException>(() => new ScaleFormula("Key", "Test", "R,3,2"));
+      Assert.Throws<ArgumentException>(() => new ScaleFormula("Key", "Test", "R,M3,M2"));
     }
 
     #endregion

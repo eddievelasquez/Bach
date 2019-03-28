@@ -197,8 +197,7 @@ namespace Bach.Model.Test
 
       Assert.True(Interval.TryParse("M3", out actual));
       Assert.Equal(Interval.MajorThird, actual);
-      Assert.True(Interval.TryParse("3", out actual));
-      Assert.Equal(Interval.MajorThird, actual);
+      Assert.False(Interval.TryParse("3", out actual));
 
       Assert.True(Interval.TryParse("A3", out actual));
       Assert.Equal(Interval.AugmentedThird, actual);

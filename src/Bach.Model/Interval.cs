@@ -311,7 +311,7 @@ namespace Bach.Model
         }
         else
         {
-          quality = IntervalQuality.Major;
+          return false;
         }
       }
 
