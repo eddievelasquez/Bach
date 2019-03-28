@@ -1,0 +1,100 @@
+﻿{
+  "Version": "0.1",
+  "Scales":
+  [
+    { "Key": "Major", "Name": "Major", "Formula": "R,M2,M3,4,5,M6,M7" },
+    { "Key": "NaturalMinor", "Name": "Natural Minor", "Formula": "R,M2,m3,4,5,m6,m7" },
+    { "Key": "MelodicMinor", "Name": "Melodic Minor", "Formula": "R,M2,m3,4,5,M6,M7" },
+    { "Key": "HarmonicMinor", "Name": "Harmonic Minor", "Formula": "R,M2,m3,4,5,m6,M7" },
+    { "Key": "Diminished", "Name": "Diminished", "Formula": "R,M2,m3,4,d5,A5,M6,M7" },
+    { "Key": "WholeTone", "Name": "Whole Tone", "Formula": "R,M2,M3,A4,A5,A6" },
+    { "Key": "Blues", "Name": "Blues", "Formula": "R,m3,4,d5,5,m7" },
+    { "Key": "MinorPentatonic", "Name": "Minor Pentatonic", "Formula": "R,m3,4,5,m7" },
+    { "Key": "Pentatonic", "Name": "Pentatonic", "Formula": "R,M2,M3,5,M6" },
+    { "Key": "Polytonal", "Name": "Polytonal", "Formula": "R,m2,m3,d4,A4,5,M6,m7" },
+    { "Key": "Gospel", "Name": "Gospel", "Formula": "R,M2,m3,M3,5,M6" },
+    { "Key": "HungarianFolk", "Name": "Hungarian Folk", "Formula": "R,m2,M3,5,m6,M7" },
+    { "Key": "Gypsy", "Name": "Gypsy", "Formula": "R,m2,M3,4,5,A5,M7" },
+    { "Key": "LeadingTone", "Name": "Leading Tone", "Formula": "R,M2,M3,d5,A5,m7,M7" },
+    { "Key": "Enigmatic", "Name": "Enigmatic", "Formula": "R,m2,M3,d5,A5,m7,M7" },
+    { "Key": "Persian", "Name": "Persian", "Formula": "R,m2,M3,4,d5,A5,M7" },
+    { "Key": "Overtone", "Name": "Overtone", "Formula": "R,M2,M3,d5,5,A5,m7" },
+    { "Key": "Hindu", "Name": "Hindu", "Formula": "R,M2,M3,4,5,A5,m7" },
+    { "Key": "HungarianMajor", "Name": "Hungarian Major", "Formula": "R,m3,M3,d5,5,M6,m7" },
+    { "Key": "SpanishGypsy", "Name": "Spanish Gypsy", "Formula": "R,m2,M3,4,5,A5,m7" },
+    { "Key": "Arabian", "Name": "Arabian", "Formula": "R,M2,M3,4,d5,A5,m7" },
+    { "Key": "Oriental", "Name": "Oriental", "Formula": "R,m2,M3,4,d5,M6,m7" },
+    { "Key": "GypsyMinor", "Name": "Gypsy Minor", "Formula": "R,M2,m3,d5,5,A5,m7" },
+    { "Key": "Javanese", "Name": "Javanese", "Formula": "R,m2,m3,4,5,M6,m7" },
+    { "Key": "NeapolitanMinor", "Name": "Neapolitan Minor", "Formula": "R,m2,m3,4,5,A5,M7" },
+    { "Key": "NeapolitanMajor", "Name": "Neapolitan Major", "Formula": "R,m2,m3,4,5,M6,M7" },
+    { "Key": "HungarianMinor", "Name": "Hungarian Minor", "Formula": "R,M2,m3,d5,5,A5,M7" },
+    { "Key": "InSen", "Name": "In Sen", "Formula": "R,m2,4,5,m7" },
+    { "Key": "Iwato", "Name": "Iwato", "Formula": "R,m2,4,d5,m7" },
+    { "Key": "Scottish", "Name": "Scottish", "Formula": "R,M2,4,5,M6" },
+    { "Key": "Kumoi", "Name": "Kumoi", "Formula": "R,m2,4,5,A5" },
+    { "Key": "Egyptian", "Name": "Egyptian", "Formula": "R,M2,4,5,m7" },
+    { "Key": "Yo", "Name": "Yo", "Formula": "R,m3,4,5,m7" },
+    { "Key": "Hirojoshi", "Name": "Hirojoshi", "Formula": "R,M2,m3,5,A5" },
+    { "Key": "Balinese", "Name": "Balinese", "Formula": "R,m2,m3,5,A5" },
+    { "Key": "Mongolian", "Name": "Mongolian", "Formula": "R,M2,M3,5,M6" },
+    { "Key": "Augmented", "Name": "Augmented", "Formula": "R,m3,M3,5,A5,M7" },
+    { "Key": "Pelog", "Name": "Pelog", "Formula": "R,m2,m3,4,5,m7" },
+    { "Key": "Mystic", "Name": "Mystic", "Formula": "R,M2,M3,d5,M6,m7" },
+    { "Key": "Bebop", "Name": "Bebop", "Formula": "R,M2,M3,4,5,A5,M6,M7" },
+    { "Key": "BebopDorian", "Name": "Bebop Dorian", "Formula": "R,M2,m3,4,5,M6,m7,M7" },
+    { "Key": "BebopDominant", "Name": "Bebop Dominant", "Formula": "R,M2,M3,4,5,M6,m7,M7" },
+    { "Key": "Spanish8Tone", "Name": "Spanish 8 Tone", "Formula": "R,m2,m3,M3,4,d5,A5,m7" },
+    { "Key": "DoubleHarmonicMajor", "Name": "Double Harmonic Major", "Formula": "R,m2,M3,4,5,m6,M7" }
+  ],
+  "Chords":
+  [
+    { "Key": "Major", "Name": "Major", "Symbol": "", "Formula": "R,M3,5" },
+    { "Key": "Major6", "Name": "Major Sixth", "Symbol": "M6", "Formula": "R,M3,5,M6" },
+    { "Key": "Major7", "Name": "Major Seventh", "Symbol": "M7", "Formula": "R,M3,5,M7" },
+    { "Key": "Major9", "Name": "Major Ninth", "Symbol": "M9", "Formula": "R,M3,5,M7,M9" },
+    { "Key": "Major11", "Name": "Major Eleventh", "Symbol": "M11", "Formula": "R,M3,5,M7,M9,11" },
+    { "Key": "Major13", "Name": "Major Thirteenth", "Symbol": "M13", "Formula": "R,M3,5,M7,M9,11,M13" },
+    { "Key": "Minor", "Name": "Minor", "Symbol": "m", "Formula": "R,m3,5" },
+    { "Key": "Minor6", "Name": "Minor Sixth", "Symbol": "m6", "Formula": "R,m3,5,M6" },
+    { "Key": "Minor7", "Name": "Minor Seventh", "Symbol": "m7", "Formula": "R,m3,5,m7" },
+    { "Key": "Minor9", "Name": "Minor Ninth", "Symbol": "m9", "Formula": "R,m3,5,m7,M9" },
+    { "Key": "Minor11", "Name": "Minor Eleventh", "Symbol": "m11", "Formula": "R,m3,5,m7,M9,11" },
+    { "Key": "Minor13", "Name": "Minor Thirteenth", "Symbol": "m13", "Formula": "R,m3,5,m7,M9,11,M13" },
+    { "Key": "Dominant7", "Name": "Dominant Seventh", "Symbol": "7", "Formula": "R,M3,5,m7" },
+    { "Key": "Dominant9", "Name": "Dominant Ninth", "Symbol": "9", "Formula": "R,M3,5,m7,M9" },
+    { "Key": "Dominant11", "Name": "Dominant Eleventh", "Symbol": "11", "Formula": "R,M3,5,m7,M9,11" },
+    { "Key": "Dominant13", "Name": "Dominant Thirteenth", "Symbol": "13", "Formula": "R,M3,5,m7,M9,11,M13" },
+    { "Key": "SixNine", "Name": "Six Nine", "Symbol": "6/9", "Formula": "R,M3,5,M6,M9" },
+    { "Key": "AddNine", "Name": "Add Nine", "Symbol": "add9", "Formula": "R,M3,5,M9" },
+    { "Key": "Diminished", "Name": "Diminished", "Symbol": "dim", "Formula": "R,m3,d5" },
+    { "Key": "Diminished7", "Name": "Diminished Seventh", "Symbol": "dim7", "Formula": "R,m3,d5,d7" },
+    { "Key": "HalfDiminished", "Name": "Half Diminished", "Symbol": "7dim5", "Formula": "R,m3,d5,m7" },
+    { "Key": "Augmented", "Name": "Augmented", "Symbol": "aug", "Formula": "R,M3,A5" },
+    { "Key": "Augmented7", "Name": "Augmented Seventh", "Symbol": "aug7", "Formula": "R,M3,A5,m7" },
+    { "Key": "MinorMajor7", "Name": "Minor-Major Seventh", "Symbol": "mM7", "Formula": "R,m3,5,M7" }
+  ],
+  "StringedInstruments":
+  [
+    {
+    "Key": "Guitar",
+        "Name": "Guitar",
+        "StringCount": 6,
+        "Tunings": [
+          { "Key": "Standard", "Name": "Standard", "Notes": "E4,B3,G3,D3,A2,E2" },
+          { "Key": "DropD", "Name": "Drop D", "Notes": "E4,B3,G3,D3,A2,D2" },
+          { "Key": "OpenD", "Name": "Open D", "Notes": "D4,A3,F#3,D3,A2,D2" },
+          { "Key": "OpenG", "Name": "Open G", "Notes": "D4,B3,G2,D2,G2,D2" },
+          { "Key": "OpenA", "Name": "Open A", "Notes": "E4,C#4,A3,E3,A2,E2" }
+        ]
+  },
+    {
+    "Key": "Bass",
+        "Name": "Bass",
+        "StringCount": 4,
+        "Tunings": [
+          { "Key": "Standard", "Name": "Standard", "Notes": "G2,D2,A1,E1" }
+        ]
+    }
+  ]
+}

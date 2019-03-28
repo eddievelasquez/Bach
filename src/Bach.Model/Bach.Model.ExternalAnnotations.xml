@@ -1,0 +1,12 @@
+﻿<assembly name="Bach.Model">
+  <member name="M:Bach.Model.Internal.Contract.Requires(System.Boolean,System.String)">
+    <attribute ctor="M:JetBrains.Annotations.ContractAnnotationAttribute.#ctor(System.String)">
+      <argument>condition:false=&gt;halt</argument>
+    </attribute>
+  </member>
+  <member name="M:Bach.Model.Internal.Contract.Requires``1(System.Boolean,System.String)">
+    <attribute ctor="M:JetBrains.Annotations.ContractAnnotationAttribute.#ctor(System.String)">
+      <argument>condition:false=&gt;halt</argument>
+    </attribute>
+  </member>
+</assembly>

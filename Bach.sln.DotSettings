@@ -1,0 +1,40 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">Module Name: $FILENAME$&#xD;
+Project:     $PROJECT$&#xD;
+Copyright (c) 2012, $CURRENT_YEAR$  Eddie Velasquez.&#xD;
+&#xD;
+This source is subject to the MIT License.&#xD;
+See http://opensource.org/licenses/MIT.&#xD;
+All other rights reserved.&#xD;
+&#xD;
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software&#xD;
+and associated documentation files (the "Software"), to deal in the Software without restriction,&#xD;
+including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,&#xD;
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to&#xD;
+do so, subject to the following conditions:&#xD;
+&#xD;
+The above copyright notice and this permission notice shall be included in all copies or substantial&#xD;
+portions of the Software.&#xD;
+&#xD;
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,&#xD;
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A&#xD;
+PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT&#xD;
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF&#xD;
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE&#xD;
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&#xD;
+</s:String>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=5CD7D1896CE76E41A25F72223B2FD70E/AbsolutePath/@EntryValue">D:\icc\src\dotnet\Bach\src\C#CodeStyle.DotSettings</s:String>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=5CD7D1896CE76E41A25F72223B2FD70E/RelativePath/@EntryValue">..\C#CodeStyle.DotSettings</s:String>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=5CD7D1896CE76E41A25F72223B2FD70E/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File5CD7D1896CE76E41A25F72223B2FD70E/@KeyIndexDefined">True</s:Boolean>
+	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File5CD7D1896CE76E41A25F72223B2FD70E/RelativePriority/@EntryValue">1</s:Double>
+	<s:String x:Key="/Default/FilterSettingsManager/CoverageFilterXml/@EntryValue">&lt;data&gt;&lt;IncludeFilters /&gt;&lt;ExcludeFilters&gt;&lt;Filter ModuleMask="Bach.Model" ModuleVersionMask="*" ClassMask="Bach.Model.Contract" FunctionMask="*" IsEnabled="True" /&gt;&lt;Filter ModuleMask="Bach.Model" ModuleVersionMask="*" ClassMask="Bach.Model.Internal.Contract" FunctionMask="*" IsEnabled="True" /&gt;&lt;/ExcludeFilters&gt;&lt;/data&gt;</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Hirojoshi/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Iwato/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Kumoi/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Locrian/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Mixolydian/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Pelog/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Phrygian/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Polytonal/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Tablature/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

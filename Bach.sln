@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bach.Model", "src\Bach.Model\Bach.Model.csproj", "{68BB6A6E-E7E3-4BBE-A729-AFE012665689}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bach.Model.Test", "src\Bach.Model.Test\Bach.Model.Test.csproj", "{110D627B-3CC3-40EA-B213-B338E03C7C17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68BB6A6E-E7E3-4BBE-A729-AFE012665689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68BB6A6E-E7E3-4BBE-A729-AFE012665689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68BB6A6E-E7E3-4BBE-A729-AFE012665689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68BB6A6E-E7E3-4BBE-A729-AFE012665689}.Release|Any CPU.Build.0 = Release|Any CPU
+		{110D627B-3CC3-40EA-B213-B338E03C7C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{110D627B-3CC3-40EA-B213-B338E03C7C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{110D627B-3CC3-40EA-B213-B338E03C7C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{110D627B-3CC3-40EA-B213-B338E03C7C17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2CA46BEC-D959-4B3F-820D-1D59AAAD36BC}
+	EndGlobalSection
+EndGlobal
