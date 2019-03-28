@@ -56,6 +56,7 @@
     { "Key": "Major11", "Name": "Major Eleventh", "Symbol": "M11", "Formula": "R,M3,5,M7,M9,11" },
     { "Key": "Major13", "Name": "Major Thirteenth", "Symbol": "M13", "Formula": "R,M3,5,M7,M9,11,M13" },
     { "Key": "Minor", "Name": "Minor", "Symbol": "m", "Formula": "R,m3,5" },
+    { "Key": "Minor6", "Name": "Minor Sixth", "Symbol": "m6", "Formula": "R,m3,5,M6" },
     { "Key": "Minor7", "Name": "Minor Seventh", "Symbol": "m7", "Formula": "R,m3,5,m7" },
     { "Key": "Minor9", "Name": "Minor Ninth", "Symbol": "m9", "Formula": "R,m3,5,m7,M9" },
     { "Key": "Minor11", "Name": "Minor Eleventh", "Symbol": "m11", "Formula": "R,m3,5,m7,M9,11" },
@@ -69,7 +70,9 @@
     { "Key": "Diminished", "Name": "Diminished", "Symbol": "dim", "Formula": "R,m3,d5" },
     { "Key": "Diminished7", "Name": "Diminished Seventh", "Symbol": "dim7", "Formula": "R,m3,d5,d7" },
     { "Key": "HalfDiminished", "Name": "Half Diminished", "Symbol": "7dim5", "Formula": "R,m3,d5,m7" },
-    { "Key": "Augmented", "Name": "Augmented", "Symbol": "aug", "Formula": "R,M3,A5" }
+    { "Key": "Augmented", "Name": "Augmented", "Symbol": "aug", "Formula": "R,M3,A5" },
+    { "Key": "Augmented7", "Name": "Augmented Seventh", "Symbol": "aug7", "Formula": "R,M3,A5,m7" },
+    { "Key": "MinorMajor7", "Name": "Minor-Major Seventh", "Symbol": "mM7", "Formula": "R,m3,5,M7" }
   ],
   "StringedInstruments":
   [
