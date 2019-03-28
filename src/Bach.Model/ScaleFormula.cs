@@ -32,8 +32,10 @@ namespace Bach.Model
     /// <summary>Constructor.</summary>
     /// <param name="key">The language-neutral key of the scale.</param>
     /// <param name="name">The localizable name of the scale.</param>
-    /// <param name="intervals">The intervals that describe the relationship between the notes that
-    ///                         compose the scale.</param>
+    /// <param name="intervals">
+    ///   The intervals that describe the relationship between the notes that
+    ///   compose the scale.
+    /// </param>
     public ScaleFormula(string key,
                         string name,
                         params Interval[] intervals)
@@ -44,39 +46,16 @@ namespace Bach.Model
     /// <summary>Constructor.</summary>
     /// <param name="key">The language-neutral key of the scale.</param>
     /// <param name="name">The localizable name of the scale.</param>
-    /// <param name="formula">The string representation of the formula for the scale. The formula is a
-    ///                       sequence of comma-separated intervals. See
-    ///                       <see cref="Interval.ToString" /> for the format of an interval.</param>
+    /// <param name="formula">
+    ///   The string representation of the formula for the scale. The formula is a
+    ///   sequence of comma-separated intervals. See
+    ///   <see cref="Interval.ToString" /> for the format of an interval.
+    /// </param>
     public ScaleFormula(string key,
                         string name,
                         string formula)
       : base(key, name, formula)
     {
-    }
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>Gets the relative steps in terms of semitones between the intervals that compose the scale.</summary>
-    /// <returns>An array of integral semitone counts.</returns>
-    public int[] GetRelativeSteps()
-    {
-      var steps = new int[Intervals.Count];
-      var lastStep = 0;
-
-      for( var i = 1; i < Intervals.Count; i++ )
-      {
-        int currentIntervalSteps = Intervals[i].SemitoneCount;
-        int step = currentIntervalSteps - lastStep;
-        steps[i - 1] = step;
-        lastStep = currentIntervalSteps;
-      }
-
-      // Add last step between the root octave and the
-      // last interval
-      steps[steps.Length - 1] = 12 - lastStep;
-      return steps;
     }
 
     #endregion

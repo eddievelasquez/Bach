@@ -192,6 +192,27 @@ namespace Bach.Model
       // ReSharper disable once IteratorNeverReturns
     }
 
+    /// <summary>Gets the relative steps in terms of semitones between the intervals that compose the formula.</summary>
+    /// <returns>An array of integral semitone counts.</returns>
+    public int[] GetRelativeSteps()
+    {
+      var steps = new int[_intervals.Length];
+      var lastCount = 0;
+
+      for( var i = 1; i < _intervals.Length; i++ )
+      {
+        int semitoneCount = _intervals[i].SemitoneCount;
+        int step = semitoneCount - lastCount;
+        steps[i - 1] = step;
+        lastCount = semitoneCount;
+      }
+
+      // Add last step between the root octave and the
+      // last interval
+      steps[steps.Length - 1] = 12 - lastCount;
+      return steps;
+    }
+
     #endregion
 
     #region Overrides
