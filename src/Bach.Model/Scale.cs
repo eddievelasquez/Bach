@@ -25,7 +25,6 @@
 namespace Bach.Model
 {
   using System;
-  using System.Collections;
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
   using System.Diagnostics;
@@ -34,9 +33,7 @@ namespace Bach.Model
   using Internal;
 
   /// <summary>A scale is a set of notes defined by a ScaleFormula .</summary>
-  public class Scale
-    : IEquatable<Scale>,
-      IEnumerable<Note>
+  public class Scale: IEquatable<Scale>
   {
     #region Nested type: ScaleCategory
 
@@ -144,28 +141,43 @@ namespace Bach.Model
     /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
     public bool Theoretical => ( _categories & ScaleCategory.Theoretical ) != 0;
 
-    #endregion
-
-    #region IEnumerable<Note> Members
-
-    /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator()
+    /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
+    /// <value>An enumerable that iterates through the scale in ascending fashion.</value>
+    public IEnumerable<Note> Ascending
     {
-      ReadOnlyCollection<Note> notes = Notes;
-      var index = 0;
-
-      while( true )
+      get
       {
-        yield return notes[index];
+        var index = 0;
 
-        index = ArrayExtensions.WrapIndex(notes.Count, ++index);
+        while( true )
+        {
+          yield return _notes[index];
+
+          index = ArrayExtensions.WrapIndex(_notes.Length, ++index);
+        }
+
+        // ReSharper disable once IteratorNeverReturns
       }
-
-      // ReSharper disable once IteratorNeverReturns
     }
 
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    /// <summary>Returns an enumerable that iterates through the scale in descending fashion.</summary>
+    /// <value>An enumerable that iterates through the scale in descending fashion.</value>
+    public IEnumerable<Note> Descending
+    {
+      get
+      {
+        var index = 0;
+
+        while( true )
+        {
+          yield return _notes[index];
+
+          index = ArrayExtensions.WrapIndex(_notes.Length, --index);
+        }
+
+        // ReSharper disable once IteratorNeverReturns
+      }
+    }
 
     #endregion
 
@@ -248,7 +260,7 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override string ToString() => NoteCollection.ToString(Notes);
+    public override string ToString() => NoteCollection.ToString(_notes);
 
     #endregion
 

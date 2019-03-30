@@ -64,7 +64,7 @@ namespace Bach.Model
       buf.Append(formula.Name);
 
       Name = buf.ToString();
-      _notes = scale.Skip(Formula.Tonic - 1).Take(scale.Notes.Count).ToArray();
+      _notes = scale.Ascending.Skip(Formula.Tonic - 1).Take(scale.Notes.Count).ToArray();
     }
 
     #endregion

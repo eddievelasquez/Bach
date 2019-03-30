@@ -72,10 +72,10 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void GetEnumeratorTest()
+    public void GetAscendingEnumeratorTest()
     {
       var scale = new Scale(Note.C, "Major");
-      IEnumerator enumerator = ( (IEnumerable)scale ).GetEnumerator();
+      IEnumerator enumerator = scale.Ascending.GetEnumerator();
       Assert.True(enumerator.MoveNext());
       Assert.Equal(Note.C, enumerator.Current);
       Assert.True(enumerator.MoveNext());
@@ -95,20 +95,60 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void GenerateScaleTest()
+    public void GetDescendingEnumeratorTest()
+    {
+      var scale = new Scale(Note.C, "Major");
+      IEnumerator enumerator = scale.Descending.GetEnumerator();
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.C, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.B, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.A, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.G, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.F, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.E, enumerator.Current);
+      Assert.True(enumerator.MoveNext());
+      Assert.Equal(Note.D, enumerator.Current);
+      Assert.True(enumerator.MoveNext()); // Scale enumerator wraps around infinitely
+      Assert.Equal(Note.C, enumerator.Current);
+    }
+
+    [Fact]
+    public void ScaleAscendingTest()
     {
       Note root = Note.C;
-      TestScale("C,D,E,F,G,A,B", root, "Major");
-      TestScale("C,D,Eb,F,G,Ab,Bb", root, "NaturalMinor");
-      TestScale("C,D,Eb,F,G,Ab,B", root, "HarmonicMinor");
-      TestScale("C,D,Eb,F,G,A,B", root, "MelodicMinor");
-      TestScale("C,D,Eb,F,Gb,G#,A,B", root, "Diminished");
-      TestScale("C,Db,Eb,E,F#,G,A,Bb", root, "Polytonal");
-      TestScale("C,D,E,F#,G#,A#", root, "WholeTone");
-      TestScale("C,D,E,G,A", root, "Pentatonic");
-      TestScale("C,Eb,F,G,Bb", root, "MinorPentatonic");
-      TestScale("C,Eb,F,Gb,G,Bb", root, "Blues");
-      TestScale("C,D,Eb,E,G,A", root, "Gospel");
+      TestScaleAscending("C,D,E,F,G,A,B", root, "Major");
+      TestScaleAscending("C,D,Eb,F,G,Ab,Bb", root, "NaturalMinor");
+      TestScaleAscending("C,D,Eb,F,G,Ab,B", root, "HarmonicMinor");
+      TestScaleAscending("C,D,Eb,F,G,A,B", root, "MelodicMinor");
+      TestScaleAscending("C,D,Eb,F,Gb,G#,A,B", root, "Diminished");
+      TestScaleAscending("C,Db,Eb,E,F#,G,A,Bb", root, "Polytonal");
+      TestScaleAscending("C,D,E,F#,G#,A#", root, "WholeTone");
+      TestScaleAscending("C,D,E,G,A", root, "Pentatonic");
+      TestScaleAscending("C,Eb,F,G,Bb", root, "MinorPentatonic");
+      TestScaleAscending("C,Eb,F,Gb,G,Bb", root, "Blues");
+      TestScaleAscending("C,D,Eb,E,G,A", root, "Gospel");
+    }
+
+    [Fact]
+    public void ScaleDescendingTest()
+    {
+      Note root = Note.C;
+      TestScaleDescending("C,B,A,G,F,E,D", root, "Major");
+      TestScaleDescending("C,Bb,Ab,G,F,Eb,D", root, "NaturalMinor");
+      TestScaleDescending("C,B,Ab,G,F,Eb,D", root, "HarmonicMinor");
+      TestScaleDescending("C,B,A,G,F,Eb,D", root, "MelodicMinor");
+      TestScaleDescending("C,B,A,G#,Gb,F,Eb,D", root, "Diminished");
+      TestScaleDescending("C,Bb,A,G,F#,E,Eb,Db", root, "Polytonal");
+      TestScaleDescending("C,A#,G#,F#,E,D", root, "WholeTone");
+      TestScaleDescending("C,A,G,E,D", root, "Pentatonic");
+      TestScaleDescending("C,Bb,G,F,Eb", root, "MinorPentatonic");
+      TestScaleDescending("C,Bb,G,Gb,F,Eb", root, "Blues");
+      TestScaleDescending("C,A,G,E,Eb,D", root, "Gospel");
     }
 
     [Fact]
@@ -164,7 +204,7 @@ namespace Bach.Model.Test
       object z = new Scale(Note.C, "Major");
 
       Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(x.Equals(y)); // Symmetric
       Assert.True(y.Equals(x));
       Assert.True(y.Equals(z)); // Transitive
       Assert.True(x.Equals(z));
@@ -179,7 +219,7 @@ namespace Bach.Model.Test
       var z = new Scale(Note.C, "Major");
 
       Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
+      Assert.True(x.Equals(y)); // Symmetric
       Assert.True(y.Equals(x));
       Assert.True(y.Equals(z)); // Transitive
       Assert.True(x.Equals(z));
@@ -241,53 +281,53 @@ namespace Bach.Model.Test
     [Fact]
     public void RenderUsesChoosesAppropriateAccidentalForMajorScaleTest()
     {
-      TestScale("C,D,E,F,G,A,B", Note.C, "Major");
-      TestScale("C#,D#,E#,F#,G#,A#,B#", Note.CSharp, "Major");
-      TestScale("Db,Eb,F,Gb,Ab,Bb,C", Note.DFlat, "Major");
-      TestScale("D,E,F#,G,A,B,C#", Note.D, "Major");
-      TestScale("D#,E#,F##,G#,A#,B#,C##", Note.DSharp, "Major");
-      TestScale("Eb,F,G,Ab,Bb,C,D", Note.EFlat, "Major");
-      TestScale("E,F#,G#,A,B,C#,D#", Note.E, "Major");
-      TestScale("E#,F##,G##,A#,B#,C##,D##", Note.Parse("E#"), "Major");
-      TestScale("Fb,Gb,Ab,Bbb,Cb,Db,Eb", Note.Parse("Fb"), "Major");
-      TestScale("F,G,A,Bb,C,D,E", Note.F, "Major");
-      TestScale("F#,G#,A#,B,C#,D#,E#", Note.FSharp, "Major");
-      TestScale("Gb,Ab,Bb,Cb,Db,Eb,F", Note.GFlat, "Major");
-      TestScale("G,A,B,C,D,E,F#", Note.G, "Major");
-      TestScale("G#,A#,B#,C#,D#,E#,F##", Note.GSharp, "Major");
-      TestScale("Ab,Bb,C,Db,Eb,F,G", Note.AFlat, "Major");
-      TestScale("A,B,C#,D,E,F#,G#", Note.A, "Major");
-      TestScale("A#,B#,C##,D#,E#,F##,G##", Note.ASharp, "Major");
-      TestScale("Bb,C,D,Eb,F,G,A", Note.BFlat, "Major");
-      TestScale("B,C#,D#,E,F#,G#,A#", Note.B, "Major");
-      TestScale("B#,C##,D##,E#,F##,G##,A##", Note.Parse("B#"), "Major");
-      TestScale("Cb,Db,Eb,Fb,Gb,Ab,Bb", Note.Parse("Cb"), "Major");
+      TestScaleAscending("C,D,E,F,G,A,B", Note.C, "Major");
+      TestScaleAscending("C#,D#,E#,F#,G#,A#,B#", Note.CSharp, "Major");
+      TestScaleAscending("Db,Eb,F,Gb,Ab,Bb,C", Note.DFlat, "Major");
+      TestScaleAscending("D,E,F#,G,A,B,C#", Note.D, "Major");
+      TestScaleAscending("D#,E#,F##,G#,A#,B#,C##", Note.DSharp, "Major");
+      TestScaleAscending("Eb,F,G,Ab,Bb,C,D", Note.EFlat, "Major");
+      TestScaleAscending("E,F#,G#,A,B,C#,D#", Note.E, "Major");
+      TestScaleAscending("E#,F##,G##,A#,B#,C##,D##", Note.Parse("E#"), "Major");
+      TestScaleAscending("Fb,Gb,Ab,Bbb,Cb,Db,Eb", Note.Parse("Fb"), "Major");
+      TestScaleAscending("F,G,A,Bb,C,D,E", Note.F, "Major");
+      TestScaleAscending("F#,G#,A#,B,C#,D#,E#", Note.FSharp, "Major");
+      TestScaleAscending("Gb,Ab,Bb,Cb,Db,Eb,F", Note.GFlat, "Major");
+      TestScaleAscending("G,A,B,C,D,E,F#", Note.G, "Major");
+      TestScaleAscending("G#,A#,B#,C#,D#,E#,F##", Note.GSharp, "Major");
+      TestScaleAscending("Ab,Bb,C,Db,Eb,F,G", Note.AFlat, "Major");
+      TestScaleAscending("A,B,C#,D,E,F#,G#", Note.A, "Major");
+      TestScaleAscending("A#,B#,C##,D#,E#,F##,G##", Note.ASharp, "Major");
+      TestScaleAscending("Bb,C,D,Eb,F,G,A", Note.BFlat, "Major");
+      TestScaleAscending("B,C#,D#,E,F#,G#,A#", Note.B, "Major");
+      TestScaleAscending("B#,C##,D##,E#,F##,G##,A##", Note.Parse("B#"), "Major");
+      TestScaleAscending("Cb,Db,Eb,Fb,Gb,Ab,Bb", Note.Parse("Cb"), "Major");
     }
 
     [Fact]
     public void RenderUsesChoosesAppropriateAccidentalForNaturalMinorScaleTest()
     {
-      TestScale("C,D,Eb,F,G,Ab,Bb", Note.C, "NaturalMinor");
-      TestScale("C#,D#,E,F#,G#,A,B", Note.CSharp, "NaturalMinor");
-      TestScale("Db,Eb,Fb,Gb,Ab,Bbb,Cb", Note.DFlat, "NaturalMinor");
-      TestScale("D,E,F,G,A,Bb,C", Note.D, "NaturalMinor");
-      TestScale("D#,E#,F#,G#,A#,B,C#", Note.DSharp, "NaturalMinor");
-      TestScale("EB,F,Gb,Ab,Bb,Cb,Db", Note.EFlat, "NaturalMinor");
-      TestScale("E,F#,G,A,B,C,D", Note.E, "NaturalMinor");
-      TestScale("E#,F##,G#,A#,B#,C#,D#", Note.Parse("E#"), "NaturalMinor");
-      TestScale("Fb,Gb,Abb,Bbb,Cb,Dbb,Ebb", Note.Parse("Fb"), "NaturalMinor");
-      TestScale("F,G,Ab,Bb,C,Db,Eb", Note.F, "NaturalMinor");
-      TestScale("F#,G#,A,B,C#,D,E", Note.FSharp, "NaturalMinor");
-      TestScale("Gb,Ab,Bbb,Cb,Db,Ebb,Fb", Note.GFlat, "NaturalMinor");
-      TestScale("G,A,Bb,C,D,Eb,F", Note.G, "NaturalMinor");
-      TestScale("G#,A#,B,C#,D#,E,F#", Note.GSharp, "NaturalMinor");
-      TestScale("Ab,Bb,Cb,Db,Eb,Fb,Gb", Note.AFlat, "NaturalMinor");
-      TestScale("A,B,C,D,E,F,G", Note.A, "NaturalMinor");
-      TestScale("A#,B#,C#,D#,E#,F#,G#", Note.ASharp, "NaturalMinor");
-      TestScale("Bb,C,Db,Eb,F,Gb,Ab", Note.BFlat, "NaturalMinor");
-      TestScale("B,C#,D,E,F#,G,A", Note.B, "NaturalMinor");
-      TestScale("B#,C##,D#,E#,F##,G#,A#", Note.Parse("B#"), "NaturalMinor");
-      TestScale("Cb,Db,Ebb,Fb,Gb,Abb,Bbb", Note.Parse("Cb"), "NaturalMinor");
+      TestScaleAscending("C,D,Eb,F,G,Ab,Bb", Note.C, "NaturalMinor");
+      TestScaleAscending("C#,D#,E,F#,G#,A,B", Note.CSharp, "NaturalMinor");
+      TestScaleAscending("Db,Eb,Fb,Gb,Ab,Bbb,Cb", Note.DFlat, "NaturalMinor");
+      TestScaleAscending("D,E,F,G,A,Bb,C", Note.D, "NaturalMinor");
+      TestScaleAscending("D#,E#,F#,G#,A#,B,C#", Note.DSharp, "NaturalMinor");
+      TestScaleAscending("EB,F,Gb,Ab,Bb,Cb,Db", Note.EFlat, "NaturalMinor");
+      TestScaleAscending("E,F#,G,A,B,C,D", Note.E, "NaturalMinor");
+      TestScaleAscending("E#,F##,G#,A#,B#,C#,D#", Note.Parse("E#"), "NaturalMinor");
+      TestScaleAscending("Fb,Gb,Abb,Bbb,Cb,Dbb,Ebb", Note.Parse("Fb"), "NaturalMinor");
+      TestScaleAscending("F,G,Ab,Bb,C,Db,Eb", Note.F, "NaturalMinor");
+      TestScaleAscending("F#,G#,A,B,C#,D,E", Note.FSharp, "NaturalMinor");
+      TestScaleAscending("Gb,Ab,Bbb,Cb,Db,Ebb,Fb", Note.GFlat, "NaturalMinor");
+      TestScaleAscending("G,A,Bb,C,D,Eb,F", Note.G, "NaturalMinor");
+      TestScaleAscending("G#,A#,B,C#,D#,E,F#", Note.GSharp, "NaturalMinor");
+      TestScaleAscending("Ab,Bb,Cb,Db,Eb,Fb,Gb", Note.AFlat, "NaturalMinor");
+      TestScaleAscending("A,B,C,D,E,F,G", Note.A, "NaturalMinor");
+      TestScaleAscending("A#,B#,C#,D#,E#,F#,G#", Note.ASharp, "NaturalMinor");
+      TestScaleAscending("Bb,C,Db,Eb,F,Gb,Ab", Note.BFlat, "NaturalMinor");
+      TestScaleAscending("B,C#,D,E,F#,G,A", Note.B, "NaturalMinor");
+      TestScaleAscending("B#,C##,D#,E#,F##,G#,A#", Note.Parse("B#"), "NaturalMinor");
+      TestScaleAscending("Cb,Db,Ebb,Fb,Gb,Abb,Bbb", Note.Parse("Cb"), "NaturalMinor");
     }
 
     [Fact]
@@ -362,13 +402,23 @@ namespace Bach.Model.Test
       Assert.Equal(PitchCollection.Parse(expectedNotes), actual);
     }
 
-    private static void TestScale(string expectedNotes,
-                                  Note root,
-                                  string formulaName)
+    private static void TestScaleAscending(string expectedNotes,
+                                           Note root,
+                                           string formulaName)
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
       var scale = new Scale(root, formulaName);
-      Note[] actual = scale.Take(expected.Count).ToArray();
+      Note[] actual = scale.Ascending.Take(expected.Count).ToArray();
+      Assert.Equal(expected, actual);
+    }
+
+    private static void TestScaleDescending(string expectedNotes,
+                                            Note root,
+                                            string formulaName)
+    {
+      NoteCollection expected = NoteCollection.Parse(expectedNotes);
+      var scale = new Scale(root, formulaName);
+      Note[] actual = scale.Descending.Take(expected.Count).ToArray();
       Assert.Equal(expected, actual);
     }
 
