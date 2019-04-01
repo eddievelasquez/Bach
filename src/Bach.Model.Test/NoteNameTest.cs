@@ -118,9 +118,11 @@ namespace Bach.Model.Test
     {
       Assert.Equal(0, NoteName.B - NoteName.B);
       Assert.Equal(1, NoteName.B - NoteName.A);
+      Assert.Equal(5, NoteName.B - NoteName.D);
       Assert.Equal(2, NoteName.B - NoteName.G);
       Assert.Equal(6, NoteName.B - NoteName.C);
       Assert.Equal(1, NoteName.D - NoteName.C);
+      Assert.Equal(2, NoteName.D - NoteName.B);
       Assert.Equal(1, NoteName.C - NoteName.B);
     }
 

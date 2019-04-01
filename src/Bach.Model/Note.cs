@@ -108,6 +108,8 @@ namespace Bach.Model
       { -1, 32, 33, -1, 34 } // Cb, B, A##
     };
 
+    private static readonly int SemitoneCount = 12;
+
     #endregion
 
     #region Data Members
@@ -338,27 +340,6 @@ namespace Bach.Model
       return result;
     }
 
-    /// <summary>
-    ///   Calculate the number of semitones between two notes
-    /// </summary>
-    /// <param name="a">The first note.</param>
-    /// <param name="b">The second note.</param>
-    /// <returns>The number of semitones.</returns>
-    public static int SemitonesBetween(Note a,
-                                       Note b)
-    {
-      Note current = a;
-      var count = 0;
-
-      while( current != b )
-      {
-        ++count;
-        ++current;
-      }
-
-      return count;
-    }
-
     /// <summary>Adds a number of semitones to the current instance.</summary>
     /// <param name="semitoneCount">Number of semitones.</param>
     /// <returns>A Note.</returns>
@@ -387,25 +368,16 @@ namespace Bach.Model
       return LookupNote(enharmonicIndex);
     }
 
-    /// <summary>Determines the interval between two notes.</summary>
-    /// <param name="a">The first note.</param>
-    /// <param name="b">The second note.</param>
+    /// <summary>Determines the interval between this instance and the provided note.</summary>
+    /// <param name="note">The note.</param>
     /// <returns>An interval.</returns>
-    public static Interval Subtract(Note a,
-                                    Note b)
+    public Interval Subtract(Note note)
     {
       // First we determine the interval quantity
-      var quantity = IntervalQuantity.Unison;
-      NoteName current = a.NoteName;
-
-      while( current != b.NoteName )
-      {
-        ++quantity;
-        ++current;
-      }
+      var quantity = (IntervalQuantity)( note.NoteName - NoteName );
 
       // Then we determine the semitone count
-      int semitoneCount = SemitonesBetween(a, b);
+      int semitoneCount = ArrayExtensions.WrapIndex(SemitoneCount, note._enharmonicIndex - _enharmonicIndex);
       var interval = new Interval(quantity, semitoneCount);
       return interval;
     }
@@ -585,7 +557,7 @@ namespace Bach.Model
     /// <returns>The result of the operation.</returns>
     public static Interval operator-(Note a,
                                      Note b)
-      => Subtract(a, b);
+      => a.Subtract(b);
 
     #endregion
   }

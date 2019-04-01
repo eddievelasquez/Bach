@@ -102,7 +102,7 @@ namespace Bach.Model
     [Pure]
     public NoteName Subtract(int steps) => Add(-steps);
 
-    /// <summary>Returns to number of semitones between two note names.</summary>
+    /// <summary>Returns to number of note names between two note names.</summary>
     /// <param name="name">The last noted name.</param>
     /// <returns>A NoteName.</returns>
     [Pure]
