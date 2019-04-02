@@ -419,9 +419,7 @@ namespace Bach.Model
 
       // Deal with enharmonics
       Note? enharmonic = calculatedNote.GetEnharmonic(calculatedNoteName);
-      Debug.Assert(enharmonic.HasValue, "Enharmonic not found!");
-
-      return enharmonic.Value;
+      return enharmonic ?? calculatedNote;
     }
 
     // Finds a note that corresponds to the provided enharmonic index,
