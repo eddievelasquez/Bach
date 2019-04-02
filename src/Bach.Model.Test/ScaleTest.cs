@@ -366,7 +366,7 @@ namespace Bach.Model.Test
     public void ToStringTest()
     {
       var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal("C,Eb,F,G,Bb", scale.ToString());
+      Assert.Equal("C Minor Pentatonic {C,Eb,F,G,Bb}", scale.ToString());
     }
 
     [Fact]

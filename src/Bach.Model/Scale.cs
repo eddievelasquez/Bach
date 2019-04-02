@@ -260,7 +260,13 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override string ToString() => NoteCollection.ToString(_notes);
+    public override string ToString()
+    {
+      var builder = new StringBuilder();
+      builder.Append(Name).Append(" {").Append(NoteCollection.ToString(_notes)).Append("}");
+
+      return builder.ToString();
+    }
 
     #endregion
 
