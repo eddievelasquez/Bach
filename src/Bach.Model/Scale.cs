@@ -225,6 +225,16 @@ namespace Bach.Model
       return scale;
     }
 
+    /// <summary>Determines if this instance contains the given notes.</summary>
+    /// <param name="notes">The notes.</param>
+    /// <returns>True if all the notes are in this scale; otherwise, false.</returns>
+    public bool Contains(params Note[] notes) => Contains((IEnumerable<Note>)notes);
+
+    /// <summary>Determines if this instance contains the given notes.</summary>
+    /// <param name="notes">The notes.</param>
+    /// <returns>True if all the notes are in this scale; otherwise, false.</returns>
+    public bool Contains(IEnumerable<Note> notes) => notes.All(note => Array.BinarySearch(_notes, note) >= 0);
+
     #endregion
 
     #region Overrides

@@ -380,6 +380,15 @@ namespace Bach.Model.Test
       Assert.Equal(Note.BFlat, scale.Notes[4]);
     }
 
+    [Fact]
+    public void ContainsTest()
+    {
+      var scale = new Scale(Note.C, "major");
+      Assert.True(scale.Contains(Note.C));
+      Assert.True(scale.Contains(Note.C, Note.E, Note.G));
+      Assert.False(scale.Contains(Note.C, Note.E, Note.GFlat));
+    }
+
     #endregion
 
     #region  Implementation
