@@ -24,9 +24,31 @@
 
 namespace Bach.Model
 {
+  using System;
+  using System.Collections.ObjectModel;
+
   /// <summary>A scale formula defines how the notes of a scale relate to each other.</summary>
   public class ScaleFormula: Formula
   {
+    #region Nested type: Category
+
+    [Flags]
+    private enum Category
+    {
+      None = 0,
+      Diatonic = 1,
+      Major = 2,
+      Minor = 4
+    }
+
+    #endregion
+
+    #region Data Members
+
+    private readonly Category _categories;
+
+    #endregion
+
     #region Constructors
 
     /// <summary>Constructor.</summary>
@@ -41,6 +63,7 @@ namespace Bach.Model
                         params Interval[] intervals)
       : base(key, name, intervals)
     {
+      _categories = Categorize(this);
     }
 
     /// <summary>Constructor.</summary>
@@ -56,6 +79,90 @@ namespace Bach.Model
                         string formula)
       : base(key, name, formula)
     {
+      _categories = Categorize(this);
+    }
+
+    #endregion
+
+    #region Properties
+
+    /// <summary>Determines if this formula describes a diatonic scale.</summary>
+    /// <notes>A diatonic scale is one that includes 5 whole steps and 2 semitones.</notes>
+    /// <value>True if diatonic, false if not.</value>
+    public bool Diatonic => ( _categories & Category.Diatonic ) != 0;
+
+    /// <summary>Determines if this formula describes a major scale.</summary>
+    /// <notes>A major scale is one in which the root, third and fifth form a major triad (R,M3,5).</notes>
+    /// <value>True if major, false if not.</value>
+    public bool Major => ( _categories & Category.Major ) != 0;
+
+    /// <summary>Determines if this formula describes a minor scale.</summary>
+    /// <notes>A minor scale is one in which the root, third and fifth form a minor triad (R,m3,5).</notes>
+    /// <value>True if minor, false if not.</value>
+    public bool Minor => ( _categories & Category.Minor ) != 0;
+
+    #endregion
+
+    #region  Implementation
+
+    private static Category Categorize(ScaleFormula formula)
+    {
+      var category = Category.None;
+      if( IsDiatonic(formula) )
+      {
+        category |= Category.Diatonic;
+      }
+
+      if( IsMajor(formula) )
+      {
+        category |= Category.Major;
+      }
+
+      if( IsMinor(formula) )
+      {
+        category |= Category.Minor;
+      }
+
+      return category;
+    }
+
+    private static bool IsDiatonic(ScaleFormula formula)
+    {
+      if( formula.Intervals.Count != 7 )
+      {
+        return false;
+      }
+
+      var wholeSteps = 0;
+      var halfSteps = 0;
+
+      foreach( int step in formula.GetRelativeSteps() )
+      {
+        if( step == 2 )
+        {
+          ++wholeSteps;
+        }
+        else if( step == 1 )
+        {
+          ++halfSteps;
+        }
+      }
+
+      return wholeSteps == 5 && halfSteps == 2;
+    }
+
+    private static bool IsMajor(ScaleFormula formula)
+    {
+      // Scale is minor when the root, third and fifth form a major triad (R,M3,5).
+      ReadOnlyCollection<Interval> intervals = formula.Intervals;
+      return intervals[0] == Interval.Unison && intervals.Contains(Interval.MajorThird) && intervals.Contains(Interval.Fifth);
+    }
+
+    private static bool IsMinor(ScaleFormula formula)
+    {
+      // Scale is minor when the root, third and fifth form a minor triad (R,m3,5).
+      ReadOnlyCollection<Interval> intervals = formula.Intervals;
+      return intervals[0] == Interval.Unison && intervals.Contains(Interval.MinorThird) && intervals.Contains(Interval.Fifth);
     }
 
     #endregion

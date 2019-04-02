@@ -27,7 +27,6 @@ namespace Bach.Model
   using System;
   using System.Collections.Generic;
   using System.Collections.ObjectModel;
-  using System.Diagnostics;
   using System.Linq;
   using System.Text;
   using Internal;
@@ -35,23 +34,8 @@ namespace Bach.Model
   /// <summary>A scale is a set of notes defined by a ScaleFormula .</summary>
   public class Scale: IEquatable<Scale>
   {
-    #region Nested type: ScaleCategory
-
-    [Flags]
-    private enum ScaleCategory
-    {
-      None = 0,
-      Diatonic = 1,
-      Major = 2,
-      Minor = 4,
-      Theoretical = 8
-    }
-
-    #endregion
-
     #region Data Members
 
-    private readonly ScaleCategory _categories;
     private readonly Note[] _notes;
 
     #endregion
@@ -82,8 +66,7 @@ namespace Bach.Model
       }
 
       Name = buf.ToString();
-
-      _categories = Categorize(this);
+      Theoretical = IsTheoretical(this);
     }
 
     /// <summary>Constructor.</summary>
@@ -119,17 +102,17 @@ namespace Bach.Model
     /// <summary>Determines if this scale is diatonic.</summary>
     /// <notes>A diatonic scale is one that includes 5 whole steps and 2 semitones.</notes>
     /// <value>True if diatonic, false if not.</value>
-    public bool Diatonic => ( _categories & ScaleCategory.Diatonic ) != 0;
+    public bool Diatonic => Formula.Diatonic;
 
     /// <summary>Determines if this scale is major.</summary>
     /// <notes>A major scale is one in which the root, third and fifth form a major triad (R,M3,5).</notes>
     /// <value>True if major, false if not.</value>
-    public bool Major => ( _categories & ScaleCategory.Major ) != 0;
+    public bool Major => Formula.Major;
 
     /// <summary>Determines if this scale is minor.</summary>
     /// <notes>A minor scale is one in which the root, third and fifth form a minor triad (R,m3,5).</notes>
     /// <value>True if minor, false if not.</value>
-    public bool Minor => ( _categories & ScaleCategory.Minor ) != 0;
+    public bool Minor => Formula.Minor;
 
     /// <summary>Determines if this scale is theoretical.</summary>
     /// <notes>
@@ -139,7 +122,7 @@ namespace Bach.Model
     ///   <see cref="GetEnharmonicScale" /> for a way to obtain said scale.
     /// </notes>
     /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
-    public bool Theoretical => ( _categories & ScaleCategory.Theoretical ) != 0;
+    public bool Theoretical { get; }
 
     /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
     /// <value>An enumerable that iterates through the scale in ascending fashion.</value>
@@ -214,9 +197,7 @@ namespace Bach.Model
     {
       Note expectedNote = Root.Accidental >= Accidental.Natural ? Root + 1 : Root - 1;
       Note? enharmonicRoot = Root.GetEnharmonic(expectedNote.NoteName);
-      Debug.Assert(enharmonicRoot.HasValue);
-
-      if( enharmonicRoot.Value == Root )
+      if( enharmonicRoot == null || enharmonicRoot.Value == Root )
       {
         return this;
       }
@@ -238,7 +219,7 @@ namespace Bach.Model
     /// <summary>Enumerates the scales that contain the given notes.</summary>
     /// <param name="notes">The notes.</param>
     /// <returns>
-    /// An enumerator to all the scales that contain the notes.
+    ///   An enumerator to all the scales that contain the notes.
     /// </returns>
     public static IEnumerable<Scale> ScalesContaining(params Note[] notes)
     {
@@ -305,70 +286,6 @@ namespace Bach.Model
     #endregion
 
     #region  Implementation
-
-    private static ScaleCategory Categorize(Scale scale)
-    {
-      var category = ScaleCategory.None;
-      if( IsDiatonic(scale) )
-      {
-        category |= ScaleCategory.Diatonic;
-      }
-
-      if( IsMajor(scale) )
-      {
-        category |= ScaleCategory.Major;
-      }
-      else if( IsMinor(scale) )
-      {
-        category |= ScaleCategory.Minor;
-      }
-
-      if( IsTheoretical(scale) )
-      {
-        category |= ScaleCategory.Theoretical;
-      }
-
-      return category;
-    }
-
-    private static bool IsDiatonic(Scale scale)
-    {
-      if( scale.Formula.Intervals.Count != 7 )
-      {
-        return false;
-      }
-
-      var wholeSteps = 0;
-      var halfSteps = 0;
-
-      foreach( int step in scale.Formula.GetRelativeSteps() )
-      {
-        if( step == 2 )
-        {
-          ++wholeSteps;
-        }
-        else if( step == 1 )
-        {
-          ++halfSteps;
-        }
-      }
-
-      return wholeSteps == 5 && halfSteps == 2;
-    }
-
-    private static bool IsMajor(Scale scale)
-    {
-      // Scale is minor when the root, third and fifth form a major triad (R,M3,5).
-      ReadOnlyCollection<Interval> intervals = scale.Formula.Intervals;
-      return intervals[0] == Interval.Unison && intervals.Contains(Interval.MajorThird) && intervals.Contains(Interval.Fifth);
-    }
-
-    private static bool IsMinor(Scale scale)
-    {
-      // Scale is minor when the root, third and fifth form a minor triad (R,m3,5).
-      ReadOnlyCollection<Interval> intervals = scale.Formula.Intervals;
-      return intervals[0] == Interval.Unison && intervals.Contains(Interval.MinorThird) && intervals.Contains(Interval.Fifth);
-    }
 
     private static bool IsTheoretical(Scale scale)
     {
