@@ -389,6 +389,20 @@ namespace Bach.Model.Test
       Assert.False(scale.Contains(Note.C, Note.E, Note.GFlat));
     }
 
+    [Fact]
+    public void ScalesContainingTest()
+    {
+      // This will return a bunch of scales, we'll only test the first two
+      var scales = Scale.ScalesContaining(Note.C, Note.E, Note.C).GetEnumerator();
+      Assert.NotNull(scales);
+
+      Assert.True(scales.MoveNext());
+      Assert.Equal("C", scales.Current.Name);
+      Assert.True(scales.MoveNext());
+      Assert.Equal("G", scales.Current.Name);
+      Assert.True(scales.MoveNext()); // There are more scales
+    }
+
     #endregion
 
     #region  Implementation

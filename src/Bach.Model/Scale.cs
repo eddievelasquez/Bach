@@ -235,6 +235,30 @@ namespace Bach.Model
     /// <returns>True if all the notes are in this scale; otherwise, false.</returns>
     public bool Contains(IEnumerable<Note> notes) => notes.All(note => Array.BinarySearch(_notes, note) >= 0);
 
+    /// <summary>Enumerates the scales that contain the given notes.</summary>
+    /// <param name="notes">The notes.</param>
+    /// <returns>
+    /// An enumerator to all the scales that contain the notes.
+    /// </returns>
+    public static IEnumerable<Scale> ScalesContaining(params Note[] notes)
+    {
+      foreach( ScaleFormula formula in Registry.ScaleFormulas )
+      {
+        Note root = Note.C;
+
+        do
+        {
+          var scale = new Scale(root, formula);
+          if( scale.Contains(notes) )
+          {
+            yield return scale;
+          }
+
+          ++root;
+        } while( root != Note.C );
+      }
+    }
+
     #endregion
 
     #region Overrides
