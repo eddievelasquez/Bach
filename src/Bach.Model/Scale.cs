@@ -34,6 +34,12 @@ namespace Bach.Model
   /// <summary>A scale is a set of notes defined by a ScaleFormula .</summary>
   public class Scale: IEquatable<Scale>
   {
+    #region Constants
+
+    private const string DefaultToStringFormat = "N {S}";
+
+    #endregion
+
     #region Data Members
 
     private readonly Note[] _notes;
@@ -240,6 +246,65 @@ namespace Bach.Model
       }
     }
 
+    /// <summary>Returns a string representation of the value of this <see cref="Scale"/> instance, according to the
+    /// provided format specifier.</summary>
+    /// <param name="format">A custom format string.</param>
+    /// <returns>A string representation of the value of the current <see cref="Scale"/> object as specified by
+    /// <paramref name="format" />.</returns>
+    /// <remarks>
+    ///   <para>Format specifiers:</para>
+    ///   <para>"N": Name pattern. e.g. "Major".</para>
+    ///   <para>"S": Notes pattern. e.g. "C,E,G".</para>
+    ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+    /// </remarks>
+    public string ToString(string format) => ToString(format, null);
+
+    /// <summary>Returns a string representation of the value of this <see cref="Scale"/> instance, according to the
+    /// provided format specifier and format provider.</summary>
+    /// <param name="format">A custom format string.</param>
+    /// <param name="provider">The format provider. (Currently unused)</param>
+    /// <returns>A string representation of the value of the current <see cref="Scale"/> object as specified by
+    /// <paramref name="format" />.</returns>
+    /// <remarks>
+    ///   <para>Format specifiers:</para>
+    ///   <para>"N": Name pattern. e.g. "Major".</para>
+    ///   <para>"S": Notes pattern. e.g. "C,E,G".</para>
+    ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+    /// </remarks>
+    public string ToString(string format,
+                           IFormatProvider provider)
+    {
+      if( string.IsNullOrEmpty(format) )
+      {
+        format = DefaultToStringFormat;
+      }
+
+      var buf = new StringBuilder();
+      foreach( char f in format )
+      {
+        switch( f )
+        {
+          case 'N':
+            buf.Append(Name);
+            break;
+
+          case 'S':
+            buf.Append(NoteCollection.ToString(_notes));
+            break;
+
+          case 'I':
+            buf.Append(Formula.ToString("I"));
+            break;
+
+          default:
+            buf.Append(f);
+            break;
+        }
+      }
+
+      return buf.ToString();
+    }
+
     #endregion
 
     #region Overrides
@@ -275,13 +340,7 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override string ToString()
-    {
-      var builder = new StringBuilder();
-      builder.Append(Name).Append(" {").Append(NoteCollection.ToString(_notes)).Append("}");
-
-      return builder.ToString();
-    }
+    public override string ToString() => ToString(DefaultToStringFormat, null);
 
     #endregion
 

@@ -38,6 +38,8 @@ namespace Bach.Model
   {
     #region Constants
 
+    private const string DefaultToStringFormat = "N: I";
+
     private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
 
     #endregion
@@ -139,13 +141,11 @@ namespace Bach.Model
 
     /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
     /// <param name="root">The root pitch.</param>
-    /// <param name="skipCount">(Optional) Number of pitches to skip.</param>
     /// <returns> An enumerator for a sequence of pitches.</returns>
-    public IEnumerable<Pitch> Generate(Pitch root,
-                                       int skipCount = 0)
+    public IEnumerable<Pitch> Generate(Pitch root)
     {
       int intervalCount = _intervals.Length;
-      int index = skipCount;
+      var index = 0;
 
       while( true )
       {
@@ -213,35 +213,73 @@ namespace Bach.Model
       return steps;
     }
 
+    /// <summary>
+    ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+    ///   provided format specifier.
+    /// </summary>
+    /// <param name="format">A custom format string.</param>
+    /// <returns>
+    ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
+    ///   <paramref name="format" />.
+    /// </returns>
+    /// <remarks>
+    ///   <para>Format specifiers:</para>
+    ///   <para>"N": Name pattern. e.g. "Major".</para>
+    ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+    /// </remarks>
+    public string ToString(string format) => ToString(format, null);
+
+    /// <summary>
+    ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+    ///   provided format specifier and format provider.
+    /// </summary>
+    /// <param name="format">A custom format string.</param>
+    /// <param name="provider">The format provider. (Currently unused)</param>
+    /// <returns>
+    ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
+    ///   <paramref name="format" />.
+    /// </returns>
+    /// <remarks>
+    ///   <para>Format specifiers:</para>
+    ///   <para>"N": Name pattern. e.g. "Major".</para>
+    ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+    /// </remarks>
+    public string ToString(string format,
+                           IFormatProvider provider)
+    {
+      if( string.IsNullOrEmpty(format) )
+      {
+        format = DefaultToStringFormat;
+      }
+
+      var buf = new StringBuilder();
+      foreach( char f in format )
+      {
+        switch( f )
+        {
+          case 'N':
+            buf.Append(Name);
+            break;
+
+          case 'I':
+            buf.Append(IEnumerableExtensions.ToString(_intervals));
+            break;
+
+          default:
+            buf.Append(f);
+            break;
+        }
+      }
+
+      return buf.ToString();
+    }
+
     #endregion
 
     #region Overrides
 
     /// <inheritdoc />
-    public override string ToString()
-    {
-      var buf = new StringBuilder();
-      buf.Append(Name);
-      buf.Append(": ");
-
-      var needComma = false;
-
-      foreach( Interval interval in _intervals )
-      {
-        if( needComma )
-        {
-          buf.Append(',');
-        }
-        else
-        {
-          needComma = true;
-        }
-
-        buf.Append(interval);
-      }
-
-      return buf.ToString();
-    }
+    public override string ToString() => ToString(DefaultToStringFormat, null);
 
     /// <inheritdoc />
     public override bool Equals(object other)
