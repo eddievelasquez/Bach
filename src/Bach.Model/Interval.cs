@@ -88,6 +88,7 @@ namespace Bach.Model
 
     private readonly byte _quality;
     private readonly byte _quantity;
+    private readonly byte _semitoneCount;
 
     #endregion
 
@@ -99,10 +100,7 @@ namespace Bach.Model
     public Interval(IntervalQuantity quantity,
                     IntervalQuality quality)
     {
-      // Validate that the provided number and quality
-      // refer to a valid interval
-      GetSemitoneCount(quantity, quality);
-
+      _semitoneCount = (byte)GetSemitoneCount(quantity, quality);
       _quantity = (byte)quantity;
       _quality = (byte)quality;
     }
@@ -128,6 +126,7 @@ namespace Bach.Model
       Debug.Assert(found, $"A {quantity} with {semitoneCount} is not a valid interval");
       _quantity = (byte)quantity;
       _quality = (byte)quality;
+      _semitoneCount = (byte)semitoneCount;
     }
 
     #endregion
@@ -144,7 +143,7 @@ namespace Bach.Model
 
     /// <summary>Gets the number of semitones in the interval.</summary>
     /// <value>The number of semitones.</value>
-    public int SemitoneCount => GetSemitoneCount(Quantity, Quality);
+    public int SemitoneCount => _semitoneCount;
 
     #endregion
 
