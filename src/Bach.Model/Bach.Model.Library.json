@@ -8,11 +8,11 @@
     { "Key": "HarmonicMinor", "Name": "Harmonic Minor", "Formula": "R,M2,m3,4,5,m6,M7" },
     { "Key": "Diminished", "Name": "Diminished", "Formula": "R,M2,m3,4,d5,A5,M6,M7" },
     { "Key": "WholeTone", "Name": "Whole Tone", "Formula": "R,M2,M3,A4,A5,A6" },
-    { "Key": "Blues", "Name": "Blues", "Formula": "R,m3,4,d5,5,m7" },
+    { "Key": "MinorBlues", "Name": "Minor Blues", "Formula": "R,m3,4,d5,5,m7" },
+    { "Key": "MajorBlues", "Name": "MajorBlues", "Formula": "R,M2,m3,M3,5,M6" },
     { "Key": "MinorPentatonic", "Name": "Minor Pentatonic", "Formula": "R,m3,4,5,m7" },
     { "Key": "Pentatonic", "Name": "Pentatonic", "Formula": "R,M2,M3,5,M6" },
     { "Key": "Polytonal", "Name": "Polytonal", "Formula": "R,m2,m3,d4,A4,5,M6,m7" },
-    { "Key": "Gospel", "Name": "Gospel", "Formula": "R,M2,m3,M3,5,M6" },
     { "Key": "HungarianFolk", "Name": "Hungarian Folk", "Formula": "R,m2,M3,5,m6,M7" },
     { "Key": "Gypsy", "Name": "Gypsy", "Formula": "R,m2,M3,4,5,A5,M7" },
     { "Key": "LeadingTone", "Name": "Leading Tone", "Formula": "R,M2,M3,d5,A5,m7,M7" },
@@ -41,11 +41,14 @@
     { "Key": "Augmented", "Name": "Augmented", "Formula": "R,m3,M3,5,A5,M7" },
     { "Key": "Pelog", "Name": "Pelog", "Formula": "R,m2,m3,4,5,m7" },
     { "Key": "Mystic", "Name": "Mystic", "Formula": "R,M2,M3,d5,M6,m7" },
-    { "Key": "Bebop", "Name": "Bebop", "Formula": "R,M2,M3,4,5,A5,M6,M7" },
+    { "Key": "MajorBebop", "Name": "Major Bebop", "Formula": "R,M2,M3,4,5,d6,M6,M7" },
+    { "Key": "MinorBebop", "Name": "Minor Bebop", "Formula": "R,M2,m3,M3,4,5,M6,m7" },
     { "Key": "BebopDorian", "Name": "Bebop Dorian", "Formula": "R,M2,m3,4,5,M6,m7,M7" },
     { "Key": "BebopDominant", "Name": "Bebop Dominant", "Formula": "R,M2,M3,4,5,M6,m7,M7" },
-    { "Key": "Spanish8Tone", "Name": "Spanish 8 Tone", "Formula": "R,m2,m3,M3,4,d5,A5,m7" },
-    { "Key": "DoubleHarmonicMajor", "Name": "Double Harmonic Major", "Formula": "R,m2,M3,4,5,m6,M7" }
+    { "Key": "Spanish8Tone", "Name": "Spanish 8 Tone", "Formula": "R,m2,m3,M3,4,d5,d6,m7" },
+    { "Key": "DoubleHarmonicMajor", "Name": "Double Harmonic Major", "Formula": "R,m2,M3,4,5,m6,M7" },
+    { "Key": "SuperLocrian", "Name": "Super Locrian", "Formula": "R,m2,A2,M3,d5,A5,m7" },
+    { "Key": "NineTone", "Name": "Nine Tone", "Formula": "R,M2,m3,M3,d5,5,m6,M6,M7" }
   ],
   "Chords":
   [

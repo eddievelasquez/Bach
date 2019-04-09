@@ -130,8 +130,8 @@ namespace Bach.Model.Test
       TestScaleAscending("C,D,E,F#,G#,A#", root, "WholeTone");
       TestScaleAscending("C,D,E,G,A", root, "Pentatonic");
       TestScaleAscending("C,Eb,F,G,Bb", root, "MinorPentatonic");
-      TestScaleAscending("C,Eb,F,Gb,G,Bb", root, "Blues");
-      TestScaleAscending("C,D,Eb,E,G,A", root, "Gospel");
+      TestScaleAscending("C,Eb,F,Gb,G,Bb", root, "MinorBlues");
+      TestScaleAscending("C,D,Eb,E,G,A", root, "MajorBlues");
     }
 
     [Fact]
@@ -147,8 +147,8 @@ namespace Bach.Model.Test
       TestScaleDescending("C,A#,G#,F#,E,D", root, "WholeTone");
       TestScaleDescending("C,A,G,E,D", root, "Pentatonic");
       TestScaleDescending("C,Bb,G,F,Eb", root, "MinorPentatonic");
-      TestScaleDescending("C,Bb,G,Gb,F,Eb", root, "Blues");
-      TestScaleDescending("C,A,G,E,Eb,D", root, "Gospel");
+      TestScaleDescending("C,Bb,G,Gb,F,Eb", root, "MinorBlues");
+      TestScaleDescending("C,A,G,E,Eb,D", root, "MajorBlues");
     }
 
     [Fact]

@@ -142,7 +142,7 @@ namespace Bach.Model.Test
       TestGetSteps("HarmonicMinor", 2, 1, 2, 2, 1, 3, 1);
       TestGetSteps("Diminished", 2, 1, 2, 1, 2, 1, 2, 1);
       TestGetSteps("WholeTone", 2, 2, 2, 2, 2, 2);
-      TestGetSteps("Blues", 3, 2, 1, 1, 3, 2);
+      TestGetSteps("MinorBlues", 3, 2, 1, 1, 3, 2);
       TestGetSteps("MinorPentatonic", 3, 2, 2, 3, 2);
       TestGetSteps("Pentatonic", 2, 2, 3, 2, 3);
     }
