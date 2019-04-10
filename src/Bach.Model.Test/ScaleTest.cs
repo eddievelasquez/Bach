@@ -27,11 +27,30 @@ namespace Bach.Model.Test
   using System;
   using System.Collections;
   using System.Collections.Generic;
+  using System.Collections.Immutable;
   using System.Linq;
+  using Internal;
   using Xunit;
+  using Xunit.Abstractions;
 
   public class ScaleTest
   {
+    #region Data Members
+
+    private readonly ITestOutputHelper _output;
+
+    #endregion
+
+    #region Constructors
+
+    /// <inheritdoc />
+    public ScaleTest(ITestOutputHelper output)
+    {
+      _output = output;
+    }
+
+    #endregion
+
     #region Public Methods
 
     [Fact]
@@ -392,15 +411,14 @@ namespace Bach.Model.Test
     [Fact]
     public void ScalesContainingTest()
     {
-      // This will return a bunch of scales, we'll only test the first two
-      var scales = Scale.ScalesContaining(Note.C, Note.E, Note.C).GetEnumerator();
-      Assert.NotNull(scales);
-
-      Assert.True(scales.MoveNext());
-      Assert.Equal("C", scales.Current.Name);
-      Assert.True(scales.MoveNext());
-      Assert.Equal("G", scales.Current.Name);
-      Assert.True(scales.MoveNext()); // There are more scales
+      IDictionary<string, Scale> scales = Scale.ScalesContaining(Note.C, Note.E, Note.G).ToDictionary(scale => scale.Name);
+      Assert.Contains("C", scales);
+      Assert.Contains("C Pentatonic", scales);
+      Assert.Contains("E Natural Minor", scales);
+      Assert.Contains("E Harmonic Minor", scales);
+      Assert.Contains("G", scales);
+      Assert.Contains("G Melodic Minor", scales);
+      Assert.Contains("G Diminished", scales);
     }
 
     #endregion

@@ -215,20 +215,32 @@ namespace Bach.Model
     /// <summary>Determines if this instance contains the given notes.</summary>
     /// <param name="notes">The notes.</param>
     /// <returns>True if all the notes are in this scale; otherwise, false.</returns>
-    public bool Contains(params Note[] notes) => Contains((IEnumerable<Note>)notes);
+    public bool Contains(params Note[] notes)
+    {
+      return notes.All(note =>
+      {
+        int pos = Array.IndexOf(_notes, note);
+        return pos >= 0;
+      });
+    }
 
-    /// <summary>Determines if this instance contains the given notes.</summary>
-    /// <param name="notes">The notes.</param>
-    /// <returns>True if all the notes are in this scale; otherwise, false.</returns>
-    public bool Contains(IEnumerable<Note> notes) => notes.All(note => Array.BinarySearch(_notes, note) >= 0);
-
-    /// <summary>Enumerates the scales that contain the given notes.</summary>
+    /// <summary>Enumerates the scales that contain the given notes matching exactly the intervals between them.</summary>
     /// <param name="notes">The notes.</param>
     /// <returns>
     ///   An enumerator to all the scales that contain the notes.
     /// </returns>
-    public static IEnumerable<Scale> ScalesContaining(params Note[] notes)
+    public static IEnumerable<Scale> ScalesContaining(params Note[] notes) => ScalesContaining(IntervalMatch.Exact, notes);
+
+    /// <summary>Enumerates the scales that contain the given notes.</summary>
+    /// <param name="match">Interval matching strategy.</param>
+    /// <param name="notes">The notes.</param>
+    /// <returns>
+    ///   An enumerator to all the scales that contain the notes.
+    /// </returns>
+    public static IEnumerable<Scale> ScalesContaining(IntervalMatch match,
+                                                      params Note[] notes)
     {
+#if BRUTE_FORCE_MATCHING
       foreach( ScaleFormula formula in Registry.ScaleFormulas )
       {
         Note root = Note.C;
@@ -244,13 +256,38 @@ namespace Bach.Model
           ++root;
         } while( root != Note.C );
       }
+#else
+      var rootNotes = new CircularArray<Note>(notes);
+
+      do
+      {
+        Interval[] intervals = rootNotes.Intervals().ToArray();
+
+        foreach( ScaleFormula formula in Registry.ScaleFormulas )
+        {
+          if( !formula.Contains(intervals, match) )
+          {
+            continue;
+          }
+
+          var scale = new Scale(rootNotes[0], formula);
+          yield return scale;
+        }
+
+        ++rootNotes.Head;
+      } while( rootNotes.Head != 0 );
+#endif
     }
 
-    /// <summary>Returns a string representation of the value of this <see cref="Scale"/> instance, according to the
-    /// provided format specifier.</summary>
+    /// <summary>
+    ///   Returns a string representation of the value of this <see cref="Scale" /> instance, according to the
+    ///   provided format specifier.
+    /// </summary>
     /// <param name="format">A custom format string.</param>
-    /// <returns>A string representation of the value of the current <see cref="Scale"/> object as specified by
-    /// <paramref name="format" />.</returns>
+    /// <returns>
+    ///   A string representation of the value of the current <see cref="Scale" /> object as specified by
+    ///   <paramref name="format" />.
+    /// </returns>
     /// <remarks>
     ///   <para>Format specifiers:</para>
     ///   <para>"N": Name pattern. e.g. "Major".</para>
@@ -259,12 +296,16 @@ namespace Bach.Model
     /// </remarks>
     public string ToString(string format) => ToString(format, null);
 
-    /// <summary>Returns a string representation of the value of this <see cref="Scale"/> instance, according to the
-    /// provided format specifier and format provider.</summary>
+    /// <summary>
+    ///   Returns a string representation of the value of this <see cref="Scale" /> instance, according to the
+    ///   provided format specifier and format provider.
+    /// </summary>
     /// <param name="format">A custom format string.</param>
     /// <param name="provider">The format provider. (Currently unused)</param>
-    /// <returns>A string representation of the value of the current <see cref="Scale"/> object as specified by
-    /// <paramref name="format" />.</returns>
+    /// <returns>
+    ///   A string representation of the value of the current <see cref="Scale" /> object as specified by
+    ///   <paramref name="format" />.
+    /// </returns>
     /// <remarks>
     ///   <para>Format specifiers:</para>
     ///   <para>"N": Name pattern. e.g. "Major".</para>

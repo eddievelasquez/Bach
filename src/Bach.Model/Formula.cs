@@ -36,11 +36,43 @@ namespace Bach.Model
     : IKeyedObject,
       IEquatable<Formula>
   {
+    #region Nested type: IntervalComparer
+
+    private class IntervalComparer: IComparer<Interval>
+    {
+      #region IComparer<Interval> Members
+
+      public int Compare(Interval x,
+                         Interval y)
+        => x.CompareTo(y);
+
+      #endregion
+    }
+
+    #endregion
+
+    #region Nested type: SemitoneCountIntervalComparer
+
+    private class SemitoneCountIntervalComparer: IComparer<Interval>
+    {
+      #region IComparer<Interval> Members
+
+      public int Compare(Interval x,
+                         Interval y)
+        => x.SemitoneCount - y.SemitoneCount;
+
+      #endregion
+    }
+
+    #endregion
+
     #region Constants
 
     private const string DefaultToStringFormat = "N: I";
 
     private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
+    private static readonly IntervalComparer s_intervalComparer = new IntervalComparer();
+    private static readonly SemitoneCountIntervalComparer s_semitoneComparer = new SemitoneCountIntervalComparer();
 
     #endregion
 
@@ -138,6 +170,19 @@ namespace Bach.Model
     #endregion
 
     #region Public Methods
+
+    /// <summary>Determines whether this instance contains the provided intervals.</summary>
+    /// <param name="intervals">The intervals to evaluate.</param>
+    /// <param name="match">Interval matching strategy.</param>
+    /// <returns>
+    ///   <c>true</c> if the formula contains the specified intervals; otherwise, <c>false</c>.
+    /// </returns>
+    public bool Contains(IEnumerable<Interval> intervals,
+                         IntervalMatch match = IntervalMatch.Exact)
+    {
+      IComparer<Interval> comparer = ( match == IntervalMatch.Exact ) ? (IComparer<Interval>)s_intervalComparer : s_semitoneComparer;
+      return intervals.All(interval => Array.BinarySearch(_intervals, interval, comparer) >= 0);
+    }
 
     /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
     /// <param name="root">The root pitch.</param>
