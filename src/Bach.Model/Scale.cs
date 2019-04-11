@@ -105,21 +105,6 @@ namespace Bach.Model
     /// <value>An array of notes.</value>
     public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
 
-    /// <summary>Determines if this scale is diatonic.</summary>
-    /// <notes>A diatonic scale is one that includes 5 whole steps and 2 semitones.</notes>
-    /// <value>True if diatonic, false if not.</value>
-    public bool Diatonic => Formula.Diatonic;
-
-    /// <summary>Determines if this scale is major.</summary>
-    /// <notes>A major scale is one in which the root, third and fifth form a major triad (R,M3,5).</notes>
-    /// <value>True if major, false if not.</value>
-    public bool Major => Formula.Major;
-
-    /// <summary>Determines if this scale is minor.</summary>
-    /// <notes>A minor scale is one in which the root, third and fifth form a minor triad (R,m3,5).</notes>
-    /// <value>True if minor, false if not.</value>
-    public bool Minor => Formula.Minor;
-
     /// <summary>Determines if this scale is theoretical.</summary>
     /// <notes>
     ///   A theoretical scale is one that contains at least one double flat or double sharp accidental. These

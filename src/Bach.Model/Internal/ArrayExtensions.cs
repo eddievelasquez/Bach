@@ -25,6 +25,7 @@
 namespace Bach.Model.Internal
 {
   using System;
+  using System.Collections.Generic;
 
   internal static class ArrayExtensions
   {
@@ -43,12 +44,13 @@ namespace Bach.Model.Internal
                                 int index)
       => WrapIndex(array.GetLength(dimension), index);
 
-    public static bool IsSortedWithoutDuplicates<T>(this T[] values) where T: IComparable<T>
+    public static bool IsSortedWithoutDuplicates<T>(this IList<T> values)
+      where T: IComparable<T>
     {
-      for (int i = 1; i < values.Length; ++i)
+      for( var i = 1; i < values.Count; ++i )
       {
         int result = values[i - 1].CompareTo(values[i]);
-        if (result >= 0)
+        if( result >= 0 )
         {
           return false;
         }

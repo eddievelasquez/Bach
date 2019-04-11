@@ -62,7 +62,13 @@ namespace Bach.Model
       ScaleFormulas = new KeyedObjectCollection<ScaleFormula>();
       foreach( PersistentScale scale in library.Scales )
       {
-        ScaleFormulas.Add(new ScaleFormula(scale.Key, scale.Name, scale.Formula));
+        ScaleFormula formula = new ScaleFormulaBuilder(scale.Name)
+                               .SetKey(scale.Key)
+                               .SetIntervals(scale.Formula)
+                               .AddCategory(scale.Categories)
+                               .AddAlias(scale.Alias)
+                               .Build();
+        ScaleFormulas.Add(formula);
       }
 
       ChordFormulas = new KeyedObjectCollection<ChordFormula>();

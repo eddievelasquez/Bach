@@ -27,30 +27,11 @@ namespace Bach.Model.Test
   using System;
   using System.Collections;
   using System.Collections.Generic;
-  using System.Collections.Immutable;
   using System.Linq;
-  using Internal;
   using Xunit;
-  using Xunit.Abstractions;
 
   public class ScaleTest
   {
-    #region Data Members
-
-    private readonly ITestOutputHelper _output;
-
-    #endregion
-
-    #region Constructors
-
-    /// <inheritdoc />
-    public ScaleTest(ITestOutputHelper output)
-    {
-      _output = output;
-    }
-
-    #endregion
-
     #region Public Methods
 
     [Fact]
@@ -173,46 +154,43 @@ namespace Bach.Model.Test
     [Fact]
     public void IsDiatonicTest()
     {
-      TestPredicate(Note.C, "Major", scale => scale.Diatonic);
-      TestPredicate(Note.C, "LeadingTone", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Overtone", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Hindu", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Arabian", scale => scale.Diatonic);
-      TestPredicate(Note.C, "NaturalMinor", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Javanese", scale => scale.Diatonic);
-      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Diatonic);
+      TestPredicate(Note.C, "Major", scale => scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "LeadingTone", scale => scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "LydianDominant", scale => scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "Hindu", scale => scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "Arabian", scale => scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "NaturalMinor", scale => scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "Javanese", scale => scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Formula.Categories.Contains("Diatonic"));
 
-      TestPredicate(Note.C, "HungarianFolk", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Gypsy", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Enigmatic", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Persian", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Mongolian", scale => !scale.Diatonic);
+      TestPredicate(Note.C, "HungarianFolk", scale => !scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "Gypsy", scale => !scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "EnigmaticMajor", scale => !scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "Persian", scale => !scale.Formula.Categories.Contains("Diatonic"));
+      TestPredicate(Note.C, "Mongolian", scale => !scale.Formula.Categories.Contains("Diatonic"));
     }
 
     [Fact]
     public void IsMajorTest()
     {
-      TestPredicate(Note.C, "Major", scale => scale.Major);
-      TestPredicate(Note.C, "HungarianFolk", scale => scale.Major);
-      TestPredicate(Note.C, "Gypsy", scale => scale.Major);
-      //TestPredicate(Note.C, "LeadingTone", scale => scale.Major);
-      //TestPredicate(Note.C, "Enigmatic", scale => scale.Major);
-      //TestPredicate(Note.C, "Persian", scale => scale.Major);
-      TestPredicate(Note.C, "Mongolian", scale => scale.Major);
+      TestPredicate(Note.C, "Major", scale => scale.Formula.Categories.Contains("Major"));
+      TestPredicate(Note.C, "HungarianFolk", scale => scale.Formula.Categories.Contains("Major"));
+      TestPredicate(Note.C, "Gypsy", scale => scale.Formula.Categories.Contains("Major"));
+      TestPredicate(Note.C, "Mongolian", scale => scale.Formula.Categories.Contains("Major"));
     }
 
     [Fact]
     public void IsMinorTest()
     {
-      TestPredicate(Note.C, "NaturalMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "GypsyMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "Javanese", scale => scale.Minor);
-      TestPredicate(Note.C, "NeapolitanMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Minor);
-      TestPredicate(Note.C, "HungarianMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "Yo", scale => scale.Minor);
-      TestPredicate(Note.C, "Hirojoshi", scale => scale.Minor);
-      TestPredicate(Note.C, "Balinese", scale => scale.Minor);
+      TestPredicate(Note.C, "NaturalMinor", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "GypsyMinor", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "Javanese", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "NeapolitanMinor", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "HungarianGypsy", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "Yo", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "Hirajoshi", scale => scale.Formula.Categories.Contains("Minor"));
+      TestPredicate(Note.C, "Balinese", scale => scale.Formula.Categories.Contains("Minor"));
     }
 
     [Fact]

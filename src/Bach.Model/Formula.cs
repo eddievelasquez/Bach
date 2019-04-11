@@ -319,6 +319,14 @@ namespace Bach.Model
       return buf.ToString();
     }
 
+    public static Interval[] ParseIntervals(string formula)
+    {
+      Contract.RequiresNotNullOrEmpty(formula, "Must provide a formula");
+
+      string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+      return values.Select(Interval.Parse).ToArray();
+    }
+
     #endregion
 
     #region Overrides
@@ -349,12 +357,23 @@ namespace Bach.Model
 
     #region  Implementation
 
-    private static Interval[] ParseIntervals(string formula)
+    internal static int[] GetRelativeSteps(IList<Interval> intervals)
     {
-      Contract.RequiresNotNullOrEmpty(formula, "Must provide a formula");
+      var steps = new int[intervals.Count];
+      var lastCount = 0;
 
-      string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-      return values.Select(Interval.Parse).ToArray();
+      for( var i = 1; i < intervals.Count; i++ )
+      {
+        int semitoneCount = intervals[i].SemitoneCount;
+        int step = semitoneCount - lastCount;
+        steps[i - 1] = step;
+        lastCount = semitoneCount;
+      }
+
+      // Add last step between the root octave and the
+      // last interval
+      steps[steps.Length - 1] = 12 - lastCount;
+      return steps;
     }
 
     #endregion
