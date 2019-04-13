@@ -43,7 +43,7 @@ namespace Bach.Model.Test
       Assert.Equal(KEY, actual.Key);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
-      Assert.Equal("Name: P1,M2,M3", actual.ToString());
+      Assert.Equal("Name: 1,2,3", actual.ToString());
     }
 
     [Fact]
@@ -57,7 +57,7 @@ namespace Bach.Model.Test
       Assert.Equal(KEY, actual.Key);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
-      Assert.Equal("Name: P1,M2,M3", actual.ToString());
+      Assert.Equal("Name: 1,2,3", actual.ToString());
     }
 
     [Fact]

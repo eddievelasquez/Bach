@@ -175,8 +175,8 @@ namespace Bach.Model
 
     public Interval GetInversion()
     {
-      var newQuantity = (IntervalQuantity)(8 - (int)Quantity - 1);
-      var newQuality = IntervalQuality.Augmented - (int)Quality;
+      var newQuantity = (IntervalQuantity)( 8 - (int)Quantity - 1 );
+      IntervalQuality newQuality = IntervalQuality.Augmented - (int)Quality;
 
       var result = new Interval(newQuantity, newQuality);
       return result;
@@ -359,7 +359,7 @@ namespace Bach.Model
                                    bool suppressPerfectAndMajor = true)
     {
       var buf = new StringBuilder();
-      if( quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || suppressPerfectAndMajor )
+      if( quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || !suppressPerfectAndMajor )
       {
         buf.Append(quality.Symbol);
       }
