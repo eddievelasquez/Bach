@@ -37,12 +37,6 @@ namespace Bach.Model
     : IEquatable<Mode>,
       IEnumerable<Note>
   {
-    #region Data Members
-
-    private readonly Note[] _notes;
-
-    #endregion
-
     #region Constructors
 
     /// <summary>Constructor.</summary>
@@ -64,7 +58,7 @@ namespace Bach.Model
       buf.Append(formula.Name);
 
       Name = buf.ToString();
-      _notes = scale.Ascending.Skip(Formula.Tonic - 1).Take(scale.Notes.Count).ToArray();
+      Notes = new NoteCollection(scale.Ascending.Skip(Formula.Tonic - 1).Take(scale.Notes.Count));
     }
 
     #endregion
@@ -73,7 +67,7 @@ namespace Bach.Model
 
     /// <summary>Gets the mode's notes.</summary>
     /// <value>The notes.</value>
-    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
+    public NoteCollection Notes { get; }
 
     /// <summary>Gets the mode's scale.</summary>
     /// <value>The scale.</value>
@@ -97,14 +91,13 @@ namespace Bach.Model
     /// <inheritdoc />
     public IEnumerator<Note> GetEnumerator()
     {
-      ReadOnlyCollection<Note> notes = Notes;
       var index = 0;
 
       while( true )
       {
-        yield return notes[index];
+        yield return Notes[index];
 
-        index = ArrayExtensions.WrapIndex(notes.Count, ++index);
+        index = ArrayExtensions.WrapIndex(Notes.Count, ++index);
       }
 
       // ReSharper disable once IteratorNeverReturns
@@ -158,7 +151,7 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override string ToString() => NoteCollection.ToString(Notes);
+    public override string ToString() => string.Join(",", Notes);
 
     #endregion
   }

@@ -172,7 +172,7 @@ namespace Bach.Model.Test
                                  Scale root,
                                  ModeFormula formula)
     {
-      Note[] expected = NoteCollection.Parse(expectedNotes).ToArray();
+      NoteCollection expected = NoteCollection.Parse(expectedNotes);
       var mode = new Mode(root, formula);
       Assert.Equal(expected, mode.Notes);
       Assert.Equal(expectedNotes, mode.ToString());

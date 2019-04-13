@@ -381,15 +381,15 @@ namespace Bach.Model.Test
     public void ContainsTest()
     {
       var scale = new Scale(Note.C, "major");
-      Assert.True(scale.Contains(Note.C));
-      Assert.True(scale.Contains(Note.C, Note.E, Note.G));
-      Assert.False(scale.Contains(Note.C, Note.E, Note.GFlat));
+      Assert.True(scale.Contains(new[] { Note.C }));
+      Assert.True(scale.Contains(new[] { Note.C, Note.E, Note.G }));
+      Assert.False(scale.Contains(new[] { Note.C, Note.E, Note.GFlat }));
     }
 
     [Fact]
     public void ScalesContainingTest()
     {
-      IDictionary<string, Scale> scales = Scale.ScalesContaining(Note.C, Note.E, Note.G).ToDictionary(scale => scale.Name);
+      IDictionary<string, Scale> scales = Scale.ScalesContaining(new[] { Note.C, Note.E, Note.G }).ToDictionary(scale => scale.Name);
       Assert.Contains("C", scales);
       Assert.Contains("C Pentatonic", scales);
       Assert.Contains("E Natural Minor", scales);
@@ -427,7 +427,7 @@ namespace Bach.Model.Test
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
       var scale = new Scale(root, formulaName);
-      Note[] actual = scale.Ascending.Take(expected.Count).ToArray();
+      IEnumerable<Note> actual = scale.Ascending.Take(expected.Count);
       Assert.Equal(expected, actual);
     }
 
@@ -437,7 +437,7 @@ namespace Bach.Model.Test
     {
       NoteCollection expected = NoteCollection.Parse(expectedNotes);
       var scale = new Scale(root, formulaName);
-      Note[] actual = scale.Descending.Take(expected.Count).ToArray();
+      IEnumerable<Note> actual = scale.Descending.Take(expected.Count);
       Assert.Equal(expected, actual);
     }
 

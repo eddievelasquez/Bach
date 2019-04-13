@@ -25,44 +25,73 @@
 namespace Bach.Model
 {
   using System;
+  using System.Collections;
   using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.Linq;
-  using System.Text;
   using Internal;
 
   /// <summary>Collection of notes.</summary>
   public class NoteCollection
-    : Collection<Note>,
-      IEquatable<IEnumerable<Note>>
+    : IReadOnlyList<Note>,
+      IEquatable<NoteCollection>
   {
+    #region Data Members
+
+    private readonly Note[] _notes;
+
+    #endregion
+
     #region Constructors
 
     /// <inheritdoc />
-    public NoteCollection()
+    public NoteCollection(IEnumerable<Note> notes)
     {
+      Contract.Requires<ArgumentNullException>(notes != null);
+      _notes = notes.ToArray();
     }
 
     /// <inheritdoc />
-    public NoteCollection(IList<Note> tones)
-      : base(tones)
+    public NoteCollection(Note[] notes)
     {
+      Contract.Requires<ArgumentNullException>(notes != null);
+      _notes = notes;
     }
 
     #endregion
 
-    #region IEquatable<IEnumerable<Note>> Members
+    #region IEquatable<NoteCollection> Members
 
     /// <inheritdoc />
-    public bool Equals(IEnumerable<Note> other)
+    public bool Equals(NoteCollection other)
     {
-      if( ReferenceEquals(other, this) )
+      if( ReferenceEquals(null, other) )
+      {
+        return false;
+      }
+
+      if( ReferenceEquals(this, other) )
       {
         return true;
       }
 
-      return !ReferenceEquals(other, null) && this.SequenceEqual(other);
+      return _notes.SequenceEqual(other._notes);
     }
+
+    #endregion
+
+    #region IReadOnlyList<Note> Members
+
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public IEnumerator<Note> GetEnumerator() => ( (IEnumerable<Note>)_notes ).GetEnumerator();
+
+    /// <inheritdoc />
+    public int Count => _notes.Length;
+
+    /// <inheritdoc />
+    public Note this[int index] => _notes[index];
 
     #endregion
 
@@ -81,19 +110,20 @@ namespace Bach.Model
         return false;
       }
 
-      notes = new NoteCollection();
+      var tmp = new List<Note>();
 
       foreach( string s in value.Split(',') )
       {
-        if( !Note.TryParse(s, out Note tone) )
+        if( !Note.TryParse(s, out Note note) )
         {
           notes = null;
           return false;
         }
 
-        notes.Add(tone);
+        tmp.Add(note);
       }
 
+      notes = new NoteCollection(tmp.ToArray());
       return true;
     }
 
@@ -115,49 +145,29 @@ namespace Bach.Model
       return tones;
     }
 
-    /// <summary>Converts a sequence of notes into a string representation.</summary>
-    /// <exception cref="ArgumentNullException">Thrown when notes argument is null.</exception>
-    /// <returns>A string that represents the sequence of notes.</returns>
-    public static string ToString(IEnumerable<Note> notes)
-    {
-      Contract.Requires<ArgumentNullException>(notes != null);
-
-      var buf = new StringBuilder();
-      var needsComma = false;
-
-      foreach( Note note in notes )
-      {
-        if( needsComma )
-        {
-          buf.Append(',');
-        }
-        else
-        {
-          needsComma = true;
-        }
-
-        buf.Append(note);
-      }
-
-      return buf.ToString();
-    }
+    public int IndexOf(Note note) => Array.IndexOf(_notes, note);
 
     #endregion
 
     #region Overrides
 
     /// <inheritdoc />
-    public override string ToString() => ToString(this);
+    public override string ToString() => string.Join(",", _notes);
 
     /// <inheritdoc />
     public override bool Equals(object other)
     {
-      if( ReferenceEquals(other, this) )
+      if( ReferenceEquals(null, other) )
+      {
+        return false;
+      }
+
+      if( ReferenceEquals(this, other) )
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+      if( other.GetType() != GetType() )
       {
         return false;
       }
@@ -168,18 +178,16 @@ namespace Bach.Model
     /// <inheritdoc />
     public override int GetHashCode()
     {
-      const int Multiplier = 89;
-
-      var hashCode = 0;
-      foreach( Note tone in Items )
+      unchecked
       {
-        unchecked
+        var hash = 17;
+        foreach( Note note in _notes )
         {
-          hashCode += tone.GetHashCode() * Multiplier;
+          hash = ( hash * 23 ) + note.GetHashCode();
         }
-      }
 
-      return hashCode;
+        return hash;
+      }
     }
 
     #endregion

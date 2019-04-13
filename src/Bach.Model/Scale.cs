@@ -26,7 +26,6 @@ namespace Bach.Model
 {
   using System;
   using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.Linq;
   using System.Text;
   using Internal;
@@ -37,12 +36,6 @@ namespace Bach.Model
     #region Constants
 
     private const string DefaultToStringFormat = "N {S}";
-
-    #endregion
-
-    #region Data Members
-
-    private readonly Note[] _notes;
 
     #endregion
 
@@ -59,7 +52,7 @@ namespace Bach.Model
 
       Root = root;
       Formula = formula;
-      _notes = Formula.Generate(Root).Take(Formula.Intervals.Count).ToArray();
+      Notes = new NoteCollection(Formula.Generate(Root).Take(Formula.Intervals.Count));
 
       var buf = new StringBuilder();
       buf.Append(root.NoteName);
@@ -102,8 +95,8 @@ namespace Bach.Model
     public ScaleFormula Formula { get; }
 
     /// <summary>Gets the notes that form this scale.</summary>
-    /// <value>An array of notes.</value>
-    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
+    /// <value>A collection of notes.</value>
+    public NoteCollection Notes { get; }
 
     /// <summary>Determines if this scale is theoretical.</summary>
     /// <notes>
@@ -125,9 +118,9 @@ namespace Bach.Model
 
         while( true )
         {
-          yield return _notes[index];
+          yield return Notes[index];
 
-          index = ArrayExtensions.WrapIndex(_notes.Length, ++index);
+          index = ArrayExtensions.WrapIndex(Notes.Count, ++index);
         }
 
         // ReSharper disable once IteratorNeverReturns
@@ -144,9 +137,9 @@ namespace Bach.Model
 
         while( true )
         {
-          yield return _notes[index];
+          yield return Notes[index];
 
-          index = ArrayExtensions.WrapIndex(_notes.Length, --index);
+          index = ArrayExtensions.WrapIndex(Notes.Count, --index);
         }
 
         // ReSharper disable once IteratorNeverReturns
@@ -200,21 +193,14 @@ namespace Bach.Model
     /// <summary>Determines if this instance contains the given notes.</summary>
     /// <param name="notes">The notes.</param>
     /// <returns>True if all the notes are in this scale; otherwise, false.</returns>
-    public bool Contains(params Note[] notes)
-    {
-      return notes.All(note =>
-      {
-        int pos = Array.IndexOf(_notes, note);
-        return pos >= 0;
-      });
-    }
+    public bool Contains(IEnumerable<Note> notes) => notes.All(note => Notes.IndexOf(note) >= 0);
 
     /// <summary>Enumerates the scales that contain the given notes matching exactly the intervals between them.</summary>
     /// <param name="notes">The notes.</param>
     /// <returns>
     ///   An enumerator to all the scales that contain the notes.
     /// </returns>
-    public static IEnumerable<Scale> ScalesContaining(params Note[] notes) => ScalesContaining(IntervalMatch.Exact, notes);
+    public static IEnumerable<Scale> ScalesContaining(IEnumerable<Note> notes) => ScalesContaining(IntervalMatch.Exact, notes);
 
     /// <summary>Enumerates the scales that contain the given notes.</summary>
     /// <param name="match">Interval matching strategy.</param>
@@ -223,7 +209,7 @@ namespace Bach.Model
     ///   An enumerator to all the scales that contain the notes.
     /// </returns>
     public static IEnumerable<Scale> ScalesContaining(IntervalMatch match,
-                                                      params Note[] notes)
+                                                      IEnumerable<Note> notes)
     {
 #if BRUTE_FORCE_MATCHING
       foreach( ScaleFormula formula in Registry.ScaleFormulas )
@@ -274,8 +260,9 @@ namespace Bach.Model
     ///   <paramref name="format" />.
     /// </returns>
     /// <remarks>
-    ///   <para>Format specifiers:</para>
-    ///   <para>"N": Name pattern. e.g. "Major".</para>
+    ///   <para>"N": Name pattern. e.g. "C Major".</para>
+    ///   <para>"R": Root pattern. e.g. "C".</para>
+    ///   <para>"F": Formula name pattern. e.g. "Major".</para>
     ///   <para>"S": Notes pattern. e.g. "C,E,G".</para>
     ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
     /// </remarks>
@@ -293,7 +280,9 @@ namespace Bach.Model
     /// </returns>
     /// <remarks>
     ///   <para>Format specifiers:</para>
-    ///   <para>"N": Name pattern. e.g. "Major".</para>
+    ///   <para>"N": Name pattern. e.g. "C Major".</para>
+    ///   <para>"R": Root pattern. e.g. "C".</para>
+    ///   <para>"F": Formula name pattern. e.g. "Major".</para>
     ///   <para>"S": Notes pattern. e.g. "C,E,G".</para>
     ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
     /// </remarks>
@@ -310,16 +299,24 @@ namespace Bach.Model
       {
         switch( f )
         {
-          case 'N':
-            buf.Append(Name);
-            break;
-
-          case 'S':
-            buf.Append(NoteCollection.ToString(_notes));
+          case 'F':
+            buf.Append(Formula.Name);
             break;
 
           case 'I':
             buf.Append(Formula.ToString("I"));
+            break;
+
+          case 'N':
+            buf.Append(Name);
+            break;
+
+          case 'R':
+            buf.Append(Root);
+            break;
+
+          case 'S':
+            buf.Append(Notes);
             break;
 
           default:

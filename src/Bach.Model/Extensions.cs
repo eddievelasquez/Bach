@@ -1,4 +1,4 @@
-﻿// Module Name: IEnumerableExtensions.cs
+﻿// Module Name: Extensions.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
 //
@@ -26,11 +26,10 @@ namespace Bach.Model
 {
   using System;
   using System.Collections.Generic;
-  using System.Text;
   using Internal;
 
-  /// <summary>Provides extensions to IEnumerables</summary>
-  public static class IEnumerableExtensions
+  /// <summary>Provides common extensions.</summary>
+  public static class Extensions
   {
     #region Public Methods
 
@@ -60,31 +59,6 @@ namespace Bach.Model
           yield return interval;
         } while( e.MoveNext() );
       }
-    }
-
-    /// <summary>Converts a sequence of intervals into a comma separated string</summary>
-    /// <param name="intervals">The intervals.</param>
-    /// <returns>A <see cref="System.String"/> that represents this instance.</returns>
-    public static string ToString(this IEnumerable<Interval> intervals)
-    {
-      var buf = new StringBuilder();
-      var needComma = false;
-
-      foreach( Interval interval in intervals )
-      {
-        if( needComma )
-        {
-          buf.Append(',');
-        }
-        else
-        {
-          needComma = true;
-        }
-
-        buf.Append(interval);
-      }
-
-      return buf.ToString();
     }
 
     #endregion

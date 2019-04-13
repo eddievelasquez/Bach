@@ -240,7 +240,7 @@ namespace Bach.Model.Test
                                       string formulaName)
     {
       var chord = new Chord(root, formulaName);
-      Note[] actualNotes = chord.Take(NoteCollection.Parse(expectedNotes).Count).ToArray();
+      IEnumerable<Note> actualNotes = chord.Take(NoteCollection.Parse(expectedNotes).Count);
       Assert.Equal(NoteCollection.Parse(expectedNotes), actualNotes);
     }
 

@@ -26,7 +26,6 @@ namespace Bach.Model
 {
   using System;
   using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.Linq;
   using System.Text;
   using Internal;
@@ -76,12 +75,6 @@ namespace Bach.Model
 
     #endregion
 
-    #region Data Members
-
-    private readonly Interval[] _intervals;
-
-    #endregion
-
     #region Constructors
 
     /// <summary>Specialized constructor for use only by derived classes.</summary>
@@ -102,11 +95,10 @@ namespace Bach.Model
       Contract.RequiresNotNullOrEmpty(name, "Must provide a name");
       Contract.Requires<ArgumentNullException>(intervals != null, "Must provide an interval array");
       Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0, "Must provide at least one interval");
-      Contract.Requires<ArgumentException>(intervals.IsSortedWithoutDuplicates());
 
       Key = key;
       Name = name;
-      _intervals = intervals;
+      Intervals = new IntervalCollection(intervals);
     }
 
     /// <summary>Specialized constructor for use only by derived classed.</summary>
@@ -133,7 +125,7 @@ namespace Bach.Model
 
     /// <summary>Gets the intervals that compose this formula.</summary>
     /// <value>The intervals.</value>
-    public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
+    public IntervalCollection Intervals { get; }
 
     /// <summary>Gets the localizable name for the formula.</summary>
     /// <value>The name.</value>
@@ -156,7 +148,7 @@ namespace Bach.Model
         return false;
       }
 
-      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
+      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name) && Intervals.SequenceEqual(other.Intervals);
     }
 
     #endregion
@@ -181,7 +173,7 @@ namespace Bach.Model
                          IntervalMatch match = IntervalMatch.Exact)
     {
       IComparer<Interval> comparer = ( match == IntervalMatch.Exact ) ? (IComparer<Interval>)s_intervalComparer : s_semitoneComparer;
-      return intervals.All(interval => Array.BinarySearch(_intervals, interval, comparer) >= 0);
+      return intervals.All(interval => Intervals.IndexOf(interval, comparer) >= 0);
     }
 
     /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
@@ -189,12 +181,12 @@ namespace Bach.Model
     /// <returns> An enumerator for a sequence of pitches.</returns>
     public IEnumerable<Pitch> Generate(Pitch root)
     {
-      int intervalCount = _intervals.Length;
+      int intervalCount = Intervals.Count;
       var index = 0;
 
       while( true )
       {
-        Interval interval = _intervals[index % intervalCount];
+        Interval interval = Intervals[index % intervalCount];
         Pitch pitch = root + interval;
 
         // Do we need to change the pitch's octave?
@@ -221,13 +213,13 @@ namespace Bach.Model
     /// <returns> An enumerator for a sequence of notes.</returns>
     public IEnumerable<Note> Generate(Note root)
     {
-      int intervalCount = _intervals.Length;
+      int intervalCount = Intervals.Count;
       var index = 0;
 
       // NOTE: By design, this iterator never returns.
       while( true )
       {
-        Interval interval = _intervals[index % intervalCount];
+        Interval interval = Intervals[index % intervalCount];
         Note note = root + interval;
         yield return note;
 
@@ -241,12 +233,12 @@ namespace Bach.Model
     /// <returns>An array of integral semitone counts.</returns>
     public int[] GetRelativeSteps()
     {
-      var steps = new int[_intervals.Length];
+      var steps = new int[Intervals.Count];
       var lastCount = 0;
 
-      for( var i = 1; i < _intervals.Length; i++ )
+      for( var i = 1; i < Intervals.Count; i++ )
       {
-        int semitoneCount = _intervals[i].SemitoneCount;
+        int semitoneCount = Intervals[i].SemitoneCount;
         int step = semitoneCount - lastCount;
         steps[i - 1] = step;
         lastCount = semitoneCount;
@@ -307,7 +299,7 @@ namespace Bach.Model
             break;
 
           case 'I':
-            buf.Append(IEnumerableExtensions.ToString(_intervals));
+            buf.Append(Intervals);
             break;
 
           default:
