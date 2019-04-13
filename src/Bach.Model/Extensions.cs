@@ -41,6 +41,8 @@ namespace Bach.Model
       Contract.Requires<ArgumentNullException>(notes != null);
       using( IEnumerator<Note> e = notes.GetEnumerator() )
       {
+        yield return Interval.Unison;
+
         if( !e.MoveNext() )
         {
           yield break;
