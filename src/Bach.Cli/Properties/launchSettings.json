@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Bach.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "scales-containing C D E G"
+    }
+  }
+}
