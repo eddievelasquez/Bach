@@ -36,6 +36,8 @@ namespace Bach.Model
   {
     #region Constants
 
+    private const string DefaultToStringFormat = "sq";
+
     private static readonly int[,] s_steps =
     {
       // Diminished, Minor, Perfect, Major, Augmented
@@ -222,7 +224,7 @@ namespace Bach.Model
       int steps = s_steps[(int)quantity, (int)quality];
       if( steps == -1 )
       {
-        throw new ArgumentException($"{ToString(quantity, quality)} is not a valid interval");
+        throw new ArgumentException($"{quantity}{quality} is not a valid interval");
       }
 
       return steps;
@@ -324,13 +326,85 @@ namespace Bach.Model
       return true;
     }
 
+    /// <summary>
+    ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
+    ///   provided format specifier.
+    /// </summary>
+    /// <param name="format">A custom format string.</param>
+    /// <returns>
+    ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
+    ///   <paramref name="format" />.
+    /// </returns>
+    /// <remarks>
+    ///   <para>"s": Symbol pattern. e.g. (m)inor, (d)iminished, (A)ugmented. Excludes perfect and major.</para>
+    ///   <para>"S": Symbol pattern. e.g. (P)erfect, (M)ajor, (m)inor, (d)iminished, (A)ugmented.</para>
+    ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+    ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+    /// </remarks>
+    public string ToString(string format) => ToString(format, null);
+
+    /// <summary>
+    ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
+    ///   provided format specifier and format provider..
+    /// </summary>
+    /// <param name="format">A custom format string.</param>
+    /// <returns>
+    ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
+    ///   <paramref name="format" />.
+    ///   <param name="provider">The format provider. (Currently unused)</param>
+    /// </returns>
+    /// <remarks>
+    ///   <para>"s": Symbol pattern. e.g. (m)inor, (d)iminished, (A)ugmented. Excludes perfect and major.</para>
+    ///   <para>"S": Symbol pattern. e.g. (P)erfect, (M)ajor, (m)inor, (d)iminished, (A)ugmented.</para>
+    ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+    ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+    /// </remarks>
+    public string ToString(string format,
+                           IFormatProvider provider)
+    {
+      var buf = new StringBuilder();
+      foreach( char f in format )
+      {
+        switch( f )
+        {
+          case 's':
+          {
+            if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
+            {
+              buf.Append(Quality.Symbol);
+            }
+
+            break;
+          }
+
+          case 'S':
+            buf.Append(Quality.Symbol);
+            break;
+
+          case 'q':
+            buf.Append((int)( Quantity + 1 ));
+            break;
+
+          case 'Q':
+            buf.Append(Quantity);
+            break;
+
+          default:
+            buf.Append(f);
+            break;
+        }
+      }
+
+      return buf.ToString();
+    }
+
     #endregion
 
     #region Overrides
 
     /// <summary>Returns the fully qualified type name of this instance.</summary>
     /// <returns>The fully qualified type name.</returns>
-    public override string ToString() => ToString(Quantity, Quality);
+    public override string ToString() => ToString(DefaultToStringFormat, null);
 
     /// <inheritdoc />
     public override bool Equals(object obj)
@@ -348,24 +422,6 @@ namespace Bach.Model
     {
       int hashCode = ( _quality << 8 ) | _quantity;
       return hashCode;
-    }
-
-    #endregion
-
-    #region  Implementation
-
-    private static string ToString(IntervalQuantity quantity,
-                                   IntervalQuality quality,
-                                   bool suppressPerfectAndMajor = true)
-    {
-      var buf = new StringBuilder();
-      if( quality != IntervalQuality.Perfect && quality != IntervalQuality.Major || !suppressPerfectAndMajor )
-      {
-        buf.Append(quality.Symbol);
-      }
-
-      buf.Append((int)( quantity + 1 ));
-      return buf.ToString();
     }
 
     #endregion
