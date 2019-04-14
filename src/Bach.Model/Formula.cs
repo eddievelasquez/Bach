@@ -79,7 +79,7 @@ namespace Bach.Model
 
     /// <summary>Specialized constructor for use only by derived classes.</summary>
     /// <exception cref="ArgumentNullException">Thrown when either the key, name or interval arguments are null.</exception>
-    /// <exception cref="ArgumentException">Thrown when teh key or name are empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when the key or name are empty.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval array is empty.</exception>
     /// <param name="key">
     ///   The language-neutral key for the formula. The key is used as the unique identifier for a formula in
@@ -227,6 +227,17 @@ namespace Bach.Model
       }
 
       // ReSharper disable once IteratorNeverReturns
+    }
+
+    /// <summary>Generates a sequence of notes based on the provided formula's intervals and starting on the provided <see cref="Note"/>.</summary>
+    /// <param name="root">The root note.</param>
+    /// <param name="intervals">The intervals.</param>
+    /// <returns> An enumerator for a sequence of notes.</returns>
+    public static IEnumerable<Note> Generate(Note root,
+                                             IEnumerable<Interval> intervals)
+    {
+      Contract.Requires<ArgumentNullException>(intervals != null);
+      return intervals.Select(interval => root + interval);
     }
 
     /// <summary>Gets the relative steps in terms of semitones between the intervals that compose the formula.</summary>

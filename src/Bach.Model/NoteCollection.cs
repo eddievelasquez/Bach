@@ -112,7 +112,7 @@ namespace Bach.Model
 
       var tmp = new List<Note>();
 
-      foreach( string s in value.Split(',') )
+      foreach( string s in value.Split(new[]{ ',', ' ' }, StringSplitOptions.RemoveEmptyEntries) )
       {
         if( !Note.TryParse(s, out Note note) )
         {
@@ -137,12 +137,12 @@ namespace Bach.Model
     {
       Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
 
-      if( !TryParse(value, out NoteCollection tones) )
+      if( !TryParse(value, out NoteCollection notes) )
       {
         throw new FormatException($"{value} contains invalid notes");
       }
 
-      return tones;
+      return notes;
     }
 
     public int IndexOf(Note note) => Array.IndexOf(_notes, note);

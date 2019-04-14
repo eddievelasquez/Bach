@@ -47,16 +47,17 @@ namespace Bach.Cli
           return 1;
         });
 
-        app.Command("scale", DisplayScale);
-        app.Command("chord", DisplayChord);
-        app.Command("intervals", DisplayIntervals);
-        app.Command("scales-containing", DisplayScalesForNotes);
         app.Command("list",
                     cmd =>
                     {
                       cmd.Command("scales", ListScales);
                       cmd.Command("chords", ListChords);
                     });
+        app.Command("scale", DisplayScale);
+        app.Command("chord", DisplayChord);
+        app.Command("intervals", DisplayIntervals);
+        app.Command("scales-containing", DisplayScalesForNotes);
+        app.Command("notes", DisplayNotes);
 
         return app.Execute(args);
       }
@@ -168,11 +169,11 @@ namespace Bach.Cli
 
     private static void DisplayIntervals(CommandLineApplication app)
     {
-      CommandArgument notesArg = app.Argument("Notes", "Notes", true).IsRequired();
+      CommandArgument notesArg = app.Argument("Notes", "Notes").IsRequired();
 
       app.OnExecute(() =>
       {
-        Note[] notes = notesArg.Values.Select(Note.Parse).ToArray();
+        NoteCollection notes = NoteCollection.Parse(notesArg.Value);
         Interval[] intervals = notes.Intervals().ToArray();
 
         Console.WriteLine($"Notes: {{{string.Join(",", notes)}}}");
@@ -198,6 +199,22 @@ namespace Bach.Cli
           Console.WriteLine($"    => {{{string.Join(",", scale.Formula.Intervals.Select(interval => interval.ToString("Sq")))}}}");
           Console.WriteLine();
         }
+      });
+    }
+
+    private static void DisplayNotes(CommandLineApplication app)
+    {
+      CommandArgument rootArg = app.Argument("root", "Root note").IsRequired();
+      CommandArgument intervalsArg = app.Argument("intervals", "Intervals to render").IsRequired();
+
+      app.OnExecute(() =>
+      {
+        Note root = Note.Parse(rootArg.Value);
+        Interval[] intervals = Formula.ParseIntervals(intervalsArg.Value);
+
+        Console.WriteLine($"Notes: {{{string.Join(",", Formula.Generate(root, intervals))}}}");
+        Console.WriteLine($"    => {{{string.Join(",", intervals.Select(interval => interval.ToString("Sq")))}}}");
+        Console.WriteLine();
       });
     }
 

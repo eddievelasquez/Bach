@@ -26,6 +26,7 @@ namespace Bach.Model
 {
   using System;
   using System.Diagnostics.Contracts;
+  using System.Runtime.InteropServices;
   using Internal;
   using Contract = Internal.Contract;
 
@@ -121,7 +122,7 @@ namespace Bach.Model
         return false;
       }
 
-      int value = s_names.IndexOf(s.Substring(0, 1), StringComparison.InvariantCultureIgnoreCase);
+      int value = s_names.IndexOf(char.ToUpperInvariant(s[0]));
       if( value == -1 )
       {
         noteName = C;

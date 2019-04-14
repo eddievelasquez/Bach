@@ -305,6 +305,7 @@ namespace Bach.Model
         return false;
       }
 
+      value = value.Trim();
       if( !NoteName.TryParse(value, out NoteName toneName) )
       {
         note = C;
