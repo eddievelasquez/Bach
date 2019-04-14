@@ -36,27 +36,36 @@ namespace Bach.Cli
     public static int Main(string[] args)
     {
       var app = new CommandLineApplication { Name = "bach", Description = "CLI for Bach.Model" };
-      app.HelpOption(true);
 
-      app.OnExecute(() =>
+      try
       {
-        Console.WriteLine("Specify a subcommand");
+        app.HelpOption(true);
+
+        app.OnExecute(() =>
+        {
+          app.ShowHelp();
+          return 1;
+        });
+
+        app.Command("scale", DisplayScale);
+        app.Command("chord", DisplayChord);
+        app.Command("intervals", DisplayIntervals);
+        app.Command("scales-containing", DisplayScalesForNotes);
+        app.Command("list",
+                    cmd =>
+                    {
+                      cmd.Command("scales", ListScales);
+                      cmd.Command("chords", ListChords);
+                    });
+
+        return app.Execute(args);
+      }
+      catch( Exception ex )
+      {
+        Console.WriteLine($"ERROR: {ex.Message}");
         app.ShowHelp();
         return 1;
-      });
-
-      app.Command("scale", DisplayScale);
-      app.Command("chord", DisplayChord);
-      app.Command("intervals", DisplayIntervals);
-      app.Command("scales-containing", DisplayScalesForNotes);
-      app.Command("list",
-                  cmd =>
-                  {
-                    cmd.Command("scales", ListScales);
-                    cmd.Command("chords", ListChords);
-                  });
-
-      return app.Execute(args);
+      }
     }
 
     #endregion
@@ -112,8 +121,8 @@ namespace Bach.Cli
 
     private static void DisplayScale(CommandLineApplication app)
     {
-      CommandArgument formulaArg = app.Argument("Formula", "Required. The name of scale formula").IsRequired();
-      CommandArgument rootArg = app.Argument("Root", "Required. The Scale root", true).IsRequired();
+      CommandArgument formulaArg = app.Argument("scaleKey", "Required. The key of scale formula").IsRequired();
+      CommandArgument rootArg = app.Argument("root", "Required. The Scale root", true).IsRequired();
 
       app.OnExecute(() =>
       {
@@ -135,8 +144,8 @@ namespace Bach.Cli
 
     private static void DisplayChord(CommandLineApplication app)
     {
-      CommandArgument formulaArg = app.Argument("Formula", "The key of chord formula").IsRequired();
-      CommandArgument rootArg = app.Argument("Root", "Chord root", true).IsRequired();
+      CommandArgument formulaArg = app.Argument("chordKey", "The key of chord formula").IsRequired();
+      CommandArgument rootArg = app.Argument("root", "Chord root", true).IsRequired();
 
       app.OnExecute(() =>
       {
