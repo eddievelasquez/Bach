@@ -81,7 +81,7 @@ namespace Bach.Cli
 
         foreach( ScaleFormula formula in Registry.ScaleFormulas )
         {
-          Console.WriteLine($"{formula.Key} - \"{formula.Name}\"");
+          Console.WriteLine($"{formula.Name}");
           Console.WriteLine($"  Formula: {formula.Intervals}");
 
           if( formula.Categories.Count > 0 )
@@ -107,7 +107,7 @@ namespace Bach.Cli
 
         foreach( ChordFormula formula in Registry.ChordFormulas )
         {
-          Console.WriteLine($"{formula.Key} - \"{formula.Name}\"");
+          Console.WriteLine($"{formula.Name}");
 
           if( !string.IsNullOrEmpty(formula.Symbol) )
           {
@@ -122,8 +122,8 @@ namespace Bach.Cli
 
     private static void DisplayScale(CommandLineApplication app)
     {
-      CommandArgument formulaArg = app.Argument("scaleKey", "Required. The key of scale formula").IsRequired();
-      CommandArgument rootArg = app.Argument("root", "Required. The Scale root", true).IsRequired();
+      CommandArgument formulaArg = app.Argument("name", "Required. The name of the scale").IsRequired();
+      CommandArgument rootArg = app.Argument("root", "Required. The scale root", true).IsRequired();
 
       app.OnExecute(() =>
       {
@@ -145,8 +145,8 @@ namespace Bach.Cli
 
     private static void DisplayChord(CommandLineApplication app)
     {
-      CommandArgument formulaArg = app.Argument("chordKey", "The key of chord formula").IsRequired();
-      CommandArgument rootArg = app.Argument("root", "Chord root", true).IsRequired();
+      CommandArgument formulaArg = app.Argument("name", "required. The name of the chord").IsRequired();
+      CommandArgument rootArg = app.Argument("root", "Required. The chord root", true).IsRequired();
 
       app.OnExecute(() =>
       {
@@ -169,7 +169,7 @@ namespace Bach.Cli
 
     private static void DisplayIntervals(CommandLineApplication app)
     {
-      CommandArgument notesArg = app.Argument("Notes", "Notes").IsRequired();
+      CommandArgument notesArg = app.Argument("notes", "The notes").IsRequired();
 
       app.OnExecute(() =>
       {
@@ -184,11 +184,11 @@ namespace Bach.Cli
 
     private static void DisplayScalesForNotes(CommandLineApplication app)
     {
-      CommandArgument notesArg = app.Argument("Notes", "Notes", true).IsRequired();
+      CommandArgument notesArg = app.Argument("notes", "The notes that will be searched for").IsRequired();
 
       app.OnExecute(() =>
       {
-        Note[] notes = notesArg.Values.Select(Note.Parse).ToArray();
+        NoteCollection notes = NoteCollection.Parse(notesArg.Value);
 
         Console.WriteLine($"Scales containing: {{{string.Join(",", notes)}}}");
         Console.WriteLine();
