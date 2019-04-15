@@ -30,7 +30,7 @@ namespace Bach.Model.Instruments
 
   /// <summary>A base class for an instrument definition.</summary>
   public abstract class InstrumentDefinition
-    : IKeyedObject,
+    : IKeyNameObject,
       IEquatable<InstrumentDefinition>
   {
     #region Constructors
@@ -81,12 +81,15 @@ namespace Bach.Model.Instruments
 
     #endregion
 
-    #region IKeyedObject Members
+    #region IKeyNameObject Members
 
     /// <summary>Returns the language-neutral key for the instrument.</summary>
     /// <value>The key.</value>
     /// <inheritdoc />
     public string Key => State.InstrumentKey;
+
+    /// <inheritdoc />
+    public string Name => State.InstrumentName;
 
     #endregion
 

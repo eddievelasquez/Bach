@@ -32,7 +32,7 @@ namespace Bach.Model
 
   /// <summary>A formula is a base class for constructing a sequence of notes based on a series of intervals.</summary>
   public abstract class Formula
-    : IKeyedObject,
+    : IKeyNameObject,
       IEquatable<Formula>
   {
     #region Nested type: IntervalComparer
@@ -127,10 +127,6 @@ namespace Bach.Model
     /// <value>The intervals.</value>
     public IntervalCollection Intervals { get; }
 
-    /// <summary>Gets the localizable name for the formula.</summary>
-    /// <value>The name.</value>
-    public string Name { get; }
-
     #endregion
 
     #region IEquatable<Formula> Members
@@ -153,7 +149,11 @@ namespace Bach.Model
 
     #endregion
 
-    #region IKeyedObject Members
+    #region IKeyNameObject Members
+
+    /// <summary>Gets the localizable name for the formula.</summary>
+    /// <value>The name.</value>
+    public string Name { get; }
 
     /// <summary>Returns the language-neutral key for the formula.</summary>
     /// <value>The key.</value>
@@ -229,7 +229,10 @@ namespace Bach.Model
       // ReSharper disable once IteratorNeverReturns
     }
 
-    /// <summary>Generates a sequence of notes based on the provided formula's intervals and starting on the provided <see cref="Note"/>.</summary>
+    /// <summary>
+    ///   Generates a sequence of notes based on the provided formula's intervals and starting on the provided
+    ///   <see cref="Note" />.
+    /// </summary>
     /// <param name="root">The root note.</param>
     /// <param name="intervals">The intervals.</param>
     /// <returns> An enumerator for a sequence of notes.</returns>

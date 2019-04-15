@@ -59,7 +59,7 @@ namespace Bach.Model
       var library = JsonConvert.DeserializeObject<PersistentLibrary>(s);
 
       // Load data
-      ScaleFormulas = new KeyedObjectCollection<ScaleFormula>();
+      ScaleFormulas = new KeyNameObjectCollection<ScaleFormula>();
       foreach( PersistentScale scale in library.Scales )
       {
         ScaleFormula formula = new ScaleFormulaBuilder(scale.Name)
@@ -71,13 +71,13 @@ namespace Bach.Model
         ScaleFormulas.Add(formula);
       }
 
-      ChordFormulas = new KeyedObjectCollection<ChordFormula>();
+      ChordFormulas = new KeyNameObjectCollection<ChordFormula>();
       foreach( PersistentChord chord in library.Chords )
       {
         ChordFormulas.Add(new ChordFormula(chord.Key, chord.Name, chord.Symbol, chord.Formula));
       }
 
-      StringedInstrumentDefinitions = new KeyedObjectCollection<StringedInstrumentDefinition>();
+      StringedInstrumentDefinitions = new KeyNameObjectCollection<StringedInstrumentDefinition>();
       foreach( PersistentStringedInstrument instrument in library.StringedInstruments )
       {
         var builder = new StringedInstrumentDefinitionBuilder(instrument.Key, instrument.Name, instrument.StringCount);
@@ -97,15 +97,15 @@ namespace Bach.Model
 
     /// <summary>Gets the collection of scale formulas.</summary>
     /// <value>The scale formulas.</value>
-    public static KeyedObjectCollection<ScaleFormula> ScaleFormulas { get; }
+    public static KeyNameObjectCollection<ScaleFormula> ScaleFormulas { get; }
 
     /// <summary>Gets the collection of chord formulas.</summary>
     /// <value>The chord formulas.</value>
-    public static KeyedObjectCollection<ChordFormula> ChordFormulas { get; }
+    public static KeyNameObjectCollection<ChordFormula> ChordFormulas { get; }
 
     /// <summary>Gets the collection of stringed instrument definitions.</summary>
     /// <value>The stringed instrument definitions.</value>
-    public static KeyedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
+    public static KeyNameObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
 
     #endregion
   }

@@ -1,4 +1,4 @@
-﻿// Module Name: KeyedObjectCollection.cs
+﻿// Module Name: IKeyNameObject.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
 //
@@ -24,28 +24,20 @@
 
 namespace Bach.Model.Internal
 {
-  using System;
-  using System.Collections.ObjectModel;
-
-  /// <summary>Collection of keyed objects.</summary>
-  /// <typeparam name="T">Type parameter for the keyed object.</typeparam>
-  public class KeyedObjectCollection<T>: KeyedCollection<string, T>
-    where T: IKeyedObject
+  /// <summary>Interface for a keyed object.</summary>
+  public interface IKeyNameObject
   {
-    #region Constructors
+    #region Properties
 
-    /// <summary>Initializes a new instance of the KeyedObjectCollection class.</summary>
-    public KeyedObjectCollection()
-      : base(StringComparer.CurrentCultureIgnoreCase)
-    {
-    }
+    /// <summary>
+    /// Returns the key for the object
+    /// </summary>
+    string Key { get; }
 
-    #endregion
-
-    #region Overrides
-
-    /// <inheritdoc />
-    protected override string GetKeyForItem(T item) => item.Key;
+    /// <summary>
+    /// Returns the localizable name for the object
+    /// </summary>
+    string Name { get; }
 
     #endregion
   }
