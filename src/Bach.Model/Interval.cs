@@ -351,10 +351,10 @@ namespace Bach.Model
     ///   provided format specifier and format provider..
     /// </summary>
     /// <param name="format">A custom format string.</param>
+    /// <param name="provider">The format provider. (Currently unused)</param>
     /// <returns>
     ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
     ///   <paramref name="format" />.
-    ///   <param name="provider">The format provider. (Currently unused)</param>
     /// </returns>
     /// <remarks>
     ///   <para>"s": Symbol pattern. e.g. (m)inor, (d)iminished, (A)ugmented. Excludes perfect and major.</para>
@@ -412,7 +412,7 @@ namespace Bach.Model
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(obj, null) || obj.GetType() != GetType() )
+      if( obj is null || obj.GetType() != GetType() )
       {
         return false;
       }

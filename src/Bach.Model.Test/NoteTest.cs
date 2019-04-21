@@ -79,23 +79,23 @@ namespace Bach.Model.Test
     [Fact]
     public void PredefinedNoteTest()
     {
-      ToneMemberTestImpl(Note.C, NoteName.C, Accidental.Natural, 0);
-      ToneMemberTestImpl(Note.CSharp, NoteName.C, Accidental.Sharp, 1);
-      ToneMemberTestImpl(Note.DFlat, NoteName.D, Accidental.Flat, 1);
-      ToneMemberTestImpl(Note.D, NoteName.D, Accidental.Natural, 2);
-      ToneMemberTestImpl(Note.DSharp, NoteName.D, Accidental.Sharp, 3);
-      ToneMemberTestImpl(Note.EFlat, NoteName.E, Accidental.Flat, 3);
-      ToneMemberTestImpl(Note.E, NoteName.E, Accidental.Natural, 4);
-      ToneMemberTestImpl(Note.F, NoteName.F, Accidental.Natural, 5);
-      ToneMemberTestImpl(Note.FSharp, NoteName.F, Accidental.Sharp, 6);
-      ToneMemberTestImpl(Note.GFlat, NoteName.G, Accidental.Flat, 6);
-      ToneMemberTestImpl(Note.G, NoteName.G, Accidental.Natural, 7);
-      ToneMemberTestImpl(Note.GSharp, NoteName.G, Accidental.Sharp, 8);
-      ToneMemberTestImpl(Note.AFlat, NoteName.A, Accidental.Flat, 8);
-      ToneMemberTestImpl(Note.A, NoteName.A, Accidental.Natural, 9);
-      ToneMemberTestImpl(Note.ASharp, NoteName.A, Accidental.Sharp, 10);
-      ToneMemberTestImpl(Note.BFlat, NoteName.B, Accidental.Flat, 10);
-      ToneMemberTestImpl(Note.B, NoteName.B, Accidental.Natural, 11);
+      NoteMemberTestImpl(Note.C, NoteName.C, Accidental.Natural);
+      NoteMemberTestImpl(Note.CSharp, NoteName.C, Accidental.Sharp);
+      NoteMemberTestImpl(Note.DFlat, NoteName.D, Accidental.Flat);
+      NoteMemberTestImpl(Note.D, NoteName.D, Accidental.Natural);
+      NoteMemberTestImpl(Note.DSharp, NoteName.D, Accidental.Sharp);
+      NoteMemberTestImpl(Note.EFlat, NoteName.E, Accidental.Flat);
+      NoteMemberTestImpl(Note.E, NoteName.E, Accidental.Natural);
+      NoteMemberTestImpl(Note.F, NoteName.F, Accidental.Natural);
+      NoteMemberTestImpl(Note.FSharp, NoteName.F, Accidental.Sharp);
+      NoteMemberTestImpl(Note.GFlat, NoteName.G, Accidental.Flat);
+      NoteMemberTestImpl(Note.G, NoteName.G, Accidental.Natural);
+      NoteMemberTestImpl(Note.GSharp, NoteName.G, Accidental.Sharp);
+      NoteMemberTestImpl(Note.AFlat, NoteName.A, Accidental.Flat);
+      NoteMemberTestImpl(Note.A, NoteName.A, Accidental.Natural);
+      NoteMemberTestImpl(Note.ASharp, NoteName.A, Accidental.Sharp);
+      NoteMemberTestImpl(Note.BFlat, NoteName.B, Accidental.Flat);
+      NoteMemberTestImpl(Note.B, NoteName.B, Accidental.Natural);
     }
 
     [Fact]
@@ -420,13 +420,12 @@ namespace Bach.Model.Test
                                             int interval)
     {
       var note = Note.Create(noteName, accidental);
-      ToneMemberTestImpl(note, noteName, accidental, interval);
+      NoteMemberTestImpl(note, noteName, accidental);
     }
 
-    private static void ToneMemberTestImpl(Note note,
+    private static void NoteMemberTestImpl(Note note,
                                            NoteName noteName,
-                                           Accidental accidental,
-                                           int interval)
+                                           Accidental accidental)
     {
       Assert.Equal(noteName, note.NoteName);
       Assert.Equal(accidental, note.Accidental);

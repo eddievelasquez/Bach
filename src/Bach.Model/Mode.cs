@@ -27,7 +27,6 @@ namespace Bach.Model
   using System;
   using System.Collections;
   using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.Linq;
   using System.Text;
   using Internal;
@@ -115,7 +114,7 @@ namespace Bach.Model
         return true;
       }
 
-      if( ReferenceEquals(other, null) )
+      if( other is null )
       {
         return false;
       }
@@ -135,7 +134,7 @@ namespace Bach.Model
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
+      if( other is null || other.GetType() != GetType() )
       {
         return false;
       }

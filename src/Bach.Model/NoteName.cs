@@ -26,7 +26,6 @@ namespace Bach.Model
 {
   using System;
   using System.Diagnostics.Contracts;
-  using System.Runtime.InteropServices;
   using Internal;
   using Contract = Internal.Contract;
 
