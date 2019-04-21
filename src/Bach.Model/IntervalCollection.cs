@@ -32,7 +32,7 @@ namespace Bach.Model
 
   public class IntervalCollection
     : IReadOnlyList<Interval>,
-      IEquatable<IntervalCollection>
+      IEquatable<IEnumerable<Interval>>
   {
     #region Data Members
 
@@ -53,22 +53,17 @@ namespace Bach.Model
 
     #endregion
 
-    #region IEquatable<IntervalCollection> Members
+    #region IEquatable<IEnumerable<Interval>> Members
 
     /// <inheritdoc />
-    public bool Equals(IntervalCollection other)
+    public bool Equals(IEnumerable<Interval> other)
     {
       if( ReferenceEquals(null, other) )
       {
         return false;
       }
 
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      return _intervals.SequenceEqual(other._intervals);
+      return ReferenceEquals(this, other) || _intervals.SequenceEqual(other);
     }
 
     #endregion
@@ -97,10 +92,10 @@ namespace Bach.Model
     /// </summary>
     /// <param name="interval">The interval to locate</param>
     /// <param name="comparer">
-    ///   The optional <see cref="IComparer&lt;Interval&gt;"/>  implementation to use when comparing intervals. If no
+    ///   The optional <see cref="IComparer&lt;Interval&gt;" />  implementation to use when comparing intervals. If no
     ///   comparer is provided, the intervals will be compared using an exact match.
     /// </param>
-    /// <returns>The index of the occurence of <paramref name="interval"/> in the collection, if found; otherwise, -1.</returns>
+    /// <returns>The index of the occurence of <paramref name="interval" /> in the collection, if found; otherwise, -1.</returns>
     public int IndexOf(Interval interval,
                        IComparer<Interval> comparer = null)
       => Array.BinarySearch(_intervals, interval, comparer ?? Comparer<Interval>.Default);

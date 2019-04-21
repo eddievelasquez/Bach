@@ -34,7 +34,7 @@ namespace Bach.Model
   /// <summary>Collection of pitches.</summary>
   public class PitchCollection
     : IReadOnlyList<Pitch>,
-      IEquatable<PitchCollection>
+      IEquatable<IEnumerable<Pitch>>
   {
     #region Data Members
 
@@ -58,17 +58,17 @@ namespace Bach.Model
 
     #endregion
 
-    #region IEquatable<PitchCollection> Members
+    #region IEquatable<IEnumerable<Pitch>> Members
 
     /// <inheritdoc />
-    public bool Equals(PitchCollection other)
+    public bool Equals(IEnumerable<Pitch> other)
     {
       if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      return !ReferenceEquals(other, null) && _pitches.SequenceEqual(other._pitches);
+      return !ReferenceEquals(other, null) && _pitches.SequenceEqual(other);
     }
 
     #endregion

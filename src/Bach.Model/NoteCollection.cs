@@ -33,7 +33,7 @@ namespace Bach.Model
   /// <summary>Collection of notes.</summary>
   public class NoteCollection
     : IReadOnlyList<Note>,
-      IEquatable<NoteCollection>
+      IEquatable<IEnumerable<Note>>
   {
     #region Data Members
 
@@ -62,19 +62,14 @@ namespace Bach.Model
     #region IEquatable<NoteCollection> Members
 
     /// <inheritdoc />
-    public bool Equals(NoteCollection other)
+    public bool Equals(IEnumerable<Note> other)
     {
       if( ReferenceEquals(null, other) )
       {
         return false;
       }
 
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      return _notes.SequenceEqual(other._notes);
+      return ReferenceEquals(this, other) || _notes.SequenceEqual(other);
     }
 
     #endregion
