@@ -36,11 +36,11 @@ namespace Bach.Model
     #region Data Members
 
     private readonly List<Interval> _intervals = new List<Interval>();
-    private readonly HashSet<string> _aliases = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-    private readonly HashSet<string> _categories = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+    private readonly HashSet<string> _aliases = new HashSet<string>(Comparer.NameComparer);
+    private readonly HashSet<string> _categories = new HashSet<string>(Comparer.NameComparer);
 
+    private string _id;
     private string _name;
-    private string _key;
 
     #endregion
 
@@ -58,9 +58,27 @@ namespace Bach.Model
       SetName(name);
     }
 
+    /// <summary>Initializes a new named instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
+    /// <param name="id">The scale formula's identifier.</param>
+    /// <param name="name">The scale formula's name.</param>
+    public ScaleFormulaBuilder(string id, string name)
+    {
+      SetId(id);
+      SetName(name);
+    }
+
     #endregion
 
     #region Public Methods
+
+    /// <summary>Sets the scale formula's id.</summary>
+    /// <param name="id">The scale formula's identifier.</param>
+    /// <returns>This instance.</returns>
+    public ScaleFormulaBuilder SetId(string id)
+    {
+      _id = RemoveWhitespace(id);
+      return this;
+    }
 
     /// <summary>Sets the scale formula's name.</summary>
     /// <param name="name">The name.</param>
@@ -72,15 +90,6 @@ namespace Bach.Model
         _name = name.Trim();
       }
 
-      return this;
-    }
-
-    /// <summary>Sets the scale formula's key.</summary>
-    /// <param name="key">The key.</param>
-    /// <returns>This instance.</returns>
-    public ScaleFormulaBuilder SetKey(string key)
-    {
-      _key = RemoveWhitespace(key);
       return this;
     }
 
@@ -219,7 +228,7 @@ namespace Bach.Model
     ///   Builds a scale formula instance.
     /// </summary>
     /// <remarks>
-    ///   The scale formula will have a default key if none was provided. This key is equivalent to the scale formula's name
+    ///   The scale formula will have a default id if none was provided. This id is equivalent to the scale formula's name
     ///   without any whitespace characters.
     ///   The "Diatonic", "Major" or "Minor" categories will be automatically added if the provided intervals satisfy the
     ///   category's requirements.
@@ -242,15 +251,15 @@ namespace Bach.Model
         throw new InvalidOperationException("A scale must contain at least two intervals");
       }
 
-      if( !_intervals.IsSortedWithoutDuplicates() )
+      if( !_intervals.IsSortedUnique() )
       {
         throw new InvalidOperationException("A scale's intervals must be sorted and without duplicates");
       }
 
       // Add default values
-      if( _key == null )
+      if( _id == null )
       {
-        _key = RemoveWhitespace(_name);
+        _id = RemoveWhitespace(_name);
       }
 
       if( IsDiatonic() )
@@ -268,7 +277,7 @@ namespace Bach.Model
         _categories.Add("Minor");
       }
 
-      var formula = new ScaleFormula(_key, _name, _intervals.ToArray(), _categories.ToImmutableHashSet(), _aliases.ToImmutableHashSet());
+      var formula = new ScaleFormula(_id, _name, _intervals.ToArray(), _categories.ToImmutableHashSet(), _aliases.ToImmutableHashSet());
       return formula;
     }
 

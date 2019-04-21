@@ -1,4 +1,4 @@
-﻿// Module Name: IKeyNameObject.cs
+﻿// Module Name: Comparer.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
 //
@@ -24,20 +24,14 @@
 
 namespace Bach.Model.Internal
 {
-  /// <summary>Interface for a keyed object.</summary>
-  public interface IKeyNameObject
+  using System;
+
+  internal static class Comparer
   {
-    #region Properties
+    #region Constants
 
-    /// <summary>
-    /// Returns the key for the object
-    /// </summary>
-    string Key { get; }
-
-    /// <summary>
-    /// Returns the localizable name for the object
-    /// </summary>
-    string Name { get; }
+    public static readonly StringComparer IdComparer = StringComparer.InvariantCultureIgnoreCase;
+    public static readonly StringComparer NameComparer = StringComparer.CurrentCultureIgnoreCase;
 
     #endregion
   }

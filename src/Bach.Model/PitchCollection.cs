@@ -25,44 +25,67 @@
 namespace Bach.Model
 {
   using System;
+  using System.Collections;
   using System.Collections.Generic;
-  using System.Collections.ObjectModel;
   using System.Linq;
   using System.Text;
   using Internal;
 
   /// <summary>Collection of pitches.</summary>
   public class PitchCollection
-    : Collection<Pitch>,
-      IEquatable<IEnumerable<Pitch>>
+    : IReadOnlyList<Pitch>,
+      IEquatable<PitchCollection>
   {
+    #region Data Members
+
+    private readonly Pitch[] _pitches;
+
+    #endregion
+
     #region Constructors
 
-    /// <inheritdoc />
-    public PitchCollection()
+    public PitchCollection(Pitch[] notes)
     {
+      Contract.Requires<ArgumentNullException>(notes != null);
+      _pitches = notes;
     }
 
-    /// <inheritdoc />
-    public PitchCollection(IList<Pitch> notes)
-      : base(notes)
+    public PitchCollection(IEnumerable<Pitch> notes)
     {
+      Contract.Requires<ArgumentNullException>(notes != null);
+      _pitches = notes.ToArray();
     }
 
     #endregion
 
-    #region IEquatable<IEnumerable<Pitch>> Members
+    #region IEquatable<PitchCollection> Members
 
     /// <inheritdoc />
-    public bool Equals(IEnumerable<Pitch> other)
+    public bool Equals(PitchCollection other)
     {
       if( ReferenceEquals(other, this) )
       {
         return true;
       }
 
-      return !ReferenceEquals(other, null) && this.SequenceEqual(other);
+      return !ReferenceEquals(other, null) && _pitches.SequenceEqual(other._pitches);
     }
+
+    #endregion
+
+    #region IReadOnlyList<Pitch> Members
+
+    /// <inheritdoc />
+    public int Count => _pitches.Length;
+
+    /// <inheritdoc />
+    public Pitch this[int index] => _pitches[index];
+
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    /// <inheritdoc />
+    public IEnumerator<Pitch> GetEnumerator() => ( (IEnumerable<Pitch>)_pitches ).GetEnumerator();
 
     #endregion
 
@@ -81,8 +104,7 @@ namespace Bach.Model
         return false;
       }
 
-      pitches = new PitchCollection();
-
+      var tmp = new List<Pitch>();
       foreach( string s in value.Split(',') )
       {
         if( !Pitch.TryParse(s, out Pitch note) )
@@ -91,9 +113,10 @@ namespace Bach.Model
           return false;
         }
 
-        pitches.Add(note);
+        tmp.Add(note);
       }
 
+      pitches = new PitchCollection(tmp);
       return true;
     }
 

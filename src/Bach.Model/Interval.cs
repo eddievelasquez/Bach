@@ -147,6 +147,18 @@ namespace Bach.Model
     /// <value>The number of semitones.</value>
     public int SemitoneCount => _semitoneCount;
 
+    public Interval Inversion
+    {
+      get
+      {
+        var newQuantity = (IntervalQuantity)( 8 - (int)Quantity - 1 );
+        IntervalQuality newQuality = IntervalQuality.Augmented - (int)Quality;
+
+        var result = new Interval(newQuantity, newQuality);
+        return result;
+      }
+    }
+
     #endregion
 
     #region IComparable<Interval> Members
@@ -174,15 +186,6 @@ namespace Bach.Model
     #endregion
 
     #region Public Methods
-
-    public Interval GetInversion()
-    {
-      var newQuantity = (IntervalQuantity)( 8 - (int)Quantity - 1 );
-      IntervalQuality newQuality = IntervalQuality.Augmented - (int)Quality;
-
-      var result = new Interval(newQuantity, newQuality);
-      return result;
-    }
 
     /// <summary>Determine if the interval quantity and quality refer to a valid interval.</summary>
     /// <param name="quantity">The interval quantity.</param>
@@ -312,7 +315,7 @@ namespace Bach.Model
         }
         else
         {
-          return false;
+          quality = IntervalQuality.Major;
         }
       }
 

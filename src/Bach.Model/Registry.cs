@@ -59,11 +59,10 @@ namespace Bach.Model
       var library = JsonConvert.DeserializeObject<PersistentLibrary>(s);
 
       // Load data
-      ScaleFormulas = new KeyNameObjectCollection<ScaleFormula>();
+      ScaleFormulas = new NamedObjectCollection<ScaleFormula>();
       foreach( PersistentScale scale in library.Scales )
       {
-        ScaleFormula formula = new ScaleFormulaBuilder(scale.Name)
-                               .SetKey(scale.Key)
+        ScaleFormula formula = new ScaleFormulaBuilder(scale.Id, scale.Name)
                                .SetIntervals(scale.Formula)
                                .AddCategory(scale.Categories)
                                .AddAlias(scale.Alias)
@@ -71,19 +70,19 @@ namespace Bach.Model
         ScaleFormulas.Add(formula);
       }
 
-      ChordFormulas = new KeyNameObjectCollection<ChordFormula>();
+      ChordFormulas = new NamedObjectCollection<ChordFormula>();
       foreach( PersistentChord chord in library.Chords )
       {
-        ChordFormulas.Add(new ChordFormula(chord.Key, chord.Name, chord.Symbol, chord.Formula));
+        ChordFormulas.Add(new ChordFormula(chord.Id, chord.Name, chord.Symbol, chord.Formula));
       }
 
-      StringedInstrumentDefinitions = new KeyNameObjectCollection<StringedInstrumentDefinition>();
+      StringedInstrumentDefinitions = new NamedObjectCollection<StringedInstrumentDefinition>();
       foreach( PersistentStringedInstrument instrument in library.StringedInstruments )
       {
-        var builder = new StringedInstrumentDefinitionBuilder(instrument.Key, instrument.Name, instrument.StringCount);
+        var builder = new StringedInstrumentDefinitionBuilder(instrument.Id, instrument.Name, instrument.StringCount);
         foreach( PersistentTuning tuning in instrument.Tunings )
         {
-          builder.AddTuning(tuning.Key, tuning.Name, tuning.Notes);
+          builder.AddTuning(tuning.Id, tuning.Name, tuning.Notes);
         }
 
         StringedInstrumentDefinition definition = builder.Build();
@@ -97,15 +96,15 @@ namespace Bach.Model
 
     /// <summary>Gets the collection of scale formulas.</summary>
     /// <value>The scale formulas.</value>
-    public static KeyNameObjectCollection<ScaleFormula> ScaleFormulas { get; }
+    public static NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
 
     /// <summary>Gets the collection of chord formulas.</summary>
     /// <value>The chord formulas.</value>
-    public static KeyNameObjectCollection<ChordFormula> ChordFormulas { get; }
+    public static NamedObjectCollection<ChordFormula> ChordFormulas { get; }
 
     /// <summary>Gets the collection of stringed instrument definitions.</summary>
     /// <value>The stringed instrument definitions.</value>
-    public static KeyNameObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
+    public static NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
 
     #endregion
   }

@@ -24,40 +24,44 @@
 
 namespace Bach.Model
 {
+  using System;
+  using Internal;
+
   /// <summary>A chord formula defines how the notes of a chord relate to each other.</summary>
   public class ChordFormula: Formula
   {
     #region Constructors
 
     /// <summary>Constructor.</summary>
-    /// <param name="key">The language-neutral key of the chord.</param>
+    /// <param name="id">The language-neutral id of the chord.</param>
     /// <param name="name">The localizable name of the chord.</param>
     /// <param name="symbol">The symbol for the chord.</param>
     /// <param name="intervals">The intervals that describe the relationship between the notes that
     ///                         compose the chord.</param>
-    public ChordFormula(string key,
+    public ChordFormula(string id,
                         string name,
                         string symbol,
                         params Interval[] intervals)
-      : base(key, name, intervals)
+      : base(id, name, intervals)
     {
+      // A chord is composed by three or more notes...
+      Contract.Requires<ArgumentException>(intervals.Length >= 2);
       Symbol = symbol ?? string.Empty;
     }
 
     /// <summary>Constructor.</summary>
-    /// <param name="key">The language-neutral key of the chord.</param>
+    /// <param name="id">The language-neutral id of the chord.</param>
     /// <param name="name">The localizable name of the chord.</param>
     /// <param name="symbol">The symbol for the chord.</param>
     /// <param name="formula">The string representation of the formula for the chord. The formula is a
     ///                       sequence of comma-separated intervals. See
-    ///                       <see cref="Interval.ToString" /> for the format of an interval.</param>
-    public ChordFormula(string key,
+    ///                       <see cref="Interval.ToString()" /> for the format of an interval.</param>
+    public ChordFormula(string id,
                         string name,
                         string symbol,
                         string formula)
-      : base(key, name, formula)
+      : this(id, name, symbol, ParseIntervals(formula))
     {
-      Symbol = symbol ?? string.Empty;
     }
 
     #endregion

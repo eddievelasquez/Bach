@@ -35,13 +35,13 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorWithFormulaTest()
     {
-      const string KEY = "Key";
+      const string ID = "Id";
       const string NAME = "Name";
       const string SYMBOL = "Symbol";
       const string FORMULA = "R,M2,M3";
-      var actual = new ChordFormula(KEY, NAME, SYMBOL, FORMULA);
+      var actual = new ChordFormula(ID, NAME, SYMBOL, FORMULA);
 
-      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(ID, actual.Id);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(SYMBOL, actual.Symbol);
       Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
@@ -51,12 +51,12 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorWithIntervalsTest()
     {
-      const string KEY = "Key";
+      const string ID = "Id";
       const string NAME = "Name";
       const string SYMBOL = "Symbol";
-      var actual = new ChordFormula(KEY, NAME, SYMBOL, Interval.Unison, Interval.MajorSecond, Interval.MajorThird);
+      var actual = new ChordFormula(ID, NAME, SYMBOL, Interval.Unison, Interval.MajorSecond, Interval.MajorThird);
 
-      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(ID, actual.Id);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(SYMBOL, actual.Symbol);
       Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
@@ -66,9 +66,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
-      object y = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
-      object z = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      object x = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
+      object y = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
+      object z = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -81,9 +81,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
-      var y = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
-      var z = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      var x = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
+      var y = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
+      var z = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -96,43 +96,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      object actual = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      var actual = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      object actual = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      var actual = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      var actual = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
-      var expected = new ChordFormula("Key", "Name", "Symbol", "R,M2,M3");
+      var actual = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
+      var expected = new ChordFormula("Id", "Name", "Symbol", "R,M2,M3");
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -140,7 +140,7 @@ namespace Bach.Model.Test
     [Fact]
     public void GenerateTest()
     {
-      var formula = new ChordFormula("Key", "Test", "Symbol", "R,M2,M3");
+      var formula = new ChordFormula("Id", "Test", "Symbol", "R,M2,M3");
       using( IEnumerator<Pitch> pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
       {
         var count = 0;
@@ -158,13 +158,13 @@ namespace Bach.Model.Test
     [Fact]
     public void IntervalsMustHaveNoDuplicatesTest()
     {
-      Assert.Throws<ArgumentException>(() => new ChordFormula("Key", "Name", "Symbol", "R,M2,M2,M3"));
+      Assert.Throws<ArgumentException>(() => new ChordFormula("Id", "Name", "Symbol", "R,M2,M2,M3"));
     }
 
     [Fact]
     public void IntervalsMustBeSortedTest()
     {
-      Assert.Throws<ArgumentException>(() => new ChordFormula("Key", "Name", "Symbol", "R,M3,M2"));
+      Assert.Throws<ArgumentException>(() => new ChordFormula("Id", "Name", "Symbol", "R,M3,M2"));
     }
 
     #endregion

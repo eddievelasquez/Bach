@@ -42,7 +42,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.Empty(formula.Aliases);
@@ -58,7 +58,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal("Name", formula.Name);
-      Assert.Equal("Name", formula.Key);
+      Assert.Equal("Name", formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.Empty(formula.Aliases);
@@ -75,7 +75,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.Empty(formula.Aliases);
@@ -91,7 +91,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.Empty(formula.Aliases);
@@ -112,7 +112,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.Empty(formula.Aliases);
@@ -122,15 +122,15 @@ namespace Bach.Model.Test
     public void SetKeyTest()
     {
       const string Name = "Name";
-      const string Key = "Key";
+      const string Id = "Id";
       const string IntervalString = "R,M2,m6";
       Interval[] intervals = Formula.ParseIntervals(IntervalString);
 
-      ScaleFormulaBuilder builder = new ScaleFormulaBuilder(Name).SetKey(Key).SetIntervals(IntervalString);
+      ScaleFormulaBuilder builder = new ScaleFormulaBuilder(Name).SetId(Id).SetIntervals(IntervalString);
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Key, formula.Key);
+      Assert.Equal(Id, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.Empty(formula.Aliases);
@@ -147,7 +147,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal("NameWithSpaces", formula.Key);
+      Assert.Equal("NameWithSpaces", formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.Empty(formula.Aliases);
@@ -165,7 +165,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.NotEmpty(formula.Aliases);
@@ -184,7 +184,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.NotEmpty(formula.Aliases);
@@ -203,7 +203,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.NotEmpty(formula.Aliases);
@@ -223,7 +223,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.NotEmpty(formula.Aliases);
@@ -243,7 +243,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.NotEmpty(formula.Aliases);
@@ -263,7 +263,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.Empty(formula.Categories);
       Assert.NotEmpty(formula.Aliases);
@@ -283,7 +283,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains(Category, formula.Categories);
@@ -302,7 +302,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains(Category, formula.Categories);
@@ -321,7 +321,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains("Category1", formula.Categories);
@@ -341,7 +341,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains("Category1", formula.Categories);
@@ -361,7 +361,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains(categories[0], formula.Categories);
@@ -381,7 +381,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains(categories[0], formula.Categories);
@@ -428,7 +428,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains("Diatonic", formula.Categories);
@@ -446,7 +446,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains("Major", formula.Categories);
@@ -464,7 +464,7 @@ namespace Bach.Model.Test
       ScaleFormula formula = builder.Build();
       Assert.NotNull(formula);
       Assert.Equal(Name, formula.Name);
-      Assert.Equal(Name, formula.Key);
+      Assert.Equal(Name, formula.Id);
       Assert.Equal(intervals, formula.Intervals);
       Assert.NotEmpty(formula.Categories);
       Assert.Contains("Minor", formula.Categories);

@@ -35,12 +35,12 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorWithFormulaTest()
     {
-      const string KEY = "Key";
+      const string ID = "Id";
       const string NAME = "Name";
       const string FORMULA = "R,M2,M3";
-      var actual = new ScaleFormulaBuilder(NAME).SetKey(KEY).SetIntervals(FORMULA).Build();
+      var actual = new ScaleFormulaBuilder(NAME).SetId(ID).SetIntervals(FORMULA).Build();
 
-      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(ID, actual.Id);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
       Assert.Equal("Name: 1,2,3", actual.ToString());
@@ -49,12 +49,12 @@ namespace Bach.Model.Test
     [Fact]
     public void ConstructorWithIntervalsTest()
     {
-      const string KEY = "Key";
+      const string ID = "Id";
       const string NAME = "Name";
 
-      var actual = new ScaleFormulaBuilder(NAME).SetKey(KEY).SetIntervals(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }).Build();
+      var actual = new ScaleFormulaBuilder(NAME).SetId(ID).SetIntervals(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }).Build();
 
-      Assert.Equal(KEY, actual.Key);
+      Assert.Equal(ID, actual.Id);
       Assert.Equal(NAME, actual.Name);
       Assert.Equal(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals);
       Assert.Equal("Name: 1,2,3", actual.ToString());
@@ -63,9 +63,9 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
-      object y = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
-      object z = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      object x = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      object y = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      object z = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symmetric
@@ -78,9 +78,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
-      var y = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
-      var z = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      var x = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      var y = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      var z = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symmetric
@@ -93,43 +93,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      object actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      object actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
-      var expected = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      var expected = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -151,7 +151,7 @@ namespace Bach.Model.Test
     [Fact]
     public void GenerateTest()
     {
-      var formula = new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M3").Build();
+      var formula = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       using( IEnumerator<Pitch> pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
       {
         var count = 0;
@@ -169,13 +169,13 @@ namespace Bach.Model.Test
     [Fact]
     public void IntervalsMustHaveNoDuplicatesTest()
     {
-      Assert.Throws<InvalidOperationException>(() => new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M2,M2,M3").Build());
+      Assert.Throws<InvalidOperationException>(() => new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M2,M3").Build());
     }
 
     [Fact]
     public void IntervalsMustBeSortedTest()
     {
-      Assert.Throws<InvalidOperationException>(() => new ScaleFormulaBuilder("Name").SetKey("Key").SetIntervals("R,M3,M2").Build());
+      Assert.Throws<InvalidOperationException>(() => new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M3,M2").Build());
     }
 
     #endregion

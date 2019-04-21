@@ -197,7 +197,6 @@ namespace Bach.Model.Test
 
       Assert.True(Interval.TryParse("M3", out actual));
       Assert.Equal(Interval.MajorThird, actual);
-      Assert.False(Interval.TryParse("3", out actual));
 
       Assert.True(Interval.TryParse("A3", out actual));
       Assert.Equal(Interval.AugmentedThird, actual);
@@ -272,22 +271,22 @@ namespace Bach.Model.Test
     }
 
     [Fact]
-    public void GetInversionTest()
+    public void InversionTest()
     {
-      Assert.Equal(Interval.Octave, Interval.Unison.GetInversion());
-      Assert.Equal(Interval.MajorSeventh, Interval.MinorSecond.GetInversion());
-      Assert.Equal(Interval.MinorSeventh, Interval.MajorSecond.GetInversion());
-      Assert.Equal(Interval.MajorSixth, Interval.MinorThird.GetInversion());
-      Assert.Equal(Interval.MinorSixth, Interval.MajorThird.GetInversion());
-      Assert.Equal(Interval.Fifth, Interval.Fourth.GetInversion());
-      Assert.Equal(Interval.DiminishedFifth, Interval.AugmentedFourth.GetInversion());
-      Assert.Equal(Interval.Fourth, Interval.Fifth.GetInversion());
-      Assert.Equal(Interval.DiminishedFourth, Interval.AugmentedFifth.GetInversion());
-      Assert.Equal(Interval.MajorThird, Interval.MinorSixth.GetInversion());
-      Assert.Equal(Interval.MinorThird, Interval.MajorSixth.GetInversion());
-      Assert.Equal(Interval.MajorSecond, Interval.MinorSeventh.GetInversion());
-      Assert.Equal(Interval.MinorSecond, Interval.MajorSeventh.GetInversion());
-      Assert.Equal(Interval.Unison, Interval.Octave.GetInversion());
+      Assert.Equal(Interval.Octave, Interval.Unison.Inversion);
+      Assert.Equal(Interval.MajorSeventh, Interval.MinorSecond.Inversion);
+      Assert.Equal(Interval.MinorSeventh, Interval.MajorSecond.Inversion);
+      Assert.Equal(Interval.MajorSixth, Interval.MinorThird.Inversion);
+      Assert.Equal(Interval.MinorSixth, Interval.MajorThird.Inversion);
+      Assert.Equal(Interval.Fifth, Interval.Fourth.Inversion);
+      Assert.Equal(Interval.DiminishedFifth, Interval.AugmentedFourth.Inversion);
+      Assert.Equal(Interval.Fourth, Interval.Fifth.Inversion);
+      Assert.Equal(Interval.DiminishedFourth, Interval.AugmentedFifth.Inversion);
+      Assert.Equal(Interval.MajorThird, Interval.MinorSixth.Inversion);
+      Assert.Equal(Interval.MinorThird, Interval.MajorSixth.Inversion);
+      Assert.Equal(Interval.MajorSecond, Interval.MinorSeventh.Inversion);
+      Assert.Equal(Interval.MinorSecond, Interval.MajorSeventh.Inversion);
+      Assert.Equal(Interval.Unison, Interval.Octave.Inversion);
     }
   }
 }

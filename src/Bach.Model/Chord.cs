@@ -49,10 +49,10 @@ namespace Bach.Model
 
     /// <summary>Constructor.</summary>
     /// <param name="root">The root note of the chord.</param>
-    /// <param name="formulaName">Key of the formula as defined in the Registry.</param>
+    /// <param name="formulaIdOrName">Id or name of the formula as defined in the Registry.</param>
     public Chord(Note root,
-                 string formulaName)
-      : this(root, Registry.ChordFormulas[formulaName], 0)
+                 string formulaIdOrName)
+      : this(root, Registry.ChordFormulas[formulaIdOrName], 0)
     {
     }
 

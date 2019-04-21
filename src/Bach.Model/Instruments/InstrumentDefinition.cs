@@ -30,7 +30,7 @@ namespace Bach.Model.Instruments
 
   /// <summary>A base class for an instrument definition.</summary>
   public abstract class InstrumentDefinition
-    : IKeyNameObject,
+    : INamedObject,
       IEquatable<InstrumentDefinition>
   {
     #region Constructors
@@ -45,17 +45,7 @@ namespace Bach.Model.Instruments
 
     #region Properties
 
-    private static StringComparer Comparer { get; } = StringComparer.CurrentCultureIgnoreCase;
-
     internal InstrumentDefinitionState State { get; }
-
-    /// <summary>Gets the unique identifier of the instrument.</summary>
-    /// <value>The identifier of the instrument.</value>
-    public Guid InstrumentId => State.InstrumentId;
-
-    /// <summary>Gets the name of the instrument.</summary>
-    /// <value>The name of the instrument.</value>
-    public string InstrumentName => State.InstrumentName;
 
     #endregion
 
@@ -69,34 +59,25 @@ namespace Bach.Model.Instruments
         return false;
       }
 
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      // InstrumentId is only used for hashcode calculation,
-      // don't used it for equality
-      return Comparer.Equals(InstrumentName, other.InstrumentName);
+      return ReferenceEquals(this, other) || Comparer.IdComparer.Equals(Id, other.Id);
     }
 
     #endregion
 
     #region IKeyNameObject Members
 
-    /// <summary>Returns the language-neutral key for the instrument.</summary>
-    /// <value>The key.</value>
     /// <inheritdoc />
-    public string Key => State.InstrumentKey;
+    public string Id => State.Id;
 
     /// <inheritdoc />
-    public string Name => State.InstrumentName;
+    public string Name => State.Name;
 
     #endregion
 
     #region Overrides
 
     /// <inheritdoc />
-    public override int GetHashCode() => InstrumentId.GetHashCode();
+    public override int GetHashCode() => Id.GetHashCode();
 
     #endregion
   }

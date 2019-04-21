@@ -1,4 +1,4 @@
-﻿// Module Name: KeyNameObjectCollection.cs
+﻿// Module Name: NamedObjectCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
 //
@@ -32,12 +32,12 @@ namespace Bach.Model.Internal
   /// <summary>Collection of key-name objects.</summary>
   /// <typeparam name="T">Type parameter for the keyed object.</typeparam>
   [DebuggerDisplay("Count = {Count}")]
-  public class KeyNameObjectCollection<T>: Collection<T>
-    where T: IKeyNameObject
+  public class NamedObjectCollection<T>: Collection<T>
+    where T: INamedObject
   {
     #region Data Members
 
-    private readonly Dictionary<string, T> _byKey;
+    private readonly Dictionary<string, T> _byId;
     private readonly Dictionary<string, T> _byName;
 
     #endregion
@@ -45,19 +45,16 @@ namespace Bach.Model.Internal
     #region Constructors
 
     /// <inheritdoc />
-    internal KeyNameObjectCollection()
+    internal NamedObjectCollection()
       : base(new List<T>())
     {
-      _byKey = new Dictionary<string, T>(KeyComparer);
-      _byName = new Dictionary<string, T>(NameComparer);
+      _byId = new Dictionary<string, T>(Comparer.IdComparer);
+      _byName = new Dictionary<string, T>(Comparer.NameComparer);
     }
 
     #endregion
 
     #region Properties
-
-    public StringComparer KeyComparer { get; } = StringComparer.InvariantCultureIgnoreCase;
-    public StringComparer NameComparer { get; } = StringComparer.CurrentCultureIgnoreCase;
 
     private new List<T> Items
     {
@@ -68,16 +65,16 @@ namespace Bach.Model.Internal
       }
     }
 
-    public T this[string key]
+    public T this[string idOrName]
     {
       get
       {
-        if( TryGetValue(key, out T item) )
+        if( TryGetValue(idOrName, out T item) )
         {
           return item;
         }
 
-        throw new KeyNotFoundException(string.Format($"Key or name not found: {key}"));
+        throw new KeyNotFoundException(string.Format($"Id or name not found: {idOrName}"));
       }
     }
 
@@ -85,17 +82,17 @@ namespace Bach.Model.Internal
 
     #region Public Methods
 
-    public bool TryGetValue(string keyOrName,
+    public bool TryGetValue(string idOrName,
                             out T item)
     {
-      Contract.Requires<ArgumentNullException>(keyOrName != null);
+      Contract.Requires<ArgumentNullException>(idOrName != null);
 
-      if( _byKey.TryGetValue(keyOrName, out item) )
+      if( _byId.TryGetValue(idOrName, out item) )
       {
         return true;
       }
 
-      if( _byName.TryGetValue(keyOrName, out item) )
+      if( _byName.TryGetValue(idOrName, out item) )
       {
         return true;
       }
@@ -113,15 +110,15 @@ namespace Bach.Model.Internal
     {
       base.ClearItems();
 
-      _byKey?.Clear();
-      _byName?.Clear();
+      _byId.Clear();
+      _byName.Clear();
     }
 
     /// <inheritdoc />
     protected override void InsertItem(int index,
                                        T item)
     {
-      _byKey.Add(item.Key, item);
+      _byId.Add(item.Id, item);
       _byName.Add(item.Name, item);
 
       base.InsertItem(index, item);
@@ -131,7 +128,7 @@ namespace Bach.Model.Internal
     protected override void RemoveItem(int index)
     {
       T item = Items[index];
-      _byKey.Remove(item.Key);
+      _byId.Remove(item.Id);
       _byName.Remove(item.Name);
 
       base.RemoveItem(index);
@@ -142,8 +139,8 @@ namespace Bach.Model.Internal
                                     T item)
     {
       T existingItem = Items[index];
-      SetItem(_byKey, KeyComparer, item.Key, existingItem.Key, item);
-      SetItem(_byName, NameComparer, item.Name, existingItem.Name, item);
+      SetItem(_byId, item.Id, existingItem.Id, item);
+      SetItem(_byName, item.Name, existingItem.Name, item);
 
       base.SetItem(index, item);
     }
@@ -152,25 +149,23 @@ namespace Bach.Model.Internal
 
     #region  Implementation
 
-    private static void SetItem(IDictionary<string, T> dictionary,
-                                StringComparer comparer,
-                                string newKey,
-                                string oldKey,
+    private static void SetItem(Dictionary<string, T> dictionary,
+                                string newId,
+                                string existingId,
                                 T item)
     {
       Debug.Assert(dictionary != null);
-      Debug.Assert(comparer != null);
-      Debug.Assert(!string.IsNullOrEmpty(newKey));
-      Debug.Assert(!string.IsNullOrEmpty(oldKey));
+      Debug.Assert(!string.IsNullOrEmpty(newId));
+      Debug.Assert(!string.IsNullOrEmpty(existingId));
 
-      if( comparer.Equals(oldKey, newKey) )
+      if( dictionary.Comparer.Equals(newId, existingId) )
       {
-        dictionary[newKey] = item;
+        dictionary[newId] = item;
       }
       else
       {
-        dictionary.Add(newKey, item);
-        dictionary.Remove(oldKey);
+        dictionary.Add(newId, item);
+        dictionary.Remove(existingId);
       }
     }
 

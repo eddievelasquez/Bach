@@ -25,26 +25,45 @@
 namespace Bach.Model.Internal
 {
   using System;
+  using System.Collections;
   using System.Collections.Generic;
 
   internal static class ArrayExtensions
   {
     #region Public Methods
 
+    /// <summary>  Handles underflow and overflow of the provided index given a size.</summary>
+    /// <param name="size">The size.</param>
+    /// <param name="index">The index.</param>
+    /// <returns>An index that is ensured to be in the range zero to size - 1.</returns>
     public static int WrapIndex(int size,
                                 int index)
       => ( ( index % size ) + size ) % size;
 
-    public static int WrapIndex(this Array array,
+    /// <summary>  Handles underflow and overflow of the provided index within the given list.</summary>
+    /// <param name="list">The list.</param>
+    /// <param name="index">The index.</param>
+    /// <returns>An index that is ensured to be within the range of elements of the list.</returns>
+    public static int WrapIndex(this IList list,
                                 int index)
-      => WrapIndex(array.Length, index);
+      => WrapIndex(list.Count, index);
 
+    /// <summary>  Handles underflow and overflow of the provided index within the dimension of the given array.</summary>
+    /// <param name="array">An array.</param>
+    /// <param name="dimension">The array's dimension to evaluate.</param>
+    /// <param name="index">The index.</param>
+    /// <returns>An index that is ensured to be within the range of elements of the dimension of the array.</returns>
     public static int WrapIndex(this Array array,
                                 int dimension,
                                 int index)
       => WrapIndex(array.GetLength(dimension), index);
 
-    public static bool IsSortedWithoutDuplicates<T>(this IList<T> values)
+    /// <summary>Determines whether the provided list is sorted and only contains unique elements</summary>
+    /// <typeparam name="T">Type of the list elements.</typeparam>
+    /// <param name="values">The values.</param>
+    /// <returns>
+    ///   <c>true</c> if the list is sorted and only contains unique elements; otherwise, <c>false</c>.</returns>
+    public static bool IsSortedUnique<T>(this IReadOnlyList<T> values)
       where T: IComparable<T>
     {
       for( var i = 1; i < values.Count; ++i )

@@ -46,7 +46,7 @@ namespace Bach.Model
     {
       Contract.Requires<ArgumentNullException>(intervals != null);
       Contract.Requires<ArgumentException>(intervals.Length > 0);
-      Contract.Requires<ArgumentException>(intervals.IsSortedWithoutDuplicates());
+      Contract.Requires<ArgumentException>(intervals.IsSortedUnique());
 
       _intervals = intervals;
     }

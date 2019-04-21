@@ -39,12 +39,10 @@ namespace Bach.Model.Internal
   {
     #region Data Members
 
-    private readonly T[] _items;
+    private readonly IList<T> _items;
     private int _head;
 
     #endregion
-
-    #region Constructors
 
     #region Construction
 
@@ -59,7 +57,16 @@ namespace Bach.Model.Internal
       _head = 0;
     }
 
-    #endregion
+    /// <summary>
+    ///   Initializes a new instance <see cref="CircularArray{T}" /> class
+    ///   that contains the provided items.
+    /// </summary>
+    public CircularArray(IList<T> items)
+    {
+      Contract.Requires<ArgumentNullException>(items != null);
+      _items = items;
+      _head = 0;
+    }
 
     #endregion
 
@@ -68,14 +75,14 @@ namespace Bach.Model.Internal
     public int Head
     {
       get => _head;
-      set => _head = _items.WrapIndex(value);
+      set => _head = ( (IList)_items ).WrapIndex(value);
     }
 
     /// <summary>
     ///   Gets the number of elements actually contained in the
     ///   <see cref="CircularArray{T}" />.
     /// </summary>
-    public int Length => _items.Length;
+    public int Length => _items.Count;
 
     /// <summary>
     ///   Gets or sets the element at the specified index.
@@ -122,18 +129,24 @@ namespace Bach.Model.Internal
 
     private T GetElement(int index)
     {
-      Contract.Requires(( _head + index ) % Length >= 0);
-
       int position = ( _head + index ) % Length;
+      if( position < 0 )
+      {
+        throw new ArgumentOutOfRangeException(nameof(index));
+      }
+
       return _items[position];
     }
 
     private void SetElement(int index,
                             T value)
     {
-      Contract.Requires(( _head + index ) % Length >= 0);
-
       int position = ( _head + index ) % Length;
+      if( position < 0 )
+      {
+        throw new ArgumentOutOfRangeException(nameof(index));
+      }
+
       _items[position] = value;
     }
 

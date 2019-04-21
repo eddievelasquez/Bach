@@ -25,43 +25,30 @@
 namespace Bach.Model.Instruments
 {
   using System;
-  using System.Collections.ObjectModel;
   using System.Linq;
   using Model.Internal;
 
   /// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
   public class Tuning: IEquatable<Tuning>
   {
-    #region Constants
-
-    private static readonly StringComparer s_nameComparer = StringComparer.CurrentCultureIgnoreCase;
-
-    #endregion
-
-    #region Data Members
-
-    private readonly Pitch[] _pitches;
-
-    #endregion
-
     #region Constructors
 
     internal Tuning(StringedInstrumentDefinition instrumentDefinition,
-                    string key,
+                    string id,
                     string name,
                     PitchCollection pitches)
     {
       Contract.Requires<ArgumentNullException>(instrumentDefinition != null, "Must provide an instrument definition");
-      Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
+      Contract.RequiresNotNullOrEmpty(id, "Must provide a tuning id");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(pitches != null, "Must provide a pitch collection");
       Contract.Requires<ArgumentOutOfRangeException>(pitches.Count == instrumentDefinition.StringCount,
                                                      "The number of pitch must match the instrument's string count");
 
       InstrumentDefinition = instrumentDefinition;
-      Key = key;
+      Id = id;
       Name = name;
-      _pitches = pitches.ToArray();
+      Pitches = pitches;
     }
 
     #endregion
@@ -72,9 +59,9 @@ namespace Bach.Model.Instruments
     /// <value>The instrument definition.</value>
     public StringedInstrumentDefinition InstrumentDefinition { get; }
 
-    /// <summary>Gets the language-neutral key for the tuning.</summary>
-    /// <value>The key.</value>
-    public string Key { get; }
+    /// <summary>Gets the language-neutral identifier for the tuning.</summary>
+    /// <value>The id.</value>
+    public string Id { get; }
 
     /// <summary>Gets the localizable name for the tuning.</summary>
     /// <value>The name.</value>
@@ -82,12 +69,11 @@ namespace Bach.Model.Instruments
 
     /// <summary>Gets the tunings pitches.</summary>
     /// <value>The pitches.</value>
-    public ReadOnlyCollection<Pitch> Pitches => new ReadOnlyCollection<Pitch>(_pitches);
+    public PitchCollection Pitches { get; }
 
     /// <summary>Indexer to get pitches within this tuning using array index syntax.</summary>
     /// <exception cref="ArgumentOutOfRangeException">
-    ///   Thrown when the string number is outside the
-    ///   string range.
+    ///   Thrown when the string number is outside the string range.
     /// </exception>
     /// <param name="stringNumber">The string number.</param>
     /// <returns>A pitch.</returns>
@@ -119,8 +105,8 @@ namespace Bach.Model.Instruments
       }
 
       return InstrumentDefinition.Equals(other.InstrumentDefinition)
-             && s_nameComparer.Equals(Key, other.Key)
-             && s_nameComparer.Equals(Name, other.Name)
+             && Comparer.IdComparer.Equals(Id, other.Id)
+             && Comparer.NameComparer.Equals(Name, other.Name)
              && Pitches.SequenceEqual(other.Pitches);
     }
 
@@ -149,8 +135,8 @@ namespace Bach.Model.Instruments
     {
       var hash = 17;
       hash = ( hash * 23 ) + InstrumentDefinition.GetHashCode();
-      hash = ( hash * 23 ) + s_nameComparer.GetHashCode(Key);
-      hash = ( hash * 23 ) + s_nameComparer.GetHashCode(Name);
+      hash = ( hash * 23 ) + Comparer.IdComparer.GetHashCode(Id);
+      hash = ( hash * 23 ) + Comparer.NameComparer.GetHashCode(Name);
       return hash;
     }
 

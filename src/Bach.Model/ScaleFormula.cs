@@ -33,12 +33,12 @@ namespace Bach.Model
     #region Constructors
 
     /// <inheritdoc />
-    internal ScaleFormula(string key,
+    internal ScaleFormula(string id,
                           string name,
                           Interval[] intervals,
                           IImmutableSet<string> categories,
                           IImmutableSet<string> aliases)
-      : base(key, name, intervals)
+      : base(id, name, intervals)
     {
       Debug.Assert(categories != null);
       Debug.Assert(aliases != null);

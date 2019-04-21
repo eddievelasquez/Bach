@@ -29,21 +29,21 @@ namespace Bach.Model.Instruments
   using System.Collections.Generic;
   using System.Diagnostics;
   using Model.Internal;
+  using Comparer = Model.Internal.Comparer;
 
   /// <summary>Collection of tunings.</summary>
   public class TuningCollection: IReadOnlyDictionary<string, Tuning>
   {
     #region Data Members
 
-    private readonly Guid _instrumentId;
-
-    private readonly Dictionary<string, Tuning> _tunings = new Dictionary<string, Tuning>(StringComparer.CurrentCultureIgnoreCase);
+    private readonly string _instrumentId;
+    private readonly Dictionary<string, Tuning> _tunings = new Dictionary<string, Tuning>(Comparer.IdComparer);
 
     #endregion
 
     #region Constructors
 
-    internal TuningCollection(Guid instrumentId)
+    internal TuningCollection(string instrumentId)
     {
       _instrumentId = instrumentId;
     }
@@ -79,32 +79,32 @@ namespace Bach.Model.Instruments
     public int Count => _tunings.Count;
 
     /// <summary>
-    ///   Determines whether the collection contains a tuning that has the specified language-neutral key.
+    ///   Determines whether the collection contains a tuning that has the specified language-neutral id.
     /// </summary>
-    /// <param name="key">The key to locate.</param>
+    /// <param name="id">The id to locate.</param>
     /// <returns>
-    ///   true if the collection contains an tuning that has the specified key; otherwise,
+    ///   true if the collection contains an tuning that has the specified id; otherwise,
     ///   false.
     /// </returns>
-    public bool ContainsKey(string key) => _tunings.ContainsKey(key);
+    public bool ContainsKey(string id) => _tunings.ContainsKey(id);
 
-    /// <summary>Gets the value that is associated with the specified key.</summary>
-    /// <param name="key">The language-neutral key to locate.</param>
+    /// <summary>Gets the value that is associated with the specified id.</summary>
+    /// <param name="id">The language-neutral id to locate.</param>
     /// <param name="value">
-    ///   [out] When this method returns, the tuning associated with the specified key,
-    ///   if the key is found; otherwise, it returns null. This parameter is passed uninitialized.
+    ///   [out] When this method returns, the tuning associated with the specified id,
+    ///   if the id is found; otherwise, it returns null. This parameter is passed uninitialized.
     /// </param>
     /// <returns>
-    ///   true if a tuning with the given key is found; otherwise, false.
+    ///   true if a tuning with the given id is found; otherwise, false.
     /// </returns>
-    public bool TryGetValue(string key,
+    public bool TryGetValue(string id,
                             out Tuning value)
-      => _tunings.TryGetValue(key, out value);
+      => _tunings.TryGetValue(id, out value);
 
     /// <inheritdoc />
-    /// <summary>Gets the tuning that has the specified language-neutral key.</summary>
-    /// <returns>The tuning that has the specified key in the read-only dictionary.</returns>
-    public Tuning this[string key] => _tunings[key];
+    /// <summary>Gets the tuning that has the specified language-neutral id.</summary>
+    /// <returns>The tuning that has the specified id in the read-only dictionary.</returns>
+    public Tuning this[string id] => _tunings[id];
 
     /// <summary>
     ///   Gets an enumerable collection that contains the keys for all the tunings in the collection.
@@ -126,8 +126,8 @@ namespace Bach.Model.Instruments
     {
       Contract.Requires<ArgumentNullException>(tuning != null);
 
-      Debug.Assert(_instrumentId.Equals(tuning.InstrumentDefinition.InstrumentId));
-      _tunings.Add(tuning.Name, tuning);
+      Debug.Assert(_instrumentId.Equals(tuning.InstrumentDefinition.Id));
+      _tunings.Add(tuning.Id, tuning);
     }
 
     #endregion

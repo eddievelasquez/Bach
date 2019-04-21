@@ -38,6 +38,7 @@ namespace Bach.Model.Instruments
     {
       #region Properties
 
+      public string Id { get; set; }
       public string Name { get; set; }
       public PitchCollection Pitches { get; set; }
 
@@ -49,8 +50,7 @@ namespace Bach.Model.Instruments
     #region Data Members
 
     private readonly StringedInstrumentDefinitionState _state;
-
-    private readonly Dictionary<string, TuningInfo> _tuningInfo = new Dictionary<string, TuningInfo>(StringComparer.CurrentCultureIgnoreCase);
+    private readonly Dictionary<string, TuningInfo> _tuningInfo = new Dictionary<string, TuningInfo>(Comparer.IdComparer);
 
     private bool _built;
 
@@ -59,23 +59,23 @@ namespace Bach.Model.Instruments
     #region Constructors
 
     /// <summary>Constructor.</summary>
-    /// <param name="key">The language-neutral key for the instrument to build. The key will be used to create the name.</param>
+    /// <param name="id">The language-neutral identifier for the instrument to build. The id will be used to create the name.</param>
     /// <param name="stringCount">Number of strings of the instrument to build.</param>
-    public StringedInstrumentDefinitionBuilder(string key,
+    public StringedInstrumentDefinitionBuilder(string id,
                                                int stringCount)
     {
-      _state = new StringedInstrumentDefinitionState(Guid.NewGuid(), key, key, stringCount);
+      _state = new StringedInstrumentDefinitionState(id, id, stringCount);
     }
 
     /// <summary>Constructor.</summary>
-    /// <param name="key">The language-neutral key for the instrument to build.</param>
+    /// <param name="id">The language-neutral id for the instrument to build.</param>
     /// <param name="name">The localizable name of the instrument to build.</param>
     /// <param name="stringCount">Number of strings of the instrument to build.</param>
-    public StringedInstrumentDefinitionBuilder(string key,
+    public StringedInstrumentDefinitionBuilder(string id,
                                                string name,
                                                int stringCount)
     {
-      _state = new StringedInstrumentDefinitionState(Guid.NewGuid(), key, name, stringCount);
+      _state = new StringedInstrumentDefinitionState(id, name, stringCount);
     }
 
     #endregion
@@ -83,73 +83,73 @@ namespace Bach.Model.Instruments
     #region Public Methods
 
     /// <summary>Adds a tuning to the instrument to build.</summary>
-    /// <param name="key">
-    ///   The language-neutral key for the tuning. The key will be used to
+    /// <param name="id">
+    ///   The language-neutral identifier for the tuning. The id will be used to
     ///   create the tunings name.
     /// </param>
     /// <param name="pitches">A string that represents the pitches.</param>
     /// <returns>This instance.</returns>
-    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+    public StringedInstrumentDefinitionBuilder AddTuning(string id,
                                                          string pitches)
-      => AddTuning(key, key, PitchCollection.Parse(pitches));
+      => AddTuning(id, id, PitchCollection.Parse(pitches));
 
     /// <summary>Adds a tuning to the instrument to build.</summary>
-    /// <param name="key">The language-neutral key for the tuning.</param>
+    /// <param name="id">The language-neutral identifier for the tuning.</param>
     /// <param name="name">The localizable name of the tuning.</param>
     /// <param name="pitches">A string that represents the pitches.</param>
     /// <returns>This instance.</returns>
-    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+    public StringedInstrumentDefinitionBuilder AddTuning(string id,
                                                          string name,
                                                          string pitches)
-      => AddTuning(key, name, PitchCollection.Parse(pitches));
+      => AddTuning(id, name, PitchCollection.Parse(pitches));
 
     /// <summary>Adds a tuning to the instrument to build.</summary>
-    /// <param name="key">
-    ///   The language-neutral key for the tuning. The key will be used to create the
+    /// <param name="id">
+    ///   The language-neutral identifier for the tuning. The id will be used to create the
     ///   tunings name.
     /// </param>
     /// <param name="pitches">An array with the tunings pitches.</param>
     /// <returns>This instance.</returns>
-    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+    public StringedInstrumentDefinitionBuilder AddTuning(string id,
                                                          params Pitch[] pitches)
-      => AddTuning(key, key, new PitchCollection(pitches));
+      => AddTuning(id, id, new PitchCollection(pitches));
 
     /// <summary>Adds a tuning to the instrument to build.</summary>
-    /// <param name="key">The language-neutral key for the tuning.</param>
+    /// <param name="id">The language-neutral identifier for the tuning.</param>
     /// <param name="name">The localizable name of the tuning.</param>
     /// <param name="pitches">An array with the tunings pitches.</param>
     /// <returns>This instance.</returns>
-    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+    public StringedInstrumentDefinitionBuilder AddTuning(string id,
                                                          string name,
                                                          params Pitch[] pitches)
-      => AddTuning(key, name, new PitchCollection(pitches));
+      => AddTuning(id, name, new PitchCollection(pitches));
 
     /// <summary>Adds a tuning to the instrument to build.</summary>
-    /// <param name="key">
-    ///   The language-neutral key for the tuning. The key will be used to create the
-    ///   tunings name.
+    /// <param name="id">
+    ///   The language-neutral identifier for the tuning. The identifier will be used to create the
+    ///   tuning's name.
     /// </param>
     /// <param name="pitches">A pitch collection.</param>
     /// <returns>This instance.</returns>
-    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+    public StringedInstrumentDefinitionBuilder AddTuning(string id,
                                                          PitchCollection pitches)
-      => AddTuning(key, key, pitches);
+      => AddTuning(id, id, pitches);
 
     /// <summary>Adds a tuning to the instrument to build.</summary>
-    /// <param name="key">The language-neutral key for the tuning.</param>
+    /// <param name="id">The language-neutral identifier for the tuning.</param>
     /// <param name="name">The localizable name of the tuning.</param>
     /// <param name="pitches">A pitch collection.</param>
     /// <returns>This instance.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when either the key, name or pitch collection are null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when either the id, name or pitch collection are null.</exception>
     /// <exception cref="ArgumentException">
-    ///   Thrown when either the key or name are empty, or when the number of pitches in the
+    ///   Thrown when either the id or name are empty, or when the number of pitches in the
     ///   pitch collection doesn't match the number of string for the instrument.
     /// </exception>
-    public StringedInstrumentDefinitionBuilder AddTuning(string key,
+    public StringedInstrumentDefinitionBuilder AddTuning(string id,
                                                          string name,
                                                          PitchCollection pitches)
     {
-      Contract.RequiresNotNullOrEmpty(key, "Must provide a tuning key");
+      Contract.RequiresNotNullOrEmpty(id, "Must provide a tuning id");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
       Contract.Requires<ArgumentNullException>(pitches != null, "Must provide a pitch collection");
 
@@ -160,8 +160,8 @@ namespace Bach.Model.Instruments
 
       CheckBuilderReuse();
 
-      var info = new TuningInfo { Name = name, Pitches = new PitchCollection(pitches) };
-      _tuningInfo.Add(key, info);
+      var info = new TuningInfo { Id = id, Name = name, Pitches = pitches };
+      _tuningInfo.Add(id, info);
       return this;
     }
 
@@ -188,7 +188,7 @@ namespace Bach.Model.Instruments
       var definition = new StringedInstrumentDefinition(_state);
       foreach( KeyValuePair<string, TuningInfo> info in _tuningInfo )
       {
-        _state.Tunings.Add(new Tuning(definition, info.Key, info.Value.Name, info.Value.Pitches));
+        _state.Tunings.Add(new Tuning(definition, info.Value.Id, info.Value.Name, info.Value.Pitches));
       }
 
       _built = true;

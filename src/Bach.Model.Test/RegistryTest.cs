@@ -40,7 +40,7 @@ namespace Bach.Model.Test
 
       foreach( ScaleFormula expected in scaleFormulas )
       {
-        ScaleFormula actual = Registry.ScaleFormulas[expected.Key];
+        ScaleFormula actual = Registry.ScaleFormulas[expected.Id];
         Assert.Equal(expected, actual);
       }
     }
@@ -54,21 +54,21 @@ namespace Bach.Model.Test
 
       foreach( ChordFormula expected in chordFormulas )
       {
-        ChordFormula actual = Registry.ChordFormulas[expected.Key];
+        ChordFormula actual = Registry.ChordFormulas[expected.Id];
         Assert.Equal(expected, actual);
       }
     }
 
     [Fact]
-    public void InstrumentDefinitionsTest()
+    public void StringedInstrumentDefinitionsTest()
     {
       StringedInstrumentDefinition[] instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
       Assert.NotNull(instrumentDefinitions);
       Assert.NotEmpty(instrumentDefinitions);
 
-      foreach( InstrumentDefinition expected in instrumentDefinitions )
+      foreach( StringedInstrumentDefinition expected in instrumentDefinitions )
       {
-        InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Key];
+        InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Id];
         Assert.Equal(expected, actual);
       }
     }

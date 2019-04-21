@@ -31,7 +31,7 @@ namespace Bach.Model.Serialization
   {
     #region Properties
 
-    public string Key { get; set; }
+    public string Id { get; set; }
     public string Name { get; set; }
     public string Categories { get; set; }
     public string Alias { get; set; }

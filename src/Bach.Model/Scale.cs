@@ -58,7 +58,7 @@ namespace Bach.Model
       buf.Append(root.NoteName);
       buf.Append(root.Accidental.ToSymbol());
 
-      if( !StringComparer.CurrentCultureIgnoreCase.Equals(formula.Name, "Major") )
+      if( !Comparer.NameComparer.Equals(formula.Name, "Major") )
       {
         buf.Append(' ');
         buf.Append(formula.Name);
@@ -70,11 +70,11 @@ namespace Bach.Model
 
     /// <summary>Constructor.</summary>
     /// <param name="root">The root note of the scale.</param>
-    /// <param name="formulaName">Key of the formula as defined in the Registry.</param>
+    /// <param name="formulaIdOrName">Id or name of the formula as defined in the Registry.</param>
     /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
     public Scale(Note root,
-                 string formulaName)
-      : this(root, Registry.ScaleFormulas[formulaName])
+                 string formulaIdOrName)
+      : this(root, Registry.ScaleFormulas[formulaIdOrName])
     {
     }
 

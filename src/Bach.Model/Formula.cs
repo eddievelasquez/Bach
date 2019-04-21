@@ -32,7 +32,7 @@ namespace Bach.Model
 
   /// <summary>A formula is a base class for constructing a sequence of notes based on a series of intervals.</summary>
   public abstract class Formula
-    : IKeyNameObject,
+    : INamedObject,
       IEquatable<Formula>
   {
     #region Nested type: IntervalComparer
@@ -69,7 +69,6 @@ namespace Bach.Model
 
     private const string DefaultToStringFormat = "N: I";
 
-    private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
     private static readonly IntervalComparer s_intervalComparer = new IntervalComparer();
     private static readonly SemitoneCountIntervalComparer s_semitoneComparer = new SemitoneCountIntervalComparer();
 
@@ -78,45 +77,27 @@ namespace Bach.Model
     #region Constructors
 
     /// <summary>Specialized constructor for use only by derived classes.</summary>
-    /// <exception cref="ArgumentNullException">Thrown when either the key, name or interval arguments are null.</exception>
-    /// <exception cref="ArgumentException">Thrown when the key or name are empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when either the id, name or interval arguments are null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the id or name are empty.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when interval array is empty.</exception>
-    /// <param name="key">
-    ///   The language-neutral key for the formula. The key is used as the unique identifier for a formula in
+    /// <param name="id">
+    ///   The language-neutral identifier for the formula. The id is used as the unique identifier for a formula in
     ///   the registry.
     /// </param>
     /// <param name="name">The localizable name for the formula.</param>
     /// <param name="intervals">The intervals that compose the formula.</param>
-    protected Formula(string key,
+    protected Formula(string id,
                       string name,
                       Interval[] intervals)
     {
-      Contract.RequiresNotNullOrEmpty(key, "Must provide a key");
+      Contract.RequiresNotNullOrEmpty(id, "Must provide a id");
       Contract.RequiresNotNullOrEmpty(name, "Must provide a name");
       Contract.Requires<ArgumentNullException>(intervals != null, "Must provide an interval array");
       Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0, "Must provide at least one interval");
 
-      Key = key;
+      Id = id;
       Name = name;
       Intervals = new IntervalCollection(intervals);
-    }
-
-    /// <summary>Specialized constructor for use only by derived classed.</summary>
-    /// <param name="key">
-    ///   The language-neutral key for the formula. The key is used as the unique
-    ///   identifier for a formula in the registry.
-    /// </param>
-    /// <param name="name">The localizable name for the formula.</param>
-    /// <param name="formula">
-    ///   The string representation of the formula for the scale. The formula is a
-    ///   sequence of comma-separated intervals. See
-    ///   <see cref="Interval.ToString" /> for the format of an interval.
-    /// </param>
-    protected Formula(string key,
-                      string name,
-                      string formula)
-      : this(key, name, ParseIntervals(formula))
-    {
     }
 
     #endregion
@@ -144,20 +125,20 @@ namespace Bach.Model
         return false;
       }
 
-      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name) && Intervals.SequenceEqual(other.Intervals);
+      return Comparer.IdComparer.Equals(Id, other.Id) && Comparer.NameComparer.Equals(Name, other.Name) && Intervals.SequenceEqual(other.Intervals);
     }
 
     #endregion
 
     #region IKeyNameObject Members
 
+    /// <summary>Returns the language-neutral id for the formula.</summary>
+    /// <value>The id.</value>
+    public string Id { get; }
+
     /// <summary>Gets the localizable name for the formula.</summary>
     /// <value>The name.</value>
     public string Name { get; }
-
-    /// <summary>Returns the language-neutral key for the formula.</summary>
-    /// <value>The key.</value>
-    public string Key { get; }
 
     #endregion
 
@@ -357,7 +338,7 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override int GetHashCode() => s_comparer.GetHashCode(Key);
+    public override int GetHashCode() => Comparer.IdComparer.GetHashCode(Id);
 
     #endregion
 

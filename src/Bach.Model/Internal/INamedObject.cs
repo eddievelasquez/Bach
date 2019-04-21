@@ -1,4 +1,4 @@
-// Module Name: InstrumentDefinitionState.cs
+﻿// Module Name: INamedObject.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
 //
@@ -22,31 +22,24 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments.Internal
+namespace Bach.Model.Internal
 {
-  using System;
-  using Model.Internal;
-
-  internal abstract class InstrumentDefinitionState
+  /// <summary>Interface for a named object.</summary>
+  /// <remarks>
+  ///   A named object has an invariant culture, case insensitive identifier and a current culture, case insensitive
+  ///   name.
+  /// </remarks>
+  public interface INamedObject
   {
-    #region Constructors
-
-    protected InstrumentDefinitionState(string id,
-                                        string name)
-    {
-      Contract.RequiresNotNullOrEmpty(id, "Must provide an instrument id");
-      Contract.RequiresNotNullOrEmpty(name, "Must provide an instrument name");
-
-      Id = id;
-      Name = name;
-    }
-
-    #endregion
-
     #region Properties
 
-    public string Id { get; }
-    public string Name { get; }
+    /// <summary>Returns the language-neutral identifier for the current instance.</summary>
+    /// <value>The identifier.</value>
+    string Id { get; }
+
+    /// <summary>Returns the localizable name for the current instance. </summary>
+    /// <value>The name.</value>
+    string Name { get; }
 
     #endregion
   }
