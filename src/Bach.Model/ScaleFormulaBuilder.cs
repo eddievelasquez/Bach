@@ -61,7 +61,8 @@ namespace Bach.Model
     /// <summary>Initializes a new named instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
     /// <param name="id">The scale formula's identifier.</param>
     /// <param name="name">The scale formula's name.</param>
-    public ScaleFormulaBuilder(string id, string name)
+    public ScaleFormulaBuilder(string id,
+                               string name)
     {
       SetId(id);
       SetName(name);
@@ -277,6 +278,25 @@ namespace Bach.Model
         _categories.Add("Minor");
       }
 
+      switch( _intervals.Count )
+      {
+        case 5:
+          _categories.Add("Pentatonic");
+          break;
+
+        case 6:
+          _categories.Add("Hexatonic");
+          break;
+
+        case 7:
+          _categories.Add("Heptatonic");
+          break;
+
+        case 8:
+          _categories.Add("Octatonic");
+          break;
+      }
+
       var formula = new ScaleFormula(_id, _name, _intervals.ToArray(), _categories.ToImmutableHashSet(), _aliases.ToImmutableHashSet());
       return formula;
     }
@@ -285,7 +305,7 @@ namespace Bach.Model
 
     #region  Implementation
 
-    internal bool IsDiatonic()
+    private bool IsDiatonic()
     {
       if( _intervals.Count != 7 )
       {
@@ -310,9 +330,9 @@ namespace Bach.Model
       return wholeSteps == 5 && halfSteps == 2;
     }
 
-    private bool IsMajor() => _intervals[0] == Interval.Unison && _intervals.Contains(Interval.MajorThird) && _intervals.Contains(Interval.Fifth);
+    private bool IsMajor() => _intervals.Contains(Interval.MajorThird) && _intervals.Contains(Interval.Fifth);
 
-    private bool IsMinor() => _intervals[0] == Interval.Unison && _intervals.Contains(Interval.MinorThird) && _intervals.Contains(Interval.Fifth);
+    private bool IsMinor() => _intervals.Contains(Interval.MinorThird) && _intervals.Contains(Interval.Fifth);
 
     private static string RemoveWhitespace(string value)
     {

@@ -26,6 +26,7 @@ namespace Bach.Model.Test
 {
   using System;
   using System.Collections.Generic;
+  using System.Linq;
   using Xunit;
 
   public class ScaleFormulaTest
@@ -38,7 +39,7 @@ namespace Bach.Model.Test
       const string ID = "Id";
       const string NAME = "Name";
       const string FORMULA = "R,M2,M3";
-      var actual = new ScaleFormulaBuilder(NAME).SetId(ID).SetIntervals(FORMULA).Build();
+      ScaleFormula actual = new ScaleFormulaBuilder(NAME).SetId(ID).SetIntervals(FORMULA).Build();
 
       Assert.Equal(ID, actual.Id);
       Assert.Equal(NAME, actual.Name);
@@ -52,7 +53,7 @@ namespace Bach.Model.Test
       const string ID = "Id";
       const string NAME = "Name";
 
-      var actual = new ScaleFormulaBuilder(NAME).SetId(ID).SetIntervals(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }).Build();
+      ScaleFormula actual = new ScaleFormulaBuilder(NAME).SetId(ID).SetIntervals(new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }).Build();
 
       Assert.Equal(ID, actual.Id);
       Assert.Equal(NAME, actual.Name);
@@ -78,9 +79,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
-      var y = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
-      var z = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula x = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula y = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula z = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symmetric
@@ -100,7 +101,7 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.False(actual.Equals(int.MinValue));
     }
 
@@ -114,22 +115,22 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
-      var expected = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula actual = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula expected = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
@@ -149,9 +150,45 @@ namespace Bach.Model.Test
     }
 
     [Fact]
+    public void CategoriesMajorTest()
+    {
+      TestFormulaCategory("Major", false, formula => formula.Intervals.Contains(Interval.MajorThird) && formula.Intervals.Contains(Interval.Fifth));
+    }
+
+    [Fact]
+    public void CategoriesMinorTest()
+    {
+      TestFormulaCategory("Minor", false, formula => formula.Intervals.Contains(Interval.MinorThird) && formula.Intervals.Contains(Interval.Fifth));
+    }
+
+    [Fact]
+    public void CategoriesPentatonicTest()
+    {
+      TestFormulaCategory("Pentatonic", true, formula => formula.Intervals.Count == 5);
+    }
+
+    [Fact]
+    public void CategoriesHexatonicTest()
+    {
+      TestFormulaCategory("Hexatonic", true, formula => formula.Intervals.Count == 6);
+    }
+
+    [Fact]
+    public void CategoriesHeptatonicTest()
+    {
+      TestFormulaCategory("Heptatonic", true, formula => formula.Intervals.Count == 7);
+    }
+
+    [Fact]
+    public void CategoriesOctatonicTest()
+    {
+      TestFormulaCategory("Octatonic", true, formula => formula.Intervals.Count == 8);
+    }
+
+    [Fact]
     public void GenerateTest()
     {
-      var formula = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
+      ScaleFormula formula = new ScaleFormulaBuilder("Name").SetId("Id").SetIntervals("R,M2,M3").Build();
       using( IEnumerator<Pitch> pitches = formula.Generate(Pitch.MinValue).GetEnumerator() )
       {
         var count = 0;
@@ -181,6 +218,23 @@ namespace Bach.Model.Test
     #endregion
 
     #region  Implementation
+
+    private static void TestFormulaCategory(string category,
+                                            bool strict,
+                                            Predicate<ScaleFormula> predicate)
+    {
+      foreach( ScaleFormula formula in Registry.ScaleFormulas )
+      {
+        if( predicate(formula) )
+        {
+          Assert.Contains(category, formula.Categories);
+        }
+        else if( strict )
+        {
+          Assert.DoesNotContain(category, formula.Categories);
+        }
+      }
+    }
 
     private static void TestGetSteps(string scaleName,
                                      params int[] expected)
