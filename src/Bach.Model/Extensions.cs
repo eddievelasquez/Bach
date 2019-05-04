@@ -33,13 +33,13 @@ namespace Bach.Model
   {
     #region Public Methods
 
-    /// <summary>Returns the intervals that separate the provided notes.</summary>
-    /// <param name="notes">The notes.</param>
+    /// <summary>Returns the intervals that separate the provided pitch classes.</summary>
+    /// <param name="pitchClasses">The pitch classes.</param>
     /// <returns>An intervals iterator.</returns>
-    public static IEnumerable<Interval> Intervals(this IEnumerable<Note> notes)
+    public static IEnumerable<Interval> Intervals(this IEnumerable<PitchClass> pitchClasses)
     {
-      Contract.Requires<ArgumentNullException>(notes != null);
-      using( IEnumerator<Note> e = notes.GetEnumerator() )
+      Contract.Requires<ArgumentNullException>(pitchClasses != null);
+      using( IEnumerator<PitchClass> e = pitchClasses.GetEnumerator() )
       {
         yield return Interval.Unison;
 
@@ -48,7 +48,7 @@ namespace Bach.Model
           yield break;
         }
 
-        Note root = e.Current;
+        PitchClass root = e.Current;
         if( !e.MoveNext() )
         {
           yield break;
@@ -56,8 +56,8 @@ namespace Bach.Model
 
         do
         {
-          Note note = e.Current;
-          Interval interval = root - note;
+          PitchClass pitchClass = e.Current;
+          Interval interval = root - pitchClass;
           yield return interval;
         } while( e.MoveNext() );
       }

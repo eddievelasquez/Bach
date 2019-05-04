@@ -82,7 +82,7 @@ namespace Bach.Model
         var builder = new StringedInstrumentDefinitionBuilder(instrument.Id, instrument.Name, instrument.StringCount);
         foreach( PersistentTuning tuning in instrument.Tunings )
         {
-          builder.AddTuning(tuning.Id, tuning.Name, tuning.Notes);
+          builder.AddTuning(tuning.Id, tuning.Name, tuning.Pitches);
         }
 
         StringedInstrumentDefinition definition = builder.Build();

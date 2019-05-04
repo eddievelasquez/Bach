@@ -27,7 +27,7 @@ namespace Bach.Model
   using System;
   using Internal;
 
-  /// <summary>A chord formula defines how the notes of a chord relate to each other.</summary>
+  /// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
   public class ChordFormula: Formula
   {
     #region Constructors
@@ -36,15 +36,17 @@ namespace Bach.Model
     /// <param name="id">The language-neutral id of the chord.</param>
     /// <param name="name">The localizable name of the chord.</param>
     /// <param name="symbol">The symbol for the chord.</param>
-    /// <param name="intervals">The intervals that describe the relationship between the notes that
-    ///                         compose the chord.</param>
+    /// <param name="intervals">
+    ///   The intervals that describe the relationship between the pitch classes that
+    ///   compose the chord.
+    /// </param>
     public ChordFormula(string id,
                         string name,
                         string symbol,
                         params Interval[] intervals)
       : base(id, name, intervals)
     {
-      // A chord is composed by three or more notes...
+      // A chord is composed by three or more pitch classes...
       Contract.Requires<ArgumentException>(intervals.Length >= 2);
       Symbol = symbol ?? string.Empty;
     }
@@ -53,9 +55,11 @@ namespace Bach.Model
     /// <param name="id">The language-neutral id of the chord.</param>
     /// <param name="name">The localizable name of the chord.</param>
     /// <param name="symbol">The symbol for the chord.</param>
-    /// <param name="formula">The string representation of the formula for the chord. The formula is a
-    ///                       sequence of comma-separated intervals. See
-    ///                       <see cref="Interval.ToString()" /> for the format of an interval.</param>
+    /// <param name="formula">
+    ///   The string representation of the formula for the chord. The formula is a
+    ///   sequence of comma-separated intervals. See
+    ///   <see cref="Interval.ToString()" /> for the format of an interval.
+    /// </param>
     public ChordFormula(string id,
                         string name,
                         string symbol,

@@ -30,7 +30,7 @@ namespace Bach.Model
   using System.Text;
   using Internal;
 
-  /// <summary>A formula is a base class for constructing a sequence of notes based on a series of intervals.</summary>
+  /// <summary>A formula is a base class for constructing a sequence of pitch classes based on a series of intervals.</summary>
   public abstract class Formula
     : INamedObject,
       IEquatable<Formula>
@@ -130,7 +130,7 @@ namespace Bach.Model
 
     #endregion
 
-    #region IKeyNameObject Members
+    #region INamedObject Members
 
     /// <summary>Returns the language-neutral id for the formula.</summary>
     /// <value>The id.</value>
@@ -188,11 +188,11 @@ namespace Bach.Model
       }
     }
 
-    /// <summary>Generates a sequence of notes based on the formula's intervals.</summary>
-    /// <notes>Warning! By design, this enumerator never ends.</notes>
-    /// <param name="root">The root note.</param>
-    /// <returns> An enumerator for a sequence of notes.</returns>
-    public IEnumerable<Note> Generate(Note root)
+    /// <summary>Generates a sequence of pitch classes based on the formula's intervals.</summary>
+    /// <remarks>Warning! By design, this enumerator never ends.</remarks>
+    /// <param name="root">The root pitch class.</param>
+    /// <returns> An enumerator for a sequence of pitch classes.</returns>
+    public IEnumerable<PitchClass> Generate(PitchClass root)
     {
       int intervalCount = Intervals.Count;
       var index = 0;
@@ -201,8 +201,8 @@ namespace Bach.Model
       while( true )
       {
         Interval interval = Intervals[index % intervalCount];
-        Note note = root + interval;
-        yield return note;
+        PitchClass pitchClass = root + interval;
+        yield return pitchClass;
 
         ++index;
       }
@@ -211,14 +211,14 @@ namespace Bach.Model
     }
 
     /// <summary>
-    ///   Generates a sequence of notes based on the provided formula's intervals and starting on the provided
-    ///   <see cref="Note" />.
+    ///   Generates a sequence of pitchClasses based on the provided formula's intervals and starting on the provided
+    ///   <see cref="PitchClass" />.
     /// </summary>
-    /// <param name="root">The root note.</param>
+    /// <param name="root">The root pitch class.</param>
     /// <param name="intervals">The intervals.</param>
-    /// <returns> An enumerator for a sequence of notes.</returns>
-    public static IEnumerable<Note> Generate(Note root,
-                                             IEnumerable<Interval> intervals)
+    /// <returns> An enumerator for a sequence of pitchClasses.</returns>
+    public static IEnumerable<PitchClass> Generate(PitchClass root,
+                                                   IEnumerable<Interval> intervals)
     {
       Contract.Requires<ArgumentNullException>(intervals != null);
       return intervals.Select(interval => root + interval);

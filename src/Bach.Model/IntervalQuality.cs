@@ -120,21 +120,21 @@ namespace Bach.Model
 
     #region Public Methods
 
-    /// <summary>Adds a number of steps to a note name.</summary>
-    /// <param name="steps">The number of steps to add.</param>
+    /// <summary>Adds a number of semitones to a pitch class name.</summary>
+    /// <param name="semitones">The number of semitones to add.</param>
     /// <returns>A IntervalQuality.</returns>
     [Pure]
-    public IntervalQuality Add(int steps)
+    public IntervalQuality Add(int semitones)
     {
-      var result = new IntervalQuality(_value + steps);
+      var result = new IntervalQuality(_value + semitones);
       return result;
     }
 
-    /// <summary>Subtracts a number of steps from a note name.</summary>
-    /// <param name="steps">The number of steps to subtract.</param>
+    /// <summary>Subtracts a number of semitones from a pitch class name.</summary>
+    /// <param name="semitones">The number of semitones to subtract.</param>
     /// <returns>A IntervalQuality.</returns>
     [Pure]
-    public IntervalQuality Subtract(int steps) => Add(-steps);
+    public IntervalQuality Subtract(int semitones) => Add(-semitones);
 
     /// <summary>
     ///   Converts the specified string representation of an interval quality to its <see cref="IntervalQuality" /> equivalent.
@@ -214,7 +214,7 @@ namespace Bach.Model
     #region Operators
 
     /// <summary>Explicit cast that converts the given IntervalQuality to an int.</summary>
-    /// <param name="quality">The note name.</param>
+    /// <param name="quality">The pitch class name.</param>
     /// <returns>The result of the operation.</returns>
     public static explicit operator int(IntervalQuality quality) => quality._value;
 
@@ -273,27 +273,27 @@ namespace Bach.Model
 
     /// <summary>Addition operator.</summary>
     /// <param name="quality">The first value.</param>
-    /// <param name="steps">A number of semitones to add to it.</param>
+    /// <param name="semitones">A number of semitones to add to it.</param>
     /// <returns>The result of the operation.</returns>
     public static IntervalQuality operator+(IntervalQuality quality,
-                                            int steps)
-      => quality.Add(steps);
+                                            int semitones)
+      => quality.Add(semitones);
 
     /// <summary>Increment operator.</summary>
-    /// <param name="quality">The note.</param>
+    /// <param name="quality">The interval quality to increment.</param>
     /// <returns>The result of the operation.</returns>
     public static IntervalQuality operator++(IntervalQuality quality) => quality.Add(1);
 
     /// <summary>Subtraction operator.</summary>
     /// <param name="quality">The first value.</param>
-    /// <param name="steps">A number of semitones to subtract from it.</param>
+    /// <param name="semitones">A number of semitones to subtract from it.</param>
     /// <returns>The result of the operation.</returns>
     public static IntervalQuality operator-(IntervalQuality quality,
-                                            int steps)
-      => quality.Subtract(steps);
+                                            int semitones)
+      => quality.Subtract(semitones);
 
     /// <summary>Decrement operator.</summary>
-    /// <param name="quality">The note.</param>
+    /// <param name="quality">The interval quality to decrement.</param>
     /// <returns>The result of the operation.</returns>
     public static IntervalQuality operator--(IntervalQuality quality) => quality.Subtract(1);
 

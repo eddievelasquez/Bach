@@ -34,8 +34,8 @@ namespace Bach.Model.Test
     public void CreateWithToneAndAccidentalTest()
     {
       Pitch target = Pitch.Create(NoteName.A, Accidental.Natural, 1);
-      Assert.Equal(NoteName.A, target.Note.NoteName);
-      Assert.Equal(Accidental.Natural, target.Note.Accidental);
+      Assert.Equal(NoteName.A, target.PitchClass.NoteName);
+      Assert.Equal(Accidental.Natural, target.PitchClass.Accidental);
       Assert.Equal(1, target.Octave);
 
       Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(NoteName.C, Accidental.Flat, Pitch.MinOctave));
@@ -47,14 +47,14 @@ namespace Bach.Model.Test
     [Fact]
     public void CreateWithNoteTest()
     {
-      Pitch target = Pitch.Create(Note.A, 1);
-      Assert.Equal(Note.A, target.Note);
+      Pitch target = Pitch.Create(PitchClass.A, 1);
+      Assert.Equal(PitchClass.A, target.PitchClass);
       Assert.Equal(1, target.Octave);
 
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.C, Accidental.Flat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(Note.Create(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(PitchClass.Create(NoteName.C, Accidental.Flat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(PitchClass.Create(NoteName.C, Accidental.DoubleFlat), Pitch.MinOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(PitchClass.Create(NoteName.B, Accidental.Sharp), Pitch.MaxOctave));
+      Assert.Throws<ArgumentOutOfRangeException>(() => Pitch.Create(PitchClass.Create(NoteName.B, Accidental.DoubleSharp), Pitch.MaxOctave));
     }
 
     [Fact]

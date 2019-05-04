@@ -143,7 +143,7 @@ namespace Bach.Model.Instruments
 
       Pitch startPitch = Tuning[startString] + startPosition;
       int octave = startPitch.Octave;
-      if( startPitch.Note > chord.Bass )
+      if( startPitch.PitchClass > chord.Bass )
       {
         ++octave;
       }
@@ -191,7 +191,7 @@ namespace Bach.Model.Instruments
 
       // Adjust the octave if necessary
       int octave = startPitch.Octave;
-      if (startPitch.Note < scale.Root)
+      if (startPitch.PitchClass < scale.Root)
       {
         --octave;
       }

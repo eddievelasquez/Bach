@@ -231,10 +231,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, "MinorPentatonic");
+      var scale = new Scale(PitchClass.A, "MinorPentatonic");
       Assert.Equal("60 63 50 53 40 42 30 32 21 23 10 13", RenderScale(instrument, scale, 0, 4));
 
-      scale = new Scale(Note.G, "MinorPentatonic");
+      scale = new Scale(PitchClass.G, "MinorPentatonic");
       Assert.Equal("61 63 51 53 40 43 30 33 21 23 11 13", RenderScale(instrument, scale, 0, 4));
     }
 
@@ -243,10 +243,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, "MinorPentatonic");
+      var scale = new Scale(PitchClass.A, "MinorPentatonic");
       Assert.Equal("65 68 55 57 45 47 35 37 25 28 15 18", RenderScale(instrument, scale, 5, 4));
 
-      scale = new Scale(Note.G, "MinorPentatonic");
+      scale = new Scale(PitchClass.G, "MinorPentatonic");
       Assert.Equal("66 68 55 58 45 48 35 37 26 28 16 18", RenderScale(instrument, scale, 5, 4));
     }
 
@@ -255,10 +255,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, "MelodicMinor");
+      var scale = new Scale(PitchClass.A, "MelodicMinor");
       Assert.Equal("60 62 64 50 52 53 40 42 44 31 32 20 21 23 10 12 14", RenderScale(instrument, scale, 0, 4));
 
-      scale = new Scale(Note.G, "MelodicMinor");
+      scale = new Scale(PitchClass.G, "MelodicMinor");
       Assert.Equal("60 62 63 50 51 53 40 42 44 30 32 33 21 23 10 12 13", RenderScale(instrument, scale, 0, 4));
     }
 
@@ -267,10 +267,10 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.A, "MelodicMinor");
+      var scale = new Scale(PitchClass.A, "MelodicMinor");
       Assert.Equal("65 67 68 55 57 59 46 47 49 35 37 25 27 29 15 17 18", RenderScale(instrument, scale, 5, 4));
 
-      scale = new Scale(Note.G, "MelodicMinor");
+      scale = new Scale(PitchClass.G, "MelodicMinor");
       Assert.Equal("65 66 68 55 57 59 45 47 48 35 37 25 27 28 15 16 18", RenderScale(instrument, scale, 5, 4));
     }
 
@@ -279,7 +279,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var scale = new Scale(Note.DSharp, "MinorPentatonic");
+      var scale = new Scale(PitchClass.DSharp, "MinorPentatonic");
       Assert.Equal("62 64 51 54 41 44 31 33 22 24 12 14", RenderScale(instrument, scale, 0, 4));
     }
 
@@ -288,7 +288,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 53 42 30 21 10", RenderChord(instrument, chord, 0, 4));
     }
 
@@ -297,7 +297,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 53 45 35 25 13", RenderChord(instrument, chord, 3, 4));
     }
 
@@ -306,7 +306,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("68 57 45 35 25 18", RenderChord(instrument, chord, 5, 4));
     }
 
@@ -315,7 +315,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("68 510 410 39 28 18", RenderChord(instrument, chord, 8, 4));
     }
 
@@ -324,7 +324,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 515 414 312 213 112", RenderChord(instrument, chord, 12, 4));
     }
 
@@ -333,7 +333,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.D, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.D, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 5x 40 32 23 12", RenderChord(instrument, chord, 0, 4));
     }
 
@@ -342,7 +342,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.D, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.D, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 55 47 37 27 15", RenderChord(instrument, chord, 5, 4));
     }
 
@@ -351,7 +351,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.D, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.D, Registry.ChordFormulas["Major"]);
       Assert.Equal("610 59 47 37 27 110", RenderChord(instrument, chord, 7, 4));
     }
 
@@ -360,7 +360,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.D, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.D, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 5x 412 314 215 114", RenderChord(instrument, chord, 12, 4));
     }
 
@@ -369,7 +369,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      Chord chord = new Chord(Note.C, Registry.ChordFormulas["Major"]).GetInversion(1);
+      Chord chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]).GetInversion(1);
       Assert.Equal("60 53 42 30 21 10", RenderChord(instrument, chord, 0, 4));
     }
 
@@ -378,7 +378,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 53 45 35 25 13", RenderChord(instrument, chord, 3, 4));
     }
 
@@ -387,7 +387,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("68 57 45 35 25 18", RenderChord(instrument, chord, 5, 4));
     }
 
@@ -396,7 +396,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("68 510 410 39 28 18", RenderChord(instrument, chord, 8, 4));
     }
 
@@ -405,7 +405,7 @@ namespace Bach.Model.Test.Instruments
     {
       StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
 
-      var chord = new Chord(Note.C, Registry.ChordFormulas["Major"]);
+      var chord = new Chord(PitchClass.C, Registry.ChordFormulas["Major"]);
       Assert.Equal("6x 515 414 312 213 112", RenderChord(instrument, chord, 12, 4));
     }
 

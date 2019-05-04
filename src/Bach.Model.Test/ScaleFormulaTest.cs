@@ -198,7 +198,7 @@ namespace Bach.Model.Test
           ++count;
         }
 
-        // 3 notes per octave, 10 octaves total.
+        // 3 pitchClasses per octave, 10 octaves total.
         Assert.Equal(30, count);
       }
     }

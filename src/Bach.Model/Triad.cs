@@ -26,7 +26,7 @@ namespace Bach.Model
 {
   using System;
 
-  /// <summary>A triad is a set of three notes stacked in thirds.</summary>
+  /// <summary>A triad is a set of three pitchClasses stacked in thirds.</summary>
   public class Triad: Chord
   {
     #region Constants
@@ -46,16 +46,16 @@ namespace Bach.Model
     #region Constructors
 
     /// <summary>Constructor.</summary>
-    /// <param name="root">The triad's root note.</param>
+    /// <param name="root">The triad's root pitch class.</param>
     /// <param name="quality">The triad's quality.</param>
-    public Triad(Note root,
+    public Triad(PitchClass root,
                  TriadQuality quality)
       : base(root, GetFormula(quality))
     {
       Quality = quality;
     }
 
-    private Triad(Note root,
+    private Triad(PitchClass root,
                   ChordFormula formula,
                   int inversion)
       : base(root, formula, inversion)

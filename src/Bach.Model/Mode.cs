@@ -34,7 +34,7 @@ namespace Bach.Model
   /// <summary>A mode is a type of scale coupled with a set of melodic behaviors.</summary>
   public class Mode
     : IEquatable<Mode>,
-      IEnumerable<Note>
+      IEnumerable<PitchClass>
   {
     #region Constructors
 
@@ -57,16 +57,16 @@ namespace Bach.Model
       buf.Append(formula.Name);
 
       Name = buf.ToString();
-      Notes = new NoteCollection(scale.Ascending.Skip(Formula.Tonic - 1).Take(scale.Notes.Count));
+      PitchClasses = new PitchClassCollection(scale.Ascending.Skip(Formula.Tonic - 1).Take(scale.PitchClasses.Count));
     }
 
     #endregion
 
     #region Properties
 
-    /// <summary>Gets the mode's notes.</summary>
-    /// <value>The notes.</value>
-    public NoteCollection Notes { get; }
+    /// <summary>Gets the mode's pitchClasses.</summary>
+    /// <value>The pitchClasses.</value>
+    public PitchClassCollection PitchClasses { get; }
 
     /// <summary>Gets the mode's scale.</summary>
     /// <value>The scale.</value>
@@ -82,21 +82,21 @@ namespace Bach.Model
 
     #endregion
 
-    #region IEnumerable<Note> Members
+    #region IEnumerable<PitchClass> Members
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator()
+    public IEnumerator<PitchClass> GetEnumerator()
     {
       var index = 0;
 
       while( true )
       {
-        yield return Notes[index];
+        yield return PitchClasses[index];
 
-        index = ArrayExtensions.WrapIndex(Notes.Count, ++index);
+        index = ArrayExtensions.WrapIndex(PitchClasses.Count, ++index);
       }
 
       // ReSharper disable once IteratorNeverReturns
@@ -150,7 +150,7 @@ namespace Bach.Model
     }
 
     /// <inheritdoc />
-    public override string ToString() => string.Join(",", Notes);
+    public override string ToString() => string.Join(",", PitchClasses);
 
     #endregion
   }

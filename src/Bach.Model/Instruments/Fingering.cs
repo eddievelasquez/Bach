@@ -54,7 +54,7 @@ namespace Bach.Model.Instruments
     public int String { get; }
 
     /// <summary>Gets the position on the string.</summary>
-    /// <note>For fretted instruments this corresponds to the fret number.</note>
+    /// <remarks>For fretted instruments this corresponds to the fret number.</remarks>
     /// <value>The position.</value>
     public int Position { get; }
 

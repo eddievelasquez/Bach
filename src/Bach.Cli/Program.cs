@@ -57,7 +57,7 @@ namespace Bach.Cli
         app.Command("chord", DisplayChord);
         app.Command("intervals", DisplayIntervals);
         app.Command("scales-containing", DisplayScalesForNotes);
-        app.Command("notes", DisplayNotes);
+        app.Command("notes", DisplayPitchClasses);
 
         return app.Execute(args);
       }
@@ -134,9 +134,9 @@ namespace Bach.Cli
 
         foreach( string rootValue in rootArg.Values )
         {
-          Note root = Note.Parse(rootValue);
+          PitchClass root = PitchClass.Parse(rootValue);
           var scale = new Scale(root, formula);
-          Console.WriteLine($"  {root} {formula.Name} {{{scale.Notes}}}");
+          Console.WriteLine($"  {root} {formula.Name} {{{scale.PitchClasses}}}");
         }
 
         Console.WriteLine();
@@ -157,10 +157,10 @@ namespace Bach.Cli
 
         foreach( string rootValue in rootArg.Values )
         {
-          Note root = Note.Parse(rootValue);
+          PitchClass root = PitchClass.Parse(rootValue);
           var chord = new Chord(root, formula);
 
-          Console.WriteLine($"  {chord} {{{chord.Notes}}}");
+          Console.WriteLine($"  {chord} {{{chord.PitchClasses}}}");
         }
 
         Console.WriteLine();
@@ -173,10 +173,10 @@ namespace Bach.Cli
 
       app.OnExecute(() =>
       {
-        NoteCollection notes = NoteCollection.Parse(notesArg.Value);
-        Interval[] intervals = notes.Intervals().ToArray();
+        PitchClassCollection pitchClasses = PitchClassCollection.Parse(notesArg.Value);
+        Interval[] intervals = pitchClasses.Intervals().ToArray();
 
-        Console.WriteLine($"Notes: {{{string.Join(",", notes)}}}");
+        Console.WriteLine($"Notes: {{{string.Join(",", pitchClasses)}}}");
         Console.WriteLine($"    => {{{string.Join(",", intervals.Select(interval => interval.ToString("Sq")))}}}");
         Console.WriteLine();
       });
@@ -188,28 +188,28 @@ namespace Bach.Cli
 
       app.OnExecute(() =>
       {
-        NoteCollection notes = NoteCollection.Parse(notesArg.Value);
+        PitchClassCollection pitchClasses = PitchClassCollection.Parse(notesArg.Value);
 
-        Console.WriteLine($"Scales containing: {{{string.Join(",", notes)}}}");
+        Console.WriteLine($"Scales containing: {{{string.Join(",", pitchClasses)}}}");
         Console.WriteLine();
 
-        foreach( Scale scale in Scale.ScalesContaining(notes) )
+        foreach( Scale scale in Scale.ScalesContaining(pitchClasses) )
         {
-          Console.WriteLine($"  {scale.Name} {{{string.Join(",", scale.Notes)}}}");
+          Console.WriteLine($"  {scale.Name} {{{string.Join(",", scale.PitchClasses)}}}");
           Console.WriteLine($"    => {{{string.Join(",", scale.Formula.Intervals.Select(interval => interval.ToString("Sq")))}}}");
           Console.WriteLine();
         }
       });
     }
 
-    private static void DisplayNotes(CommandLineApplication app)
+    private static void DisplayPitchClasses(CommandLineApplication app)
     {
       CommandArgument rootArg = app.Argument("root", "Root note").IsRequired();
       CommandArgument intervalsArg = app.Argument("intervals", "Intervals to render").IsRequired();
 
       app.OnExecute(() =>
       {
-        Note root = Note.Parse(rootArg.Value);
+        PitchClass root = PitchClass.Parse(rootArg.Value);
         Interval[] intervals = Formula.ParseIntervals(intervalsArg.Value);
 
         Console.WriteLine($"Notes: {{{string.Join(",", Formula.Generate(root, intervals))}}}");

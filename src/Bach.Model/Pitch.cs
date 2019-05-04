@@ -29,7 +29,7 @@ namespace Bach.Model
   using Internal;
 
   /// <summary>
-  ///   A Pitch represents the pitch of a sound (<see cref="Note" />)
+  ///   A Pitch represents the pitch of a sound (<see cref="PitchClass" />)
   ///   on a given octave.
   /// </summary>
   /// <remarks>
@@ -72,13 +72,13 @@ namespace Bach.Model
     private static readonly Pitch s_a4 = Create(NoteName.A, Accidental.Natural, 4);
 
     /// <summary>An empty pitch.</summary>
-    public static readonly Pitch Empty = new Pitch(Note.B, 9, 128);
+    public static readonly Pitch Empty = new Pitch(PitchClass.B, 9, 128);
 
     /// <summary>The minimum possible pitch value.</summary>
-    public static readonly Pitch MinValue = Create(Note.C, MinOctave);
+    public static readonly Pitch MinValue = Create(PitchClass.C, MinOctave);
 
     /// <summary>The maximum possible pitch value.</summary>
-    public static readonly Pitch MaxValue = Create(Note.G, MaxOctave);
+    public static readonly Pitch MaxValue = Create(PitchClass.G, MaxOctave);
 
     #endregion
 
@@ -98,15 +98,15 @@ namespace Bach.Model
       Contract.Requires<ArgumentOutOfRangeException>(absoluteValue < 128);
 
       _absoluteValue = (byte)absoluteValue;
-      CalcNote(_absoluteValue, out Note note, out _octave);
+      CalcNote(_absoluteValue, out PitchClass note, out _octave);
       _note = (ushort)note;
     }
 
-    private Pitch(Note note,
+    private Pitch(PitchClass pitchClass,
                   int octave,
                   int absoluteValue)
     {
-      _note = (ushort)note;
+      _note = (ushort)pitchClass;
       _octave = (byte)octave;
       _absoluteValue = (byte)absoluteValue;
     }
@@ -121,14 +121,14 @@ namespace Bach.Model
     {
       get
       {
-        int abs = _absoluteValue + (int)Note.Accidental;
+        int abs = _absoluteValue + (int)PitchClass.Accidental;
         return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
       }
     }
 
-    /// <summary>Gets the pitch's note.</summary>
-    /// <value>The note.</value>
-    public Note Note => (Note)_note;
+    /// <summary>Gets the pitch's pitch class.</summary>
+    /// <value>The pitch class.</value>
+    public PitchClass PitchClass => (PitchClass)_note;
 
     /// <summary>Gets the pitch's octave.</summary>
     /// <value>The octave.</value>
@@ -170,16 +170,16 @@ namespace Bach.Model
 
     /// <summary>Creates a new Pitch.</summary>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
-    /// <param name="note">The note.</param>
+    /// <param name="pitchClass">The pitch class.</param>
     /// <param name="octave">The octave.</param>
     /// <returns>A Pitch.</returns>
-    public static Pitch Create(Note note,
+    public static Pitch Create(PitchClass pitchClass,
                                int octave)
     {
       Contract.Requires<ArgumentOutOfRangeException>(octave >= MinOctave);
       Contract.Requires<ArgumentOutOfRangeException>(octave <= MaxOctave);
 
-      int abs = CalcAbsoluteValue(note.NoteName, note.Accidental, octave);
+      int abs = CalcAbsoluteValue(pitchClass.NoteName, pitchClass.Accidental, octave);
       if( abs < s_minAbsoluteValue )
       {
         throw new ArgumentOutOfRangeException($"Must be equal to or greater than {new Pitch(s_minAbsoluteValue)}");
@@ -190,19 +190,19 @@ namespace Bach.Model
         throw new ArgumentOutOfRangeException($"Must be equal to or less than {new Pitch(s_maxAbsoluteValue)}");
       }
 
-      return new Pitch(note, octave, abs);
+      return new Pitch(pitchClass, octave, abs);
     }
 
     /// <summary>Creates a new Pitch.</summary>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
-    /// <param name="noteName">Name of the note.</param>
+    /// <param name="noteName">Name of the pitch class.</param>
     /// <param name="accidental">The accidental.</param>
     /// <param name="octave">The octave.</param>
     /// <returns>A Pitch.</returns>
     public static Pitch Create(NoteName noteName,
                                Accidental accidental,
                                int octave)
-      => Create(Note.Create(noteName, accidental), octave);
+      => Create(PitchClass.Create(noteName, accidental), octave);
 
     /// <summary>Creates a pitch from a MIDI pitch value.</summary>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
@@ -240,10 +240,10 @@ namespace Bach.Model
                             Interval interval)
     {
       var absoluteValue = (byte)( pitch._absoluteValue + interval.SemitoneCount );
-      CalcNote(absoluteValue, out Note _, out byte octave);
+      CalcNote(absoluteValue, out PitchClass _, out byte octave);
 
-      Note newNote = pitch.Note + interval;
-      var result = new Pitch(newNote, octave, absoluteValue);
+      PitchClass newPitchClass = pitch.PitchClass + interval;
+      var result = new Pitch(newPitchClass, octave, absoluteValue);
       return result;
     }
 
@@ -291,7 +291,7 @@ namespace Bach.Model
     public override int GetHashCode() => _absoluteValue;
 
     /// <inheritdoc />
-    public override string ToString() => $"{Note}{Octave}";
+    public override string ToString() => $"{PitchClass}{Octave}";
 
     #endregion
 
@@ -306,11 +306,11 @@ namespace Bach.Model
     }
 
     private static void CalcNote(byte absoluteValue,
-                                 out Note note,
+                                 out PitchClass pitchClass,
                                  out byte octave)
     {
       octave = (byte)Math.DivRem(absoluteValue, IntervalsPerOctave, out int remainder);
-      note = Note.LookupNote(remainder);
+      pitchClass = PitchClass.LookupNote(remainder);
     }
 
     private static int SemitonesBetween(NoteName start,
@@ -510,7 +510,7 @@ namespace Bach.Model
 
     /// <summary>Attempts to parse a Pitch from the given string.</summary>
     /// <param name="value">The value to parse.</param>
-    /// <param name="pitch">[out] The note.</param>
+    /// <param name="pitch">[out] The pitch class.</param>
     /// <returns>True if it succeeds, false if it fails.</returns>
     public static bool TryParse(string value,
                                 out Pitch pitch)

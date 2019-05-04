@@ -117,7 +117,7 @@ namespace Bach.Model
 
     #region Public Methods
 
-    /// <summary>Adds a number of steps to a note name.</summary>
+    /// <summary>Adds a number of steps to a pitch class name.</summary>
     /// <param name="steps">The number of steps to add.</param>
     /// <returns>A Accidental.</returns>
     [Pure]
@@ -127,7 +127,7 @@ namespace Bach.Model
       return result;
     }
 
-    /// <summary>Subtracts a number of steps from a note name.</summary>
+    /// <summary>Subtracts a number of steps from a pitch class name.</summary>
     /// <param name="steps">The number of steps to subtract.</param>
     /// <returns>A Accidental.</returns>
     [Pure]
@@ -242,7 +242,7 @@ namespace Bach.Model
     #region Operators
 
     /// <summary>Explicit cast that converts the given Accidental to an int.</summary>
-    /// <param name="accidental">The note name.</param>
+    /// <param name="accidental">The pitch class name.</param>
     /// <returns>The result of the operation.</returns>
     public static explicit operator int(Accidental accidental) => accidental._value;
 
@@ -308,7 +308,7 @@ namespace Bach.Model
       => accidental.Add(semitoneCount);
 
     /// <summary>Increment operator.</summary>
-    /// <param name="accidental">The note.</param>
+    /// <param name="accidental">The pitch class.</param>
     /// <returns>The result of the operation.</returns>
     public static Accidental operator++(Accidental accidental) => accidental.Add(1);
 
@@ -321,7 +321,7 @@ namespace Bach.Model
       => accidental.Subtract(semitoneCount);
 
     /// <summary>Decrement operator.</summary>
-    /// <param name="accidental">The note.</param>
+    /// <param name="accidental">The pitch class.</param>
     /// <returns>The result of the operation.</returns>
     public static Accidental operator--(Accidental accidental) => accidental.Subtract(1);
 

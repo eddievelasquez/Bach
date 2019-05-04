@@ -1,5 +1,5 @@
 ﻿//
-// Module Name: NoteCollectionTest.cs
+// Module Name: PitchClassCollectionTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2016  Eddie Velasquez.
 //
@@ -28,34 +28,34 @@ namespace Bach.Model.Test
   using System;
   using Xunit;
 
-  public class NoteCollectionTest
+  public class PitchClassCollectionTest
   {
     [Fact]
     public void TryParseTest()
     {
-      NoteCollection actual;
-      Assert.True(NoteCollection.TryParse("C,Db", out actual));
-      Assert.Equal(new[] { Note.C, Note.DFlat }, actual);
-      Assert.False(NoteCollection.TryParse(null, out actual));
-      Assert.False(NoteCollection.TryParse("", out actual));
-      Assert.False(NoteCollection.TryParse("C$", out actual));
+      PitchClassCollection actual;
+      Assert.True(PitchClassCollection.TryParse("C,Db", out actual));
+      Assert.Equal(new[] { PitchClass.C, PitchClass.DFlat }, actual);
+      Assert.False(PitchClassCollection.TryParse(null, out actual));
+      Assert.False(PitchClassCollection.TryParse("", out actual));
+      Assert.False(PitchClassCollection.TryParse("C$", out actual));
     }
 
     [Fact]
     public void ParseTest()
     {
-      Assert.Equal(new[] { Note.C, Note.DFlat }, NoteCollection.Parse("C,Db"));
-      Assert.Throws<ArgumentNullException>(() => NoteCollection.Parse(null));
-      Assert.Throws<ArgumentException>(() => NoteCollection.Parse(""));
-      Assert.Throws<FormatException>(() => NoteCollection.Parse("C$"));
+      Assert.Equal(new[] { PitchClass.C, PitchClass.DFlat }, PitchClassCollection.Parse("C,Db"));
+      Assert.Throws<ArgumentNullException>(() => PitchClassCollection.Parse(null));
+      Assert.Throws<ArgumentException>(() => PitchClassCollection.Parse(""));
+      Assert.Throws<FormatException>(() => PitchClassCollection.Parse("C$"));
     }
 
     [Fact]
     public void EqualsContractTest()
     {
-      object x = new NoteCollection(NoteCollection.Parse("C,Db"));
-      object y = new NoteCollection(NoteCollection.Parse("C,Db"));
-      object z = new NoteCollection(NoteCollection.Parse("C,Db"));
+      object x = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
+      object y = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
+      object z = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -68,9 +68,9 @@ namespace Bach.Model.Test
     [Fact]
     public void TypeSafeEqualsContractTest()
     {
-      var x = new NoteCollection(NoteCollection.Parse("C,Db"));
-      var y = new NoteCollection(NoteCollection.Parse("C,Db"));
-      var z = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var x = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
+      var y = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
+      var z = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
 
       Assert.True(x.Equals(x)); // Reflexive
       Assert.True(x.Equals(y)); // Symetric
@@ -83,43 +83,43 @@ namespace Bach.Model.Test
     [Fact]
     public void EqualsFailsWithDifferentTypeTest()
     {
-      object actual = new NoteCollection(NoteCollection.Parse("C,Db"));
+      object actual = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithDifferentTypeTest()
     {
-      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var actual = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
       Assert.False(actual.Equals(int.MinValue));
     }
 
     [Fact]
     public void EqualsFailsWithNullTest()
     {
-      object actual = new NoteCollection(NoteCollection.Parse("C,Db"));
+      object actual = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void TypeSafeEqualsFailsWithNullTest()
     {
-      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var actual = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
       Assert.False(actual.Equals(null));
     }
 
     [Fact]
     public void EqualsSucceedsWithSameObjectTest()
     {
-      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var actual = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
       Assert.True(actual.Equals(actual));
     }
 
     [Fact]
     public void GetHashcodeTest()
     {
-      var actual = new NoteCollection(NoteCollection.Parse("C,Db"));
-      var expected = new NoteCollection(NoteCollection.Parse("C,Db"));
+      var actual = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
+      var expected = new PitchClassCollection(PitchClassCollection.Parse("C,Db"));
       Assert.True(expected.Equals(actual));
       Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }

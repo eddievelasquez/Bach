@@ -27,7 +27,7 @@ namespace Bach.Model
   using System.Collections.Immutable;
   using System.Diagnostics;
 
-  /// <summary>A scale formula defines how the notes of a scale relate to each other.</summary>
+  /// <summary>A scale formula defines how the pitchClasses of a scale relate to each other.</summary>
   public class ScaleFormula: Formula
   {
     #region Constructors

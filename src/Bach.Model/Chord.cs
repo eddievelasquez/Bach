@@ -31,26 +31,26 @@ namespace Bach.Model
   using System.Text;
   using Internal;
 
-  /// <summary>A chord is a set of notes defined by a ChordFormula .</summary>
+  /// <summary>A chord is a set of pitch classes defined by a ChordFormula .</summary>
   public class Chord
     : IEquatable<Chord>,
-      IEnumerable<Note>
+      IEnumerable<PitchClass>
   {
     #region Constructors
 
     /// <summary>Constructor.</summary>
-    /// <param name="root">The root note of the chord.</param>
+    /// <param name="root">The root pitch class of the chord.</param>
     /// <param name="formula">The formula used to generate the chord.</param>
-    public Chord(Note root,
+    public Chord(PitchClass root,
                  ChordFormula formula)
       : this(root, formula, 0)
     {
     }
 
     /// <summary>Constructor.</summary>
-    /// <param name="root">The root note of the chord.</param>
+    /// <param name="root">The root pitch class of the chord.</param>
     /// <param name="formulaIdOrName">Id or name of the formula as defined in the Registry.</param>
-    public Chord(Note root,
+    public Chord(PitchClass root,
                  string formulaIdOrName)
       : this(root, Registry.ChordFormulas[formulaIdOrName], 0)
     {
@@ -62,10 +62,10 @@ namespace Bach.Model
     ///   Thrown when the inversion is less than zero or greater than the number of
     ///   intervals in the chord's formula.
     /// </exception>
-    /// <param name="root">The root note of the chord.</param>
+    /// <param name="root">The root pitch class of the chord.</param>
     /// <param name="formula">The formula used to generate the chord.</param>
     /// <param name="inversion">The inversion.</param>
-    protected Chord(Note root,
+    protected Chord(PitchClass root,
                     ChordFormula formula,
                     int inversion)
     {
@@ -76,21 +76,21 @@ namespace Bach.Model
       Root = root;
       Formula = formula;
       Inversion = inversion;
-      Notes = new NoteCollection(Formula.Generate(Root).Skip(inversion).Take(Formula.Intervals.Count));
-      Name = GenerateName(root, formula, Notes.First());
+      PitchClasses = new PitchClassCollection(Formula.Generate(Root).Skip(inversion).Take(Formula.Intervals.Count));
+      Name = GenerateName(root, formula, PitchClasses.First());
     }
 
     #endregion
 
     #region Properties
 
-    /// <summary>Gets the root note for the chord.</summary>
+    /// <summary>Gets the root pitch class for the chord.</summary>
     /// <value>The root.</value>
-    public Note Root { get; }
+    public PitchClass Root { get; }
 
-    /// <summary>Gets the bass note for the chord. The Bass note is differs from the root for chord inversions.</summary>
+    /// <summary>Gets the bass pitch class for the chord. The Bass pitch class is differs from the root for chord inversions.</summary>
     /// <value>The bass.</value>
-    public Note Bass => Notes[0];
+    public PitchClass Bass => PitchClasses[0];
 
     /// <summary>Gets the inversion number of the current instance.</summary>
     /// <value>The inversion.</value>
@@ -104,9 +104,9 @@ namespace Bach.Model
     /// <value>The formula.</value>
     public ChordFormula Formula { get; }
 
-    /// <summary>Gets the notes that compose the current chord.</summary>
-    /// <value>The notes.</value>
-    public NoteCollection Notes { get; }
+    /// <summary>Gets the pitch classes that compose the current chord.</summary>
+    /// <value>The pitchClasses.</value>
+    public PitchClassCollection PitchClasses { get; }
 
     /// <summary>An extended chord uses intervals whose quantity extends beyond the octave.</summary>
     /// <value>True if this instance is an extended chord, false if not.</value>
@@ -121,13 +121,13 @@ namespace Bach.Model
 
     #endregion
 
-    #region IEnumerable<Note> Members
+    #region IEnumerable<PitchClass> Members
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator() => ( (IEnumerable<Note>)Notes ).GetEnumerator();
+    public IEnumerator<PitchClass> GetEnumerator() => ( (IEnumerable<PitchClass>)PitchClasses ).GetEnumerator();
 
     #endregion
 
@@ -214,9 +214,9 @@ namespace Bach.Model
 
     #region  Implementation
 
-    private static string GenerateName(Note root,
+    private static string GenerateName(PitchClass root,
                                        ChordFormula formula,
-                                       Note bass)
+                                       PitchClass bass)
     {
       var buf = new StringBuilder();
       buf.Append(root);

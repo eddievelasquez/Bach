@@ -1,4 +1,4 @@
-// Module Name: NoteCollection.cs
+// Module Name: PitchClassCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
 //
@@ -30,124 +30,124 @@ namespace Bach.Model
   using System.Linq;
   using Internal;
 
-  /// <summary>Collection of notes.</summary>
-  public class NoteCollection
-    : IReadOnlyList<Note>,
-      IEquatable<IEnumerable<Note>>
+  /// <summary>Collection of pitch classes.</summary>
+  public class PitchClassCollection
+    : IReadOnlyList<PitchClass>,
+      IEquatable<IEnumerable<PitchClass>>
   {
     #region Data Members
 
-    private readonly Note[] _notes;
+    private readonly PitchClass[] _pitchClasses;
 
     #endregion
 
     #region Constructors
 
     /// <inheritdoc />
-    public NoteCollection(IEnumerable<Note> notes)
+    public PitchClassCollection(IEnumerable<PitchClass> pitchClasses)
     {
-      Contract.Requires<ArgumentNullException>(notes != null);
-      _notes = notes.ToArray();
+      Contract.Requires<ArgumentNullException>(pitchClasses != null);
+      _pitchClasses = pitchClasses.ToArray();
     }
 
     /// <inheritdoc />
-    public NoteCollection(Note[] notes)
+    public PitchClassCollection(PitchClass[] pitchClasses)
     {
-      Contract.Requires<ArgumentNullException>(notes != null);
-      _notes = notes;
+      Contract.Requires<ArgumentNullException>(pitchClasses != null);
+      _pitchClasses = pitchClasses;
     }
 
     #endregion
 
-    #region IEquatable<NoteCollection> Members
+    #region IEquatable<IEnumerable<PitchClass>> Members
 
     /// <inheritdoc />
-    public bool Equals(IEnumerable<Note> other)
+    public bool Equals(IEnumerable<PitchClass> other)
     {
       if( ReferenceEquals(null, other) )
       {
         return false;
       }
 
-      return ReferenceEquals(this, other) || _notes.SequenceEqual(other);
+      return ReferenceEquals(this, other) || _pitchClasses.SequenceEqual(other);
     }
 
     #endregion
 
-    #region IReadOnlyList<Note> Members
+    #region IReadOnlyList<PitchClass> Members
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator() => ( (IEnumerable<Note>)_notes ).GetEnumerator();
+    public IEnumerator<PitchClass> GetEnumerator() => ( (IEnumerable<PitchClass>)_pitchClasses ).GetEnumerator();
 
     /// <inheritdoc />
-    public int Count => _notes.Length;
+    public int Count => _pitchClasses.Length;
 
     /// <inheritdoc />
-    public Note this[int index] => _notes[index];
+    public PitchClass this[int index] => _pitchClasses[index];
 
     #endregion
 
     #region Public Methods
 
-    /// <summary>Attempts to parse a Note collection from the given string.</summary>
+    /// <summary>Attempts to parse a PitchClass collection from the given string.</summary>
     /// <param name="value">The value to parse.</param>
-    /// <param name="notes">[out] The note collection.</param>
+    /// <param name="pitchClasses">[out] The pitch class collection.</param>
     /// <returns>True if it succeeds, false if it fails.</returns>
     public static bool TryParse(string value,
-                                out NoteCollection notes)
+                                out PitchClassCollection pitchClasses)
     {
       if( string.IsNullOrEmpty(value) )
       {
-        notes = null;
+        pitchClasses = null;
         return false;
       }
 
-      var tmp = new List<Note>();
+      var tmp = new List<PitchClass>();
 
-      foreach( string s in value.Split(new[]{ ',', ' ' }, StringSplitOptions.RemoveEmptyEntries) )
+      foreach( string s in value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries) )
       {
-        if( !Note.TryParse(s, out Note note) )
+        if( !PitchClass.TryParse(s, out PitchClass note) )
         {
-          notes = null;
+          pitchClasses = null;
           return false;
         }
 
         tmp.Add(note);
       }
 
-      notes = new NoteCollection(tmp.ToArray());
+      pitchClasses = new PitchClassCollection(tmp.ToArray());
       return true;
     }
 
     /// <summary>Parses the provided string.</summary>
-    /// <exception cref="FormatException">Thrown when the provided string doesn't represent a note collection.</exception>
+    /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch class collection.</exception>
     /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
     /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
     /// <param name="value">The value to parse.</param>
-    /// <returns>A NoteCollection.</returns>
-    public static NoteCollection Parse(string value)
+    /// <returns>A PitchClassCollection.</returns>
+    public static PitchClassCollection Parse(string value)
     {
       Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
 
-      if( !TryParse(value, out NoteCollection notes) )
+      if( !TryParse(value, out PitchClassCollection notes) )
       {
-        throw new FormatException($"{value} contains invalid notes");
+        throw new FormatException($"{value} contains invalid pitchClasses");
       }
 
       return notes;
     }
 
-    public int IndexOf(Note note) => Array.IndexOf(_notes, note);
+    public int IndexOf(PitchClass pitchClass) => Array.IndexOf(_pitchClasses, pitchClass);
 
     #endregion
 
     #region Overrides
 
     /// <inheritdoc />
-    public override string ToString() => string.Join(",", _notes);
+    public override string ToString() => string.Join(",", _pitchClasses);
 
     /// <inheritdoc />
     public override bool Equals(object other)
@@ -162,12 +162,7 @@ namespace Bach.Model
         return true;
       }
 
-      if( other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((NoteCollection)other);
+      return other.GetType() == GetType() && Equals((PitchClassCollection)other);
     }
 
     /// <inheritdoc />
@@ -176,7 +171,7 @@ namespace Bach.Model
       unchecked
       {
         var hash = 17;
-        foreach( Note note in _notes )
+        foreach( PitchClass note in _pitchClasses )
         {
           hash = ( hash * 23 ) + note.GetHashCode();
         }

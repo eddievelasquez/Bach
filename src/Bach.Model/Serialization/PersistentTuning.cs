@@ -33,7 +33,7 @@ namespace Bach.Model.Serialization
 
     public string Id { get; set; }
     public string Name { get; set; }
-    public string Notes { get; set; }
+    public string Pitches { get; set; }
 
     #endregion
   }

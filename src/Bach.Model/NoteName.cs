@@ -30,9 +30,8 @@ namespace Bach.Model
   using Contract = Internal.Contract;
 
   /// <summary>
-  ///   A NoteName represents a basic diatonic pitch
-  ///   according to the English naming convention for
-  ///   the 12 note chromatic scale.
+  ///   A NoteName represents the traditional note name
+  ///   according to International Pitch Notation convention.
   /// </summary>
   public readonly struct NoteName
     : IEquatable<NoteName>,
@@ -50,7 +49,7 @@ namespace Bach.Model
     public static readonly NoteName B = new NoteName(6);
 
     // ReSharper disable once StringLiteralTypo
-    private static readonly string s_names = "CDEFGAB";
+    private static string s_names = "CDEFGAB";
 
     #endregion
 
@@ -103,7 +102,7 @@ namespace Bach.Model
     public NoteName Subtract(int steps) => Add(-steps);
 
     /// <summary>Returns to number of note names between two note names.</summary>
-    /// <param name="name">The last noted name.</param>
+    /// <param name="name">The last note name.</param>
     /// <returns>A NoteName.</returns>
     [Pure]
     public int Subtract(NoteName name) => (int)Add(-(int)name);
@@ -137,7 +136,7 @@ namespace Bach.Model
     /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
     /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
     /// <param name="value">The value to parse.</param>
-    /// <returns>A Note.</returns>
+    /// <returns>A PitchClass.</returns>
     public static NoteName Parse(string value)
     {
       Contract.RequiresNotNullOrEmpty(value, "Must provide a value");
@@ -250,7 +249,7 @@ namespace Bach.Model
       => noteName.Add(semitoneCount);
 
     /// <summary>Increment operator.</summary>
-    /// <param name="noteName">The note.</param>
+    /// <param name="noteName">The pitch class.</param>
     /// <returns>The result of the operation.</returns>
     public static NoteName operator++(NoteName noteName) => noteName.Add(1);
 
@@ -263,7 +262,7 @@ namespace Bach.Model
       => noteName.Subtract(semitoneCount);
 
     /// <summary>Decrement operator.</summary>
-    /// <param name="noteName">The note.</param>
+    /// <param name="noteName">The pitch class.</param>
     /// <returns>The result of the operation.</returns>
     public static NoteName operator--(NoteName noteName) => noteName.Subtract(1);
 

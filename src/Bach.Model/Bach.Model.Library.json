@@ -1,5 +1,5 @@
 ﻿{
-  "Version": "0.2",
+  "Version": "0.3",
   "Scales":
   [
     { "Id": "Arabian", "Name": "Arabian", "Categories": "Exotic", "Formula": "R,2,3,4,d5,A5,m7" },
@@ -90,11 +90,11 @@
       "Name": "Guitar",
       "StringCount": 6,
       "Tunings": [
-        { "Id": "Standard", "Name": "Standard", "Notes": "E4,B3,G3,D3,A2,E2" },
-        { "Id": "DropD", "Name": "Drop D", "Notes": "E4,B3,G3,D3,A2,D2" },
-        { "Id": "OpenD", "Name": "Open D", "Notes": "D4,A3,F#3,D3,A2,D2" },
-        { "Id": "OpenG", "Name": "Open G", "Notes": "D4,B3,G2,D2,G2,D2" },
-        { "Id": "OpenA", "Name": "Open A", "Notes": "E4,C#4,A3,E3,A2,E2" }
+        { "Id": "Standard", "Name": "Standard", "Pitches": "E4,B3,G3,D3,A2,E2" },
+        { "Id": "DropD", "Name": "Drop D", "Pitches": "E4,B3,G3,D3,A2,D2" },
+        { "Id": "OpenD", "Name": "Open D", "Pitches": "D4,A3,F#3,D3,A2,D2" },
+        { "Id": "OpenG", "Name": "Open G", "Pitches": "D4,B3,G2,D2,G2,D2" },
+        { "Id": "OpenA", "Name": "Open A", "Pitches": "E4,C#4,A3,E3,A2,E2" }
       ]
     },
     {
@@ -102,7 +102,7 @@
       "Name": "Bass",
       "StringCount": 4,
       "Tunings": [
-        { "Id": "Standard", "Name": "Standard", "Notes": "G2,D2,A1,E1" }
+        { "Id": "Standard", "Name": "Standard", "Pitches": "G2,D2,A1,E1" }
       ]
     }
   ]

@@ -30,7 +30,7 @@ namespace Bach.Model
   using System.Text;
   using Internal;
 
-  /// <summary>A scale is a set of notes defined by a ScaleFormula .</summary>
+  /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
   public class Scale: IEquatable<Scale>
   {
     #region Constants
@@ -42,17 +42,17 @@ namespace Bach.Model
     #region Constructors
 
     /// <summary>Constructor.</summary>
-    /// <param name="root">The root note of the scale.</param>
+    /// <param name="root">The root pitchClass of the scale.</param>
     /// <param name="formula">The formula used to generate the scale.</param>
     /// <exception cref="ArgumentNullException">Thrown when the formula is null.</exception>
-    public Scale(Note root,
+    public Scale(PitchClass root,
                  ScaleFormula formula)
     {
       Contract.Requires<ArgumentNullException>(formula != null);
 
       Root = root;
       Formula = formula;
-      Notes = new NoteCollection(Formula.Generate(Root).Take(Formula.Intervals.Count));
+      PitchClasses = new PitchClassCollection(Formula.Generate(Root).Take(Formula.Intervals.Count));
 
       var buf = new StringBuilder();
       buf.Append(root.NoteName);
@@ -69,10 +69,10 @@ namespace Bach.Model
     }
 
     /// <summary>Constructor.</summary>
-    /// <param name="root">The root note of the scale.</param>
+    /// <param name="root">The root pitchClass of the scale.</param>
     /// <param name="formulaIdOrName">Id or name of the formula as defined in the Registry.</param>
     /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
-    public Scale(Note root,
+    public Scale(PitchClass root,
                  string formulaIdOrName)
       : this(root, Registry.ScaleFormulas[formulaIdOrName])
     {
@@ -82,9 +82,9 @@ namespace Bach.Model
 
     #region Properties
 
-    /// <summary>Gets the root note of the scale.</summary>
+    /// <summary>Gets the root pitchClass of the scale.</summary>
     /// <value>The root.</value>
-    public Note Root { get; }
+    public PitchClass Root { get; }
 
     /// <summary>Gets the localized name of the scale.</summary>
     /// <value>The name.</value>
@@ -94,23 +94,23 @@ namespace Bach.Model
     /// <value>The formula.</value>
     public ScaleFormula Formula { get; }
 
-    /// <summary>Gets the notes that form this scale.</summary>
-    /// <value>A collection of notes.</value>
-    public NoteCollection Notes { get; }
+    /// <summary>Gets the pitchClasses that form this scale.</summary>
+    /// <value>A collection of pitchClasses.</value>
+    public PitchClassCollection PitchClasses { get; }
 
     /// <summary>Determines if this scale is theoretical.</summary>
-    /// <notes>
+    /// <remarks>
     ///   A theoretical scale is one that contains at least one double flat or double sharp accidental. These
     ///   scales exist in the musical theory realm but are not used in practice due to their complexity. There's always another
     ///   practical scale that contains exactly the same enharmonic pitches in the same order. See
     ///   <see cref="GetEnharmonicScale" /> for a way to obtain said scale.
-    /// </notes>
+    /// </remarks>
     /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
     public bool Theoretical { get; }
 
     /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
     /// <value>An enumerable that iterates through the scale in ascending fashion.</value>
-    public IEnumerable<Note> Ascending
+    public IEnumerable<PitchClass> Ascending
     {
       get
       {
@@ -118,9 +118,9 @@ namespace Bach.Model
 
         while( true )
         {
-          yield return Notes[index];
+          yield return PitchClasses[index];
 
-          index = ArrayExtensions.WrapIndex(Notes.Count, ++index);
+          index = ArrayExtensions.WrapIndex(PitchClasses.Count, ++index);
         }
 
         // ReSharper disable once IteratorNeverReturns
@@ -129,7 +129,7 @@ namespace Bach.Model
 
     /// <summary>Returns an enumerable that iterates through the scale in descending fashion.</summary>
     /// <value>An enumerable that iterates through the scale in descending fashion.</value>
-    public IEnumerable<Note> Descending
+    public IEnumerable<PitchClass> Descending
     {
       get
       {
@@ -137,9 +137,9 @@ namespace Bach.Model
 
         while( true )
         {
-          yield return Notes[index];
+          yield return PitchClasses[index];
 
-          index = ArrayExtensions.WrapIndex(Notes.Count, --index);
+          index = ArrayExtensions.WrapIndex(PitchClasses.Count, --index);
         }
 
         // ReSharper disable once IteratorNeverReturns
@@ -179,8 +179,8 @@ namespace Bach.Model
     /// <returns>The enharmonic scale.</returns>
     public Scale GetEnharmonicScale()
     {
-      Note expectedNote = Root.Accidental >= Accidental.Natural ? Root + 1 : Root - 1;
-      Note? enharmonicRoot = Root.GetEnharmonic(expectedNote.NoteName);
+      PitchClass expectedPitchClass = Root.Accidental >= Accidental.Natural ? Root + 1 : Root - 1;
+      PitchClass? enharmonicRoot = Root.GetEnharmonic(expectedPitchClass.NoteName);
       if( enharmonicRoot == null || enharmonicRoot.Value == Root )
       {
         return this;
@@ -190,45 +190,45 @@ namespace Bach.Model
       return scale;
     }
 
-    /// <summary>Determines if this instance contains the given notes.</summary>
-    /// <param name="notes">The notes.</param>
-    /// <returns>True if all the notes are in this scale; otherwise, false.</returns>
-    public bool Contains(IEnumerable<Note> notes) => notes.All(note => Notes.IndexOf(note) >= 0);
+    /// <summary>Determines if this instance contains the given pitchClasses.</summary>
+    /// <param name="notes">The pitchClasses.</param>
+    /// <returns>True if all the pitchClasses are in this scale; otherwise, false.</returns>
+    public bool Contains(IEnumerable<PitchClass> notes) => notes.All(note => PitchClasses.IndexOf(note) >= 0);
 
-    /// <summary>Enumerates the scales that contain the given notes matching exactly the intervals between them.</summary>
-    /// <param name="notes">The notes.</param>
+    /// <summary>Enumerates the scales that contain the given pitchClasses matching exactly the intervals between them.</summary>
+    /// <param name="notes">The pitchClasses.</param>
     /// <returns>
-    ///   An enumerator to all the scales that contain the notes.
+    ///   An enumerator to all the scales that contain the pitchClasses.
     /// </returns>
-    public static IEnumerable<Scale> ScalesContaining(IEnumerable<Note> notes) => ScalesContaining(IntervalMatch.Exact, notes);
+    public static IEnumerable<Scale> ScalesContaining(IEnumerable<PitchClass> notes) => ScalesContaining(IntervalMatch.Exact, notes);
 
-    /// <summary>Enumerates the scales that contain the given notes.</summary>
+    /// <summary>Enumerates the scales that contain the given pitchClasses.</summary>
     /// <param name="match">Interval matching strategy.</param>
-    /// <param name="notes">The notes.</param>
+    /// <param name="notes">The pitchClasses.</param>
     /// <returns>
-    ///   An enumerator to all the scales that contain the notes.
+    ///   An enumerator to all the scales that contain the pitchClasses.
     /// </returns>
     public static IEnumerable<Scale> ScalesContaining(IntervalMatch match,
-                                                      IEnumerable<Note> notes)
+                                                      IEnumerable<PitchClass> notes)
     {
 #if BRUTE_FORCE_MATCHING
       foreach( ScaleFormula formula in Registry.ScaleFormulas )
       {
-        Note root = Note.C;
+        PitchClass root = PitchClass.C;
 
         do
         {
           var scale = new Scale(root, formula);
-          if( scale.Contains(notes) )
+          if( scale.Contains(pitchClasses) )
           {
             yield return scale;
           }
 
           ++root;
-        } while( root != Note.C );
+        } while( root != PitchClass.C );
       }
 #else
-      var rootNotes = new CircularArray<Note>(notes);
+      var rootNotes = new CircularArray<PitchClass>(notes);
 
       do
       {
@@ -263,7 +263,7 @@ namespace Bach.Model
     ///   <para>"N": Name pattern. e.g. "C Major".</para>
     ///   <para>"R": Root pattern. e.g. "C".</para>
     ///   <para>"F": Formula name pattern. e.g. "Major".</para>
-    ///   <para>"S": Notes pattern. e.g. "C,E,G".</para>
+    ///   <para>"S": PitchClasses pattern. e.g. "C,E,G".</para>
     ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
     /// </remarks>
     public string ToString(string format) => ToString(format, null);
@@ -283,7 +283,7 @@ namespace Bach.Model
     ///   <para>"N": Name pattern. e.g. "C Major".</para>
     ///   <para>"R": Root pattern. e.g. "C".</para>
     ///   <para>"F": Formula name pattern. e.g. "Major".</para>
-    ///   <para>"S": Notes pattern. e.g. "C,E,G".</para>
+    ///   <para>"S": PitchClasses pattern. e.g. "C,E,G".</para>
     ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
     /// </remarks>
     public string ToString(string format,
@@ -316,7 +316,7 @@ namespace Bach.Model
             break;
 
           case 'S':
-            buf.Append(Notes);
+            buf.Append(PitchClasses);
             break;
 
           default:
@@ -372,7 +372,7 @@ namespace Bach.Model
     private static bool IsTheoretical(Scale scale)
     {
       // Scale is theoretical when it contains at least one double flat or sharp.
-      return scale.Notes.Any(note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp);
+      return scale.PitchClasses.Any(note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp);
     }
 
     #endregion
