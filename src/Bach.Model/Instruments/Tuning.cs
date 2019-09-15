@@ -94,14 +94,14 @@ namespace Bach.Model.Instruments
     /// <inheritdoc />
     public bool Equals(Tuning other)
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
       if( ReferenceEquals(this, other) )
       {
         return true;
+      }
+
+      if( other is null )
+      {
+        return false;
       }
 
       return InstrumentDefinition.Equals(other.InstrumentDefinition)
@@ -117,17 +117,12 @@ namespace Bach.Model.Instruments
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
       if( ReferenceEquals(this, obj) )
       {
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals((Tuning)obj);
+      return obj is Tuning other && Equals(other);
     }
 
     /// <inheritdoc />

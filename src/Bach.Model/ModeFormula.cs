@@ -94,7 +94,7 @@ namespace Bach.Model
         return true;
       }
 
-      if( ReferenceEquals(other, null) )
+      if( other is null )
       {
         return false;
       }
@@ -107,19 +107,14 @@ namespace Bach.Model
     #region Overrides
 
     /// <inheritdoc />
-    public override bool Equals(object other)
+    public override bool Equals(object obj)
     {
-      if( ReferenceEquals(other, this) )
+      if( ReferenceEquals(obj, this) )
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((ModeFormula)other);
+      return obj is ModeFormula other && Equals(other);
     }
 
     /// <inheritdoc />

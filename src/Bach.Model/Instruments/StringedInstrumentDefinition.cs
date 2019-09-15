@@ -60,17 +60,17 @@ namespace Bach.Model.Instruments
     /// <inheritdoc />
     public bool Equals(StringedInstrumentDefinition other)
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
       if( ReferenceEquals(this, other) )
       {
         return true;
       }
 
-      return StringCount == other.StringCount && base.Equals(other);
+      if( other is null )
+      {
+        return false;
+      }
+
+      return base.Equals(other) && StringCount == other.StringCount;
     }
 
     #endregion
@@ -80,17 +80,12 @@ namespace Bach.Model.Instruments
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
       if( ReferenceEquals(this, obj) )
       {
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals((StringedInstrumentDefinition)obj);
+      return obj is StringedInstrumentDefinition other && Equals(other);
     }
 
     /// <inheritdoc />

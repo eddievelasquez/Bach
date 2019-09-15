@@ -54,12 +54,17 @@ namespace Bach.Model.Instruments
     /// <inheritdoc />
     public bool Equals(InstrumentDefinition other)
     {
-      if( ReferenceEquals(null, other) )
+      if( ReferenceEquals(this, other) )
+      {
+        return true;
+      }
+
+      if( other is null )
       {
         return false;
       }
 
-      return ReferenceEquals(this, other) || Comparer.IdComparer.Equals(Id, other.Id);
+      return Comparer.IdComparer.Equals(Id, other.Id);
     }
 
     #endregion
@@ -75,6 +80,17 @@ namespace Bach.Model.Instruments
     #endregion
 
     #region Overrides
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+      if( ReferenceEquals(this, obj) )
+      {
+        return true;
+      }
+
+      return obj is InstrumentDefinition other && Equals(other);
+    }
 
     /// <inheritdoc />
     public override int GetHashCode() => Id.GetHashCode();

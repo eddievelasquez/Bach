@@ -279,12 +279,7 @@ namespace Bach.Model
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( obj is null || obj.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Pitch)obj);
+      return obj is Pitch other && Equals(other);
     }
 
     /// <inheritdoc />

@@ -110,7 +110,7 @@ namespace Bach.Model.Instruments
         return false;
       }
 
-      return obj is Fingering fingering && Equals(fingering);
+      return obj is Fingering other && Equals(other);
     }
 
     /// <inheritdoc />

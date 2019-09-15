@@ -412,12 +412,7 @@ namespace Bach.Model
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( obj is null || obj.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Interval)obj);
+      return obj is Interval other && Equals(other);
     }
 
     /// <inheritdoc />

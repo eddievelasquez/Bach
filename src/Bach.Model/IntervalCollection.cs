@@ -58,12 +58,17 @@ namespace Bach.Model
     /// <inheritdoc />
     public bool Equals(IEnumerable<Interval> other)
     {
-      if( ReferenceEquals(null, other) )
+      if( ReferenceEquals(this, other) )
+      {
+        return true;
+      }
+
+      if( other is null )
       {
         return false;
       }
 
-      return ReferenceEquals(this, other) || _intervals.SequenceEqual(other);
+      return _intervals.SequenceEqual(other);
     }
 
     #endregion
@@ -107,22 +112,12 @@ namespace Bach.Model
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
       if( ReferenceEquals(this, obj) )
       {
         return true;
       }
 
-      if( obj.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((IntervalCollection)obj);
+      return obj is IntervalCollection other && Equals(other);
     }
 
     /// <inheritdoc />

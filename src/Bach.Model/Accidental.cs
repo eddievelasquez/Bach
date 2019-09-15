@@ -226,11 +226,6 @@ namespace Bach.Model
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
       return obj is Accidental other && Equals(other);
     }
 

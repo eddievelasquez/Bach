@@ -68,7 +68,12 @@ namespace Bach.Model
         return true;
       }
 
-      return !ReferenceEquals(other, null) && _pitches.SequenceEqual(other);
+      if( other is null )
+      {
+        return false;
+      }
+
+      return _pitches.SequenceEqual(other);
     }
 
     #endregion
@@ -174,19 +179,14 @@ namespace Bach.Model
     public override string ToString() => ToString(this);
 
     /// <inheritdoc />
-    public override bool Equals(object other)
+    public override bool Equals(object obj)
     {
-      if( ReferenceEquals(other, this) )
+      if( ReferenceEquals(obj, this) )
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((PitchCollection)other);
+      return obj is PitchCollection other && Equals(other);
     }
 
     /// <inheritdoc />

@@ -1,4 +1,4 @@
-﻿// Module Name: Chord.cs
+// Module Name: Chord.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2019  Eddie Velasquez.
 //
@@ -141,7 +141,7 @@ namespace Bach.Model
         return true;
       }
 
-      if( ReferenceEquals(other, null) )
+      if( other is null )
       {
         return false;
       }
@@ -185,19 +185,14 @@ namespace Bach.Model
     #region Overrides
 
     /// <inheritdoc />
-    public override bool Equals(object other)
+    public override bool Equals(object obj)
     {
-      if( ReferenceEquals(other, this) )
+      if( ReferenceEquals(obj, this) )
       {
         return true;
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Chord)other);
+      return obj is Chord other && Equals(other);
     }
 
     /// <inheritdoc />

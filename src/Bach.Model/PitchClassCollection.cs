@@ -64,12 +64,17 @@ namespace Bach.Model
     /// <inheritdoc />
     public bool Equals(IEnumerable<PitchClass> other)
     {
-      if( ReferenceEquals(null, other) )
+      if( ReferenceEquals(this, other) )
+      {
+        return true;
+      }
+
+      if( other is null )
       {
         return false;
       }
 
-      return ReferenceEquals(this, other) || _pitchClasses.SequenceEqual(other);
+      return _pitchClasses.SequenceEqual(other);
     }
 
     #endregion
@@ -150,19 +155,14 @@ namespace Bach.Model
     public override string ToString() => string.Join(",", _pitchClasses);
 
     /// <inheritdoc />
-    public override bool Equals(object other)
+    public override bool Equals(object obj)
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, other) )
+      if( ReferenceEquals(this, obj) )
       {
         return true;
       }
 
-      return other.GetType() == GetType() && Equals((PitchClassCollection)other);
+      return obj is PitchClassCollection other && Equals(other);
     }
 
     /// <inheritdoc />

@@ -71,17 +71,17 @@ namespace Bach.Model.Instruments
     /// <inheritdoc />
     public bool Equals(StringedInstrument other)
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
       if( ReferenceEquals(this, other) )
       {
         return true;
       }
 
-      return Equals(Tuning, other.Tuning) && PositionCount == other.PositionCount && base.Equals(other);
+      if( other is null )
+      {
+        return false;
+      }
+
+      return base.Equals(other) && Equals(Tuning, other.Tuning) && PositionCount == other.PositionCount;
     }
 
     #endregion
@@ -191,7 +191,7 @@ namespace Bach.Model.Instruments
 
       // Adjust the octave if necessary
       int octave = startPitch.Octave;
-      if (startPitch.PitchClass < scale.Root)
+      if( startPitch.PitchClass < scale.Root )
       {
         --octave;
       }
@@ -240,17 +240,12 @@ namespace Bach.Model.Instruments
     /// <inheritdoc />
     public override bool Equals(object obj)
     {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
       if( ReferenceEquals(this, obj) )
       {
         return true;
       }
 
-      return obj.GetType() == GetType() && Equals((StringedInstrument)obj);
+      return obj is StringedInstrument other && Equals(other);
     }
 
     /// <inheritdoc />
