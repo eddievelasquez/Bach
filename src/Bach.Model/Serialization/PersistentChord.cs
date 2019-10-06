@@ -24,10 +24,7 @@
 
 namespace Bach.Model.Serialization
 {
-  using Newtonsoft.Json;
-
-  [JsonObject("Chord")]
-  internal class PersistentChord
+  internal class Chord
   {
     #region Properties
 

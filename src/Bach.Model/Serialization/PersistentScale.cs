@@ -24,10 +24,7 @@
 
 namespace Bach.Model.Serialization
 {
-  using Newtonsoft.Json;
-
-  [JsonObject("Scale")]
-  internal class PersistentScale
+  internal class Scale
   {
     #region Properties
 

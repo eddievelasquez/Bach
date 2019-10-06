@@ -25,11 +25,13 @@
 namespace Bach.Model
 {
   using System;
+  using System.Diagnostics;
   using System.IO;
   using System.Reflection;
+  using System.Text.Json;
+  using System.Text.Json.Serialization;
   using Instruments;
   using Internal;
-  using Newtonsoft.Json;
   using Serialization;
 
   /// <summary>
@@ -38,6 +40,40 @@ namespace Bach.Model
   /// </summary>
   public static class Registry
   {
+    #region Nested type: VersionParser
+
+    /// <summary>
+    ///   The JSON Deserializer for System.Text.Json doesn't support System.Version as
+    ///   of version 3.0...
+    /// </summary>
+    /// <seealso cref="System.Text.Json.Serialization.JsonConverter{System.Version}" />
+    private class VersionParser : JsonConverter<Version>
+    {
+      #region Overrides
+
+      /// <inheritdoc />
+      public override Version Read(ref Utf8JsonReader reader,
+                                   Type typeToConvert,
+                                   JsonSerializerOptions options)
+      {
+        Debug.Assert(typeToConvert == typeof(Version));
+        return Version.Parse(reader.GetString());
+      }
+
+      /// <inheritdoc />
+      public override void Write(Utf8JsonWriter writer,
+                                 Version value,
+                                 JsonSerializerOptions options)
+      {
+        // Unused for now.
+        throw new NotImplementedException();
+      }
+
+      #endregion
+    }
+
+    #endregion
+
     #region Constants
 
     private const string LibraryFileName = "Bach.Model.Library.json";
@@ -50,42 +86,44 @@ namespace Bach.Model
     {
       // Load the library from the JSON file in the same directory as
       // this assembly.
-      Assembly assembly = Assembly.GetExecutingAssembly();
-      string directory = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath);
-      string path = Path.Combine(directory ?? "", LibraryFileName);
-      string s = File.ReadAllText(path);
+      var assembly = Assembly.GetExecutingAssembly();
+      var directory = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath);
+      var path = Path.Combine(directory ?? "", LibraryFileName);
+      var s = File.ReadAllText(path);
 
       // Deserialize
-      var library = JsonConvert.DeserializeObject<PersistentLibrary>(s);
+
+      // Use custom deserializer for System.Version, which is not currently supported
+      // by .NET Core 3.0
+      var options = new JsonSerializerOptions();
+      options.Converters.Add(new VersionParser());
+
+      var library = JsonSerializer.Deserialize<Library>(s, options);
 
       // Load data
       ScaleFormulas = new NamedObjectCollection<ScaleFormula>();
-      foreach( PersistentScale scale in library.Scales )
+      foreach (var scale in library.Scales)
       {
-        ScaleFormula formula = new ScaleFormulaBuilder(scale.Id, scale.Name)
-                               .SetIntervals(scale.Formula)
-                               .AddCategory(scale.Categories)
-                               .AddAlias(scale.Alias)
-                               .Build();
+        var formula = new ScaleFormulaBuilder(scale.Id, scale.Name).SetIntervals(scale.Formula).AddCategory(scale.Categories).AddAlias(scale.Alias).Build();
         ScaleFormulas.Add(formula);
       }
 
       ChordFormulas = new NamedObjectCollection<ChordFormula>();
-      foreach( PersistentChord chord in library.Chords )
+      foreach (var chord in library.Chords)
       {
         ChordFormulas.Add(new ChordFormula(chord.Id, chord.Name, chord.Symbol, chord.Formula));
       }
 
       StringedInstrumentDefinitions = new NamedObjectCollection<StringedInstrumentDefinition>();
-      foreach( PersistentStringedInstrument instrument in library.StringedInstruments )
+      foreach (var instrument in library.StringedInstruments)
       {
         var builder = new StringedInstrumentDefinitionBuilder(instrument.Id, instrument.Name, instrument.StringCount);
-        foreach( PersistentTuning tuning in instrument.Tunings )
+        foreach (var tuning in instrument.Tunings)
         {
           builder.AddTuning(tuning.Id, tuning.Name, tuning.Pitches);
         }
 
-        StringedInstrumentDefinition definition = builder.Build();
+        var definition = builder.Build();
         StringedInstrumentDefinitions.Add(definition);
       }
     }

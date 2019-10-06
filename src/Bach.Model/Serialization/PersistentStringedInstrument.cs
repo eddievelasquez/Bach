@@ -25,17 +25,15 @@
 namespace Bach.Model.Serialization
 {
   using System.Collections.Generic;
-  using Newtonsoft.Json;
 
-  [JsonObject("StringedInstrument")]
-  internal class PersistentStringedInstrument
+  internal class StringedInstrument
   {
     #region Properties
 
     public string Id { get; set; }
     public string Name { get; set; }
     public int StringCount { get; set; }
-    public List<PersistentTuning> Tunings { get; set; }
+    public List<Tuning> Tunings { get; set; }
 
     #endregion
   }

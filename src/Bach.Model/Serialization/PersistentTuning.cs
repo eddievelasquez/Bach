@@ -24,10 +24,7 @@
 
 namespace Bach.Model.Serialization
 {
-  using Newtonsoft.Json;
-
-  [JsonObject("Tuning")]
-  internal class PersistentTuning
+  internal class Tuning
   {
     #region Properties
 
