@@ -1,6 +1,6 @@
 ﻿// Module Name: Triad.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,92 +22,83 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System;
+
+namespace Bach.Model;
+
+/// <summary>A triad is a set of three pitchClasses stacked in thirds.</summary>
+public sealed class Triad: Chord
 {
-  using System;
+  private static readonly ChordFormula s_majorTriad
+    = new( "MajorTriad", "MajorTriad", "", Interval.Unison, Interval.MajorThird, Interval.Fifth );
 
-  /// <summary>A triad is a set of three pitchClasses stacked in thirds.</summary>
-  public class Triad: Chord
+  private static readonly ChordFormula s_minorTriad
+    = new( "MinorTriad", "MinorTriad", "m", Interval.Unison, Interval.MinorThird, Interval.Fifth );
+
+  private static readonly ChordFormula s_diminishedTriad = new( "DiminishedTriad",
+                                                                "DiminishedTriad",
+                                                                "dim",
+                                                                Interval.Unison,
+                                                                Interval.MinorThird,
+                                                                Interval.DiminishedFifth );
+
+  private static readonly ChordFormula s_augmentedTriad = new( "AugmentedTriad",
+                                                               "AugmentedTriad",
+                                                               "aug",
+                                                               Interval.Unison,
+                                                               Interval.MajorThird,
+                                                               Interval.AugmentedFifth );
+
+  /// <summary>Constructor.</summary>
+  /// <param name="root">The triad's root pitch class.</param>
+  /// <param name="quality">The triad's quality.</param>
+  public Triad(
+    PitchClass root,
+    TriadQuality quality )
+    : base( root, GetFormula( quality ) )
   {
-    #region Constants
+    Quality = quality;
+  }
 
-    private static readonly ChordFormula s_majorTriad = new ChordFormula("MajorTriad", "MajorTriad", "", Interval.Unison, Interval.MajorThird, Interval.Fifth);
+  private Triad(
+    PitchClass root,
+    ChordFormula formula,
+    int inversion )
+    : base( root, formula, inversion )
+  {
+  }
 
-    private static readonly ChordFormula s_minorTriad = new ChordFormula("MinorTriad", "MinorTriad", "m", Interval.Unison, Interval.MinorThird, Interval.Fifth);
+  /// <summary>Gets the triad's quality.</summary>
+  /// <value>The quality.</value>
+  public TriadQuality Quality { get; }
 
-    private static readonly ChordFormula s_diminishedTriad =
-      new ChordFormula("DiminishedTriad", "DiminishedTriad", "dim", Interval.Unison, Interval.MinorThird, Interval.DiminishedFifth);
+  /// <summary>Generates an inversion for the current triad.</summary>
+  /// <param name="inversion">The inversion to generate.</param>
+  /// <returns>A Triad.</returns>
+  public new Triad GetInversion( int inversion )
+  {
+    var result = new Triad( Root, Formula, inversion );
+    return result;
+  }
 
-    private static readonly ChordFormula s_augmentedTriad =
-      new ChordFormula("AugmentedTriad", "AugmentedTriad", "aug", Interval.Unison, Interval.MajorThird, Interval.AugmentedFifth);
-
-    #endregion
-
-    #region Constructors
-
-    /// <summary>Constructor.</summary>
-    /// <param name="root">The triad's root pitch class.</param>
-    /// <param name="quality">The triad's quality.</param>
-    public Triad(PitchClass root,
-                 TriadQuality quality)
-      : base(root, GetFormula(quality))
+  private static ChordFormula GetFormula( TriadQuality quality )
+  {
+    switch( quality )
     {
-      Quality = quality;
+      case TriadQuality.Major:
+        return s_majorTriad;
+
+      case TriadQuality.Minor:
+        return s_minorTriad;
+
+      case TriadQuality.Diminished:
+        return s_diminishedTriad;
+
+      case TriadQuality.Augmented:
+        return s_augmentedTriad;
+
+      default:
+        throw new ArgumentOutOfRangeException( nameof( quality ), quality, null );
     }
-
-    private Triad(PitchClass root,
-                  ChordFormula formula,
-                  int inversion)
-      : base(root, formula, inversion)
-    {
-    }
-
-    #endregion
-
-    #region Properties
-
-    /// <summary>Gets the triad's quality.</summary>
-    /// <value>The quality.</value>
-    public TriadQuality Quality { get; }
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>Generates an inversion for the current triad.</summary>
-    /// <param name="inversion">The inversion to generate.</param>
-    /// <returns>A Triad.</returns>
-    public new Triad GetInversion(int inversion)
-    {
-      var result = new Triad(Root, Formula, inversion);
-      return result;
-    }
-
-    #endregion
-
-    #region  Implementation
-
-    private static ChordFormula GetFormula(TriadQuality quality)
-    {
-      switch( quality )
-      {
-        case TriadQuality.Major:
-          return s_majorTriad;
-
-        case TriadQuality.Minor:
-          return s_minorTriad;
-
-        case TriadQuality.Diminished:
-          return s_diminishedTriad;
-
-        case TriadQuality.Augmented:
-          return s_augmentedTriad;
-
-        default:
-          throw new ArgumentOutOfRangeException(nameof(quality), quality, null);
-      }
-    }
-
-    #endregion
   }
 }

@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.156
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bach.Model", "src\Bach.Model\Bach.Model.csproj", "{68BB6A6E-E7E3-4BBE-A729-AFE012665689}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bach.Model.Test", "src\Bach.Model.Test\Bach.Model.Test.csproj", "{110D627B-3CC3-40EA-B213-B338E03C7C17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bach.Cli", "src\Bach.Cli\Bach.Cli.csproj", "{A20B4855-CE8B-4266-82B0-1DC867830F7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bach.Cli", "src\Bach.Cli\Bach.Cli.csproj", "{A20B4855-CE8B-4266-82B0-1DC867830F7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8AFA9D67-FBA4-4F3E-A750-712C0D85C26D}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿// Module Name: INamedObject.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,25 +22,20 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal
+namespace Bach.Model.Internal;
+
+/// <summary>Interface for a named object.</summary>
+/// <remarks>
+///   A named object has an invariant culture, case insensitive identifier and a current culture, case insensitive
+///   name.
+/// </remarks>
+public interface INamedObject
 {
-  /// <summary>Interface for a named object.</summary>
-  /// <remarks>
-  ///   A named object has an invariant culture, case insensitive identifier and a current culture, case insensitive
-  ///   name.
-  /// </remarks>
-  public interface INamedObject
-  {
-    #region Properties
+  /// <summary>Returns the language-neutral identifier for the current instance.</summary>
+  /// <value>The identifier.</value>
+  string Id { get; }
 
-    /// <summary>Returns the language-neutral identifier for the current instance.</summary>
-    /// <value>The identifier.</value>
-    string Id { get; }
-
-    /// <summary>Returns the localizable name for the current instance. </summary>
-    /// <value>The name.</value>
-    string Name { get; }
-
-    #endregion
-  }
+  /// <summary>Returns the localizable name for the current instance. </summary>
+  /// <value>The name.</value>
+  string Name { get; }
 }

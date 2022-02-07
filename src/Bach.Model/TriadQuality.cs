@@ -1,6 +1,6 @@
 ﻿// Module Name: TriadQuality.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,21 +22,20 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+namespace Bach.Model;
+
+/// <summary>Values that represent triad qualities.</summary>
+public enum TriadQuality
 {
-  /// <summary>Values that represent triad qualities.</summary>
-  public enum TriadQuality
-  {
-    /// <summary>A triad that contains a major third and a perfect fifth.</summary>
-    Major,
+  /// <summary>A triad that contains a major third and a perfect fifth.</summary>
+  Major,
 
-    /// <summary>A triad that contains a minor third and a perfect fifth.</summary>
-    Minor,
+  /// <summary>A triad that contains a minor third and a perfect fifth.</summary>
+  Minor,
 
-    /// <summary>A triad that contains a minor third and a diminished fifth.</summary>
-    Diminished,
+  /// <summary>A triad that contains a minor third and a diminished fifth.</summary>
+  Diminished,
 
-    /// <summary>A triad that contains a major third and an augmented fifth.</summary>
-    Augmented
-  }
+  /// <summary>A triad that contains a major third and an augmented fifth.</summary>
+  Augmented
 }

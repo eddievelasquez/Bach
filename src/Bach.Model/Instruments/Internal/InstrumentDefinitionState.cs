@@ -1,6 +1,6 @@
-// Module Name: InstrumentDefinitionState.cs
+﻿// Module Name: InstrumentDefinitionState.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,31 +22,23 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments.Internal
+using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments.Internal;
+
+internal abstract class InstrumentDefinitionState
 {
-  using Model.Internal;
-
-  internal abstract class InstrumentDefinitionState
+  protected InstrumentDefinitionState(
+    string id,
+    string name )
   {
-    #region Constructors
+    Requires.NotNullOrEmpty( id );
+    Requires.NotNullOrEmpty( name );
 
-    protected InstrumentDefinitionState(string id,
-                                        string name)
-    {
-      Contract.RequiresNotNullOrEmpty(id, "Must provide an instrument id");
-      Contract.RequiresNotNullOrEmpty(name, "Must provide an instrument name");
-
-      Id = id;
-      Name = name;
-    }
-
-    #endregion
-
-    #region Properties
-
-    public string Id { get; }
-    public string Name { get; }
-
-    #endregion
+    Id = id;
+    Name = name;
   }
+
+  public string Id { get; }
+  public string Name { get; }
 }

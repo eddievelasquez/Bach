@@ -1,6 +1,6 @@
-// Module Name: TuningCollection.cs
+﻿// Module Name: TuningCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,114 +22,105 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Bach.Model.Internal;
+using Comparer = Bach.Model.Internal.Comparer;
+
+namespace Bach.Model.Instruments;
+
+/// <summary>Collection of tunings.</summary>
+public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
 {
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Diagnostics;
-  using Model.Internal;
-  using Comparer = Model.Internal.Comparer;
+  private readonly string _instrumentId;
+  private readonly Dictionary<string, Tuning> _tunings = new( Comparer.IdComparer );
 
-  /// <summary>Collection of tunings.</summary>
-  public class TuningCollection: IReadOnlyDictionary<string, Tuning>
+  internal TuningCollection( string instrumentId )
   {
-    #region Data Members
+    _instrumentId = instrumentId;
+  }
 
-    private readonly string _instrumentId;
-    private readonly Dictionary<string, Tuning> _tunings = new Dictionary<string, Tuning>(Comparer.IdComparer);
-
-    #endregion
-
-    #region Constructors
-
-    internal TuningCollection(string instrumentId)
+  /// <summary>Gets the standard tuning.</summary>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the tuning collection is empty.</exception>
+  /// <value>The standard.</value>
+  public Tuning Standard
+  {
+    get
     {
-      _instrumentId = instrumentId;
+      Requires.GreaterThan( Count, 0 );
+      return this["Standard"];
     }
+  }
 
-    #endregion
+  /// <summary>Gets the number of tunings in the collection.</summary>
+  /// <value>The count.</value>
+  public int Count => _tunings.Count;
 
-    #region Properties
+  /// <inheritdoc />
+  /// <summary>Gets the tuning that has the specified language-neutral id.</summary>
+  /// <returns>The tuning that has the specified id in the read-only dictionary.</returns>
+  public Tuning this[ string id ] => _tunings[id];
 
-    /// <summary>Gets the standard tuning.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the tuning collection is empty.</exception>
-    /// <value>The standard.</value>
-    public Tuning Standard
-    {
-      get
-      {
-        Contract.Requires<ArgumentOutOfRangeException>(Count > 0);
-        return this["Standard"];
-      }
-    }
+  /// <summary>
+  ///   Gets an enumerable collection that contains the keys for all the tunings in the collection.
+  /// </summary>
+  /// <value>An enumerable collection that contains the keys.</value>
+  public IEnumerable<string> Keys => _tunings.Keys;
 
-    #endregion
+  /// <summary>
+  ///   Gets an enumerable collection that contains all the tunings in the collection.
+  /// </summary>
+  /// <value>An enumerable collection that contains the tunings.</value>
+  public IEnumerable<Tuning> Values => _tunings.Values;
 
-    #region IReadOnlyDictionary<string,Tuning> Members
+  /// <inheritdoc />
+  public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator()
+  {
+    return _tunings.GetEnumerator();
+  }
 
-    /// <inheritdoc />
-    public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator() => _tunings.GetEnumerator();
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
 
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+  /// <summary>
+  ///   Determines whether the collection contains a tuning that has the specified language-neutral id.
+  /// </summary>
+  /// <param name="id">The id to locate.</param>
+  /// <returns>
+  ///   true if the collection contains an tuning that has the specified id; otherwise,
+  ///   false.
+  /// </returns>
+  public bool ContainsKey( string id )
+  {
+    return _tunings.ContainsKey( id );
+  }
 
-    /// <summary>Gets the number of tunings in the collection.</summary>
-    /// <value>The count.</value>
-    public int Count => _tunings.Count;
+  /// <summary>Gets the value that is associated with the specified id.</summary>
+  /// <param name="id">The language-neutral id to locate.</param>
+  /// <param name="value">
+  ///   [out] When this method returns, the tuning associated with the specified id,
+  ///   if the id is found; otherwise, it returns null. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>
+  ///   true if a tuning with the given id is found; otherwise, false.
+  /// </returns>
+  public bool TryGetValue(
+    string id,
+    out Tuning value )
+  {
+    return _tunings.TryGetValue( id, out value );
+  }
 
-    /// <summary>
-    ///   Determines whether the collection contains a tuning that has the specified language-neutral id.
-    /// </summary>
-    /// <param name="id">The id to locate.</param>
-    /// <returns>
-    ///   true if the collection contains an tuning that has the specified id; otherwise,
-    ///   false.
-    /// </returns>
-    public bool ContainsKey(string id) => _tunings.ContainsKey(id);
+  internal void Add( Tuning tuning )
+  {
+    Requires.NotNull( tuning );
 
-    /// <summary>Gets the value that is associated with the specified id.</summary>
-    /// <param name="id">The language-neutral id to locate.</param>
-    /// <param name="value">
-    ///   [out] When this method returns, the tuning associated with the specified id,
-    ///   if the id is found; otherwise, it returns null. This parameter is passed uninitialized.
-    /// </param>
-    /// <returns>
-    ///   true if a tuning with the given id is found; otherwise, false.
-    /// </returns>
-    public bool TryGetValue(string id,
-                            out Tuning value)
-      => _tunings.TryGetValue(id, out value);
-
-    /// <inheritdoc />
-    /// <summary>Gets the tuning that has the specified language-neutral id.</summary>
-    /// <returns>The tuning that has the specified id in the read-only dictionary.</returns>
-    public Tuning this[string id] => _tunings[id];
-
-    /// <summary>
-    ///   Gets an enumerable collection that contains the keys for all the tunings in the collection.
-    /// </summary>
-    /// <value>An enumerable collection that contains the keys.</value>
-    public IEnumerable<string> Keys => _tunings.Keys;
-
-    /// <summary>
-    ///   Gets an enumerable collection that contains all the tunings in the collection.
-    /// </summary>
-    /// <value>An enumerable collection that contains the tunings.</value>
-    public IEnumerable<Tuning> Values => _tunings.Values;
-
-    #endregion
-
-    #region  Implementation
-
-    internal void Add(Tuning tuning)
-    {
-      Contract.Requires<ArgumentNullException>(tuning != null);
-
-      Debug.Assert(_instrumentId.Equals(tuning.InstrumentDefinition.Id));
-      _tunings.Add(tuning.Id, tuning);
-    }
-
-    #endregion
+    Debug.Assert( _instrumentId.Equals( tuning.InstrumentDefinition.Id ) );
+    _tunings.Add( tuning.Id, tuning );
   }
 }

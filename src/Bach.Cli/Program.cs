@@ -1,6 +1,6 @@
 ﻿// Module Name: Program.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,202 +22,34 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Cli
+using System.CommandLine.Builder;
+using System.CommandLine.Help;
+using System.CommandLine.Parsing;
+using System.Linq;
+using System.Threading.Tasks;
+using Spectre.Console;
+
+namespace Bach.Cli;
+
+internal static class Program
 {
-  using System;
-  using System.Linq;
-  using McMaster.Extensions.CommandLineUtils;
-  using Model;
+#region Public Methods
 
-  internal class Program
+  public static async Task<int> Main( string[] args )
   {
-    #region Public Methods
+    var rootCommand = new BachRootCommand();
+    var parser = new CommandLineBuilder( rootCommand ).UseDefaults()
+                                                      .UseHelp( ctx => ctx.HelpBuilder.CustomizeLayout(
+                                                                  _ => HelpBuilder.Default.GetLayout()
+                                                                    .Skip( 1 )
+                                                                    .Prepend( _ => AnsiConsole.Write(
+                                                                                new FigletText(
+                                                                                  rootCommand.Description! ).Color(
+                                                                                  Color.CadetBlue ) ) ) ) )
+                                                      .Build();
 
-    public static int Main(string[] args)
-    {
-      var app = new CommandLineApplication { Name = "bach", Description = "CLI for Bach.Model" };
-
-      try
-      {
-        app.HelpOption(true);
-
-        app.OnExecute(() =>
-        {
-          app.ShowHelp();
-          return 1;
-        });
-
-        app.Command("list",
-                    cmd =>
-                    {
-                      cmd.Command("scales", ListScales);
-                      cmd.Command("chords", ListChords);
-                    });
-        app.Command("scale", DisplayScale);
-        app.Command("chord", DisplayChord);
-        app.Command("intervals", DisplayIntervals);
-        app.Command("scales-containing", DisplayScalesForNotes);
-        app.Command("notes", DisplayPitchClasses);
-
-        return app.Execute(args);
-      }
-      catch( Exception ex )
-      {
-        Console.WriteLine($"ERROR: {ex.Message}");
-        app.ShowHelp();
-        return 1;
-      }
-    }
-
-    #endregion
-
-    #region  Implementation
-
-    private static void ListScales(CommandLineApplication app)
-    {
-      app.OnExecute(() =>
-      {
-        Console.WriteLine("Scales:\n");
-
-        foreach( ScaleFormula formula in Registry.ScaleFormulas )
-        {
-          Console.WriteLine($"{formula.Name}");
-          Console.WriteLine($"  Formula: {formula.Intervals}");
-
-          if( formula.Categories.Count > 0 )
-          {
-            Console.WriteLine("  Categories: " + string.Join(", ", formula.Categories));
-          }
-
-          if( formula.Aliases.Count > 0 )
-          {
-            Console.WriteLine("  Aliases: " + string.Join(", ", formula.Aliases));
-          }
-
-          Console.WriteLine();
-        }
-      });
-    }
-
-    private static void ListChords(CommandLineApplication app)
-    {
-      app.OnExecute(() =>
-      {
-        Console.WriteLine("Chords:\n");
-
-        foreach( ChordFormula formula in Registry.ChordFormulas )
-        {
-          Console.WriteLine($"{formula.Name}");
-
-          if( !string.IsNullOrEmpty(formula.Symbol) )
-          {
-            Console.WriteLine($"  Symbol: {formula.Symbol}");
-          }
-
-          Console.WriteLine($"  Formula: {formula.Intervals}");
-          Console.WriteLine();
-        }
-      });
-    }
-
-    private static void DisplayScale(CommandLineApplication app)
-    {
-      CommandArgument formulaArg = app.Argument("name", "Required. The name of the scale").IsRequired();
-      CommandArgument rootArg = app.Argument("root", "Required. The scale root", true).IsRequired();
-
-      app.OnExecute(() =>
-      {
-        ScaleFormula formula = Registry.ScaleFormulas[formulaArg.Value];
-
-        Console.WriteLine($"{formula.Name} scale => {formula.Intervals}");
-        Console.WriteLine();
-
-        foreach( string rootValue in rootArg.Values )
-        {
-          PitchClass root = PitchClass.Parse(rootValue);
-          var scale = new Scale(root, formula);
-          Console.WriteLine($"  {root} {formula.Name} {{{scale.PitchClasses}}}");
-        }
-
-        Console.WriteLine();
-      });
-    }
-
-    private static void DisplayChord(CommandLineApplication app)
-    {
-      CommandArgument formulaArg = app.Argument("name", "required. The name of the chord").IsRequired();
-      CommandArgument rootArg = app.Argument("root", "Required. The chord root", true).IsRequired();
-
-      app.OnExecute(() =>
-      {
-        ChordFormula formula = Registry.ChordFormulas[formulaArg.Value];
-
-        Console.WriteLine($"{formula.Name} chord => {formula.Intervals}");
-        Console.WriteLine();
-
-        foreach( string rootValue in rootArg.Values )
-        {
-          PitchClass root = PitchClass.Parse(rootValue);
-          var chord = new Chord(root, formula);
-
-          Console.WriteLine($"  {chord} {{{chord.PitchClasses}}}");
-        }
-
-        Console.WriteLine();
-      });
-    }
-
-    private static void DisplayIntervals(CommandLineApplication app)
-    {
-      CommandArgument notesArg = app.Argument("notes", "The notes").IsRequired();
-
-      app.OnExecute(() =>
-      {
-        PitchClassCollection pitchClasses = PitchClassCollection.Parse(notesArg.Value);
-        Interval[] intervals = pitchClasses.Intervals().ToArray();
-
-        Console.WriteLine($"Notes: {{{string.Join(",", pitchClasses)}}}");
-        Console.WriteLine($"    => {{{string.Join(",", intervals.Select(interval => interval.ToString("Sq")))}}}");
-        Console.WriteLine();
-      });
-    }
-
-    private static void DisplayScalesForNotes(CommandLineApplication app)
-    {
-      CommandArgument notesArg = app.Argument("notes", "The notes that will be searched for").IsRequired();
-
-      app.OnExecute(() =>
-      {
-        PitchClassCollection pitchClasses = PitchClassCollection.Parse(notesArg.Value);
-
-        Console.WriteLine($"Scales containing: {{{string.Join(",", pitchClasses)}}}");
-        Console.WriteLine();
-
-        foreach( Scale scale in Scale.ScalesContaining(pitchClasses) )
-        {
-          Console.WriteLine($"  {scale.Name} {{{string.Join(",", scale.PitchClasses)}}}");
-          Console.WriteLine($"    => {{{string.Join(",", scale.Formula.Intervals.Select(interval => interval.ToString("Sq")))}}}");
-          Console.WriteLine();
-        }
-      });
-    }
-
-    private static void DisplayPitchClasses(CommandLineApplication app)
-    {
-      CommandArgument rootArg = app.Argument("root", "Root note").IsRequired();
-      CommandArgument intervalsArg = app.Argument("intervals", "Intervals to render").IsRequired();
-
-      app.OnExecute(() =>
-      {
-        PitchClass root = PitchClass.Parse(rootArg.Value);
-        Interval[] intervals = Formula.ParseIntervals(intervalsArg.Value);
-
-        Console.WriteLine($"Notes: {{{string.Join(",", Formula.Generate(root, intervals))}}}");
-        Console.WriteLine($"    => {{{string.Join(",", intervals.Select(interval => interval.ToString("Sq")))}}}");
-        Console.WriteLine();
-      });
-    }
-
-    #endregion
+    return await parser.InvokeAsync( args );
   }
+
+#endregion
 }

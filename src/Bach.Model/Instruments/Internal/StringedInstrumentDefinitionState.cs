@@ -1,6 +1,6 @@
-// Module Name: StringedInstrumentDefinitionState.cs
+﻿// Module Name: StringedInstrumentDefinitionState.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,33 +22,24 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments.Internal
+using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments.Internal;
+
+internal sealed class StringedInstrumentDefinitionState: InstrumentDefinitionState
 {
-  using System;
-  using Model.Internal;
-
-  internal class StringedInstrumentDefinitionState: InstrumentDefinitionState
+  public StringedInstrumentDefinitionState(
+    string id,
+    string name,
+    int stringCount )
+    : base( id, name )
   {
-    #region Constructors
+    Requires.GreaterThan( stringCount, 0 );
 
-    public StringedInstrumentDefinitionState(string id,
-                                             string name,
-                                             int stringCount)
-      : base(id, name)
-    {
-      Contract.Requires<ArgumentOutOfRangeException>(stringCount > 0, "Must provide a string count greater than zero");
-
-      StringCount = stringCount;
-      Tunings = new TuningCollection(id);
-    }
-
-    #endregion
-
-    #region Properties
-
-    public int StringCount { get; }
-    public TuningCollection Tunings { get; }
-
-    #endregion
+    StringCount = stringCount;
+    Tunings = new TuningCollection( id );
   }
+
+  public int StringCount { get; }
+  public TuningCollection Tunings { get; }
 }

@@ -1,6 +1,6 @@
 ﻿// Module Name: IntervalMatch.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,15 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
-{
-  /// <summary>Determines the interval matching strategy when establishing if the formula contains the giiven intervals.</summary>
-  public enum IntervalMatch
-  {
-    /// <summary> Only the matching intervals are evaluated.</summary>
-    Exact,
+namespace Bach.Model;
 
-    /// <summary>  Enharmonic (diminished and augmented) intervals are also evaluated.</summary>
-    Enharmonic
-  }
+/// <summary>Determines the interval matching strategy when establishing if the formula contains the given intervals.</summary>
+public enum IntervalMatch
+{
+  /// <summary> Only the matching intervals are evaluated.</summary>
+  Exact,
+
+  /// <summary>  Enharmonic (diminished and augmented) intervals are also evaluated.</summary>
+  Enharmonic
 }

@@ -1,6 +1,6 @@
-// Module Name: ScaleFormula.cs
+﻿// Module Name: ScaleFormula.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,47 +22,39 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System.Collections.Immutable;
+using System.Diagnostics;
+
+namespace Bach.Model;
+
+/// <summary>A scale formula defines how the pitchClasses of a scale relate to each other.</summary>
+public class ScaleFormula: Formula
 {
-  using System.Collections.Immutable;
-  using System.Diagnostics;
-
-  /// <summary>A scale formula defines how the pitchClasses of a scale relate to each other.</summary>
-  public class ScaleFormula: Formula
+  /// <inheritdoc />
+  internal ScaleFormula(
+    string id,
+    string name,
+    Interval[] intervals,
+    IImmutableSet<string> categories,
+    IImmutableSet<string> aliases )
+    : base( id, name, intervals )
   {
-    #region Constructors
+    Debug.Assert( categories != null );
+    Debug.Assert( aliases != null );
 
-    /// <inheritdoc />
-    internal ScaleFormula(string id,
-                          string name,
-                          Interval[] intervals,
-                          IImmutableSet<string> categories,
-                          IImmutableSet<string> aliases)
-      : base(id, name, intervals)
-    {
-      Debug.Assert(categories != null);
-      Debug.Assert(aliases != null);
-
-      Categories = categories;
-      Aliases = aliases;
-    }
-
-    #endregion
-
-    #region Properties
-
-    /// <summary>
-    ///   Gets the optional categories for this scale formula
-    /// </summary>
-    /// <value>The categories.</value>
-    public IImmutableSet<string> Categories { get; }
-
-    /// <summary>
-    ///   Gets the optional aliases for this scale formula.
-    /// </summary>
-    /// <value>The aliases.</value>
-    public IImmutableSet<string> Aliases { get; }
-
-    #endregion
+    Categories = categories;
+    Aliases = aliases;
   }
+
+  /// <summary>
+  ///   Gets the optional categories for this scale formula
+  /// </summary>
+  /// <value>The categories.</value>
+  public IImmutableSet<string> Categories { get; }
+
+  /// <summary>
+  ///   Gets the optional aliases for this scale formula.
+  /// </summary>
+  /// <value>The aliases.</value>
+  public IImmutableSet<string> Aliases { get; }
 }

@@ -1,6 +1,6 @@
-// Module Name: Tuning.cs
+﻿// Module Name: Tuning.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,119 +22,102 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+using System;
+using System.Linq;
+using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments;
+
+/// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
+public sealed class Tuning: IEquatable<Tuning>
 {
-  using System;
-  using System.Linq;
-  using Model.Internal;
-
-  /// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
-  public class Tuning: IEquatable<Tuning>
+  internal Tuning(
+    StringedInstrumentDefinition instrumentDefinition,
+    string id,
+    string name,
+    PitchCollection pitches )
   {
-    #region Constructors
+    Requires.NotNull( instrumentDefinition );
+    Requires.NotNullOrEmpty( id );
+    Requires.NotNullOrEmpty( name );
+    Requires.ExactCount( pitches,
+                         instrumentDefinition.StringCount,
+                         $"The number of pitches ({pitches.Count}) must match the instrument's string count ({instrumentDefinition.StringCount})" );
 
-    internal Tuning(StringedInstrumentDefinition instrumentDefinition,
-                    string id,
-                    string name,
-                    PitchCollection pitches)
+    InstrumentDefinition = instrumentDefinition;
+    Id = id;
+    Name = name;
+    Pitches = pitches;
+  }
+
+  /// <summary>Gets the instruments definition.</summary>
+  /// <value>The instrument definition.</value>
+  public StringedInstrumentDefinition InstrumentDefinition { get; }
+
+  /// <summary>Gets the language-neutral identifier for the tuning.</summary>
+  /// <value>The id.</value>
+  public string Id { get; }
+
+  /// <summary>Gets the localizable name for the tuning.</summary>
+  /// <value>The name.</value>
+  public string Name { get; }
+
+  /// <summary>Gets the tunings pitches.</summary>
+  /// <value>The pitches.</value>
+  public PitchCollection Pitches { get; }
+
+  /// <summary>Indexer to get pitches within this tuning using array index syntax.</summary>
+  /// <exception cref="ArgumentOutOfRangeException">
+  ///   Thrown when the string number is outside the string range.
+  /// </exception>
+  /// <param name="stringNumber">The string number.</param>
+  /// <returns>A pitch.</returns>
+  public Pitch this[ int stringNumber ]
+  {
+    get
     {
-      Contract.Requires<ArgumentNullException>(instrumentDefinition != null, "Must provide an instrument definition");
-      Contract.RequiresNotNullOrEmpty(id, "Must provide a tuning id");
-      Contract.RequiresNotNullOrEmpty(name, "Must provide a tuning name");
-      Contract.Requires<ArgumentNullException>(pitches != null, "Must provide a pitch collection");
-      Contract.Requires<ArgumentOutOfRangeException>(pitches.Count == instrumentDefinition.StringCount,
-                                                     "The number of pitch must match the instrument's string count");
+      Requires.Between( stringNumber, 1, InstrumentDefinition.StringCount );
+      return Pitches[stringNumber - 1];
+    }
+  }
 
-      InstrumentDefinition = instrumentDefinition;
-      Id = id;
-      Name = name;
-      Pitches = pitches;
+  /// <inheritdoc />
+  public bool Equals( Tuning other )
+  {
+    if( ReferenceEquals( this, other ) )
+    {
+      return true;
     }
 
-    #endregion
-
-    #region Properties
-
-    /// <summary>Gets the instruments definition.</summary>
-    /// <value>The instrument definition.</value>
-    public StringedInstrumentDefinition InstrumentDefinition { get; }
-
-    /// <summary>Gets the language-neutral identifier for the tuning.</summary>
-    /// <value>The id.</value>
-    public string Id { get; }
-
-    /// <summary>Gets the localizable name for the tuning.</summary>
-    /// <value>The name.</value>
-    public string Name { get; }
-
-    /// <summary>Gets the tunings pitches.</summary>
-    /// <value>The pitches.</value>
-    public PitchCollection Pitches { get; }
-
-    /// <summary>Indexer to get pitches within this tuning using array index syntax.</summary>
-    /// <exception cref="ArgumentOutOfRangeException">
-    ///   Thrown when the string number is outside the string range.
-    /// </exception>
-    /// <param name="stringNumber">The string number.</param>
-    /// <returns>A pitch.</returns>
-    public Pitch this[int stringNumber]
+    if( other is null )
     {
-      get
-      {
-        Contract.Requires<ArgumentOutOfRangeException>(stringNumber >= 1);
-        Contract.Requires<ArgumentOutOfRangeException>(stringNumber <= InstrumentDefinition.StringCount);
-        return Pitches[stringNumber - 1];
-      }
+      return false;
     }
 
-    #endregion
+    return InstrumentDefinition.Equals( other.InstrumentDefinition )
+           && Comparer.IdComparer.Equals( Id, other.Id )
+           && Comparer.NameComparer.Equals( Name, other.Name )
+           && Pitches.SequenceEqual( other.Pitches );
+  }
 
-    #region IEquatable<Tuning> Members
-
-    /// <inheritdoc />
-    public bool Equals(Tuning other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( this, obj ) )
     {
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      if( other is null )
-      {
-        return false;
-      }
-
-      return InstrumentDefinition.Equals(other.InstrumentDefinition)
-             && Comparer.IdComparer.Equals(Id, other.Id)
-             && Comparer.NameComparer.Equals(Name, other.Name)
-             && Pitches.SequenceEqual(other.Pitches);
+      return true;
     }
 
-    #endregion
+    return obj is Tuning other && Equals( other );
+  }
 
-    #region Overrides
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
-    {
-      if( ReferenceEquals(this, obj) )
-      {
-        return true;
-      }
-
-      return obj is Tuning other && Equals(other);
-    }
-
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-      var hash = 17;
-      hash = ( hash * 23 ) + InstrumentDefinition.GetHashCode();
-      hash = ( hash * 23 ) + Comparer.IdComparer.GetHashCode(Id);
-      hash = ( hash * 23 ) + Comparer.NameComparer.GetHashCode(Name);
-      return hash;
-    }
-
-    #endregion
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    var hash = new HashCode();
+    hash.Add( InstrumentDefinition );
+    hash.Add( Id, Comparer.IdComparer );
+    hash.Add( Name, Comparer.NameComparer );
+    return hash.ToHashCode();
   }
 }

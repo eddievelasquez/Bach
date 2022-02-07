@@ -1,6 +1,6 @@
 ﻿// Module Name: ChordFormula.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,60 +22,52 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using Bach.Model.Internal;
+
+namespace Bach.Model;
+
+/// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
+public sealed class ChordFormula: Formula
 {
-  using System;
-  using Internal;
-
-  /// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
-  public class ChordFormula: Formula
+  /// <summary>Constructor.</summary>
+  /// <param name="id">The language-neutral id of the chord.</param>
+  /// <param name="name">The localizable name of the chord.</param>
+  /// <param name="symbol">The symbol for the chord.</param>
+  /// <param name="intervals">
+  ///   The intervals that describe the relationship between the pitch classes that
+  ///   compose the chord.
+  /// </param>
+  public ChordFormula(
+    string id,
+    string name,
+    string symbol,
+    params Interval[] intervals )
+    : base( id, name, intervals )
   {
-    #region Constructors
-
-    /// <summary>Constructor.</summary>
-    /// <param name="id">The language-neutral id of the chord.</param>
-    /// <param name="name">The localizable name of the chord.</param>
-    /// <param name="symbol">The symbol for the chord.</param>
-    /// <param name="intervals">
-    ///   The intervals that describe the relationship between the pitch classes that
-    ///   compose the chord.
-    /// </param>
-    public ChordFormula(string id,
-                        string name,
-                        string symbol,
-                        params Interval[] intervals)
-      : base(id, name, intervals)
-    {
-      // A chord is composed by three or more pitch classes...
-      Contract.Requires<ArgumentException>(intervals.Length >= 2);
-      Symbol = symbol ?? string.Empty;
-    }
-
-    /// <summary>Constructor.</summary>
-    /// <param name="id">The language-neutral id of the chord.</param>
-    /// <param name="name">The localizable name of the chord.</param>
-    /// <param name="symbol">The symbol for the chord.</param>
-    /// <param name="formula">
-    ///   The string representation of the formula for the chord. The formula is a
-    ///   sequence of comma-separated intervals. See
-    ///   <see cref="Interval.ToString()" /> for the format of an interval.
-    /// </param>
-    public ChordFormula(string id,
-                        string name,
-                        string symbol,
-                        string formula)
-      : this(id, name, symbol, ParseIntervals(formula))
-    {
-    }
-
-    #endregion
-
-    #region Properties
-
-    /// <summary>Gets the symbol for the chord.</summary>
-    /// <value>The symbol.</value>
-    public string Symbol { get; }
-
-    #endregion
+    // A chord is composed by three or more pitch classes...
+    Requires.GreaterThan( intervals.Length, 1 );
+    Symbol = symbol ?? string.Empty;
   }
+
+  /// <summary>Constructor.</summary>
+  /// <param name="id">The language-neutral id of the chord.</param>
+  /// <param name="name">The localizable name of the chord.</param>
+  /// <param name="symbol">The symbol for the chord.</param>
+  /// <param name="formula">
+  ///   The string representation of the formula for the chord. The formula is a
+  ///   sequence of comma-separated intervals. See
+  ///   <see cref="Interval.ToString()" /> for the format of an interval.
+  /// </param>
+  public ChordFormula(
+    string id,
+    string name,
+    string symbol,
+    string formula )
+    : this( id, name, symbol, ParseIntervals( formula ) )
+  {
+  }
+
+  /// <summary>Gets the symbol for the chord.</summary>
+  /// <value>The symbol.</value>
+  public string Symbol { get; }
 }

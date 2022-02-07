@@ -1,6 +1,6 @@
-// Module Name: InstrumentDefinition.cs
+﻿// Module Name: InstrumentDefinition.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,79 +22,56 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+using System;
+using Bach.Model.Instruments.Internal;
+using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments;
+
+/// <summary>A base class for an instrument definition.</summary>
+public abstract class InstrumentDefinition
+  : INamedObject,
+    IEquatable<InstrumentDefinition>
 {
-  using System;
-  using Internal;
-  using Model.Internal;
-
-  /// <summary>A base class for an instrument definition.</summary>
-  public abstract class InstrumentDefinition
-    : INamedObject,
-      IEquatable<InstrumentDefinition>
+  internal InstrumentDefinition( InstrumentDefinitionState state )
   {
-    #region Constructors
+    Requires.NotNull( state );
+    State = state;
+  }
 
-    internal InstrumentDefinition(InstrumentDefinitionState state)
+  internal InstrumentDefinitionState State { get; }
+
+  /// <inheritdoc />
+  public string Id => State.Id;
+
+  /// <inheritdoc />
+  public string Name => State.Name;
+
+  /// <inheritdoc />
+  public bool Equals( InstrumentDefinition other )
+  {
+    if( ReferenceEquals( this, other ) )
     {
-      Contract.Requires<ArgumentNullException>(state != null);
-      State = state;
+      return true;
     }
 
-    #endregion
+    return other is not null && Comparer.IdComparer.Equals( Id, other.Id );
+  }
 
-    #region Properties
-
-    internal InstrumentDefinitionState State { get; }
-
-    #endregion
-
-    #region IEquatable<InstrumentDefinition> Members
-
-    /// <inheritdoc />
-    public bool Equals(InstrumentDefinition other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( this, obj ) )
     {
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      if( other is null )
-      {
-        return false;
-      }
-
-      return Comparer.IdComparer.Equals(Id, other.Id);
+      return true;
     }
 
-    #endregion
+    return obj is InstrumentDefinition other && Equals( other );
+  }
 
-    #region IKeyNameObject Members
-
-    /// <inheritdoc />
-    public string Id => State.Id;
-
-    /// <inheritdoc />
-    public string Name => State.Name;
-
-    #endregion
-
-    #region Overrides
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
-    {
-      if( ReferenceEquals(this, obj) )
-      {
-        return true;
-      }
-
-      return obj is InstrumentDefinition other && Equals(other);
-    }
-
-    /// <inheritdoc />
-    public override int GetHashCode() => Id.GetHashCode();
-
-    #endregion
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return Id.GetHashCode();
   }
 }

@@ -1,6 +1,6 @@
 ﻿// Module Name: NamedObjectCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,153 +22,135 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+
+namespace Bach.Model.Internal;
+
+/// <summary>Collection of key-name objects.</summary>
+/// <typeparam name="T">Type parameter for the keyed object.</typeparam>
+[DebuggerDisplay( "Count = {Count}" )]
+public sealed class NamedObjectCollection<T>: Collection<T>
+  where T: INamedObject
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Collections.ObjectModel;
-  using System.Diagnostics;
+  private readonly Dictionary<string, T> _byId;
+  private readonly Dictionary<string, T> _byName;
 
-  /// <summary>Collection of key-name objects.</summary>
-  /// <typeparam name="T">Type parameter for the keyed object.</typeparam>
-  [DebuggerDisplay("Count = {Count}")]
-  public class NamedObjectCollection<T>: Collection<T>
-    where T: INamedObject
+  /// <inheritdoc />
+  internal NamedObjectCollection()
+    : base( new List<T>() )
   {
-    #region Data Members
+    _byId = new Dictionary<string, T>( Comparer.IdComparer );
+    _byName = new Dictionary<string, T>( Comparer.NameComparer );
+  }
 
-    private readonly Dictionary<string, T> _byId;
-    private readonly Dictionary<string, T> _byName;
-
-    #endregion
-
-    #region Constructors
-
-    /// <inheritdoc />
-    internal NamedObjectCollection()
-      : base(new List<T>())
+  private new List<T> Items
+  {
+    get
     {
-      _byId = new Dictionary<string, T>(Comparer.IdComparer);
-      _byName = new Dictionary<string, T>(Comparer.NameComparer);
+      Debug.Assert( base.Items is List<T> );
+      return (List<T>) base.Items;
     }
+  }
 
-    #endregion
-
-    #region Properties
-
-    private new List<T> Items
+  public T this[ string idOrName ]
+  {
+    get
     {
-      get
+      if( TryGetValue( idOrName, out var item ) )
       {
-        Debug.Assert(base.Items is List<T>);
-        return (List<T>)base.Items;
-      }
-    }
-
-    public T this[string idOrName]
-    {
-      get
-      {
-        if( TryGetValue(idOrName, out T item) )
-        {
-          return item;
-        }
-
-        throw new KeyNotFoundException(string.Format($"Id or name not found: {idOrName}"));
-      }
-    }
-
-    #endregion
-
-    #region Public Methods
-
-    public bool TryGetValue(string idOrName,
-                            out T item)
-    {
-      Contract.Requires<ArgumentNullException>(idOrName != null);
-
-      if( _byId.TryGetValue(idOrName, out item) )
-      {
-        return true;
+        return item;
       }
 
-      if( _byName.TryGetValue(idOrName, out item) )
-      {
-        return true;
-      }
-
-      item = default;
-      return false;
+      throw new KeyNotFoundException( string.Format( $"Id or name not found: {idOrName}" ) );
     }
+  }
 
-    #endregion
+  /// <inheritdoc />
+  protected override void ClearItems()
+  {
+    base.ClearItems();
 
-    #region Overrides
+    _byId.Clear();
+    _byName.Clear();
+  }
 
-    /// <inheritdoc />
-    protected override void ClearItems()
+  /// <inheritdoc />
+  protected override void InsertItem(
+    int index,
+    T item )
+  {
+    Requires.NotNull( item );
+
+    _byId.Add( item.Id, item );
+    _byName.Add( item.Name, item );
+
+    base.InsertItem( index, item );
+  }
+
+  /// <inheritdoc />
+  protected override void RemoveItem( int index )
+  {
+    var item = Items[index];
+    _byId.Remove( item.Id );
+    _byName.Remove( item.Name );
+
+    base.RemoveItem( index );
+  }
+
+  /// <inheritdoc />
+  protected override void SetItem(
+    int index,
+    T item )
+  {
+    Requires.NotNull( item );
+
+    var existingItem = Items[index];
+    SetItem( _byId, item.Id, existingItem.Id, item );
+    SetItem( _byName, item.Name, existingItem.Name, item );
+
+    base.SetItem( index, item );
+  }
+
+  public bool TryGetValue(
+    string idOrName,
+    out T item )
+  {
+    Requires.NotNullOrEmpty( idOrName );
+
+    if( _byId.TryGetValue( idOrName, out item ) )
     {
-      base.ClearItems();
-
-      _byId.Clear();
-      _byName.Clear();
+      return true;
     }
 
-    /// <inheritdoc />
-    protected override void InsertItem(int index,
-                                       T item)
+    if( _byName.TryGetValue( idOrName, out item ) )
     {
-      _byId.Add(item.Id, item);
-      _byName.Add(item.Name, item);
-
-      base.InsertItem(index, item);
+      return true;
     }
 
-    /// <inheritdoc />
-    protected override void RemoveItem(int index)
+    item = default;
+    return false;
+  }
+
+  private static void SetItem(
+    Dictionary<string, T> dictionary,
+    string newId,
+    string existingId,
+    T item )
+  {
+    Debug.Assert( dictionary != null );
+    Debug.Assert( !string.IsNullOrEmpty( newId ) );
+    Debug.Assert( !string.IsNullOrEmpty( existingId ) );
+
+    if( dictionary.Comparer.Equals( newId, existingId ) )
     {
-      T item = Items[index];
-      _byId.Remove(item.Id);
-      _byName.Remove(item.Name);
-
-      base.RemoveItem(index);
+      dictionary[newId] = item;
     }
-
-    /// <inheritdoc />
-    protected override void SetItem(int index,
-                                    T item)
+    else
     {
-      T existingItem = Items[index];
-      SetItem(_byId, item.Id, existingItem.Id, item);
-      SetItem(_byName, item.Name, existingItem.Name, item);
-
-      base.SetItem(index, item);
+      dictionary.Add( newId, item );
+      dictionary.Remove( existingId );
     }
-
-    #endregion
-
-    #region  Implementation
-
-    private static void SetItem(Dictionary<string, T> dictionary,
-                                string newId,
-                                string existingId,
-                                T item)
-    {
-      Debug.Assert(dictionary != null);
-      Debug.Assert(!string.IsNullOrEmpty(newId));
-      Debug.Assert(!string.IsNullOrEmpty(existingId));
-
-      if( dictionary.Comparer.Equals(newId, existingId) )
-      {
-        dictionary[newId] = item;
-      }
-      else
-      {
-        dictionary.Add(newId, item);
-        dictionary.Remove(existingId);
-      }
-    }
-
-    #endregion
   }
 }

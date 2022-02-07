@@ -1,7 +1,6 @@
-﻿//
-// Module Name: RegistryTest.cs
+﻿// Module Name: RegistryTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2016  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -14,7 +13,7 @@
 // do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial
-//  portions of the Software.
+// portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
@@ -23,54 +22,57 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test
+using System.Linq;
+using Bach.Model.Instruments;
+using Xunit;
+
+namespace Bach.Model.Test;
+
+public sealed class RegistryTest
 {
-  using System.Linq;
-  using Model.Instruments;
-  using Xunit;
+#region Public Methods
 
-  public class RegistryTest
+  [Fact]
+  public void ScaleFormulasTest()
   {
-    [Fact]
-    public void ScaleFormulasTest()
+    var scaleFormulas = Registry.ScaleFormulas.ToArray();
+    Assert.NotNull( scaleFormulas );
+    Assert.NotEmpty( scaleFormulas );
+
+    foreach( var expected in scaleFormulas )
     {
-      ScaleFormula[] scaleFormulas = Registry.ScaleFormulas.ToArray();
-      Assert.NotNull(scaleFormulas);
-      Assert.NotEmpty(scaleFormulas);
-
-      foreach( ScaleFormula expected in scaleFormulas )
-      {
-        ScaleFormula actual = Registry.ScaleFormulas[expected.Id];
-        Assert.Equal(expected, actual);
-      }
-    }
-
-    [Fact]
-    public void ChordFormulasTest()
-    {
-      ChordFormula[] chordFormulas = Registry.ChordFormulas.ToArray();
-      Assert.NotNull(chordFormulas);
-      Assert.NotEmpty(chordFormulas);
-
-      foreach( ChordFormula expected in chordFormulas )
-      {
-        ChordFormula actual = Registry.ChordFormulas[expected.Id];
-        Assert.Equal(expected, actual);
-      }
-    }
-
-    [Fact]
-    public void StringedInstrumentDefinitionsTest()
-    {
-      StringedInstrumentDefinition[] instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
-      Assert.NotNull(instrumentDefinitions);
-      Assert.NotEmpty(instrumentDefinitions);
-
-      foreach( StringedInstrumentDefinition expected in instrumentDefinitions )
-      {
-        InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Id];
-        Assert.Equal(expected, actual);
-      }
+      var actual = Registry.ScaleFormulas[expected.Id];
+      Assert.Equal( expected, actual );
     }
   }
+
+  [Fact]
+  public void ChordFormulasTest()
+  {
+    var chordFormulas = Registry.ChordFormulas.ToArray();
+    Assert.NotNull( chordFormulas );
+    Assert.NotEmpty( chordFormulas );
+
+    foreach( var expected in chordFormulas )
+    {
+      var actual = Registry.ChordFormulas[expected.Id];
+      Assert.Equal( expected, actual );
+    }
+  }
+
+  [Fact]
+  public void StringedInstrumentDefinitionsTest()
+  {
+    var instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
+    Assert.NotNull( instrumentDefinitions );
+    Assert.NotEmpty( instrumentDefinitions );
+
+    foreach( var expected in instrumentDefinitions )
+    {
+      InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Id];
+      Assert.Equal( expected, actual );
+    }
+  }
+
+#endregion
 }

@@ -1,6 +1,6 @@
 ﻿// Module Name: Fingering.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,121 +22,99 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+using System;
+using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments;
+
+/// <summary>In a stringed instrument, A fingering describes the position in a given string to produce a particular pitch.</summary>
+public readonly struct Fingering: IEquatable<Fingering>
 {
-  using System;
-  using Model.Internal;
-
-  /// <summary>In a stringed instrument, A fingering describes the position in a given string to produce a particular pitch.</summary>
-  public struct Fingering: IEquatable<Fingering>
+  private Fingering(
+    Pitch pitch,
+    int @string,
+    int position )
   {
-    #region Constructors
+    Pitch = pitch;
+    String = @string;
+    Position = position;
+  }
 
-    private Fingering(Pitch pitch,
-                      int @string,
-                      int position)
+  /// <summary>Gets the fingering's pitch.</summary>
+  /// <value>The pitch.</value>
+  public Pitch Pitch { get; }
+
+  /// <summary>Gets the string number.</summary>
+  /// <value>The string.</value>
+  public int String { get; }
+
+  /// <summary>Gets the position on the string.</summary>
+  /// <remarks>For fretted instruments this corresponds to the fret number.</remarks>
+  /// <value>The position.</value>
+  public int Position { get; }
+
+  /// <inheritdoc />
+  public bool Equals( Fingering other )
+  {
+    return String == other.String && Position == other.Position;
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return Position < 0 ? $"{String}x" : $"{String}{Position}";
+  }
+
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( null, obj ) )
     {
-      Pitch = pitch;
-      String = @string;
-      Position = position;
+      return false;
     }
 
-    #endregion
+    return obj is Fingering other && Equals( other );
+  }
 
-    #region Properties
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return HashCode.Combine( String, Position );
+  }
 
-    /// <summary>Gets the fingering's pitch.</summary>
-    /// <value>The pitch.</value>
-    public Pitch Pitch { get; }
+  /// <summary>Creates a new Fingering.</summary>
+  /// <param name="instrument">The instrument.</param>
+  /// <param name="stringNumber">The string number.</param>
+  /// <param name="position">The position.</param>
+  /// <exception cref="ArgumentNullException">Thrown when the instrument is null.</exception>
+  /// <exception cref="ArgumentOutOfRangeException">
+  ///   Thrown when either the string or the position are out of range for the
+  ///   given instrument.
+  /// </exception>
+  /// <returns>A Fingering.</returns>
+  public static Fingering Create(
+    StringedInstrument instrument,
+    int stringNumber,
+    int position )
+  {
+    Requires.NotNull( instrument );
+    Requires.Between( position, 0, instrument.PositionCount );
+    Requires.Between( stringNumber, 1, instrument.Definition.StringCount );
 
-    /// <summary>Gets the string number.</summary>
-    /// <value>The string.</value>
-    public int String { get; }
+    var pitch = instrument.Tuning[stringNumber] + position;
+    var result = new Fingering( pitch, stringNumber, position );
+    return result;
+  }
 
-    /// <summary>Gets the position on the string.</summary>
-    /// <remarks>For fretted instruments this corresponds to the fret number.</remarks>
-    /// <value>The position.</value>
-    public int Position { get; }
+  internal static Fingering Create(
+    StringedInstrument instrument,
+    int stringNumber )
+  {
+    Requires.NotNull( instrument );
+    Requires.Between( stringNumber, 1, instrument.Definition.StringCount );
 
-    #endregion
-
-    #region IEquatable<Fingering> Members
-
-    /// <inheritdoc />
-    public bool Equals(Fingering other) => String == other.String && Position == other.Position;
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>Creates a new Fingering.</summary>
-    /// <param name="instrument">The instrument.</param>
-    /// <param name="string">The string number.</param>
-    /// <param name="position">The position.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the instrument is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">
-    ///   Thrown when either the string or the position are out of range for the
-    ///   given instrument.
-    /// </exception>
-    /// <returns>A Fingering.</returns>
-    public static Fingering Create(StringedInstrument instrument,
-                                   int @string,
-                                   int position)
-    {
-      Contract.Requires<ArgumentNullException>(instrument != null);
-      Contract.Requires<ArgumentOutOfRangeException>(position >= 0 && position <= instrument.PositionCount);
-      Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
-
-      Pitch pitch = instrument.Tuning[@string] + position;
-      var result = new Fingering(pitch, @string, position);
-      return result;
-    }
-
-    #endregion
-
-    #region Overrides
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-      return Position < 0 ? $"{String}x" : $"{String}{Position}";
-    }
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
-    {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
-      return obj is Fingering other && Equals(other);
-    }
-
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-      unchecked
-      {
-        return ( String * 397 ) ^ Position;
-      }
-    }
-
-    #endregion
-
-    #region  Implementation
-
-    internal static Fingering Create(StringedInstrument instrument,
-                                     int @string)
-    {
-      Contract.Requires<ArgumentNullException>(instrument != null);
-      Contract.Requires<ArgumentOutOfRangeException>(@string > 0 && @string <= instrument.Definition.StringCount);
-
-      Pitch pitch = Pitch.Empty;
-      var result = new Fingering(pitch, @string, -1);
-      return result;
-    }
-
-    #endregion
+    var pitch = Pitch.Empty;
+    var result = new Fingering( pitch, stringNumber, -1 );
+    return result;
   }
 }

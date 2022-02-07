@@ -1,6 +1,6 @@
 ﻿// Module Name: IntervalCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,122 +22,101 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Bach.Model.Internal;
+
+namespace Bach.Model;
+
+public sealed class IntervalCollection
+  : IReadOnlyList<Interval>,
+    IEquatable<IEnumerable<Interval>>
 {
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Linq;
-  using Internal;
+  private readonly Interval[] _intervals;
 
-  public class IntervalCollection
-    : IReadOnlyList<Interval>,
-      IEquatable<IEnumerable<Interval>>
+  internal IntervalCollection( Interval[] intervals )
   {
-    #region Data Members
+    Requires.NotNullOrEmpty( intervals );
+    Requires.Condition<ArgumentException>( intervals.IsSortedUnique(),
+                                           "Intervals must be sorted and contain no duplicates" );
 
-    private readonly Interval[] _intervals;
+    _intervals = intervals;
+  }
 
-    #endregion
+  /// <inheritdoc />
+  public int Count => _intervals.Length;
 
-    #region Constructors
+  /// <inheritdoc />
+  public Interval this[ int index ] => _intervals[index];
 
-    internal IntervalCollection(Interval[] intervals)
+  /// <inheritdoc />
+  public bool Equals( IEnumerable<Interval> other )
+  {
+    if( ReferenceEquals( this, other ) )
     {
-      Contract.Requires<ArgumentNullException>(intervals != null);
-      Contract.Requires<ArgumentException>(intervals.Length > 0);
-      Contract.Requires<ArgumentException>(intervals.IsSortedUnique());
-
-      _intervals = intervals;
+      return true;
     }
 
-    #endregion
+    return other is not null && _intervals.SequenceEqual( other );
+  }
 
-    #region IEquatable<IEnumerable<Interval>> Members
+  /// <inheritdoc />
+  public IEnumerator<Interval> GetEnumerator()
+  {
+    return ( (IEnumerable<Interval>) _intervals ).GetEnumerator();
+  }
 
-    /// <inheritdoc />
-    public bool Equals(IEnumerable<Interval> other)
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( this, obj ) )
     {
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      if( other is null )
-      {
-        return false;
-      }
-
-      return _intervals.SequenceEqual(other);
+      return true;
     }
 
-    #endregion
+    return obj is IntervalCollection other && Equals( other );
+  }
 
-    #region IReadOnlyList<Interval> Members
-
-    /// <inheritdoc />
-    public IEnumerator<Interval> GetEnumerator() => ( (IEnumerable<Interval>)_intervals ).GetEnumerator();
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    /// <inheritdoc />
-    public int Count => _intervals.Length;
-
-    /// <inheritdoc />
-    public Interval this[int index] => _intervals[index];
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>
-    ///   Searches for the specified interval using the optional provided comparer and returns the index of its
-    ///   occurence in the collection.
-    /// </summary>
-    /// <param name="interval">The interval to locate</param>
-    /// <param name="comparer">
-    ///   The optional <see cref="IComparer&lt;Interval&gt;" />  implementation to use when comparing intervals. If no
-    ///   comparer is provided, the intervals will be compared using an exact match.
-    /// </param>
-    /// <returns>The index of the occurence of <paramref name="interval" /> in the collection, if found; otherwise, -1.</returns>
-    public int IndexOf(Interval interval,
-                       IComparer<Interval> comparer = null)
-      => Array.BinarySearch(_intervals, interval, comparer ?? Comparer<Interval>.Default);
-
-    #endregion
-
-    #region Overrides
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    var hash = new HashCode();
+    foreach( var interval in _intervals )
     {
-      if( ReferenceEquals(this, obj) )
-      {
-        return true;
-      }
-
-      return obj is IntervalCollection other && Equals(other);
+      hash.Add( interval );
     }
 
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-      unchecked
-      {
-        var hash = 17;
-        foreach( Interval interval in _intervals )
-        {
-          hash = ( hash * 23 ) + interval.GetHashCode();
-        }
+    return hash.ToHashCode();
+  }
 
-        return hash;
-      }
-    }
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return string.Join( ",", _intervals );
+  }
 
-    /// <inheritdoc />
-    public override string ToString() => string.Join(",", _intervals);
-
-    #endregion
+  /// <summary>
+  ///   Searches for the specified interval using the optional provided comparer and returns the index of its
+  ///   occurrence in the collection.
+  /// </summary>
+  /// <param name="interval">The interval to locate</param>
+  /// <param name="comparer">
+  ///   The optional <see cref="IComparer&lt;Interval&gt;" />  implementation to use when comparing intervals. If no
+  ///   comparer is provided, the intervals will be compared using an exact match.
+  /// </param>
+  /// <returns>The index of the occurrence of <paramref name="interval" /> in the collection, if found; otherwise, -1.</returns>
+  public int IndexOf(
+    Interval interval,
+    IComparer<Interval> comparer = null )
+  {
+    return Array.BinarySearch( _intervals, interval, comparer ?? Comparer<Interval>.Default );
   }
 }
