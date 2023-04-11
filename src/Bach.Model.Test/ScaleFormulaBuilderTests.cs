@@ -32,6 +32,16 @@ public sealed class ScaleFormulaBuilderTest
 #region Public Methods
 
   [Fact]
+  public void ParseSpanTest()
+  {
+    const string IntervalString = "R,M2,m6";
+    var intervalsFromString = Formula.ParseIntervals( IntervalString );
+    var intervalsFromSpan = Formula.ParseIntervals( IntervalString.AsSpan() );
+
+    Assert.Equal( intervalsFromString, intervalsFromSpan );
+  }
+
+  [Fact]
   public void SetNameAndIntervalsStringTest()
   {
     const string Name = "Name";

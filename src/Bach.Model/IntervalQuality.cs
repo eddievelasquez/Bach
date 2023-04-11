@@ -50,9 +50,7 @@ public readonly struct IntervalQuality
   public static readonly IntervalQuality Augmented = new( 4 );
 
   private static readonly string[] s_symbols = { "d", "m", "P", "M", "A" };
-
   private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
-
   private static readonly string[] s_long = { "Diminished", "Minor", "Perfect", "Major", "Augmented" };
 
   private readonly int _value;
@@ -176,9 +174,39 @@ public readonly struct IntervalQuality
   {
     if( !string.IsNullOrEmpty( value ) )
     {
+      return TryParse( value[0], out quality );
+    }
+
+    quality = Perfect;
+    return false;
+
+  }
+
+  /// <summary>
+  ///   Converts the specified character representation of an interval quality to its <see cref="IntervalQuality" />
+  ///   equivalent
+  ///   and returns a value that indicates whether the conversion succeeded.
+  /// </summary>
+  /// <param name="value">A character containing the interval quality to convert.</param>
+  /// <param name="quality">
+  ///   When this method returns, contains the IntervalQuality value equivalent to the interval quality
+  ///   contained in value, if the conversion succeeded; otherwise, the value is undefined if the conversion failed.
+  ///   The conversion fails if the value parameter is null or empty  or does not contain a valid string
+  ///   representation of an interval quality. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
+  ///   .
+  /// </returns>
+  public static bool TryParse(
+    char value,
+    out IntervalQuality quality )
+  {
+    if( value != '\0' )
+    {
       for( var i = 0; i < s_symbols.Length; i++ )
       {
-        if( !s_symbols[i].Equals( value ) )
+        if( s_symbols[i][0] != value )
         {
           continue;
         }

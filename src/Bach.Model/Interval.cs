@@ -267,9 +267,36 @@ public readonly struct Interval
     string value,
     out Interval interval )
   {
+    if( !string.IsNullOrWhiteSpace( value ) )
+    {
+      return TryParse( value.AsSpan(), out interval );
+    }
+
+    interval = Unison;
+    return false;
+  }
+
+  /// <summary>
+  ///   Converts the specified character span representation of an interval to its <see cref="Interval" /> equivalent
+  ///   and returns a value that indicates whether the conversion succeeded.
+  /// </summary>
+  /// <param name="value">A read-only character span containing the interval quality to convert.</param>
+  /// <param name="interval">
+  ///   When this method returns, contains the Interval value equivalent to the interval
+  ///   contained in value, if the conversion succeeded; otherwise, the value is undefined if the conversion failed.
+  ///   The conversion fails if the value parameter is null or empty or does not contain a valid string
+  ///   representation of an interval. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  /// </returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    out Interval interval )
+  {
     interval = Unison;
 
-    if( string.IsNullOrWhiteSpace( value ) )
+    if( value.IsEmpty )
     {
       return false;
     }
@@ -277,13 +304,13 @@ public readonly struct Interval
     var i = 0;
 
     // skip whitespaces
-    while( i < value.Length && char.IsWhiteSpace( value, i ) )
+    while( i < value.Length && char.IsWhiteSpace( value[i] ) )
     {
       ++i;
     }
 
     var quality = IntervalQuality.Perfect;
-    var hasExplicitQuality = char.IsLetter( value, i );
+    var hasExplicitQuality = char.IsLetter( value[i] );
 
     if( hasExplicitQuality )
     {
@@ -293,8 +320,7 @@ public readonly struct Interval
         return true;
       }
 
-      // TODO: Use spans
-      if( !IntervalQuality.TryParse( value.Substring( i, 1 ), out quality ) )
+      if( !IntervalQuality.TryParse( value[i], out quality ) )
       {
         return false;
       }
@@ -302,8 +328,16 @@ public readonly struct Interval
       ++i;
     }
 
-    // TODO: Use spans
-    if( !int.TryParse( value.Substring( i ), out var number ) )
+    // Check if we have a double-digit compound interval and adjust the length accordingly
+    var intervalSpan = value[i..];
+    var intervalNumberLength = 1;
+
+    if( intervalSpan.Length > 1 && char.IsDigit( value[1] ) )
+    {
+      ++intervalNumberLength;
+    }
+
+    if( !int.TryParse( value.Slice( i, intervalNumberLength ), out var number ) )
     {
       return false;
     }

@@ -78,6 +78,17 @@ internal static class Requires
     }
   }
 
+  public static void NotEmpty<T>(
+    ReadOnlySpan<T> value,
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
+  {
+    if( value.IsEmpty )
+    {
+      ThrowArgumentEmpty( message, callerArgExpr );
+    }
+  }
+
   public static void ExactCount<T>(
     [NotNull] ICollection<T>? value,
     int expectedCount,
@@ -116,8 +127,8 @@ internal static class Requires
     T value,
     T lowerBound,
     T upperBound,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null,
-    string? message = null )
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
     where T: IComparable
   {
     if( value.CompareTo( lowerBound ) >= 0 && value.CompareTo( upperBound ) <= 0 )
@@ -134,8 +145,8 @@ internal static class Requires
   public static void GreaterThan<T>(
     T value,
     T lowerBound,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null,
-    string? message = null )
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
     where T: IComparable
   {
     if( value.CompareTo( lowerBound ) > 0 )
@@ -152,8 +163,8 @@ internal static class Requires
   public static void LessThan<T>(
     T value,
     T upperBound,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null,
-    string? message = null )
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
     where T: IComparable
   {
     if( value.CompareTo( upperBound ) < 0 )

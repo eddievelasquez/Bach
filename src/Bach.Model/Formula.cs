@@ -309,9 +309,26 @@ public abstract class Formula
   public static Interval[] ParseIntervals( string formula )
   {
     Requires.NotNullOrEmpty( formula );
+    return ParseIntervals( formula.AsSpan() );
+  }
 
-    var values = formula.Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries );
-    return values.Select( Interval.Parse ).ToArray();
+  public static Interval[] ParseIntervals( ReadOnlySpan<char> formula )
+  {
+    Requires.NotEmpty( formula, "Must provide a formula" );
+
+    var buf = new List<Interval>();
+    foreach( var value in formula.Split( ',' ) )
+    {
+      if( !Interval.TryParse( formula[value.Start.Value..value.End.Value],
+                              out var interval ) )
+      {
+        throw new FormatException( value + " is not a valid interval" );
+      }
+
+      buf.Add( interval );
+    }
+
+    return buf.ToArray();
   }
 
   internal static int[] GetRelativeSteps( IList<Interval> intervals )
