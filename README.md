@@ -1,5 +1,6 @@
 # Bach
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+![example branch parameter](https://github.com/eddievelasquez/bach/actions/workflows/BuildAndTest.yml/badge.svg?branch=develop)
 
 A Music Theory library for .NET
 ## Introduction
