@@ -76,7 +76,7 @@ public static class Registry
     // Load the library from the JSON file in the same directory as
     // this assembly.
     var assembly = Assembly.GetExecutingAssembly();
-    var directory = Path.GetDirectoryName( new Uri( assembly.CodeBase ).LocalPath );
+    var directory = Path.GetDirectoryName( new Uri( assembly.Location ).LocalPath );
     var path = Path.Combine( directory ?? string.Empty, LibraryFileName );
     var s = File.ReadAllText( path );
 

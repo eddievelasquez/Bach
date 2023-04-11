@@ -22,7 +22,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Bach.Model;
@@ -35,8 +35,8 @@ public class ScaleFormula: Formula
     string id,
     string name,
     Interval[] intervals,
-    IImmutableSet<string> categories,
-    IImmutableSet<string> aliases )
+    IReadOnlySet<string> categories,
+    IReadOnlySet<string> aliases )
     : base( id, name, intervals )
   {
     Debug.Assert( categories != null );
@@ -50,11 +50,11 @@ public class ScaleFormula: Formula
   ///   Gets the optional categories for this scale formula
   /// </summary>
   /// <value>The categories.</value>
-  public IImmutableSet<string> Categories { get; }
+  public IReadOnlySet<string> Categories { get; }
 
   /// <summary>
   ///   Gets the optional aliases for this scale formula.
   /// </summary>
   /// <value>The aliases.</value>
-  public IImmutableSet<string> Aliases { get; }
+  public IReadOnlySet<string> Aliases { get; }
 }

@@ -24,7 +24,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using Bach.Model.Internal;
 
@@ -284,12 +284,7 @@ public sealed class ScaleFormulaBuilder
         break;
     }
 
-    var formula = new ScaleFormula( _id,
-                                    _name,
-                                    _intervals.ToArray(),
-                                    _categories.ToImmutableHashSet(),
-                                    _aliases.ToImmutableHashSet() );
-
+    var formula = new ScaleFormula( _id, _name, _intervals.ToArray(), _categories.ToHashSet(), _aliases.ToHashSet() );
     return formula;
   }
 
