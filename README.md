@@ -1,13 +1,14 @@
 # Bach
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-![example branch parameter](https://github.com/eddievelasquez/bach/actions/workflows/BuildAndTest.yml/badge.svg?branch=develop)
+[![.NET](https://github.com/eddievelasquez/bach/actions/workflows/BuildAndTest.yml/badge.svg)](https://github.com/eddievelasquez/bach/actions/workflows/BuildAndTest.yml)
 
 A Music Theory library for .NET
 ## Introduction
-Bach is a .NET library that enables expressing Western tonal musical concepts in C#: Pitches, Intervals, Scales, Triads, Chords, and 
-Modes.
+Bach is a .NET Core library that enables expressing Western tonal musical concepts in C#: 
+Pitches, Intervals, Scales, Triads, Chords, Modes, etc.
 
-This library has been a pet project of mine while learning a bit of music theory and, at the same time, keeping my C# /.NET skills up to date while I've been off doing C++ for quite a while.
+This library has been a pet project of mine while learning a bit of music theory and, at the same time, 
+keeping my C# and .NET skills up to date while I've been off doing C++ for quite a while.
 
 ## Usage
 Scales and chords are created from root pitches and formulas that describe them; these formulas are 
