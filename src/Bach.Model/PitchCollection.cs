@@ -1,6 +1,6 @@
 ﻿// Module Name: PitchCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,165 +22,164 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Bach.Model.Internal;
+
+namespace Bach.Model;
+
+/// <summary>Collection of pitches.</summary>
+public sealed class PitchCollection
+  : IReadOnlyList<Pitch>,
+    IEquatable<IEnumerable<Pitch>>
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Collections.ObjectModel;
-  using System.Linq;
-  using System.Text;
-  using Internal;
+  private readonly Pitch[] _pitches;
 
-  /// <summary>Collection of pitches.</summary>
-  public class PitchCollection
-    : Collection<Pitch>,
-      IEquatable<IEnumerable<Pitch>>
+  public PitchCollection( Pitch[] notes )
   {
-    #region Constructors
+    Requires.NotNull( notes );
+    _pitches = notes;
+  }
 
-    /// <inheritdoc />
-    public PitchCollection()
+  public PitchCollection( IEnumerable<Pitch> notes )
+  {
+    Requires.NotNull( notes );
+    _pitches = notes.ToArray();
+  }
+
+  /// <inheritdoc />
+  public int Count => _pitches.Length;
+
+  /// <inheritdoc />
+  public Pitch this[ int index ] => _pitches[index];
+
+  /// <inheritdoc />
+  public bool Equals( IEnumerable<Pitch> other )
+  {
+    if( ReferenceEquals( other, this ) )
     {
+      return true;
     }
 
-    /// <inheritdoc />
-    public PitchCollection(IList<Pitch> notes)
-      : base(notes)
+    return other is not null && _pitches.SequenceEqual( other );
+  }
+
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  /// <inheritdoc />
+  public IEnumerator<Pitch> GetEnumerator()
+  {
+    return ( (IEnumerable<Pitch>) _pitches ).GetEnumerator();
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return ToString( this );
+  }
+
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( obj, this ) )
     {
+      return true;
     }
 
-    #endregion
+    return obj is PitchCollection other && Equals( other );
+  }
 
-    #region IEquatable<IEnumerable<Pitch>> Members
-
-    /// <inheritdoc />
-    public bool Equals(IEnumerable<Pitch> other)
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    var hash = new HashCode();
+    foreach( var pitch in _pitches )
     {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      return !ReferenceEquals(other, null) && this.SequenceEqual(other);
+      hash.Add( pitch );
     }
 
-    #endregion
+    return hash.ToHashCode();
+  }
 
-    #region Public Methods
-
-    /// <summary>Attempts to parse a pitch collection from the given string.</summary>
-    /// <param name="value">The value to parse.</param>
-    /// <param name="pitches">[out] The pitch collection.</param>
-    /// <returns>True if it succeeds, false if it fails.</returns>
-    public static bool TryParse(string value,
-                                out PitchCollection pitches)
+  /// <summary>Attempts to parse a pitch collection from the given string.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="pitches">[out] The pitch collection.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    string value,
+    out PitchCollection pitches )
+  {
+    if( string.IsNullOrEmpty( value ) )
     {
-      if( string.IsNullOrEmpty(value) )
+      pitches = null;
+      return false;
+    }
+
+    var tmp = new List<Pitch>();
+    foreach( var s in value.Split( ',' ) )
+    {
+      if( !Pitch.TryParse( s, out var note ) )
       {
         pitches = null;
         return false;
       }
 
-      pitches = new PitchCollection();
-
-      foreach( string s in value.Split(',') )
-      {
-        if( !Pitch.TryParse(s, out Pitch note) )
-        {
-          pitches = null;
-          return false;
-        }
-
-        pitches.Add(note);
-      }
-
-      return true;
+      tmp.Add( note );
     }
 
-    /// <summary>Parses the provided string.</summary>
-    /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch collection.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
-    /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-    /// <param name="value">The value to parse.</param>
-    /// <returns>A PitchCollection.</returns>
-    public static PitchCollection Parse(string value)
+    pitches = new PitchCollection( tmp );
+    return true;
+  }
+
+  /// <summary>Parses the provided string.</summary>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch collection.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  /// <param name="value">The value to parse.</param>
+  /// <returns>A PitchCollection.</returns>
+  public static PitchCollection Parse( string value )
+  {
+    Requires.NotNullOrEmpty( value );
+
+    if( !TryParse( value, out var notes ) )
     {
-      Contract.Requires<ArgumentNullException>(value != null);
-      Contract.Requires<ArgumentException>(value.Length > 0);
-
-      if( !TryParse(value, out PitchCollection notes) )
-      {
-        throw new FormatException($"{value} contains invalid pitches");
-      }
-
-      return notes;
+      throw new FormatException( $"{value} contains invalid pitches" );
     }
 
-    /// <summary>Converts a sequence of pitches into a string representation.</summary>
-    /// <exception cref="ArgumentNullException">Thrown when pitches argument is null.</exception>
-    /// <returns>A string that represents the sequence of pitches.</returns>
-    public static string ToString(IEnumerable<Pitch> pitches)
+    return notes;
+  }
+
+  /// <summary>Converts a sequence of pitches into a string representation.</summary>
+  /// <exception cref="ArgumentNullException">Thrown when pitches argument is null.</exception>
+  /// <returns>A string that represents the sequence of pitches.</returns>
+  public static string ToString( IEnumerable<Pitch> pitches )
+  {
+    Requires.NotNull( pitches );
+
+    var buf = new StringBuilder();
+    var needsComma = false;
+
+    foreach( var note in pitches )
     {
-      Contract.Requires<ArgumentNullException>(pitches != null);
-
-      var buf = new StringBuilder();
-      var needsComma = false;
-
-      foreach( Pitch note in pitches )
+      if( needsComma )
       {
-        if( needsComma )
-        {
-          buf.Append(',');
-        }
-        else
-        {
-          needsComma = true;
-        }
-
-        buf.Append(note);
+        buf.Append( ',' );
+      }
+      else
+      {
+        needsComma = true;
       }
 
-      return buf.ToString();
+      buf.Append( note );
     }
 
-    #endregion
-
-    #region Overrides
-
-    /// <inheritdoc />
-    public override string ToString() => ToString(this);
-
-    /// <inheritdoc />
-    public override bool Equals(object other)
-    {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((PitchCollection)other);
-    }
-
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-      const int Multiplier = 89;
-
-      Pitch first = this.FirstOrDefault();
-      Pitch last = this.LastOrDefault();
-
-      unchecked
-      {
-        int result = ( ( first.GetHashCode() + Count ) * Multiplier ) + last.GetHashCode() + Count;
-        return result;
-      }
-    }
-
-    #endregion
+    return buf.ToString();
   }
 }

@@ -1,6 +1,6 @@
 // Module Name: TriadTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,120 +22,116 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test
+using System;
+using Xunit;
+
+namespace Bach.Model.Test;
+
+public sealed class TriadTests
 {
-  using System;
-  using System.Diagnostics;
-  using Xunit;
+#region Public Methods
 
-  public class TriadTests
+  [Fact]
+  public void MajorTriadTest()
   {
-    #region Public Methods
-
-    [Fact]
-    public void MajorTriadTest()
-    {
-      var triad = new Triad(Note.C, TriadQuality.Major);
-      Assert.Equal("C", triad.Name);
-      Assert.Equal(TriadQuality.Major, triad.Quality);
-      Assert.Equal(Note.C, triad.Root);
-      Assert.Equal(Note.C, triad.Bass);
-      Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Count);
-      Assert.Equal(Note.C, triad.Notes[0]);
-      Assert.Equal(Note.E, triad.Notes[1]);
-      Assert.Equal(Note.G, triad.Notes[2]);
-    }
-
-    [Fact]
-    public void MinorTriadTest()
-    {
-      var triad = new Triad(Note.C, TriadQuality.Minor);
-      Assert.Equal("Cm", triad.Name);
-      Assert.Equal(TriadQuality.Minor, triad.Quality);
-      Assert.Equal(Note.C, triad.Root);
-      Assert.Equal(Note.C, triad.Bass);
-      Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Count);
-      Assert.Equal(Note.C, triad.Notes[0]);
-      Assert.Equal(Note.EFlat, triad.Notes[1]);
-      Assert.Equal(Note.G, triad.Notes[2]);
-    }
-
-    [Fact]
-    public void DiminishedTriadTest()
-    {
-      var triad = new Triad(Note.C, TriadQuality.Diminished);
-      Assert.Equal("Cdim", triad.Name);
-      Assert.Equal(TriadQuality.Diminished, triad.Quality);
-      Assert.Equal(Note.C, triad.Root);
-      Assert.Equal(Note.C, triad.Bass);
-      Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Count);
-      Assert.Equal(Note.C, triad.Notes[0]);
-      Assert.Equal(Note.EFlat, triad.Notes[1]);
-      Assert.Equal(Note.GFlat, triad.Notes[2]);
-    }
-
-    [Fact]
-    public void AugmentedTriadTest()
-    {
-      var triad = new Triad(Note.C, TriadQuality.Augmented);
-      Assert.Equal("Caug", triad.Name);
-      Assert.Equal(TriadQuality.Augmented, triad.Quality);
-      Assert.Equal(Note.C, triad.Root);
-      Assert.Equal(Note.C, triad.Bass);
-      Assert.Equal(0, triad.Inversion);
-      Assert.Equal(3, triad.Notes.Count);
-      Assert.Equal(Note.C, triad.Notes[0]);
-      Assert.Equal(Note.E, triad.Notes[1]);
-      Assert.Equal(Note.GSharp, triad.Notes[2]);
-    }
-
-    [Fact]
-    public void FirstInversionTest()
-    {
-      var triad = new Triad(Note.G, TriadQuality.Major);
-      var inversion = triad.GetInversion(1);
-      Assert.Equal("G/B", inversion.Name);
-      Assert.Equal(TriadQuality.Major, inversion.Quality);
-      Assert.Equal(Note.G, inversion.Root);
-      Assert.Equal(Note.B, inversion.Bass);
-      Assert.Equal(1, inversion.Inversion);
-      Assert.Equal(3, inversion.Notes.Count);
-      Assert.Equal(Note.B, inversion.Notes[0]);
-      Assert.Equal(Note.D, inversion.Notes[1]);
-      Assert.Equal(Note.G, inversion.Notes[2]);
-    }
-
-    [Fact]
-    public void SecondInversionTest()
-    {
-      var triad = new Triad(Note.G, TriadQuality.Major);
-      var inversion = triad.GetInversion(2);
-      Assert.Equal("G/D", inversion.Name);
-      Assert.Equal(TriadQuality.Major, inversion.Quality);
-      Assert.Equal(Note.G, inversion.Root);
-      Assert.Equal(Note.D, inversion.Bass);
-      Assert.Equal(2, inversion.Inversion);
-      Assert.Equal(3, inversion.Notes.Count);
-      Assert.Equal(Note.D, inversion.Notes[0]);
-      Assert.Equal(Note.G, inversion.Notes[1]);
-      Assert.Equal(Note.B, inversion.Notes[2]);
-    }
-
-    [Fact]
-    public void InvertThrowsWithInvalidInversionNumberTest()
-    {
-      var triad = new Triad(Note.G, TriadQuality.Major);
-      Assert.Throws<ArgumentOutOfRangeException>(() => triad.GetInversion(-1));
-      Assert.Throws<ArgumentOutOfRangeException>(() => triad.GetInversion(3));
-    }
-
-    #endregion
-
-    #region  Implementation
-
-    #endregion
+    var triad = new Triad( PitchClass.C, TriadQuality.Major );
+    Assert.Equal( "C", triad.Name );
+    Assert.Equal( TriadQuality.Major, triad.Quality );
+    Assert.Equal( PitchClass.C, triad.Root );
+    Assert.Equal( PitchClass.C, triad.Bass );
+    Assert.Equal( 0, triad.Inversion );
+    Assert.Equal( 3, triad.PitchClasses.Count );
+    Assert.Equal( PitchClass.C, triad.PitchClasses[0] );
+    Assert.Equal( PitchClass.E, triad.PitchClasses[1] );
+    Assert.Equal( PitchClass.G, triad.PitchClasses[2] );
   }
+
+  [Fact]
+  public void MinorTriadTest()
+  {
+    var triad = new Triad( PitchClass.C, TriadQuality.Minor );
+    Assert.Equal( "Cm", triad.Name );
+    Assert.Equal( TriadQuality.Minor, triad.Quality );
+    Assert.Equal( PitchClass.C, triad.Root );
+    Assert.Equal( PitchClass.C, triad.Bass );
+    Assert.Equal( 0, triad.Inversion );
+    Assert.Equal( 3, triad.PitchClasses.Count );
+    Assert.Equal( PitchClass.C, triad.PitchClasses[0] );
+    Assert.Equal( PitchClass.EFlat, triad.PitchClasses[1] );
+    Assert.Equal( PitchClass.G, triad.PitchClasses[2] );
+  }
+
+  [Fact]
+  public void DiminishedTriadTest()
+  {
+    var triad = new Triad( PitchClass.C, TriadQuality.Diminished );
+    // ReSharper disable once StringLiteralTypo
+    Assert.Equal( "Cdim", triad.Name );
+    Assert.Equal( TriadQuality.Diminished, triad.Quality );
+    Assert.Equal( PitchClass.C, triad.Root );
+    Assert.Equal( PitchClass.C, triad.Bass );
+    Assert.Equal( 0, triad.Inversion );
+    Assert.Equal( 3, triad.PitchClasses.Count );
+    Assert.Equal( PitchClass.C, triad.PitchClasses[0] );
+    Assert.Equal( PitchClass.EFlat, triad.PitchClasses[1] );
+    Assert.Equal( PitchClass.GFlat, triad.PitchClasses[2] );
+  }
+
+  [Fact]
+  public void AugmentedTriadTest()
+  {
+    var triad = new Triad( PitchClass.C, TriadQuality.Augmented );
+    // ReSharper disable once StringLiteralTypo
+    Assert.Equal( "Caug", triad.Name );
+    Assert.Equal( TriadQuality.Augmented, triad.Quality );
+    Assert.Equal( PitchClass.C, triad.Root );
+    Assert.Equal( PitchClass.C, triad.Bass );
+    Assert.Equal( 0, triad.Inversion );
+    Assert.Equal( 3, triad.PitchClasses.Count );
+    Assert.Equal( PitchClass.C, triad.PitchClasses[0] );
+    Assert.Equal( PitchClass.E, triad.PitchClasses[1] );
+    Assert.Equal( PitchClass.GSharp, triad.PitchClasses[2] );
+  }
+
+  [Fact]
+  public void FirstInversionTest()
+  {
+    var triad = new Triad( PitchClass.G, TriadQuality.Major );
+    var inversion = triad.GetInversion( 1 );
+    Assert.Equal( "G/B", inversion.Name );
+    Assert.Equal( TriadQuality.Major, inversion.Quality );
+    Assert.Equal( PitchClass.G, inversion.Root );
+    Assert.Equal( PitchClass.B, inversion.Bass );
+    Assert.Equal( 1, inversion.Inversion );
+    Assert.Equal( 3, inversion.PitchClasses.Count );
+    Assert.Equal( PitchClass.B, inversion.PitchClasses[0] );
+    Assert.Equal( PitchClass.D, inversion.PitchClasses[1] );
+    Assert.Equal( PitchClass.G, inversion.PitchClasses[2] );
+  }
+
+  [Fact]
+  public void SecondInversionTest()
+  {
+    var triad = new Triad( PitchClass.G, TriadQuality.Major );
+    var inversion = triad.GetInversion( 2 );
+    Assert.Equal( "G/D", inversion.Name );
+    Assert.Equal( TriadQuality.Major, inversion.Quality );
+    Assert.Equal( PitchClass.G, inversion.Root );
+    Assert.Equal( PitchClass.D, inversion.Bass );
+    Assert.Equal( 2, inversion.Inversion );
+    Assert.Equal( 3, inversion.PitchClasses.Count );
+    Assert.Equal( PitchClass.D, inversion.PitchClasses[0] );
+    Assert.Equal( PitchClass.G, inversion.PitchClasses[1] );
+    Assert.Equal( PitchClass.B, inversion.PitchClasses[2] );
+  }
+
+  [Fact]
+  public void InvertThrowsWithInvalidInversionNumberTest()
+  {
+    var triad = new Triad( PitchClass.G, TriadQuality.Major );
+    Assert.Throws<ArgumentOutOfRangeException>( () => triad.GetInversion( -1 ) );
+    Assert.Throws<ArgumentOutOfRangeException>( () => triad.GetInversion( 3 ) );
+  }
+
+#endregion
 }

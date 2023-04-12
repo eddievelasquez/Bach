@@ -1,6 +1,6 @@
 ﻿// Module Name: Instrument.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,53 +22,49 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+using System;
+using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments;
+
+/// <summary>The base class for an instrument.</summary>
+public abstract class Instrument: IEquatable<Instrument>
 {
-  using System;
-  using Model.Internal;
-
-  /// <summary>The base class for an instrument.</summary>
-  public abstract class Instrument: IEquatable<Instrument>
+  protected Instrument( InstrumentDefinition definition )
   {
-    #region Constructors
+    Requires.NotNull( definition );
+    Definition = definition;
+  }
 
-    /// <inheritdoc />
-    protected Instrument(InstrumentDefinition definition)
+  /// <summary>Gets the instrument's definition.</summary>
+  /// <value>The definition.</value>
+  public InstrumentDefinition Definition { get; }
+
+  /// <inheritdoc />
+  public bool Equals( Instrument other )
+  {
+    if( ReferenceEquals( this, other ) )
     {
-      Contract.Requires<ArgumentNullException>(definition != null);
-      Definition = definition;
+      return true;
     }
 
-    #endregion
+    return other is not null && Definition.Equals( other.Definition );
+  }
 
-    #region Properties
-
-    /// <summary>Gets the instrument's definition.</summary>
-    /// <value>The definition.</value>
-    public InstrumentDefinition Definition { get; }
-
-    #endregion
-
-    #region IEquatable<Instrument> Members
-
-    /// <inheritdoc />
-    public bool Equals(Instrument other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( this, obj ) )
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
-      return ReferenceEquals(this, other) || Definition.Equals(other.Definition);
+      return true;
     }
 
-    #endregion
+    return obj is Instrument other && Equals( other );
+  }
 
-    #region Overrides
-
-    /// <inheritdoc />
-    public override int GetHashCode() => Definition.GetHashCode();
-
-    #endregion
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return Definition.GetHashCode();
   }
 }

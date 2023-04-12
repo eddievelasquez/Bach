@@ -1,6 +1,6 @@
 ﻿// Module Name: Formula.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,258 +22,332 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Bach.Model.Internal;
+
+namespace Bach.Model;
+
+/// <summary>A formula is a base class for constructing a sequence of pitch classes based on a series of intervals.</summary>
+public abstract class Formula
+  : INamedObject,
+    IEquatable<Formula>
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Collections.ObjectModel;
-  using System.Linq;
-  using System.Text;
-  using Internal;
-
-  /// <summary>A formula is a base class for constructing a sequence of notes based on a series of intervals.</summary>
-  public abstract class Formula
-    : IKeyedObject,
-      IEquatable<Formula>
+  private sealed class IntervalComparer: IComparer<Interval>
   {
-    #region Constants
-
-    private static readonly StringComparer s_comparer = StringComparer.CurrentCultureIgnoreCase;
-
-    #endregion
-
-    #region Data Members
-
-    private readonly Interval[] _intervals;
-
-    #endregion
-
-    #region Constructors
-
-    /// <summary>Specialized constructor for use only by derived classes.</summary>
-    /// <exception cref="ArgumentNullException">Thrown when either the key, name or interval arguments are null.</exception>
-    /// <exception cref="ArgumentException">Thrown when teh key or name are empty.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when interval array is empty.</exception>
-    /// <param name="key">
-    ///   The language-neutral key for the formula. The key is used as the unique identifier for a formula in
-    ///   the registry.
-    /// </param>
-    /// <param name="name">The localizable name for the formula.</param>
-    /// <param name="intervals">The intervals that compose the formula.</param>
-    protected Formula(string key,
-                      string name,
-                      Interval[] intervals)
+    public int Compare(
+      Interval x,
+      Interval y )
     {
-      Contract.RequiresNotNullOrEmpty(key, "Must provide a key");
-      Contract.RequiresNotNullOrEmpty(name, "Must provide a name");
-      Contract.Requires<ArgumentNullException>(intervals != null, "Must provide an interval array");
-      Contract.Requires<ArgumentOutOfRangeException>(intervals.Length > 0, "Must provide at least one interval");
-      Contract.Requires<ArgumentException>(intervals.IsSortedWithoutDuplicates());
+      return x.CompareTo( y );
+    }
+  }
 
-      Key = key;
-      Name = name;
-      _intervals = intervals;
+  private sealed class SemitoneCountIntervalComparer: IComparer<Interval>
+  {
+    public int Compare(
+      Interval x,
+      Interval y )
+    {
+      return x.SemitoneCount - y.SemitoneCount;
+    }
+  }
+
+  private const string NameIntervalsToStringFormat = "N: I";
+
+  private static readonly IntervalComparer s_intervalComparer = new();
+  private static readonly SemitoneCountIntervalComparer s_semitoneComparer = new();
+
+  /// <summary>Specialized constructor for use only by derived classes.</summary>
+  /// <exception cref="ArgumentNullException">Thrown when either the id, name or interval arguments are null.</exception>
+  /// <exception cref="ArgumentException">Thrown when the id or name are empty.</exception>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when interval array is empty.</exception>
+  /// <param name="id">
+  ///   The language-neutral identifier for the formula. The id is used as the unique identifier for a formula in
+  ///   the registry.
+  /// </param>
+  /// <param name="name">The localizable name for the formula.</param>
+  /// <param name="intervals">The intervals that compose the formula.</param>
+  protected Formula(
+    string id,
+    string name,
+    Interval[] intervals )
+  {
+    Requires.NotNullOrEmpty( id );
+    Requires.NotNullOrEmpty( name );
+    Requires.NotNullOrEmpty( intervals );
+
+    Id = id;
+    Name = name;
+    Intervals = new IntervalCollection( intervals );
+  }
+
+  /// <summary>Gets the intervals that compose this formula.</summary>
+  /// <value>The intervals.</value>
+  public IntervalCollection Intervals { get; }
+
+  /// <summary>Returns the language-neutral id for the formula.</summary>
+  /// <value>The id.</value>
+  public string Id { get; }
+
+  /// <summary>Gets the localizable name for the formula.</summary>
+  /// <value>The name.</value>
+  public string Name { get; }
+
+  /// <inheritdoc />
+  public bool Equals( Formula other )
+  {
+    if( ReferenceEquals( other, this ) )
+    {
+      return true;
     }
 
-    /// <summary>Specialized constructor for use only by derived classed.</summary>
-    /// <param name="key">
-    ///   The language-neutral key for the formula. The key is used as the unique
-    ///   identifier for a formula in the registry.
-    /// </param>
-    /// <param name="name">The localizable name for the formula.</param>
-    /// <param name="formula">
-    ///   The string representation of the formula for the scale. The formula is a
-    ///   sequence of comma-separated intervals. See
-    ///   <see cref="Interval.ToString" /> for the format of an interval.
-    /// </param>
-    protected Formula(string key,
-                      string name,
-                      string formula)
-      : this(key, name, ParseIntervals(formula))
+    if( other is null )
     {
+      return false;
     }
 
-    #endregion
+    return Comparer.IdComparer.Equals( Id, other.Id )
+           && Comparer.NameComparer.Equals( Name, other.Name )
+           && Intervals.SequenceEqual( other.Intervals );
+  }
 
-    #region Properties
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return ToString( NameIntervalsToStringFormat, null );
+  }
 
-    /// <summary>Gets the intervals that compose this formula.</summary>
-    /// <value>The intervals.</value>
-    public ReadOnlyCollection<Interval> Intervals => new ReadOnlyCollection<Interval>(_intervals);
-
-    /// <summary>Gets the localizable name for the formula.</summary>
-    /// <value>The name.</value>
-    public string Name { get; }
-
-    #endregion
-
-    #region IEquatable<Formula> Members
-
-    /// <inheritdoc />
-    public bool Equals(Formula other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( obj, this ) )
     {
-      if( ReferenceEquals(other, this) )
+      return true;
+    }
+
+    return obj is Formula other && Equals( other );
+  }
+
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return Comparer.IdComparer.GetHashCode( Id );
+  }
+
+  /// <summary>Determines whether this instance contains the provided intervals.</summary>
+  /// <param name="intervals">The intervals to evaluate.</param>
+  /// <param name="match">Interval matching strategy.</param>
+  /// <returns>
+  ///   <c>true</c> if the formula contains the specified intervals; otherwise, <c>false</c>.
+  /// </returns>
+  public bool Contains(
+    IEnumerable<Interval> intervals,
+    IntervalMatch match = IntervalMatch.Exact )
+  {
+    var comparer = ( match == IntervalMatch.Exact ) ? (IComparer<Interval>) s_intervalComparer : s_semitoneComparer;
+
+    return intervals.All( interval => Intervals.IndexOf( interval, comparer ) >= 0 );
+  }
+
+  /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
+  /// <param name="root">The root pitch.</param>
+  /// <returns> An enumerator for a sequence of pitches.</returns>
+  public IEnumerable<Pitch> Generate( Pitch root )
+  {
+    var intervalCount = Intervals.Count;
+    var index = 0;
+
+    while( true )
+    {
+      var interval = Intervals[index % intervalCount];
+      var pitch = root + interval;
+
+      // Do we need to change the pitch's octave?
+      var octaveAdd = index / intervalCount;
+      if( octaveAdd > 0 )
       {
-        return true;
+        pitch += octaveAdd * Pitch.IntervalsPerOctave;
       }
 
-      if( ReferenceEquals(other, null) )
+      if( pitch > Pitch.MaxValue )
       {
-        return false;
+        yield break;
       }
 
-      return s_comparer.Equals(Key, other.Key) && s_comparer.Equals(Name, other.Name) && _intervals.SequenceEqual(other.Intervals);
+      yield return pitch;
+
+      ++index;
     }
+  }
 
-    #endregion
+  /// <summary>Generates a sequence of pitch classes based on the formula's intervals.</summary>
+  /// <remarks>Warning! By design, this enumerator never ends.</remarks>
+  /// <param name="root">The root pitch class.</param>
+  /// <returns> An enumerator for a sequence of pitch classes.</returns>
+  public IEnumerable<PitchClass> Generate( PitchClass root )
+  {
+    var intervalCount = Intervals.Count;
+    var index = 0;
 
-    #region IKeyedObject Members
-
-    /// <summary>Returns the language-neutral key for the formula.</summary>
-    /// <value>The key.</value>
-    public string Key { get; }
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
-    /// <param name="root">The root pitch.</param>
-    /// <param name="skipCount">(Optional) Number of pitches to skip.</param>
-    /// <returns> An enumerator for a sequence of pitches.</returns>
-    public IEnumerable<Pitch> Generate(Pitch root,
-                                       int skipCount = 0)
+    // NOTE: By design, this iterator never returns.
+    while( true )
     {
-      int intervalCount = _intervals.Length;
-      int index = skipCount;
+      var interval = Intervals[index % intervalCount];
+      var pitchClass = root + interval;
+      yield return pitchClass;
 
-      while( true )
-      {
-        Interval interval = _intervals[index % intervalCount];
-        Pitch pitch = root + interval;
-
-        // Do we need to change the pitch's octave?
-        int octaveAdd = index / intervalCount;
-        if( octaveAdd > 0 )
-        {
-          pitch += octaveAdd * Pitch.IntervalsPerOctave;
-        }
-
-        if( pitch > Pitch.MaxValue )
-        {
-          yield break;
-        }
-
-        yield return pitch;
-
-        ++index;
-      }
+      ++index;
     }
 
-    /// <summary>Generates a sequence of notes based on the formula's intervals.</summary>
-    /// <notes>Warning! By design, this enumerator never ends.</notes>
-    /// <param name="root">The root note.</param>
-    /// <returns> An enumerator for a sequence of notes.</returns>
-    public IEnumerable<Note> Generate(Note root)
+    // ReSharper disable once IteratorNeverReturns
+  }
+
+  /// <summary>
+  ///   Generates a sequence of pitchClasses based on the provided formula's intervals and starting on the provided
+  ///   <see cref="PitchClass" />.
+  /// </summary>
+  /// <param name="root">The root pitch class.</param>
+  /// <param name="intervals">The intervals.</param>
+  /// <returns> An enumerator for a sequence of pitchClasses.</returns>
+  public static IEnumerable<PitchClass> Generate(
+    PitchClass root,
+    IEnumerable<Interval> intervals )
+  {
+    Requires.NotNull( intervals );
+    return intervals.Select( interval => root + interval );
+  }
+
+  /// <summary>Gets the relative steps in terms of semitones between the intervals that compose the formula.</summary>
+  /// <returns>An array of integral semitone counts.</returns>
+  public int[] GetRelativeSteps()
+  {
+    var steps = new int[Intervals.Count];
+    var lastCount = 0;
+
+    for( var i = 1; i < Intervals.Count; i++ )
     {
-      int intervalCount = _intervals.Length;
-      var index = 0;
-
-      // NOTE: By design, this iterator never returns.
-      while( true )
-      {
-        Interval interval = _intervals[index % intervalCount];
-        Note note = root + interval;
-        yield return note;
-
-        ++index;
-      }
-
-      // ReSharper disable once IteratorNeverReturns
+      var semitoneCount = Intervals[i].SemitoneCount;
+      var step = semitoneCount - lastCount;
+      steps[i - 1] = step;
+      lastCount = semitoneCount;
     }
 
-    /// <summary>Gets the relative steps in terms of semitones between the intervals that compose the formula.</summary>
-    /// <returns>An array of integral semitone counts.</returns>
-    public int[] GetRelativeSteps()
+    // Add last step between the root octave and the
+    // last interval
+    steps[^1] = 12 - lastCount;
+    return steps;
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   provided format specifier.
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>Format specifiers:</para>
+  ///   <para>"N": Name pattern. e.g. "Major".</para>
+  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  /// </remarks>
+  public string ToString( string format )
+  {
+    return ToString( format, null );
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   provided format specifier and format provider.
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <param name="provider">The format provider. (Currently unused)</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>Format specifiers:</para>
+  ///   <para>"N": Name pattern. e.g. "Major".</para>
+  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  /// </remarks>
+  public string ToString(
+    string format,
+    IFormatProvider provider )
+  {
+    if( string.IsNullOrEmpty( format ) )
     {
-      var steps = new int[_intervals.Length];
-      var lastCount = 0;
-
-      for( var i = 1; i < _intervals.Length; i++ )
-      {
-        int semitoneCount = _intervals[i].SemitoneCount;
-        int step = semitoneCount - lastCount;
-        steps[i - 1] = step;
-        lastCount = semitoneCount;
-      }
-
-      // Add last step between the root octave and the
-      // last interval
-      steps[steps.Length - 1] = 12 - lastCount;
-      return steps;
+      format = NameIntervalsToStringFormat;
     }
 
-    #endregion
-
-    #region Overrides
-
-    /// <inheritdoc />
-    public override string ToString()
+    var buf = new StringBuilder();
+    foreach( var f in format )
     {
-      var buf = new StringBuilder();
-      buf.Append(Name);
-      buf.Append(": ");
-
-      var needComma = false;
-
-      foreach( Interval interval in _intervals )
+      switch( f )
       {
-        if( needComma )
-        {
-          buf.Append(',');
-        }
-        else
-        {
-          needComma = true;
-        }
+        case 'N':
+          buf.Append( Name );
+          break;
 
-        buf.Append(interval);
+        case 'I':
+          buf.Append( Intervals );
+          break;
+
+        default:
+          buf.Append( f );
+          break;
       }
-
-      return buf.ToString();
     }
 
-    /// <inheritdoc />
-    public override bool Equals(object other)
+    return buf.ToString();
+  }
+
+  public static Interval[] ParseIntervals( string formula )
+  {
+    Requires.NotNullOrEmpty( formula );
+    return ParseIntervals( formula.AsSpan() );
+  }
+
+  public static Interval[] ParseIntervals( ReadOnlySpan<char> formula )
+  {
+    Requires.NotEmpty( formula, "Must provide a formula" );
+
+    var buf = new List<Interval>();
+    foreach( var value in formula.Split( ',' ) )
     {
-      if( ReferenceEquals(other, this) )
+      if( !Interval.TryParse( formula[value.Start.Value..value.End.Value],
+                              out var interval ) )
       {
-        return true;
+        throw new FormatException( value + " is not a valid interval" );
       }
 
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Formula)other);
+      buf.Add( interval );
     }
 
-    /// <inheritdoc />
-    public override int GetHashCode() => s_comparer.GetHashCode(Key);
+    return buf.ToArray();
+  }
 
-    #endregion
+  internal static int[] GetRelativeSteps( IList<Interval> intervals )
+  {
+    Requires.NotNullOrEmpty( intervals );
+    var steps = new int[intervals.Count];
+    var lastCount = 0;
 
-    #region  Implementation
-
-    private static Interval[] ParseIntervals(string formula)
+    for( var i = 1; i < intervals.Count; i++ )
     {
-      Contract.RequiresNotNullOrEmpty(formula, "Must provide a formula");
-
-      string[] values = formula.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-      return values.Select(Interval.Parse).ToArray();
+      var semitoneCount = intervals[i].SemitoneCount;
+      var step = semitoneCount - lastCount;
+      steps[i - 1] = step;
+      lastCount = semitoneCount;
     }
 
-    #endregion
+    // Add last step between the root octave and the
+    // last interval
+    steps[^1] = 12 - lastCount;
+    return steps;
   }
 }

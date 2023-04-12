@@ -1,6 +1,6 @@
-// Module Name: ScaleFormula.cs
+﻿// Module Name: ScaleFormula.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,42 +22,39 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System.Collections.Generic;
+using System.Diagnostics;
+
+namespace Bach.Model;
+
+/// <summary>A scale formula defines how the pitchClasses of a scale relate to each other.</summary>
+public class ScaleFormula: Formula
 {
-  /// <summary>A scale formula defines how the notes of a scale relate to each other.</summary>
-  public class ScaleFormula: Formula
+  /// <inheritdoc />
+  internal ScaleFormula(
+    string id,
+    string name,
+    Interval[] intervals,
+    IReadOnlySet<string> categories,
+    IReadOnlySet<string> aliases )
+    : base( id, name, intervals )
   {
-    #region Constructors
+    Debug.Assert( categories != null );
+    Debug.Assert( aliases != null );
 
-    /// <summary>Constructor.</summary>
-    /// <param name="key">The language-neutral key of the scale.</param>
-    /// <param name="name">The localizable name of the scale.</param>
-    /// <param name="intervals">
-    ///   The intervals that describe the relationship between the notes that
-    ///   compose the scale.
-    /// </param>
-    public ScaleFormula(string key,
-                        string name,
-                        params Interval[] intervals)
-      : base(key, name, intervals)
-    {
-    }
-
-    /// <summary>Constructor.</summary>
-    /// <param name="key">The language-neutral key of the scale.</param>
-    /// <param name="name">The localizable name of the scale.</param>
-    /// <param name="formula">
-    ///   The string representation of the formula for the scale. The formula is a
-    ///   sequence of comma-separated intervals. See
-    ///   <see cref="Interval.ToString" /> for the format of an interval.
-    /// </param>
-    public ScaleFormula(string key,
-                        string name,
-                        string formula)
-      : base(key, name, formula)
-    {
-    }
-
-    #endregion
+    Categories = categories;
+    Aliases = aliases;
   }
+
+  /// <summary>
+  ///   Gets the optional categories for this scale formula
+  /// </summary>
+  /// <value>The categories.</value>
+  public IReadOnlySet<string> Categories { get; }
+
+  /// <summary>
+  ///   Gets the optional aliases for this scale formula.
+  /// </summary>
+  /// <value>The aliases.</value>
+  public IReadOnlySet<string> Aliases { get; }
 }

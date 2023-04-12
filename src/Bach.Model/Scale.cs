@@ -1,6 +1,6 @@
 ﻿// Module Name: Scale.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,308 +22,338 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Bach.Model.Internal;
+
+namespace Bach.Model;
+
+/// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
+public sealed class Scale: IEquatable<Scale>
 {
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Collections.ObjectModel;
-  using System.Diagnostics;
-  using System.Linq;
-  using System.Text;
-  using Internal;
+  private const string DefaultToStringFormat = "N {S}";
 
-  /// <summary>A scale is a set of notes defined by a ScaleFormula .</summary>
-  public class Scale
-    : IEquatable<Scale>,
-      IEnumerable<Note>
+  /// <summary>Constructor.</summary>
+  /// <param name="root">The root pitchClass of the scale.</param>
+  /// <param name="formula">The formula used to generate the scale.</param>
+  /// <exception cref="ArgumentNullException">Thrown when the formula is null.</exception>
+  public Scale(
+    PitchClass root,
+    ScaleFormula formula )
   {
-    #region Nested type: ScaleCategory
+    Requires.NotNull( formula );
 
-    [Flags]
-    private enum ScaleCategory
+    Root = root;
+    Formula = formula;
+    PitchClasses = new PitchClassCollection( Formula.Generate( Root ).Take( Formula.Intervals.Count ) );
+
+    var buf = new StringBuilder();
+    buf.Append( root.NoteName );
+    buf.Append( root.Accidental.ToSymbol() );
+
+    if( !Comparer.NameComparer.Equals( formula.Name, "Major" ) )
     {
-      None = 0,
-      Diatonic = 1,
-      Major = 2,
-      Minor = 4,
-      Theoretical = 8
+      buf.Append( ' ' );
+      buf.Append( formula.Name );
     }
 
-    #endregion
+    Name = buf.ToString();
+    Theoretical = IsTheoretical( this );
+  }
 
-    #region Data Members
+  /// <summary>Constructor.</summary>
+  /// <param name="root">The root pitchClass of the scale.</param>
+  /// <param name="formulaIdOrName">Id or name of the formula as defined in the Registry.</param>
+  /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
+  public Scale(
+    PitchClass root,
+    string formulaIdOrName )
+    : this( root, Registry.ScaleFormulas[formulaIdOrName] )
+  {
+  }
 
-    private readonly ScaleCategory _categories;
-    private readonly Note[] _notes;
+  /// <summary>Gets the root pitchClass of the scale.</summary>
+  /// <value>The root.</value>
+  public PitchClass Root { get; }
 
-    #endregion
+  /// <summary>Gets the localized name of the scale.</summary>
+  /// <value>The name.</value>
+  public string Name { get; }
 
-    #region Constructors
+  /// <summary>Gets the formula for the scale.</summary>
+  /// <value>The formula.</value>
+  public ScaleFormula Formula { get; }
 
-    /// <summary>Constructor.</summary>
-    /// <param name="root">The root note of the scale.</param>
-    /// <param name="formula">The formula used to generate the scale.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the formula is null.</exception>
-    public Scale(Note root,
-                 ScaleFormula formula)
+  /// <summary>Gets the pitchClasses that form this scale.</summary>
+  /// <value>A collection of pitchClasses.</value>
+  public PitchClassCollection PitchClasses { get; }
+
+  /// <summary>Determines if this scale is theoretical.</summary>
+  /// <remarks>
+  ///   A theoretical scale is one that contains at least one double flat or double sharp accidental. These
+  ///   scales exist in the musical theory realm but are not used in practice due to their complexity. There's always
+  ///   another
+  ///   practical scale that contains exactly the same enharmonic pitches in the same order. See
+  ///   <see cref="GetEnharmonicScale" /> for a way to obtain said scale.
+  /// </remarks>
+  /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
+  public bool Theoretical { get; }
+
+  /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
+  /// <value>An enumerable that iterates through the scale in ascending fashion.</value>
+  public IEnumerable<PitchClass> Ascending
+  {
+    get
     {
-      Contract.Requires<ArgumentNullException>(formula != null);
-
-      Root = root;
-      Formula = formula;
-      _notes = Formula.Generate(Root).Take(Formula.Intervals.Count).ToArray();
-
-      var buf = new StringBuilder();
-      buf.Append(root.NoteName);
-      buf.Append(root.Accidental.ToSymbol());
-
-      if( !StringComparer.CurrentCultureIgnoreCase.Equals(formula.Name, "Major") )
-      {
-        buf.Append(' ');
-        buf.Append(formula.Name);
-      }
-
-      Name = buf.ToString();
-
-      _categories = Categorize(this);
-    }
-
-    /// <summary>Constructor.</summary>
-    /// <param name="root">The root note of the scale.</param>
-    /// <param name="formulaName">Key of the formula as defined in the Registry.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
-    public Scale(Note root,
-                 string formulaName)
-      : this(root, Registry.ScaleFormulas[formulaName])
-    {
-    }
-
-    #endregion
-
-    #region Properties
-
-    /// <summary>Gets the root note of the scale.</summary>
-    /// <value>The root.</value>
-    public Note Root { get; }
-
-    /// <summary>Gets the localized name of the scale.</summary>
-    /// <value>The name.</value>
-    public string Name { get; }
-
-    /// <summary>Gets the formula for the scale.</summary>
-    /// <value>The formula.</value>
-    public ScaleFormula Formula { get; }
-
-    /// <summary>Gets the notes that form this scale.</summary>
-    /// <value>An array of notes.</value>
-    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
-
-    /// <summary>Determines if this scale is diatonic.</summary>
-    /// <notes>A diatonic scale is one that includes 5 whole steps and 2 semitones.</notes>
-    /// <value>True if diatonic, false if not.</value>
-    public bool Diatonic => ( _categories & ScaleCategory.Diatonic ) != 0;
-
-    /// <summary>Determines if this scale is major.</summary>
-    /// <notes>A major scale is one in which the root, third and fifth form a major triad (R,M3,5).</notes>
-    /// <value>True if major, false if not.</value>
-    public bool Major => ( _categories & ScaleCategory.Major ) != 0;
-
-    /// <summary>Determines if this scale is minor.</summary>
-    /// <notes>A minor scale is one in which the root, third and fifth form a minor triad (R,m3,5).</notes>
-    /// <value>True if minor, false if not.</value>
-    public bool Minor => ( _categories & ScaleCategory.Minor ) != 0;
-
-    /// <summary>Determines if this scale is theoretical.</summary>
-    /// <notes>
-    ///   A theoretical scale is one that contains at least one double flat or double sharp accidental. These
-    ///   scales exist in the musical theory realm but are not used in practice due to their complexity. There's always another
-    ///   practical scale that contains exactly the same enharmonic pitches in the same order. See
-    ///   <see cref="GetEnharmonicScale" /> for a way to obtain said scale.
-    /// </notes>
-    /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
-    public bool Theoretical => ( _categories & ScaleCategory.Theoretical ) != 0;
-
-    #endregion
-
-    #region IEnumerable<Note> Members
-
-    /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator()
-    {
-      ReadOnlyCollection<Note> notes = Notes;
       var index = 0;
 
       while( true )
       {
-        yield return notes[index];
+        yield return PitchClasses[index];
 
-        index = ArrayExtensions.WrapIndex(notes.Count, ++index);
+        index = ArrayExtensions.WrapIndex( PitchClasses.Count, ++index );
       }
 
       // ReSharper disable once IteratorNeverReturns
     }
+  }
 
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    #endregion
-
-    #region IEquatable<Scale> Members
-
-    /// <inheritdoc />
-    public bool Equals(Scale other)
+  /// <summary>Returns an enumerable that iterates through the scale in descending fashion.</summary>
+  /// <value>An enumerable that iterates through the scale in descending fashion.</value>
+  public IEnumerable<PitchClass> Descending
+  {
+    get
     {
-      if( ReferenceEquals(other, this) )
+      var index = 0;
+
+      while( true )
       {
-        return true;
+        yield return PitchClasses[index];
+
+        index = ArrayExtensions.WrapIndex( PitchClasses.Count, --index );
       }
 
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
+      // ReSharper disable once IteratorNeverReturns
+    }
+  }
 
-      return Root.Equals(other.Root) && Formula.Equals(other.Formula);
+  /// <inheritdoc />
+  public bool Equals( Scale other )
+  {
+    if( ReferenceEquals( other, this ) )
+    {
+      return true;
     }
 
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
-    /// <param name="octave">The octave for the first pitch.</param>
-    /// <returns>An enumerator for a pitch sequence for this scale.</returns>
-    public IEnumerable<Pitch> Render(int octave) => Formula.Generate(Pitch.Create(Root, octave));
-
-    /// <summary>Gets a enharmonic scale for this instance.</summary>
-    /// <returns>The enharmonic scale.</returns>
-    public Scale GetEnharmonicScale()
+    if( other is null )
     {
-      Note expectedNote = Root.Accidental >= Accidental.Natural ? Root + 1 : Root - 1;
-      Note? enharmonicRoot = Root.GetEnharmonic(expectedNote.NoteName);
-      Debug.Assert(enharmonicRoot.HasValue);
-
-      if( enharmonicRoot.Value == Root )
-      {
-        return this;
-      }
-
-      var scale = new Scale(enharmonicRoot.Value, Formula);
-      return scale;
+      return false;
     }
 
-    #endregion
+    return Root.Equals( other.Root ) && Formula.Equals( other.Formula );
+  }
 
-    #region Overrides
-
-    /// <inheritdoc />
-    public override bool Equals(object other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( obj, this ) )
     {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Scale)other);
+      return true;
     }
 
-    /// <inheritdoc />
-    public override int GetHashCode()
+    return obj is Scale other && Equals( other );
+  }
+
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return HashCode.Combine( Root, Formula );
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return ToString( DefaultToStringFormat, null );
+  }
+
+  /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
+  /// <param name="octave">The octave for the first pitch.</param>
+  /// <returns>An enumerator for a pitch sequence for this scale.</returns>
+  public IEnumerable<Pitch> Render( int octave )
+  {
+    return Formula.Generate( Pitch.Create( Root, octave ) );
+  }
+
+  /// <summary>Gets a enharmonic scale for this instance.</summary>
+  /// <returns>The enharmonic scale.</returns>
+  public Scale GetEnharmonicScale()
+  {
+    var expectedPitchClass = Root.Accidental >= Accidental.Natural ? Root + 1 : Root - 1;
+    var enharmonicRoot = Root.GetEnharmonic( expectedPitchClass.NoteName );
+    if( enharmonicRoot == null || enharmonicRoot.Value == Root )
     {
-      var hashCode = 17;
-
-      unchecked
-      {
-        hashCode = ( hashCode * 23 ) + Root.GetHashCode();
-        hashCode = ( hashCode * 23 ) + Formula.GetHashCode();
-      }
-
-      return hashCode;
+      return this;
     }
 
-    /// <inheritdoc />
-    public override string ToString() => NoteCollection.ToString(Notes);
+    var scale = new Scale( enharmonicRoot.Value, Formula );
+    return scale;
+  }
 
-    #endregion
+  /// <summary>Determines if this instance contains the given pitchClasses.</summary>
+  /// <param name="notes">The pitchClasses.</param>
+  /// <returns>True if all the pitchClasses are in this scale; otherwise, false.</returns>
+  public bool Contains( IEnumerable<PitchClass> notes )
+  {
+    return notes.All( note => PitchClasses.IndexOf( note ) >= 0 );
+  }
 
-    #region  Implementation
+  /// <summary>Enumerates the scales that contain the given pitchClasses matching exactly the intervals between them.</summary>
+  /// <param name="notes">The pitchClasses.</param>
+  /// <returns>
+  ///   An enumerator to all the scales that contain the pitchClasses.
+  /// </returns>
+  public static IEnumerable<Scale> ScalesContaining( IEnumerable<PitchClass> notes )
+  {
+    return ScalesContaining( IntervalMatch.Exact, notes );
+  }
 
-    private static ScaleCategory Categorize(Scale scale)
-    {
-      var category = ScaleCategory.None;
-      if( IsDiatonic(scale) )
+  /// <summary>Enumerates the scales that contain the given pitchClasses.</summary>
+  /// <param name="match">Interval matching strategy.</param>
+  /// <param name="notes">The pitchClasses.</param>
+  /// <returns>
+  ///   An enumerator to all the scales that contain the pitchClasses.
+  /// </returns>
+  public static IEnumerable<Scale> ScalesContaining(
+    IntervalMatch match,
+    IEnumerable<PitchClass> notes )
+  {
+#if BRUTE_FORCE_MATCHING
+      foreach( ScaleFormula formula in Registry.ScaleFormulas )
       {
-        category |= ScaleCategory.Diatonic;
-      }
+        PitchClass root = PitchClass.C;
 
-      if( IsMajor(scale) )
-      {
-        category |= ScaleCategory.Major;
-      }
-      else if( IsMinor(scale) )
-      {
-        category |= ScaleCategory.Minor;
-      }
-
-      if( IsTheoretical(scale) )
-      {
-        category |= ScaleCategory.Theoretical;
-      }
-
-      return category;
-    }
-
-    private static bool IsDiatonic(Scale scale)
-    {
-      if( scale.Formula.Intervals.Count != 7 )
-      {
-        return false;
-      }
-
-      var wholeSteps = 0;
-      var halfSteps = 0;
-
-      foreach( int step in scale.Formula.GetRelativeSteps() )
-      {
-        if( step == 2 )
+        do
         {
-          ++wholeSteps;
-        }
-        else if( step == 1 )
+          var scale = new Scale(root, formula);
+          if( scale.Contains(pitchClasses) )
+          {
+            yield return scale;
+          }
+
+          ++root;
+        } while( root != PitchClass.C );
+      }
+#else
+    var rootNotes = new CircularArray<PitchClass>( notes );
+
+    do
+    {
+      var intervals = rootNotes.Intervals().ToArray();
+
+      foreach( var formula in Registry.ScaleFormulas )
+      {
+        if( !formula.Contains( intervals, match ) )
         {
-          ++halfSteps;
+          continue;
         }
+
+        var scale = new Scale( rootNotes[0], formula );
+        yield return scale;
       }
 
-      return wholeSteps == 5 && halfSteps == 2;
-    }
+      ++rootNotes.Head;
+    } while( rootNotes.Head != 0 );
+#endif
+  }
 
-    private static bool IsMajor(Scale scale)
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Scale" /> instance, according to the
+  ///   provided format specifier.
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Scale" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>"N": Name pattern. e.g. "C Major".</para>
+  ///   <para>"R": Root pattern. e.g. "C".</para>
+  ///   <para>"F": Formula name pattern. e.g. "Major".</para>
+  ///   <para>"S": PitchClasses pattern. e.g. "C,E,G".</para>
+  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  /// </remarks>
+  public string ToString( string format )
+  {
+    return ToString( format, null );
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Scale" /> instance, according to the
+  ///   provided format specifier and format provider.
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <param name="provider">The format provider. (Currently unused)</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Scale" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>Format specifiers:</para>
+  ///   <para>"N": Name pattern. e.g. "C Major".</para>
+  ///   <para>"R": Root pattern. e.g. "C".</para>
+  ///   <para>"F": Formula name pattern. e.g. "Major".</para>
+  ///   <para>"S": PitchClasses pattern. e.g. "C,E,G".</para>
+  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  /// </remarks>
+  public string ToString(
+    string format,
+    IFormatProvider provider )
+  {
+    if( string.IsNullOrEmpty( format ) )
     {
-      // Scale is minor when the root, third and fifth form a major triad (R,M3,5).
-      ReadOnlyCollection<Interval> intervals = scale.Formula.Intervals;
-      return intervals[0] == Interval.Unison && intervals.Contains(Interval.MajorThird) && intervals.Contains(Interval.Fifth);
+      format = DefaultToStringFormat;
     }
 
-    private static bool IsMinor(Scale scale)
+    var buf = new StringBuilder();
+    foreach( var f in format )
     {
-      // Scale is minor when the root, third and fifth form a minor triad (R,m3,5).
-      ReadOnlyCollection<Interval> intervals = scale.Formula.Intervals;
-      return intervals[0] == Interval.Unison && intervals.Contains(Interval.MinorThird) && intervals.Contains(Interval.Fifth);
+      switch( f )
+      {
+        case 'F':
+          buf.Append( Formula.Name );
+          break;
+
+        case 'I':
+          buf.Append( Formula.ToString( "I" ) );
+          break;
+
+        case 'N':
+          buf.Append( Name );
+          break;
+
+        case 'R':
+          buf.Append( Root );
+          break;
+
+        case 'S':
+          buf.Append( PitchClasses );
+          break;
+
+        default:
+          buf.Append( f );
+          break;
+      }
     }
 
-    private static bool IsTheoretical(Scale scale)
-    {
-      // Scale is theoretical when it contains at least one double flat or sharp.
-      return scale.Notes.Any(note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp);
-    }
+    return buf.ToString();
+  }
 
-    #endregion
+  private static bool IsTheoretical( Scale scale )
+  {
+    // Scale is theoretical when it contains at least one double flat or sharp.
+    return scale.PitchClasses.Any( note => note.Accidental == Accidental.DoubleFlat
+                                           || note.Accidental == Accidental.DoubleSharp );
   }
 }

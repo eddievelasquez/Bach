@@ -1,6 +1,6 @@
 ﻿// Module Name: Mode.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,144 +22,117 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Bach.Model.Internal;
+
+namespace Bach.Model;
+
+/// <summary>A mode is a type of scale coupled with a set of melodic behaviors.</summary>
+public sealed class Mode
+  : IEquatable<Mode>,
+    IEnumerable<PitchClass>
 {
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Collections.ObjectModel;
-  using System.Linq;
-  using System.Text;
-  using Internal;
-
-  /// <summary>A mode is a type of scale coupled with a set of melodic behaviors.</summary>
-  public class Mode
-    : IEquatable<Mode>,
-      IEnumerable<Note>
+  /// <summary>Constructor.</summary>
+  /// <param name="scale">The scale.</param>
+  /// <param name="formula">The mode formula.</param>
+  /// <exception cref="ArgumentNullException">Thrown when the scale or the formula are null.</exception>
+  public Mode(
+    Scale scale,
+    ModeFormula formula )
   {
-    #region Data Members
+    Requires.NotNull( scale );
+    Requires.NotNull( formula );
 
-    private readonly Note[] _notes;
+    Scale = scale;
+    Formula = formula;
 
-    #endregion
+    var buf = new StringBuilder();
+    buf.Append( scale.Name );
+    buf.Append( ' ' );
+    buf.Append( formula.Name );
 
-    #region Constructors
+    Name = buf.ToString();
+    PitchClasses
+      = new PitchClassCollection( scale.Ascending.Skip( Formula.Tonic - 1 ).Take( scale.PitchClasses.Count ) );
+  }
 
-    /// <summary>Constructor.</summary>
-    /// <param name="scale">The scale.</param>
-    /// <param name="formula">The mode formula.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the scale or the formula are null.</exception>
-    public Mode(Scale scale,
-                ModeFormula formula)
+  /// <summary>Gets the mode's pitchClasses.</summary>
+  /// <value>The pitchClasses.</value>
+  public PitchClassCollection PitchClasses { get; }
+
+  /// <summary>Gets the mode's scale.</summary>
+  /// <value>The scale.</value>
+  public Scale Scale { get; }
+
+  /// <summary>Gets the mode's name.</summary>
+  /// <value>The name.</value>
+  public string Name { get; }
+
+  /// <summary>Gets the mode's formula.</summary>
+  /// <value>The formula.</value>
+  public ModeFormula Formula { get; }
+
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  /// <inheritdoc />
+  public IEnumerator<PitchClass> GetEnumerator()
+  {
+    var index = 0;
+
+    while( true )
     {
-      Contract.Requires<ArgumentNullException>(scale != null);
-      Contract.Requires<ArgumentNullException>(formula != null);
+      yield return PitchClasses[index];
 
-      Scale = scale;
-      Formula = formula;
-
-      var buf = new StringBuilder();
-      buf.Append(scale.Name);
-      buf.Append(' ');
-      buf.Append(formula.Name);
-
-      Name = buf.ToString();
-      _notes = scale.Skip(Formula.Tonic - 1).Take(scale.Notes.Count).ToArray();
+      index = ArrayExtensions.WrapIndex( PitchClasses.Count, ++index );
     }
 
-    #endregion
+    // ReSharper disable once IteratorNeverReturns
+  }
 
-    #region Properties
-
-    /// <summary>Gets the mode's notes.</summary>
-    /// <value>The notes.</value>
-    public ReadOnlyCollection<Note> Notes => new ReadOnlyCollection<Note>(_notes);
-
-    /// <summary>Gets the mode's scale.</summary>
-    /// <value>The scale.</value>
-    public Scale Scale { get; }
-
-    /// <summary>Gets the mode's name.</summary>
-    /// <value>The name.</value>
-    public string Name { get; }
-
-    /// <summary>Gets the mode's formula.</summary>
-    /// <value>The formula.</value>
-    public ModeFormula Formula { get; }
-
-    #endregion
-
-    #region IEnumerable<Note> Members
-
-    /// <inheritdoc />
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    /// <inheritdoc />
-    public IEnumerator<Note> GetEnumerator()
+  /// <inheritdoc />
+  public bool Equals( Mode other )
+  {
+    if( ReferenceEquals( other, this ) )
     {
-      ReadOnlyCollection<Note> notes = Notes;
-      var index = 0;
-
-      while( true )
-      {
-        yield return notes[index];
-
-        index = ArrayExtensions.WrapIndex(notes.Count, ++index);
-      }
-
-      // ReSharper disable once IteratorNeverReturns
+      return true;
     }
 
-    #endregion
-
-    #region IEquatable<Mode> Members
-
-    /// <inheritdoc />
-    public bool Equals(Mode other)
+    if( other is null )
     {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return Scale.Equals(other.Scale) && Formula.Equals(other.Formula);
+      return false;
     }
 
-    #endregion
+    return Scale.Equals( other.Scale ) && Formula.Equals( other.Formula );
+  }
 
-    #region Overrides
-
-    /// <inheritdoc />
-    public override bool Equals(object other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( obj, this ) )
     {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((Mode)other);
+      return true;
     }
 
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-      int hashCode = Scale.GetHashCode() ^ Formula.GetHashCode();
-      return hashCode;
-    }
+    return obj is Mode other && Equals( other );
+  }
 
-    /// <inheritdoc />
-    public override string ToString() => NoteCollection.ToString(Notes);
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return HashCode.Combine( Scale, Formula );
+  }
 
-    #endregion
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return string.Join( ",", PitchClasses );
   }
 }

@@ -1,6 +1,6 @@
-// Module Name: StringedInstrumentDefinition.cs
+﻿// Module Name: StringedInstrumentDefinition.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,86 +22,64 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+using System;
+using Bach.Model.Instruments.Internal;
+
+namespace Bach.Model.Instruments;
+
+/// <summary>A stringed instrument definition.</summary>
+public sealed class StringedInstrumentDefinition
+  : InstrumentDefinition,
+    IEquatable<StringedInstrumentDefinition>
 {
-  using System;
-  using Internal;
-
-  /// <summary>A stringed instrument definition.</summary>
-  public class StringedInstrumentDefinition
-    : InstrumentDefinition,
-      IEquatable<StringedInstrumentDefinition>
+  internal StringedInstrumentDefinition( StringedInstrumentDefinitionState state )
+    : base( state )
   {
-    #region Constructors
+  }
 
-    internal StringedInstrumentDefinition(StringedInstrumentDefinitionState state)
-      : base(state)
+  /// <summary>Gets the number of strings for the instrument.</summary>
+  /// <value>The number of strings.</value>
+  public int StringCount => State.StringCount;
+
+  /// <summary>Gets the instruments tunings.</summary>
+  /// <value>The tunings.</value>
+  public TuningCollection Tunings => State.Tunings;
+
+  private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState) base.State;
+
+  /// <inheritdoc />
+  public bool Equals( StringedInstrumentDefinition other )
+  {
+    if( ReferenceEquals( this, other ) )
     {
+      return true;
     }
 
-    #endregion
-
-    #region Properties
-
-    /// <summary>Gets the number of strings for the instrument.</summary>
-    /// <value>The number of strings.</value>
-    public int StringCount => State.StringCount;
-
-    /// <summary>Gets the instruments tunings.</summary>
-    /// <value>The tunings.</value>
-    public TuningCollection Tunings => State.Tunings;
-
-    private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState)base.State;
-
-    #endregion
-
-    #region IEquatable<StringedInstrumentDefinition> Members
-
-    /// <inheritdoc />
-    public bool Equals(StringedInstrumentDefinition other)
+    if( other is null )
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      return StringCount == other.StringCount && base.Equals(other);
+      return false;
     }
 
-    #endregion
+    return base.Equals( other ) && StringCount == other.StringCount;
+  }
 
-    #region Overrides
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( this, obj ) )
     {
-      if( ReferenceEquals(null, obj) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, obj) )
-      {
-        return true;
-      }
-
-      return obj.GetType() == GetType() && Equals((StringedInstrumentDefinition)obj);
+      return true;
     }
 
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-      var hash = 17;
-      hash = ( hash * 23 ) + base.GetHashCode();
-      hash = ( hash * 23 ) + StringCount;
-      return hash;
-    }
+    return obj is StringedInstrumentDefinition other && Equals( other );
+  }
 
-    #endregion
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    var hash = 17;
+    hash = ( hash * 23 ) + base.GetHashCode();
+    hash = ( hash * 23 ) + StringCount;
+    return hash;
   }
 }

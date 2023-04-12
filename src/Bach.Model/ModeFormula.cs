@@ -1,6 +1,6 @@
 ﻿// Module Name: ModeFormula.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,112 +22,93 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model
+using System;
+using System.Diagnostics;
+
+namespace Bach.Model;
+
+/// <summary>A mode formula.</summary>
+public sealed class ModeFormula: IEquatable<ModeFormula>
 {
-  using System;
-  using System.Diagnostics;
+  private const int MinTonic = 1;
+  private const int MaxTonic = 7;
 
-  /// <summary>A mode formula.</summary>
-  public class ModeFormula: IEquatable<ModeFormula>
+  /// <summary>The Ionian (I) mode.</summary>
+  public static readonly ModeFormula Ionian = new( "Ionian", 1 );
+
+  /// <summary>The Dorian (II) mode.</summary>
+  public static readonly ModeFormula Dorian = new( "Dorian", 2 );
+
+  /// <summary>The Phrygian (III) mode.</summary>
+  public static readonly ModeFormula Phrygian = new( "Phrygian", 3 );
+
+  /// <summary>The Lydian (IV) mode.</summary>
+  public static readonly ModeFormula Lydian = new( "Lydian", 4 );
+
+  /// <summary>The Mixolydian (V) mode.</summary>
+  public static readonly ModeFormula Mixolydian = new( "Mixolydian", 5 );
+
+  /// <summary>The Aeolian (VI) mode.</summary>
+  public static readonly ModeFormula Aeolian = new( "Aeolian", 6 );
+
+  /// <summary>The Locrian (VII).</summary>
+  public static readonly ModeFormula Locrian = new( "Locrian", 7 );
+
+  private ModeFormula(
+    string name,
+    int tonic )
   {
-    #region Constants
+    Debug.Assert( !string.IsNullOrWhiteSpace( name ) );
+    Debug.Assert( tonic is >= MinTonic and <= MaxTonic );
 
-    private const int MinTonic = 1;
-    private const int MaxTonic = 7;
+    Name = name;
+    Tonic = tonic;
+  }
 
-    /// <summary>The Ionian (I) mode.</summary>
-    public static readonly ModeFormula Ionian = new ModeFormula("Ionian", 1);
+  /// <summary>Gets the mode formula name.</summary>
+  /// <value>The name.</value>
+  public string Name { get; }
 
-    /// <summary>The Dorian (II) mode.</summary>
-    public static readonly ModeFormula Dorian = new ModeFormula("Dorian", 2);
+  /// <summary>Gets the mode formula's tonic.</summary>
+  /// <value>The tonic.</value>
+  public int Tonic { get; }
 
-    /// <summary>The Phrygian (III) mode.</summary>
-    public static readonly ModeFormula Phrygian = new ModeFormula("Phrygian", 3);
-
-    /// <summary>The Lydian (IV) mode.</summary>
-    public static readonly ModeFormula Lydian = new ModeFormula("Lydian", 4);
-
-    /// <summary>The Mixolydian (V) mode.</summary>
-    public static readonly ModeFormula Mixolydian = new ModeFormula("Mixolydian", 5);
-
-    /// <summary>The Aeolian (VI) mode.</summary>
-    public static readonly ModeFormula Aeolian = new ModeFormula("Aeolian", 6);
-
-    /// <summary>The Locrian (VII).</summary>
-    public static readonly ModeFormula Locrian = new ModeFormula("Locrian", 7);
-
-    #endregion
-
-    #region Constructors
-
-    private ModeFormula(string name,
-                        int tonic)
+  /// <inheritdoc />
+  public bool Equals( ModeFormula other )
+  {
+    if( ReferenceEquals( other, this ) )
     {
-      Debug.Assert(!string.IsNullOrWhiteSpace(name));
-      Debug.Assert(tonic >= MinTonic && tonic <= MaxTonic);
-
-      Name = name;
-      Tonic = tonic;
+      return true;
     }
 
-    #endregion
-
-    #region Properties
-
-    /// <summary>Gets the mode formula name.</summary>
-    /// <value>The name.</value>
-    public string Name { get; }
-
-    /// <summary>Gets the mode formula's tonic.</summary>
-    /// <value>The tonic.</value>
-    public int Tonic { get; }
-
-    #endregion
-
-    #region IEquatable<ModeFormula> Members
-
-    /// <inheritdoc />
-    public bool Equals(ModeFormula other)
+    if( other is null )
     {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) )
-      {
-        return false;
-      }
-
-      return Tonic == other.Tonic;
+      return false;
     }
 
-    #endregion
+    return Tonic == other.Tonic;
+  }
 
-    #region Overrides
-
-    /// <inheritdoc />
-    public override bool Equals(object other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( obj, this ) )
     {
-      if( ReferenceEquals(other, this) )
-      {
-        return true;
-      }
-
-      if( ReferenceEquals(other, null) || other.GetType() != GetType() )
-      {
-        return false;
-      }
-
-      return Equals((ModeFormula)other);
+      return true;
     }
 
-    /// <inheritdoc />
-    public override int GetHashCode() => Tonic;
+    return obj is ModeFormula other && Equals( other );
+  }
 
-    /// <inheritdoc />
-    public override string ToString() => Name;
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return Tonic;
+  }
 
-    #endregion
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return Name;
   }
 }

@@ -1,6 +1,6 @@
 ﻿// Module Name: ScaleTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,364 +22,443 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
+
+namespace Bach.Model.Test;
+
+public sealed class ScaleTest
 {
-  using System;
-  using System.Collections;
-  using System.Collections.Generic;
-  using System.Linq;
-  using Xunit;
+#region Public Methods
 
-  public class ScaleTest
+  [Fact]
+  public void StringConstructorTest()
   {
-    #region Public Methods
-
-    [Fact]
-    public void StringConstructorTest()
-    {
-      var actual = new Scale(Note.C, "Major");
-      Assert.Equal("C", actual.Name);
-      Assert.Equal(Note.C, actual.Root);
-      Assert.Equal(Registry.ScaleFormulas["Major"], actual.Formula);
-    }
-
-    [Fact]
-    public void StringConstructorThrowsOnNullFormulaNameTest()
-    {
-      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (string)null));
-    }
-
-    [Fact]
-    public void StringConstructorThrowsOnEmptyFormulaNameTest()
-    {
-      Assert.Throws<KeyNotFoundException>(() => new Scale(Note.C, ""));
-    }
-
-    [Fact]
-    public void FormulaConstructorTest()
-    {
-      ScaleFormula formula = Registry.ScaleFormulas["Major"];
-      var actual = new Scale(Note.C, formula);
-      Assert.Equal("C", actual.Name);
-      Assert.Equal(Note.C, actual.Root);
-      Assert.Equal(Registry.ScaleFormulas["Major"], actual.Formula);
-    }
-
-    [Fact]
-    public void FormulaConstructorThrowsOnNullFormulaTest()
-    {
-      Assert.Throws<ArgumentNullException>(() => new Scale(Note.C, (ScaleFormula)null));
-    }
-
-    [Fact]
-    public void GetEnumeratorTest()
-    {
-      var scale = new Scale(Note.C, "Major");
-      IEnumerator enumerator = ( (IEnumerable)scale ).GetEnumerator();
-      Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.C, enumerator.Current);
-      Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.D, enumerator.Current);
-      Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.E, enumerator.Current);
-      Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.F, enumerator.Current);
-      Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.G, enumerator.Current);
-      Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.A, enumerator.Current);
-      Assert.True(enumerator.MoveNext());
-      Assert.Equal(Note.B, enumerator.Current);
-      Assert.True(enumerator.MoveNext()); // Scale enumerator wraps around infinitely
-      Assert.Equal(Note.C, enumerator.Current);
-    }
-
-    [Fact]
-    public void GenerateScaleTest()
-    {
-      Note root = Note.C;
-      TestScale("C,D,E,F,G,A,B", root, "Major");
-      TestScale("C,D,Eb,F,G,Ab,Bb", root, "NaturalMinor");
-      TestScale("C,D,Eb,F,G,Ab,B", root, "HarmonicMinor");
-      TestScale("C,D,Eb,F,G,A,B", root, "MelodicMinor");
-      TestScale("C,D,Eb,F,Gb,G#,A,B", root, "Diminished");
-      TestScale("C,Db,Eb,E,F#,G,A,Bb", root, "Polytonal");
-      TestScale("C,D,E,F#,G#,A#", root, "WholeTone");
-      TestScale("C,D,E,G,A", root, "Pentatonic");
-      TestScale("C,Eb,F,G,Bb", root, "MinorPentatonic");
-      TestScale("C,Eb,F,Gb,G,Bb", root, "Blues");
-      TestScale("C,D,Eb,E,G,A", root, "Gospel");
-    }
-
-    [Fact]
-    public void IsDiatonicTest()
-    {
-      TestPredicate(Note.C, "Major", scale => scale.Diatonic);
-      TestPredicate(Note.C, "LeadingTone", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Overtone", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Hindu", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Arabian", scale => scale.Diatonic);
-      TestPredicate(Note.C, "NaturalMinor", scale => scale.Diatonic);
-      TestPredicate(Note.C, "Javanese", scale => scale.Diatonic);
-      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Diatonic);
-
-      TestPredicate(Note.C, "HungarianFolk", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Gypsy", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Enigmatic", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Persian", scale => !scale.Diatonic);
-      TestPredicate(Note.C, "Mongolian", scale => !scale.Diatonic);
-    }
-
-    [Fact]
-    public void IsMajorTest()
-    {
-      TestPredicate(Note.C, "Major", scale => scale.Major);
-      TestPredicate(Note.C, "HungarianFolk", scale => scale.Major);
-      TestPredicate(Note.C, "Gypsy", scale => scale.Major);
-      //TestPredicate(Note.C, "LeadingTone", scale => scale.Major);
-      //TestPredicate(Note.C, "Enigmatic", scale => scale.Major);
-      //TestPredicate(Note.C, "Persian", scale => scale.Major);
-      TestPredicate(Note.C, "Mongolian", scale => scale.Major);
-    }
-
-    [Fact]
-    public void IsMinorTest()
-    {
-      TestPredicate(Note.C, "NaturalMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "GypsyMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "Javanese", scale => scale.Minor);
-      TestPredicate(Note.C, "NeapolitanMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "NeapolitanMajor", scale => scale.Minor);
-      TestPredicate(Note.C, "HungarianMinor", scale => scale.Minor);
-      TestPredicate(Note.C, "Yo", scale => scale.Minor);
-      TestPredicate(Note.C, "Hirojoshi", scale => scale.Minor);
-      TestPredicate(Note.C, "Balinese", scale => scale.Minor);
-    }
-
-    [Fact]
-    public void EqualsContractTest()
-    {
-      object x = new Scale(Note.C, "Major");
-      object y = new Scale(Note.C, "Major");
-      object z = new Scale(Note.C, "Major");
-
-      Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
-      Assert.True(y.Equals(x));
-      Assert.True(y.Equals(z)); // Transitive
-      Assert.True(x.Equals(z));
-      Assert.False(x.Equals(null)); // Never equal to null
-    }
-
-    [Fact]
-    public void TypeSafeEqualsContractTest()
-    {
-      var x = new Scale(Note.C, "Major");
-      var y = new Scale(Note.C, "Major");
-      var z = new Scale(Note.C, "Major");
-
-      Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
-      Assert.True(y.Equals(x));
-      Assert.True(y.Equals(z)); // Transitive
-      Assert.True(x.Equals(z));
-      Assert.False(x.Equals(null)); // Never equal to null
-    }
-
-    [Fact]
-    public void EqualsFailsWithDifferentTypeTest()
-    {
-      object actual = new Scale(Note.C, "Major");
-      Assert.False(actual.Equals(int.MinValue));
-    }
-
-    [Fact]
-    public void TypeSafeEqualsFailsWithDifferentTypeTest()
-    {
-      var actual = new Scale(Note.C, "Major");
-      Assert.False(actual.Equals(int.MinValue));
-    }
-
-    [Fact]
-    public void EqualsFailsWithNullTest()
-    {
-      object actual = new Scale(Note.C, "Major");
-      Assert.False(actual.Equals(null));
-    }
-
-    [Fact]
-    public void TypeSafeEqualsFailsWithNullTest()
-    {
-      var actual = new Scale(Note.C, "Major");
-      Assert.False(actual.Equals(null));
-    }
-
-    [Fact]
-    public void EqualsSucceedsWithSameObjectTest()
-    {
-      var actual = new Scale(Note.C, "Major");
-      Assert.True(actual.Equals(actual));
-    }
-
-    [Fact]
-    public void GetHashcodeTest()
-    {
-      var actual = new Scale(Note.C, "Major");
-      var expected = new Scale(Note.C, "Major");
-      Assert.True(expected.Equals(actual));
-      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
-    }
-
-    [Fact]
-    public void RenderTest()
-    {
-      TestRender(new Scale(Note.C, "MinorPentatonic"), 1, "C1,Eb1,F1,G1,Bb1");
-      TestRender(new Scale(Note.D, "MinorPentatonic"), 1, "D1,F1,G1,A1,C2");
-      TestRender(new Scale(Note.B, "MinorPentatonic"), 1, "B1,D2,E2,F#2,A2");
-    }
-
-    [Fact]
-    public void RenderUsesChoosesAppropriateAccidentalForMajorScaleTest()
-    {
-      TestScale("C,D,E,F,G,A,B", Note.C, "Major");
-      TestScale("C#,D#,E#,F#,G#,A#,B#", Note.CSharp, "Major");
-      TestScale("Db,Eb,F,Gb,Ab,Bb,C", Note.DFlat, "Major");
-      TestScale("D,E,F#,G,A,B,C#", Note.D, "Major");
-      TestScale("D#,E#,F##,G#,A#,B#,C##", Note.DSharp, "Major");
-      TestScale("Eb,F,G,Ab,Bb,C,D", Note.EFlat, "Major");
-      TestScale("E,F#,G#,A,B,C#,D#", Note.E, "Major");
-      TestScale("E#,F##,G##,A#,B#,C##,D##", Note.Parse("E#"), "Major");
-      TestScale("Fb,Gb,Ab,Bbb,Cb,Db,Eb", Note.Parse("Fb"), "Major");
-      TestScale("F,G,A,Bb,C,D,E", Note.F, "Major");
-      TestScale("F#,G#,A#,B,C#,D#,E#", Note.FSharp, "Major");
-      TestScale("Gb,Ab,Bb,Cb,Db,Eb,F", Note.GFlat, "Major");
-      TestScale("G,A,B,C,D,E,F#", Note.G, "Major");
-      TestScale("G#,A#,B#,C#,D#,E#,F##", Note.GSharp, "Major");
-      TestScale("Ab,Bb,C,Db,Eb,F,G", Note.AFlat, "Major");
-      TestScale("A,B,C#,D,E,F#,G#", Note.A, "Major");
-      TestScale("A#,B#,C##,D#,E#,F##,G##", Note.ASharp, "Major");
-      TestScale("Bb,C,D,Eb,F,G,A", Note.BFlat, "Major");
-      TestScale("B,C#,D#,E,F#,G#,A#", Note.B, "Major");
-      TestScale("B#,C##,D##,E#,F##,G##,A##", Note.Parse("B#"), "Major");
-      TestScale("Cb,Db,Eb,Fb,Gb,Ab,Bb", Note.Parse("Cb"), "Major");
-    }
-
-    [Fact]
-    public void RenderUsesChoosesAppropriateAccidentalForNaturalMinorScaleTest()
-    {
-      TestScale("C,D,Eb,F,G,Ab,Bb", Note.C, "NaturalMinor");
-      TestScale("C#,D#,E,F#,G#,A,B", Note.CSharp, "NaturalMinor");
-      TestScale("Db,Eb,Fb,Gb,Ab,Bbb,Cb", Note.DFlat, "NaturalMinor");
-      TestScale("D,E,F,G,A,Bb,C", Note.D, "NaturalMinor");
-      TestScale("D#,E#,F#,G#,A#,B,C#", Note.DSharp, "NaturalMinor");
-      TestScale("EB,F,Gb,Ab,Bb,Cb,Db", Note.EFlat, "NaturalMinor");
-      TestScale("E,F#,G,A,B,C,D", Note.E, "NaturalMinor");
-      TestScale("E#,F##,G#,A#,B#,C#,D#", Note.Parse("E#"), "NaturalMinor");
-      TestScale("Fb,Gb,Abb,Bbb,Cb,Dbb,Ebb", Note.Parse("Fb"), "NaturalMinor");
-      TestScale("F,G,Ab,Bb,C,Db,Eb", Note.F, "NaturalMinor");
-      TestScale("F#,G#,A,B,C#,D,E", Note.FSharp, "NaturalMinor");
-      TestScale("Gb,Ab,Bbb,Cb,Db,Ebb,Fb", Note.GFlat, "NaturalMinor");
-      TestScale("G,A,Bb,C,D,Eb,F", Note.G, "NaturalMinor");
-      TestScale("G#,A#,B,C#,D#,E,F#", Note.GSharp, "NaturalMinor");
-      TestScale("Ab,Bb,Cb,Db,Eb,Fb,Gb", Note.AFlat, "NaturalMinor");
-      TestScale("A,B,C,D,E,F,G", Note.A, "NaturalMinor");
-      TestScale("A#,B#,C#,D#,E#,F#,G#", Note.ASharp, "NaturalMinor");
-      TestScale("Bb,C,Db,Eb,F,Gb,Ab", Note.BFlat, "NaturalMinor");
-      TestScale("B,C#,D,E,F#,G,A", Note.B, "NaturalMinor");
-      TestScale("B#,C##,D#,E#,F##,G#,A#", Note.Parse("B#"), "NaturalMinor");
-      TestScale("Cb,Db,Ebb,Fb,Gb,Abb,Bbb", Note.Parse("Cb"), "NaturalMinor");
-    }
-
-    [Fact]
-    public void NoteCountTest()
-    {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count, scale.Notes.Count);
-    }
-
-    [Fact]
-    public void IsTheoreticalTest()
-    {
-      Assert.False(new Scale(Note.C, "major").Theoretical);
-      Assert.True(new Scale(Note.DSharp, "major").Theoretical);
-      Assert.True(new Scale(Note.Parse("E#"), "major").Theoretical);
-      Assert.True(new Scale(Note.Parse("Fb"), "major").Theoretical);
-      Assert.True(new Scale(Note.GSharp, "major").Theoretical);
-      Assert.True(new Scale(Note.ASharp, "major").Theoretical);
-      Assert.True(new Scale(Note.Parse("B#"), "major").Theoretical);
-    }
-
-    [Fact]
-    public void EnharmonicScaleTest()
-    {
-      TestEnharmonic(Note.C, Note.C, "major");
-      TestEnharmonic(Note.CSharp, Note.DFlat, "major");
-      TestEnharmonic(Note.DSharp, Note.EFlat, "major");
-      TestEnharmonic(Note.Parse("E#"), Note.F, "major");
-      TestEnharmonic(Note.Parse("Fb"), Note.E, "major");
-      TestEnharmonic(Note.GSharp, Note.AFlat, "major");
-      TestEnharmonic(Note.ASharp, Note.BFlat, "major");
-      TestEnharmonic(Note.Parse("B#"), Note.C, "major");
-    }
-
-    [Fact]
-    public void ToStringTest()
-    {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal("C,Eb,F,G,Bb", scale.ToString());
-    }
-
-    [Fact]
-    public void NotesTest()
-    {
-      var scale = new Scale(Note.C, "MinorPentatonic");
-      Assert.Equal(Note.C, scale.Notes[0]);
-      Assert.Equal(Note.EFlat, scale.Notes[1]);
-      Assert.Equal(Note.F, scale.Notes[2]);
-      Assert.Equal(Note.G, scale.Notes[3]);
-      Assert.Equal(Note.BFlat, scale.Notes[4]);
-    }
-
-    #endregion
-
-    #region  Implementation
-
-    private static void TestEnharmonic(Note root,
-                                       Note enharmonicRoot,
-                                       string scaleKey)
-    {
-      var scale = new Scale(root, scaleKey);
-      Scale actual = scale.GetEnharmonicScale();
-      var expected = new Scale(enharmonicRoot, scaleKey);
-      Assert.Equal(expected, actual);
-    }
-
-    private static void TestRender(Scale scale,
-                                   int octave,
-                                   string expectedNotes)
-    {
-      Pitch[] actual = scale.Render(octave).Take(scale.Formula.Intervals.Count).ToArray();
-      Assert.Equal(PitchCollection.Parse(expectedNotes), actual);
-    }
-
-    private static void TestScale(string expectedNotes,
-                                  Note root,
-                                  string formulaName)
-    {
-      NoteCollection expected = NoteCollection.Parse(expectedNotes);
-      var scale = new Scale(root, formulaName);
-      Note[] actual = scale.Take(expected.Count).ToArray();
-      Assert.Equal(expected, actual);
-    }
-
-    private static void TestPredicate(Note root,
-                                      string formulaName,
-                                      Predicate<Scale> pred)
-    {
-      var scale = new Scale(root, formulaName);
-      Assert.True(pred(scale));
-    }
-
-    #endregion
+    var actual = new Scale( PitchClass.C, "Major" );
+    Assert.Equal( "C", actual.Name );
+    Assert.Equal( PitchClass.C, actual.Root );
+    Assert.Equal( Registry.ScaleFormulas["Major"], actual.Formula );
   }
+
+  [Fact]
+  public void StringConstructorThrowsOnNullFormulaNameTest()
+  {
+    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (string) null ) );
+  }
+
+  [Fact]
+  public void StringConstructorThrowsOnEmptyFormulaNameTest()
+  {
+    Assert.Throws<ArgumentException>( () => new Scale( PitchClass.C, "" ) );
+  }
+
+  [Fact]
+  public void FormulaConstructorTest()
+  {
+    var formula = Registry.ScaleFormulas["Major"];
+    var actual = new Scale( PitchClass.C, formula );
+    Assert.Equal( "C", actual.Name );
+    Assert.Equal( PitchClass.C, actual.Root );
+    Assert.Equal( Registry.ScaleFormulas["Major"], actual.Formula );
+  }
+
+  [Fact]
+  public void FormulaConstructorThrowsOnNullFormulaTest()
+  {
+    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (ScaleFormula) null ) );
+  }
+
+  [Fact]
+  public void GetAscendingEnumeratorTest()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+    IEnumerator enumerator = scale.Ascending.GetEnumerator();
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.C, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.D, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.E, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.F, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.G, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.A, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.B, enumerator.Current );
+    Assert.True( enumerator.MoveNext() ); // Scale enumerator wraps around infinitely
+    Assert.Equal( PitchClass.C, enumerator.Current );
+  }
+
+  [Fact]
+  public void GetDescendingEnumeratorTest()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+    IEnumerator enumerator = scale.Descending.GetEnumerator();
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.C, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.B, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.A, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.G, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.F, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.E, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.D, enumerator.Current );
+    Assert.True( enumerator.MoveNext() ); // Scale enumerator wraps around infinitely
+    Assert.Equal( PitchClass.C, enumerator.Current );
+  }
+
+  [Fact]
+  public void ScaleAscendingTest()
+  {
+    var root = PitchClass.C;
+    TestScaleAscending( "C,D,E,F,G,A,B", root, "Major" );
+    TestScaleAscending( "C,D,Eb,F,G,Ab,Bb", root, "NaturalMinor" );
+    TestScaleAscending( "C,D,Eb,F,G,Ab,B", root, "HarmonicMinor" );
+    TestScaleAscending( "C,D,Eb,F,G,A,B", root, "MelodicMinor" );
+    TestScaleAscending( "C,D,Eb,F,Gb,G#,A,B", root, "Diminished" );
+    TestScaleAscending( "C,Db,Eb,E,F#,G,A,Bb", root, "Polytonal" );
+    TestScaleAscending( "C,D,E,F#,G#,A#", root, "WholeTone" );
+    TestScaleAscending( "C,D,E,G,A", root, "Pentatonic" );
+    TestScaleAscending( "C,Eb,F,G,Bb", root, "MinorPentatonic" );
+    TestScaleAscending( "C,Eb,F,Gb,G,Bb", root, "MinorBlues" );
+    TestScaleAscending( "C,D,Eb,E,G,A", root, "MajorBlues" );
+  }
+
+  [Fact]
+  public void ScaleDescendingTest()
+  {
+    var root = PitchClass.C;
+    TestScaleDescending( "C,B,A,G,F,E,D", root, "Major" );
+    TestScaleDescending( "C,Bb,Ab,G,F,Eb,D", root, "NaturalMinor" );
+    TestScaleDescending( "C,B,Ab,G,F,Eb,D", root, "HarmonicMinor" );
+    TestScaleDescending( "C,B,A,G,F,Eb,D", root, "MelodicMinor" );
+    TestScaleDescending( "C,B,A,G#,Gb,F,Eb,D", root, "Diminished" );
+    TestScaleDescending( "C,Bb,A,G,F#,E,Eb,Db", root, "Polytonal" );
+    TestScaleDescending( "C,A#,G#,F#,E,D", root, "WholeTone" );
+    TestScaleDescending( "C,A,G,E,D", root, "Pentatonic" );
+    TestScaleDescending( "C,Bb,G,F,Eb", root, "MinorPentatonic" );
+    TestScaleDescending( "C,Bb,G,Gb,F,Eb", root, "MinorBlues" );
+    TestScaleDescending( "C,A,G,E,Eb,D", root, "MajorBlues" );
+  }
+
+  [Fact]
+  public void IsDiatonicTest()
+  {
+    TestPredicate( PitchClass.C, "Major", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "LeadingTone", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "LydianDominant", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "Hindu", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "Arabian", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "NaturalMinor", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "Javanese", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "NeapolitanMajor", scale => scale.Formula.Categories.Contains( "Diatonic" ) );
+
+    TestPredicate( PitchClass.C, "HungarianFolk", scale => !scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "Gypsy", scale => !scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "EnigmaticMajor", scale => !scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "Persian", scale => !scale.Formula.Categories.Contains( "Diatonic" ) );
+    TestPredicate( PitchClass.C, "Mongolian", scale => !scale.Formula.Categories.Contains( "Diatonic" ) );
+  }
+
+  [Fact]
+  public void IsMajorTest()
+  {
+    TestPredicate( PitchClass.C, "Major", scale => scale.Formula.Categories.Contains( "Major" ) );
+    TestPredicate( PitchClass.C, "HungarianFolk", scale => scale.Formula.Categories.Contains( "Major" ) );
+    TestPredicate( PitchClass.C, "Gypsy", scale => scale.Formula.Categories.Contains( "Major" ) );
+    TestPredicate( PitchClass.C, "Mongolian", scale => scale.Formula.Categories.Contains( "Major" ) );
+  }
+
+  [Fact]
+  public void IsMinorTest()
+  {
+    TestPredicate( PitchClass.C, "NaturalMinor", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "GypsyMinor", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "Javanese", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "NeapolitanMinor", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "NeapolitanMajor", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "HungarianGypsy", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "Yo", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "Hirajoshi", scale => scale.Formula.Categories.Contains( "Minor" ) );
+    TestPredicate( PitchClass.C, "Balinese", scale => scale.Formula.Categories.Contains( "Minor" ) );
+  }
+
+  [Fact]
+  public void EqualsContractTest()
+  {
+    object x = new Scale( PitchClass.C, "Major" );
+    object y = new Scale( PitchClass.C, "Major" );
+    object z = new Scale( PitchClass.C, "Major" );
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var x = new Scale( PitchClass.C, "Major" );
+    var y = new Scale( PitchClass.C, "Major" );
+    var z = new Scale( PitchClass.C, "Major" );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = new Scale( PitchClass.C, "Major" );
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var actual = new Scale( PitchClass.C, "Major" );
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = new Scale( PitchClass.C, "Major" );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var actual = new Scale( PitchClass.C, "Major" );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = new Scale( PitchClass.C, "Major" );
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = new Scale( PitchClass.C, "Major" );
+    var expected = new Scale( PitchClass.C, "Major" );
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void RenderTest()
+  {
+    TestRender( new Scale( PitchClass.C, "MinorPentatonic" ), 1, "C1,Eb1,F1,G1,Bb1" );
+    TestRender( new Scale( PitchClass.D, "MinorPentatonic" ), 1, "D1,F1,G1,A1,C2" );
+    TestRender( new Scale( PitchClass.B, "MinorPentatonic" ), 1, "B1,D2,E2,F#2,A2" );
+  }
+
+  [Fact]
+  public void RenderUsesChoosesAppropriateAccidentalForMajorScaleTest()
+  {
+    TestScaleAscending( "C,D,E,F,G,A,B", PitchClass.C, "Major" );
+    TestScaleAscending( "C#,D#,E#,F#,G#,A#,B#", PitchClass.CSharp, "Major" );
+    TestScaleAscending( "Db,Eb,F,Gb,Ab,Bb,C", PitchClass.DFlat, "Major" );
+    TestScaleAscending( "D,E,F#,G,A,B,C#", PitchClass.D, "Major" );
+    TestScaleAscending( "D#,E#,F##,G#,A#,B#,C##", PitchClass.DSharp, "Major" );
+    TestScaleAscending( "Eb,F,G,Ab,Bb,C,D", PitchClass.EFlat, "Major" );
+    TestScaleAscending( "E,F#,G#,A,B,C#,D#", PitchClass.E, "Major" );
+    TestScaleAscending( "E#,F##,G##,A#,B#,C##,D##", PitchClass.Parse( "E#" ), "Major" );
+    TestScaleAscending( "Fb,Gb,Ab,Bbb,Cb,Db,Eb", PitchClass.Parse( "Fb" ), "Major" );
+    TestScaleAscending( "F,G,A,Bb,C,D,E", PitchClass.F, "Major" );
+    TestScaleAscending( "F#,G#,A#,B,C#,D#,E#", PitchClass.FSharp, "Major" );
+    TestScaleAscending( "Gb,Ab,Bb,Cb,Db,Eb,F", PitchClass.GFlat, "Major" );
+    TestScaleAscending( "G,A,B,C,D,E,F#", PitchClass.G, "Major" );
+    TestScaleAscending( "G#,A#,B#,C#,D#,E#,F##", PitchClass.GSharp, "Major" );
+    TestScaleAscending( "Ab,Bb,C,Db,Eb,F,G", PitchClass.AFlat, "Major" );
+    TestScaleAscending( "A,B,C#,D,E,F#,G#", PitchClass.A, "Major" );
+    TestScaleAscending( "A#,B#,C##,D#,E#,F##,G##", PitchClass.ASharp, "Major" );
+    TestScaleAscending( "Bb,C,D,Eb,F,G,A", PitchClass.BFlat, "Major" );
+    TestScaleAscending( "B,C#,D#,E,F#,G#,A#", PitchClass.B, "Major" );
+    TestScaleAscending( "B#,C##,D##,E#,F##,G##,A##", PitchClass.Parse( "B#" ), "Major" );
+    TestScaleAscending( "Cb,Db,Eb,Fb,Gb,Ab,Bb", PitchClass.Parse( "Cb" ), "Major" );
+  }
+
+  [Fact]
+  public void RenderUsesChoosesAppropriateAccidentalForNaturalMinorScaleTest()
+  {
+    TestScaleAscending( "C,D,Eb,F,G,Ab,Bb", PitchClass.C, "NaturalMinor" );
+    TestScaleAscending( "C#,D#,E,F#,G#,A,B", PitchClass.CSharp, "NaturalMinor" );
+    TestScaleAscending( "Db,Eb,Fb,Gb,Ab,Bbb,Cb", PitchClass.DFlat, "NaturalMinor" );
+    TestScaleAscending( "D,E,F,G,A,Bb,C", PitchClass.D, "NaturalMinor" );
+    TestScaleAscending( "D#,E#,F#,G#,A#,B,C#", PitchClass.DSharp, "NaturalMinor" );
+    TestScaleAscending( "EB,F,Gb,Ab,Bb,Cb,Db", PitchClass.EFlat, "NaturalMinor" );
+    TestScaleAscending( "E,F#,G,A,B,C,D", PitchClass.E, "NaturalMinor" );
+    TestScaleAscending( "E#,F##,G#,A#,B#,C#,D#", PitchClass.Parse( "E#" ), "NaturalMinor" );
+    TestScaleAscending( "Fb,Gb,Abb,Bbb,Cb,Dbb,Ebb", PitchClass.Parse( "Fb" ), "NaturalMinor" );
+    TestScaleAscending( "F,G,Ab,Bb,C,Db,Eb", PitchClass.F, "NaturalMinor" );
+    TestScaleAscending( "F#,G#,A,B,C#,D,E", PitchClass.FSharp, "NaturalMinor" );
+    TestScaleAscending( "Gb,Ab,Bbb,Cb,Db,Ebb,Fb", PitchClass.GFlat, "NaturalMinor" );
+    TestScaleAscending( "G,A,Bb,C,D,Eb,F", PitchClass.G, "NaturalMinor" );
+    TestScaleAscending( "G#,A#,B,C#,D#,E,F#", PitchClass.GSharp, "NaturalMinor" );
+    TestScaleAscending( "Ab,Bb,Cb,Db,Eb,Fb,Gb", PitchClass.AFlat, "NaturalMinor" );
+    TestScaleAscending( "A,B,C,D,E,F,G", PitchClass.A, "NaturalMinor" );
+    TestScaleAscending( "A#,B#,C#,D#,E#,F#,G#", PitchClass.ASharp, "NaturalMinor" );
+    TestScaleAscending( "Bb,C,Db,Eb,F,Gb,Ab", PitchClass.BFlat, "NaturalMinor" );
+    TestScaleAscending( "B,C#,D,E,F#,G,A", PitchClass.B, "NaturalMinor" );
+    TestScaleAscending( "B#,C##,D#,E#,F##,G#,A#", PitchClass.Parse( "B#" ), "NaturalMinor" );
+    TestScaleAscending( "Cb,Db,Ebb,Fb,Gb,Abb,Bbb", PitchClass.Parse( "Cb" ), "NaturalMinor" );
+  }
+
+  [Fact]
+  public void NoteCountTest()
+  {
+    var scale = new Scale( PitchClass.C, "MinorPentatonic" );
+    Assert.Equal( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count, scale.PitchClasses.Count );
+  }
+
+  [Fact]
+  public void IsTheoreticalTest()
+  {
+    Assert.False( new Scale( PitchClass.C, "major" ).Theoretical );
+    Assert.True( new Scale( PitchClass.DSharp, "major" ).Theoretical );
+    Assert.True( new Scale( PitchClass.Parse( "E#" ), "major" ).Theoretical );
+    Assert.True( new Scale( PitchClass.Parse( "Fb" ), "major" ).Theoretical );
+    Assert.True( new Scale( PitchClass.GSharp, "major" ).Theoretical );
+    Assert.True( new Scale( PitchClass.ASharp, "major" ).Theoretical );
+    Assert.True( new Scale( PitchClass.Parse( "B#" ), "major" ).Theoretical );
+  }
+
+  [Fact]
+  public void EnharmonicScaleTest()
+  {
+    TestEnharmonic( PitchClass.C, PitchClass.C, "major" );
+    TestEnharmonic( PitchClass.CSharp, PitchClass.DFlat, "major" );
+    TestEnharmonic( PitchClass.DSharp, PitchClass.EFlat, "major" );
+    TestEnharmonic( PitchClass.Parse( "E#" ), PitchClass.F, "major" );
+    TestEnharmonic( PitchClass.Parse( "Fb" ), PitchClass.E, "major" );
+    TestEnharmonic( PitchClass.GSharp, PitchClass.AFlat, "major" );
+    TestEnharmonic( PitchClass.ASharp, PitchClass.BFlat, "major" );
+    TestEnharmonic( PitchClass.Parse( "B#" ), PitchClass.C, "major" );
+  }
+
+  [Fact]
+  public void ToStringTest()
+  {
+    var scale = new Scale( PitchClass.C, "MinorPentatonic" );
+    Assert.Equal( "C Minor Pentatonic {C,Eb,F,G,Bb}", scale.ToString() );
+  }
+
+  [Fact]
+  public void NotesTest()
+  {
+    var scale = new Scale( PitchClass.C, "MinorPentatonic" );
+    Assert.Equal( PitchClass.C, scale.PitchClasses[0] );
+    Assert.Equal( PitchClass.EFlat, scale.PitchClasses[1] );
+    Assert.Equal( PitchClass.F, scale.PitchClasses[2] );
+    Assert.Equal( PitchClass.G, scale.PitchClasses[3] );
+    Assert.Equal( PitchClass.BFlat, scale.PitchClasses[4] );
+  }
+
+  [Fact]
+  public void ContainsTest()
+  {
+    var scale = new Scale( PitchClass.C, "major" );
+    Assert.True( scale.Contains( new[] { PitchClass.C } ) );
+    Assert.True( scale.Contains( new[] { PitchClass.C, PitchClass.E, PitchClass.G } ) );
+
+    Assert.False( scale.Contains( new[] { PitchClass.C, PitchClass.E, PitchClass.GFlat } ) );
+  }
+
+  [Fact]
+  public void ScalesContainingTest()
+  {
+    IDictionary<string, Scale> scales = Scale.ScalesContaining( new[] { PitchClass.C, PitchClass.E, PitchClass.G } )
+                                             .ToDictionary( scale => scale.Name );
+
+    Assert.Contains( "C", scales );
+    Assert.Contains( "C Pentatonic", scales );
+    Assert.Contains( "E Natural Minor", scales );
+    Assert.Contains( "E Harmonic Minor", scales );
+    Assert.Contains( "G", scales );
+    Assert.Contains( "G Melodic Minor", scales );
+    Assert.Contains( "G Diminished", scales );
+  }
+
+#endregion
+
+#region Implementation
+
+  private static void TestEnharmonic(
+    PitchClass root,
+    PitchClass enharmonicRoot,
+    string scaleKey )
+  {
+    var scale = new Scale( root, scaleKey );
+    var actual = scale.GetEnharmonicScale();
+    var expected = new Scale( enharmonicRoot, scaleKey );
+    Assert.Equal( expected, actual );
+  }
+
+  private static void TestRender(
+    Scale scale,
+    int octave,
+    string expectedNotes )
+  {
+    var actual = scale.Render( octave ).Take( scale.Formula.Intervals.Count ).ToArray();
+    Assert.Equal( PitchCollection.Parse( expectedNotes ), actual );
+  }
+
+  private static void TestScaleAscending(
+    string expectedNotes,
+    PitchClass root,
+    string formulaName )
+  {
+    var expected = PitchClassCollection.Parse( expectedNotes );
+    var scale = new Scale( root, formulaName );
+    var actual = scale.Ascending.Take( expected.Count );
+    Assert.Equal( expected, actual );
+  }
+
+  private static void TestScaleDescending(
+    string expectedNotes,
+    PitchClass root,
+    string formulaName )
+  {
+    var expected = PitchClassCollection.Parse( expectedNotes );
+    var scale = new Scale( root, formulaName );
+    var actual = scale.Descending.Take( expected.Count );
+    Assert.Equal( expected, actual );
+  }
+
+  private static void TestPredicate(
+    PitchClass root,
+    string formulaName,
+    Predicate<Scale> predicate )
+  {
+    var scale = new Scale( root, formulaName );
+    Assert.True( predicate( scale ) );
+  }
+
+#endregion
 }

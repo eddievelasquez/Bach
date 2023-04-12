@@ -1,6 +1,6 @@
-﻿// Module Name: IKeyedObject.cs
-// Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+﻿// Module Name: BachRootCommand.cs
+// Project:     Bach.Cli
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,18 +22,27 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal
+using System.CommandLine;
+
+namespace Bach.Cli;
+
+internal sealed class BachRootCommand: RootCommand
 {
-  /// <summary>Interface for a keyed object.</summary>
-  public interface IKeyedObject
+  /// <inheritdoc />
+  public BachRootCommand()
+    : base( "Bach" )
   {
-    #region Properties
+    Add<ListCommand>();
+    Add<DisplayScaleCommand>();
+    Add<DisplayChordCommand>();
+    Add<DisplayIntervalsCommand>();
+    Add<DisplayScalesContainingCommand>();
+    Add<DisplayNotesCommand>();
+  }
 
-    /// <summary>
-    /// Returns the key for the object
-    /// </summary>
-    string Key { get; }
-
-    #endregion
+  private void Add<T>()
+    where T: BachCommand, new()
+  {
+    Add( new T().Command );
   }
 }

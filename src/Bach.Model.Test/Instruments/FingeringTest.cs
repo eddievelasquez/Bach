@@ -1,6 +1,6 @@
 ﻿// Module Name: FingeringTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,132 +22,135 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test.Instruments
+using System;
+using Bach.Model.Instruments;
+using Xunit;
+
+namespace Bach.Model.Test.Instruments;
+
+public sealed class FingeringTest
 {
-  using System;
-  using Model.Instruments;
-  using Xunit;
+#region Public Methods
 
-  public class FingeringTest
+  [Fact]
+  public void CreateTest()
   {
-    #region Public Methods
-
-    [Fact]
-    public void CreateTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
-      Assert.Equal(6, actual.String);
-      Assert.Equal(5, actual.Position);
-      Assert.Equal(Pitch.Parse("A2"), actual.Pitch);
-    }
-
-    [Fact]
-    public void CreateThrowsWithOutOfRangeStringNumberTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 0, 5));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 7, 5));
-    }
-
-    [Fact]
-    public void CreateThrowsWithOutOfRangePositionNumberTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 6, -1));
-      Assert.Throws<ArgumentOutOfRangeException>(() => Fingering.Create(instrument, 6, 23));
-    }
-
-    [Fact]
-    public void EqualsContractTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      object x = Fingering.Create(instrument, 6, 5);
-      object y = Fingering.Create(instrument, 6, 5);
-      object z = Fingering.Create(instrument, 6, 5);
-
-      Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
-      Assert.True(y.Equals(x));
-      Assert.True(y.Equals(z)); // Transitive
-      Assert.True(x.Equals(z));
-      Assert.False(x.Equals(null)); // Never equal to null
-    }
-
-    [Fact]
-    public void TypeSafeEqualsContractTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering x = Fingering.Create(instrument, 6, 5);
-      Fingering y = Fingering.Create(instrument, 6, 5);
-      Fingering z = Fingering.Create(instrument, 6, 5);
-
-      Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
-      Assert.True(y.Equals(x));
-      Assert.True(y.Equals(z)); // Transitive
-      Assert.True(x.Equals(z));
-      Assert.False(x.Equals(null)); // Never equal to null
-    }
-
-    [Fact]
-    public void EqualsFailsWithDifferentTypeTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      object actual = Fingering.Create(instrument, 6, 5);
-      Assert.False(actual.Equals(int.MinValue));
-    }
-
-    [Fact]
-    public void TypeSafeEqualsFailsWithDifferentTypeTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
-      Assert.False(actual.Equals(int.MinValue));
-    }
-
-    [Fact]
-    public void EqualsFailsWithNullTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      object actual = Fingering.Create(instrument, 6, 5);
-      Assert.False(actual.Equals(null));
-    }
-
-    [Fact]
-    public void TypeSafeEqualsFailsWithNullTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
-      Assert.False(actual.Equals(null));
-    }
-
-    [Fact]
-    public void EqualsSucceedsWithSameObjectTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
-      Assert.True(actual.Equals(actual));
-    }
-
-    [Fact]
-    public void GetHashcodeTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Fingering actual = Fingering.Create(instrument, 6, 5);
-      Fingering expected = Fingering.Create(instrument, 6, 5);
-      Assert.True(expected.Equals(actual));
-      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
-    }
-
-    [Fact]
-    public void ToStringTest()
-    {
-      StringedInstrument instrument = StringedInstrument.Create("guitar", 22);
-      Assert.Equal("65", Fingering.Create(instrument, 6, 5).ToString());
-      Assert.Equal("612", Fingering.Create(instrument, 6, 12).ToString());
-    }
-
-    #endregion
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var actual = Fingering.Create( instrument, 6, 5 );
+    Assert.Equal( 6, actual.String );
+    Assert.Equal( 5, actual.Position );
+    Assert.Equal( Pitch.Parse( "A2" ), actual.Pitch );
   }
+
+  [Fact]
+  public void CreateThrowsWithOutOfRangeStringNumberTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 0, 5 ) );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 7, 5 ) );
+  }
+
+  [Fact]
+  public void CreateThrowsWithOutOfRangePositionNumberTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 6, -1 ) );
+
+    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 6, 23 ) );
+  }
+
+  [Fact]
+  public void EqualsContractTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    object x = Fingering.Create( instrument, 6, 5 );
+    object y = Fingering.Create( instrument, 6, 5 );
+    object z = Fingering.Create( instrument, 6, 5 );
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var x = Fingering.Create( instrument, 6, 5 );
+    var y = Fingering.Create( instrument, 6, 5 );
+    var z = Fingering.Create( instrument, 6, 5 );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    object actual = Fingering.Create( instrument, 6, 5 );
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var actual = Fingering.Create( instrument, 6, 5 );
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    object actual = Fingering.Create( instrument, 6, 5 );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var actual = Fingering.Create( instrument, 6, 5 );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var actual = Fingering.Create( instrument, 6, 5 );
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var actual = Fingering.Create( instrument, 6, 5 );
+    var expected = Fingering.Create( instrument, 6, 5 );
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void ToStringTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    Assert.Equal( "65", Fingering.Create( instrument, 6, 5 ).ToString() );
+    Assert.Equal( "612", Fingering.Create( instrument, 6, 12 ).ToString() );
+  }
+
+#endregion
 }

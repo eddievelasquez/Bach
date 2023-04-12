@@ -1,6 +1,6 @@
-﻿// Module Name: KeyedObjectCollection.cs
-// Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+﻿// Module Name: DisplayNotesCommand.cs
+// Project:     Bach.Cli
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,31 +22,38 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal
+using System.Collections.Generic;
+using System.CommandLine;
+using System.Linq;
+using Bach.Model;
+
+namespace Bach.Cli;
+
+internal sealed class DisplayNotesCommand: BachCommand
 {
-  using System;
-  using System.Collections.ObjectModel;
-
-  /// <summary>Collection of keyed objects.</summary>
-  /// <typeparam name="T">Type parameter for the keyed object.</typeparam>
-  public class KeyedObjectCollection<T>: KeyedCollection<string, T>
-    where T: IKeyedObject
+  /// <inheritdoc />
+  public DisplayNotesCommand()
   {
-    #region Constructors
+    var rootArg = CreateArgument<string>( "root", "Root note" );
+    var intervalsArg = CreateMultiArgument<string>( "intervals", "Intervals to render" );
 
-    /// <summary>Initializes a new instance of the KeyedObjectCollection class.</summary>
-    public KeyedObjectCollection()
-      : base(StringComparer.CurrentCultureIgnoreCase)
-    {
-    }
+    var command = CreateCommand( "notes", arguments: new Argument[] { rootArg, intervalsArg } );
+    command.SetHandler( Execute, rootArg, intervalsArg );
+    Command = command;
+  }
 
-    #endregion
+  /// <inheritdoc />
+  public override Command Command { get; }
 
-    #region Overrides
+  private static void Execute(
+    string rootValue,
+    IEnumerable<string> intervalsValue )
+  {
+    var root = PitchClass.Parse( rootValue );
+    var intervals = Formula.ParseIntervals( string.Join( ",", intervalsValue ) );
 
-    /// <inheritdoc />
-    protected override string GetKeyForItem(T item) => item.Key;
-
-    #endregion
+    WriteList( "Notes:     ", Formula.Generate( root, intervals ) );
+    WriteList( "Intervals: ", intervals.Select( interval => interval.ToString( "Sq" ) ) );
+    WriteLine();
   }
 }

@@ -1,6 +1,6 @@
 ﻿// Module Name: ModeFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,94 +22,96 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test
+using Xunit;
+
+namespace Bach.Model.Test;
+
+public sealed class ModeFormulaTest
 {
-  using Xunit;
+#region Public Methods
 
-  public class ModeFormulaTest
+  [Fact]
+  public void ToStringTest()
   {
-    #region Public Methods
-
-    [Fact]
-    public void ToStringTest()
-    {
-      Assert.Equal("Mixolydian", ModeFormula.Mixolydian.ToString());
-    }
-
-    [Fact]
-    public void EqualsContractTest()
-    {
-      object x = ModeFormula.Dorian;
-      object y = ModeFormula.Dorian;
-      object z = ModeFormula.Dorian;
-
-      Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
-      Assert.True(y.Equals(x));
-      Assert.True(y.Equals(z)); // Transitive
-      Assert.True(x.Equals(z));
-      Assert.False(x.Equals(null)); // Never equal to null
-    }
-
-    [Fact]
-    public void TypeSafeEqualsContractTest()
-    {
-      ModeFormula x = ModeFormula.Dorian;
-      ModeFormula y = ModeFormula.Dorian;
-      ModeFormula z = ModeFormula.Dorian;
-
-      Assert.True(x.Equals(x)); // Reflexive
-      Assert.True(x.Equals(y)); // Symetric
-      Assert.True(y.Equals(x));
-      Assert.True(y.Equals(z)); // Transitive
-      Assert.True(x.Equals(z));
-      Assert.False(x.Equals(null)); // Never equal to null
-    }
-
-    [Fact]
-    public void EqualsFailsWithDifferentTypeTest()
-    {
-      object actual = ModeFormula.Dorian;
-      Assert.False(actual.Equals(int.MinValue));
-    }
-
-    [Fact]
-    public void TypeSafeEqualsFailsWithDifferentTypeTest()
-    {
-      ModeFormula actual = ModeFormula.Dorian;
-      Assert.False(actual.Equals(int.MinValue));
-    }
-
-    [Fact]
-    public void EqualsFailsWithNullTest()
-    {
-      object actual = ModeFormula.Dorian;
-      Assert.False(actual.Equals(null));
-    }
-
-    [Fact]
-    public void TypeSafeEqualsFailsWithNullTest()
-    {
-      ModeFormula actual = ModeFormula.Dorian;
-      Assert.False(actual.Equals(null));
-    }
-
-    [Fact]
-    public void EqualsSucceedsWithSameObjectTest()
-    {
-      ModeFormula actual = ModeFormula.Dorian;
-      Assert.True(actual.Equals(actual));
-    }
-
-    [Fact]
-    public void GetHashcodeTest()
-    {
-      ModeFormula actual = ModeFormula.Dorian;
-      ModeFormula expected = ModeFormula.Dorian;
-      Assert.True(expected.Equals(actual));
-      Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
-    }
-
-    #endregion
+    Assert.Equal( "Mixolydian", ModeFormula.Mixolydian.ToString() );
   }
+
+  [Fact]
+  public void EqualsContractTest()
+  {
+    object x = ModeFormula.Dorian;
+    object y = ModeFormula.Dorian;
+    object z = ModeFormula.Dorian;
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var x = ModeFormula.Dorian;
+    var y = ModeFormula.Dorian;
+    var z = ModeFormula.Dorian;
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = ModeFormula.Dorian;
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var actual = ModeFormula.Dorian;
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = ModeFormula.Dorian;
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var actual = ModeFormula.Dorian;
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = ModeFormula.Dorian;
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = ModeFormula.Dorian;
+    var expected = ModeFormula.Dorian;
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+#endregion
 }

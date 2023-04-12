@@ -1,6 +1,6 @@
-// Module Name: InstrumentDefinition.cs
+﻿// Module Name: InstrumentDefinition.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2019  Eddie Velasquez.
+// Copyright (c) 2012, 2023  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,79 +22,56 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments
+using System;
+using Bach.Model.Instruments.Internal;
+using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments;
+
+/// <summary>A base class for an instrument definition.</summary>
+public abstract class InstrumentDefinition
+  : INamedObject,
+    IEquatable<InstrumentDefinition>
 {
-  using System;
-  using Internal;
-  using Model.Internal;
-
-  /// <summary>A base class for an instrument definition.</summary>
-  public abstract class InstrumentDefinition
-    : IKeyedObject,
-      IEquatable<InstrumentDefinition>
+  internal InstrumentDefinition( InstrumentDefinitionState state )
   {
-    #region Constructors
+    Requires.NotNull( state );
+    State = state;
+  }
 
-    internal InstrumentDefinition(InstrumentDefinitionState state)
+  internal InstrumentDefinitionState State { get; }
+
+  /// <inheritdoc />
+  public string Id => State.Id;
+
+  /// <inheritdoc />
+  public string Name => State.Name;
+
+  /// <inheritdoc />
+  public bool Equals( InstrumentDefinition other )
+  {
+    if( ReferenceEquals( this, other ) )
     {
-      Contract.Requires<ArgumentNullException>(state != null);
-      State = state;
+      return true;
     }
 
-    #endregion
+    return other is not null && Comparer.IdComparer.Equals( Id, other.Id );
+  }
 
-    #region Properties
-
-    private static StringComparer Comparer { get; } = StringComparer.CurrentCultureIgnoreCase;
-
-    internal InstrumentDefinitionState State { get; }
-
-    /// <summary>Gets the unique identifier of the instrument.</summary>
-    /// <value>The identifier of the instrument.</value>
-    public Guid InstrumentId => State.InstrumentId;
-
-    /// <summary>Gets the name of the instrument.</summary>
-    /// <value>The name of the instrument.</value>
-    public string InstrumentName => State.InstrumentName;
-
-    #endregion
-
-    #region IEquatable<InstrumentDefinition> Members
-
-    /// <inheritdoc />
-    public bool Equals(InstrumentDefinition other)
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( this, obj ) )
     {
-      if( ReferenceEquals(null, other) )
-      {
-        return false;
-      }
-
-      if( ReferenceEquals(this, other) )
-      {
-        return true;
-      }
-
-      // InstrumentId is only used for hashcode calculation,
-      // don't used it for equality
-      return Comparer.Equals(InstrumentName, other.InstrumentName);
+      return true;
     }
 
-    #endregion
+    return obj is InstrumentDefinition other && Equals( other );
+  }
 
-    #region IKeyedObject Members
-
-    /// <summary>Returns the language-neutral key for the instrument.</summary>
-    /// <value>The key.</value>
-    /// <inheritdoc />
-    public string Key => State.InstrumentKey;
-
-    #endregion
-
-    #region Overrides
-
-    /// <inheritdoc />
-    public override int GetHashCode() => InstrumentId.GetHashCode();
-
-    #endregion
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return Id.GetHashCode();
   }
 }
