@@ -1,0 +1,10 @@
+mode: Mainline
+next-version: 0.7.0
+assembly-versioning-scheme: MajorMinorPatch
+assembly-informational-format: '{Major}.{Minor}.{Patch}{PreReleaseTagWithDash}+{CommitDate}.{ShortSha}'
+assembly-file-versioning-scheme: MajorMinorPatch
+commit-date-format: yyMMdd
+branches: {}
+ignore:
+  sha: []
+merge-message-formats: {}
