@@ -35,7 +35,7 @@ namespace Bach.Model.Internal;
 /// </summary>
 /// <typeparam name="T">The type of the buffer.</typeparam>
 [DebuggerDisplay( "Count = {Length}" )]
-public sealed class CircularArray<T>: IEnumerable<T>
+internal sealed class CircularArray<T>: IEnumerable<T>
 {
   private readonly IList<T> _items;
   private int _head;
