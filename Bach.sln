@@ -30,6 +30,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{256A7400-C2B6-49C8-B326-AE87F59986D5}"
 	ProjectSection(SolutionItems) = preProject
 		doc\docfx.json = doc\docfx.json
+		doc\index.md = doc\index.md
+		doc\toc.yml = doc\toc.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{94A0BB7C-9CA8-4103-A914-FD1BD85ECCD7}"
+	ProjectSection(SolutionItems) = preProject
+		doc\api\index.md = doc\api\index.md
 	EndProjectSection
 EndProject
 Global
@@ -58,6 +65,7 @@ Global
 		{4D95A49A-ABE8-4E0B-9146-F023BA73F487} = {8AFA9D67-FBA4-4F3E-A750-712C0D85C26D}
 		{96AE218D-B0C4-4722-A756-85333B1FC799} = {4D95A49A-ABE8-4E0B-9146-F023BA73F487}
 		{256A7400-C2B6-49C8-B326-AE87F59986D5} = {8AFA9D67-FBA4-4F3E-A750-712C0D85C26D}
+		{94A0BB7C-9CA8-4103-A914-FD1BD85ECCD7} = {256A7400-C2B6-49C8-B326-AE87F59986D5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2CA46BEC-D959-4B3F-820D-1D59AAAD36BC}
