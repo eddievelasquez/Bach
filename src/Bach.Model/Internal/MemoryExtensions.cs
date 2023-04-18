@@ -6,7 +6,7 @@
 
 namespace System;
 
-public static class MemoryExtensions
+internal static class MemoryExtensions
 {
 #region Public Methods
 
@@ -32,7 +32,7 @@ public static class MemoryExtensions
 #endregion
 }
 
-public ref struct SpanSplitEnumerator<T>
+internal ref struct SpanSplitEnumerator<T>
   where T: IEquatable<T>
 {
 #region Constructors
@@ -88,7 +88,7 @@ public ref struct SpanSplitEnumerator<T>
 #endregion
 }
 
-public ref struct SpanSplitSequenceEnumerator<T>
+internal ref struct SpanSplitSequenceEnumerator<T>
   where T: IEquatable<T>
 {
 #region Constructors

@@ -1,0 +1,7 @@
+# Comment out until actual articles are created
+#- name: Documentation
+#  href: articles/
+- name: API Reference
+  href: api/
+  # NOTE: Refer to the namespace page until an appropriate page is created
+  homepage: api/Bach.Model.html
