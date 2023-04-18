@@ -3,7 +3,7 @@
     {
       "src": [
         {
-          "files": [ "bin/Release/**/Bach.Model.dll" ],
+          "files": [ "src/Bach.Model/Bach.Model.csproj" ],
           "src": "../"
         }
       ],
