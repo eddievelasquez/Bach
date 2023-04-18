@@ -1,28 +1,9 @@
-syntax: glob
-*.dll
-*.exp
-*.ilk
-*.pdb
-*.lib
-*.ncb
-*.opt
-*.plg
-*.user
-*.suo
-*.sdf
-*.opensdf
-*.tss
-obj/
-bin/
-
-# Ignore NuGet Packages
-*.nupkg
-# Ignore the packages folder
-**/packages/*
-# except build/, which is used as an MSBuild target.
-!**/packages/build/
-# Uncomment if necessary however generally it will be regenerated when needed
-#!**/packages/repositories.config
-.vs/
-experiments/
-Bach.sln.DotSettings
+###############
+#    folder   #
+###############
+/**/DROP/
+/**/TEMP/
+/**/packages/
+/**/bin/
+/**/obj/
+_site
