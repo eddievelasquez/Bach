@@ -37,8 +37,14 @@ namespace Bach.Model.Internal;
 [DebuggerDisplay( "Count = {Length}" )]
 internal sealed class CircularArray<T>: IEnumerable<T>
 {
+#region Fields
+
   private readonly IList<T> _items;
   private int _head;
+
+#endregion
+
+#region Constructors
 
   /// <summary>
   ///   Initializes a new instance <see cref="CircularArray{T}" /> class
@@ -61,6 +67,10 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     _items = items;
     _head = 0;
   }
+
+#endregion
+
+#region Properties
 
   public int Head
   {
@@ -92,6 +102,10 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     }
   }
 
+#endregion
+
+#region Public Methods
+
   /// <inheritdoc />
   public IEnumerator<T> GetEnumerator()
   {
@@ -107,6 +121,10 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   {
     return GetEnumerator();
   }
+
+#endregion
+
+#region Implementation
 
   private T GetElement( int index )
   {
@@ -131,4 +149,6 @@ internal sealed class CircularArray<T>: IEnumerable<T>
 
     _items[position] = value;
   }
+
+#endregion
 }

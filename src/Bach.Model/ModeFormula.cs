@@ -30,6 +30,8 @@ namespace Bach.Model;
 /// <summary>A mode formula.</summary>
 public sealed class ModeFormula: IEquatable<ModeFormula>
 {
+#region Constants
+
   private const int MinTonic = 1;
   private const int MaxTonic = 7;
 
@@ -54,6 +56,10 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   /// <summary>The Locrian (VII).</summary>
   public static readonly ModeFormula Locrian = new( "Locrian", 7 );
 
+#endregion
+
+#region Constructors
+
   private ModeFormula(
     string name,
     int tonic )
@@ -65,6 +71,10 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
     Tonic = tonic;
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the mode formula name.</summary>
   /// <value>The name.</value>
   public string Name { get; }
@@ -72,6 +82,10 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   /// <summary>Gets the mode formula's tonic.</summary>
   /// <value>The tonic.</value>
   public int Tonic { get; }
+
+#endregion
+
+#region Public Methods
 
   /// <inheritdoc />
   public bool Equals( ModeFormula other )
@@ -111,4 +125,6 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   {
     return Name;
   }
+
+#endregion
 }

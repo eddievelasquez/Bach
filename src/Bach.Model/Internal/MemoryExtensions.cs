@@ -35,6 +35,15 @@ internal static class MemoryExtensions
 internal ref struct SpanSplitEnumerator<T>
   where T: IEquatable<T>
 {
+#region Fields
+
+  private readonly ReadOnlySpan<T> _sequence;
+  private readonly T _separator;
+  private int _offset;
+  private int _index;
+
+#endregion
+
 #region Constructors
 
   internal SpanSplitEnumerator(
@@ -52,15 +61,6 @@ internal ref struct SpanSplitEnumerator<T>
 #region Properties
 
   public Range Current => new( _offset, ( _offset + _index ) - 1 );
-
-#endregion
-
-#region Data Members
-
-  private readonly ReadOnlySpan<T> _sequence;
-  private readonly T _separator;
-  private int _offset;
-  private int _index;
 
 #endregion
 
@@ -91,6 +91,15 @@ internal ref struct SpanSplitEnumerator<T>
 internal ref struct SpanSplitSequenceEnumerator<T>
   where T: IEquatable<T>
 {
+#region Fields
+
+  private readonly ReadOnlySpan<T> _sequence;
+  private readonly ReadOnlySpan<T> _separator;
+  private int _offset;
+  private int _index;
+
+#endregion
+
 #region Constructors
 
   internal SpanSplitSequenceEnumerator(
@@ -108,15 +117,6 @@ internal ref struct SpanSplitSequenceEnumerator<T>
 #region Properties
 
   public Range Current => new( _offset, ( _offset + _index ) - 1 );
-
-#endregion
-
-#region Data Members
-
-  private readonly ReadOnlySpan<T> _sequence;
-  private readonly ReadOnlySpan<T> _separator;
-  private int _offset;
-  private int _index;
 
 #endregion
 

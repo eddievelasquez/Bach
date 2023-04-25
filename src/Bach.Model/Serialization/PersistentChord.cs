@@ -27,8 +27,12 @@ namespace Bach.Model.Serialization;
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class PersistentChord
 {
+#region Properties
+
   public string Id { get; set; } = null!;
   public string Name { get; set; } = null!;
   public string Symbol { get; set; } = null!;
   public string Formula { get; set; } = null!;
+
+#endregion
 }

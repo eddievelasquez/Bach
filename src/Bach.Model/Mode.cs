@@ -36,6 +36,8 @@ public sealed class Mode
   : IEquatable<Mode>,
     IEnumerable<PitchClass>
 {
+#region Constructors
+
   /// <summary>Constructor.</summary>
   /// <param name="scale">The scale.</param>
   /// <param name="formula">The mode formula.</param>
@@ -60,6 +62,10 @@ public sealed class Mode
       = new PitchClassCollection( scale.Ascending.Skip( Formula.Tonic - 1 ).Take( scale.PitchClasses.Count ) );
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the mode's pitchClasses.</summary>
   /// <value>The pitchClasses.</value>
   public PitchClassCollection PitchClasses { get; }
@@ -76,26 +82,9 @@ public sealed class Mode
   /// <value>The formula.</value>
   public ModeFormula Formula { get; }
 
-  /// <inheritdoc />
-  IEnumerator IEnumerable.GetEnumerator()
-  {
-    return GetEnumerator();
-  }
+#endregion
 
-  /// <inheritdoc />
-  public IEnumerator<PitchClass> GetEnumerator()
-  {
-    var index = 0;
-
-    while( true )
-    {
-      yield return PitchClasses[index];
-
-      index = ArrayExtensions.WrapIndex( PitchClasses.Count, ++index );
-    }
-
-    // ReSharper disable once IteratorNeverReturns
-  }
+#region Public Methods
 
   /// <inheritdoc />
   public bool Equals( Mode other )
@@ -125,6 +114,27 @@ public sealed class Mode
   }
 
   /// <inheritdoc />
+  public IEnumerator<PitchClass> GetEnumerator()
+  {
+    var index = 0;
+
+    while( true )
+    {
+      yield return PitchClasses[index];
+
+      index = ArrayExtensions.WrapIndex( PitchClasses.Count, ++index );
+    }
+
+    // ReSharper disable once IteratorNeverReturns
+  }
+
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  /// <inheritdoc />
   public override int GetHashCode()
   {
     return HashCode.Combine( Scale, Formula );
@@ -135,4 +145,6 @@ public sealed class Mode
   {
     return string.Join( ",", PitchClasses );
   }
+
+#endregion
 }

@@ -33,6 +33,8 @@ namespace Bach.Model.Instruments;
 /// </summary>
 public readonly struct Fingering: IEquatable<Fingering>
 {
+#region Constructors
+
   private Fingering(
     Pitch pitch,
     int stringNumber,
@@ -42,6 +44,10 @@ public readonly struct Fingering: IEquatable<Fingering>
     StringNumber = stringNumber;
     Position = position;
   }
+
+#endregion
+
+#region Properties
 
   /// <summary>Gets the fingering's pitch.</summary>
   /// <value>The pitch.</value>
@@ -56,34 +62,9 @@ public readonly struct Fingering: IEquatable<Fingering>
   /// <value>The position.</value>
   public int Position { get; }
 
-  /// <inheritdoc />
-  public bool Equals( Fingering other )
-  {
-    return StringNumber == other.StringNumber && Position == other.Position;
-  }
+#endregion
 
-  /// <inheritdoc />
-  public override string ToString()
-  {
-    return Position < 0 ? $"{StringNumber}x" : $"{StringNumber}{Position}";
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-    if( ReferenceEquals( null, obj ) )
-    {
-      return false;
-    }
-
-    return obj is Fingering other && Equals( other );
-  }
-
-  /// <inheritdoc />
-  public override int GetHashCode()
-  {
-    return HashCode.Combine( StringNumber, Position );
-  }
+#region Public Methods
 
   /// <summary>Creates a new Fingering.</summary>
   /// <param name="instrument">The instrument.</param>
@@ -108,6 +89,39 @@ public readonly struct Fingering: IEquatable<Fingering>
     return result;
   }
 
+  /// <inheritdoc />
+  public bool Equals( Fingering other )
+  {
+    return StringNumber == other.StringNumber && Position == other.Position;
+  }
+
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( null, obj ) )
+    {
+      return false;
+    }
+
+    return obj is Fingering other && Equals( other );
+  }
+
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return HashCode.Combine( StringNumber, Position );
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return Position < 0 ? $"{StringNumber}x" : $"{StringNumber}{Position}";
+  }
+
+#endregion
+
+#region Implementation
+
   internal static Fingering Create(
     StringedInstrument instrument,
     int stringNumber )
@@ -119,4 +133,6 @@ public readonly struct Fingering: IEquatable<Fingering>
     var result = new Fingering( pitch, stringNumber, -1 );
     return result;
   }
+
+#endregion
 }

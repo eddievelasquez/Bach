@@ -32,121 +32,6 @@ public sealed class PitchTest
 #region Public Methods
 
   [Fact]
-  public void CreateWithToneAndAccidentalTest()
-  {
-    var target = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    Assert.Equal( NoteName.A, target.PitchClass.NoteName );
-    Assert.Equal( Accidental.Natural, target.PitchClass.Accidental );
-    Assert.Equal( 1, target.Octave );
-
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.C, Accidental.Flat, Pitch.MinOctave ) );
-    Assert.Throws<ArgumentOutOfRangeException>(
-      () => Pitch.Create( NoteName.C, Accidental.DoubleFlat, Pitch.MinOctave ) );
-
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.B, Accidental.Sharp, Pitch.MaxOctave ) );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.B,
-                                                                    Accidental.DoubleSharp,
-                                                                    Pitch.MaxOctave ) );
-  }
-
-  [Fact]
-  public void CreateWithNoteTest()
-  {
-    var target = Pitch.Create( PitchClass.A, 1 );
-    Assert.Equal( PitchClass.A, target.PitchClass );
-    Assert.Equal( 1, target.Octave );
-
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( PitchClass.Create( NoteName.C, Accidental.Flat ),
-                                                                    Pitch.MinOctave ) );
-
-    Assert.Throws<ArgumentOutOfRangeException>(
-      () => Pitch.Create( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), Pitch.MinOctave ) );
-
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( PitchClass.Create( NoteName.B, Accidental.Sharp ),
-                                                                    Pitch.MaxOctave ) );
-
-    Assert.Throws<ArgumentOutOfRangeException>(
-      () => Pitch.Create( PitchClass.Create( NoteName.B, Accidental.DoubleSharp ), Pitch.MaxOctave ) );
-  }
-
-  [Fact]
-  public void EqualsContractTest()
-  {
-    object x = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    object y = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    object z = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var x = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var y = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var z = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    object actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var expected = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
-  }
-
-  [Fact]
   public void CompareToContractTest()
   {
     {
@@ -198,22 +83,159 @@ public sealed class PitchTest
   }
 
   [Fact]
-  public void ToStringTest()
+  public void ComparisonOperatorsTest()
   {
-    var target = Pitch.Create( NoteName.A, Accidental.DoubleFlat, 1 );
-    Assert.Equal( "Abb1", target.ToString() );
+    var a = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var b = Pitch.Create( NoteName.B, Accidental.Natural, 1 );
 
-    target = Pitch.Create( NoteName.A, Accidental.Flat, 1 );
-    Assert.Equal( "Ab1", target.ToString() );
+    Assert.True( b > a );
+    Assert.True( b >= a );
+    Assert.False( b < a );
+    Assert.False( b <= a );
+  }
 
-    target = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    Assert.Equal( "A1", target.ToString() );
+  [Fact]
+  public void CreateWithNoteTest()
+  {
+    var target = Pitch.Create( PitchClass.A, 1 );
+    Assert.Equal( PitchClass.A, target.PitchClass );
+    Assert.Equal( 1, target.Octave );
 
-    target = Pitch.Create( NoteName.A, Accidental.Sharp, 1 );
-    Assert.Equal( "A#1", target.ToString() );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( PitchClass.Create( NoteName.C, Accidental.Flat ),
+                                                                    Pitch.MinOctave ) );
 
-    target = Pitch.Create( NoteName.A, Accidental.DoubleSharp, 1 );
-    Assert.Equal( "A##1", target.ToString() );
+    Assert.Throws<ArgumentOutOfRangeException>(
+      () => Pitch.Create( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), Pitch.MinOctave ) );
+
+    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( PitchClass.Create( NoteName.B, Accidental.Sharp ),
+                                                                    Pitch.MaxOctave ) );
+
+    Assert.Throws<ArgumentOutOfRangeException>(
+      () => Pitch.Create( PitchClass.Create( NoteName.B, Accidental.DoubleSharp ), Pitch.MaxOctave ) );
+  }
+
+  [Fact]
+  public void CreateWithToneAndAccidentalTest()
+  {
+    var target = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    Assert.Equal( NoteName.A, target.PitchClass.NoteName );
+    Assert.Equal( Accidental.Natural, target.PitchClass.Accidental );
+    Assert.Equal( 1, target.Octave );
+
+    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.C, Accidental.Flat, Pitch.MinOctave ) );
+    Assert.Throws<ArgumentOutOfRangeException>(
+      () => Pitch.Create( NoteName.C, Accidental.DoubleFlat, Pitch.MinOctave ) );
+
+    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.B, Accidental.Sharp, Pitch.MaxOctave ) );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.B,
+                                                                    Accidental.DoubleSharp,
+                                                                    Pitch.MaxOctave ) );
+  }
+
+  [Fact]
+  public void EqualsContractTest()
+  {
+    object x = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    object y = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    object z = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void FrequencyTest()
+  {
+    Assert.Equal( 440.0, Math.Round( Pitch.Parse( "A4" ).Frequency, 2 ) );
+    Assert.Equal( 523.25, Math.Round( Pitch.Parse( "C5" ).Frequency, 2 ) );
+    Assert.Equal( 349.23, Math.Round( Pitch.Parse( "F4" ).Frequency, 2 ) );
+    Assert.Equal( 880.0, Math.Round( Pitch.Parse( "A5" ).Frequency, 2 ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var expected = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void MaxTest()
+  {
+    Assert.Equal( Pitch.Parse( "B4" ), Pitch.Max( Pitch.Parse( "A4" ), Pitch.Parse( "B4" ) ) );
+    Assert.Equal( Pitch.Parse( "B4" ), Pitch.Max( Pitch.Parse( "B4" ), Pitch.Parse( "A4" ) ) );
+  }
+
+  [Fact]
+  public void MidiTest()
+  {
+    Assert.Equal( 12, Pitch.Parse( "C0" ).Midi );
+    Assert.Equal( 24, Pitch.Parse( "C1" ).Midi );
+    Assert.Equal( 36, Pitch.Parse( "C2" ).Midi );
+    Assert.Equal( 48, Pitch.Parse( "C3" ).Midi );
+    Assert.Equal( 60, Pitch.Parse( "C4" ).Midi );
+    Assert.Equal( 72, Pitch.Parse( "C5" ).Midi );
+    Assert.Equal( 84, Pitch.Parse( "C6" ).Midi );
+    Assert.Equal( 96, Pitch.Parse( "C7" ).Midi );
+    Assert.Equal( 108, Pitch.Parse( "C8" ).Midi );
+    Assert.Equal( 120, Pitch.Parse( "C9" ).Midi );
+    Assert.Equal( 127, Pitch.Parse( "G9" ).Midi );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.CreateFromMidi( 11 ) );
+  }
+
+  [Fact]
+  public void MinTest()
+  {
+    Assert.Equal( Pitch.Parse( "A4" ), Pitch.Min( Pitch.Parse( "A4" ), Pitch.Parse( "B4" ) ) );
+    Assert.Equal( Pitch.Parse( "A4" ), Pitch.Min( Pitch.Parse( "B4" ), Pitch.Parse( "A4" ) ) );
+  }
+
+  [Fact]
+  public void op_AdditionIntTest()
+  {
+    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+
+    Assert.Equal( Pitch.Create( NoteName.C, Accidental.Sharp, 2 ), c2 + 1 );
+    Assert.Equal( Pitch.Create( NoteName.B, Accidental.Natural, 1 ), c2 + -1 );
+    Assert.Equal( Pitch.Create( NoteName.D, Accidental.Natural, 2 ), c2 + 2 );
+    Assert.Equal( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ), c2 + -2 );
+  }
+
+  [Fact]
+  public void op_DecrementTest()
+  {
+    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+
+    Assert.Equal( Pitch.Create( NoteName.B, Accidental.Natural, 1 ), --c2 );
+    Assert.Equal( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ), --c2 );
   }
 
   [Fact]
@@ -229,6 +251,15 @@ public sealed class PitchTest
   }
 
   [Fact]
+  public void op_IncrementTest()
+  {
+    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+
+    Assert.Equal( Pitch.Create( NoteName.C, Accidental.Sharp, 2 ), ++c2 );
+    Assert.Equal( Pitch.Create( NoteName.D, Accidental.Natural, 2 ), ++c2 );
+  }
+
+  [Fact]
   public void op_InequalityTest()
   {
     var a = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
@@ -241,15 +272,12 @@ public sealed class PitchTest
   }
 
   [Fact]
-  public void ComparisonOperatorsTest()
+  public void op_SubtractionIntTest()
   {
-    var a = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var b = Pitch.Create( NoteName.B, Accidental.Natural, 1 );
+    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
 
-    Assert.True( b > a );
-    Assert.True( b >= a );
-    Assert.False( b < a );
-    Assert.False( b <= a );
+    Assert.Equal( Pitch.Create( NoteName.B, Accidental.Natural, 1 ), c2 - 1 );
+    Assert.Equal( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ), c2 - 2 );
   }
 
   [Fact]
@@ -278,41 +306,55 @@ public sealed class PitchTest
   }
 
   [Fact]
-  public void op_AdditionIntTest()
+  public void ParseTest()
   {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
-
-    Assert.Equal( Pitch.Create( NoteName.C, Accidental.Sharp, 2 ), c2 + 1 );
-    Assert.Equal( Pitch.Create( NoteName.B, Accidental.Natural, 1 ), c2 + -1 );
-    Assert.Equal( Pitch.Create( NoteName.D, Accidental.Natural, 2 ), c2 + 2 );
-    Assert.Equal( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ), c2 + -2 );
+    Assert.Throws<FormatException>( () => Pitch.Parse( "C$4" ) );
+    Assert.Throws<ArgumentOutOfRangeException>( () => { Pitch.Parse( "A9" ); } );
   }
 
   [Fact]
-  public void op_IncrementTest()
+  public void PitchIntervalAdditionTest()
   {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
-
-    Assert.Equal( Pitch.Create( NoteName.C, Accidental.Sharp, 2 ), ++c2 );
-    Assert.Equal( Pitch.Create( NoteName.D, Accidental.Natural, 2 ), ++c2 );
+    Assert.Equal( Pitch.Parse( "E4" ), Pitch.Parse( "C4" ) + Interval.MajorThird );
+    Assert.Equal( Pitch.Parse( "E4" ), Pitch.Parse( "C#4" ) + Interval.MinorThird );
+    Assert.Equal( Pitch.Parse( "F4" ), Pitch.Parse( "D4" ) + Interval.MinorThird );
+    Assert.Equal( Pitch.Parse( "G4" ), Pitch.Parse( "D4" ) + Interval.Fourth );
+    Assert.Equal( Pitch.Parse( "A4" ), Pitch.Parse( "E4" ) + Interval.Fourth );
+    Assert.Equal( Pitch.Parse( "Ab4" ), Pitch.Parse( "Eb4" ) + Interval.Fourth );
+    Assert.Equal( Pitch.Parse( "G#4" ), Pitch.Parse( "Eb4" ) + Interval.AugmentedThird );
+    Assert.Equal( Pitch.Parse( "D5" ), Pitch.Parse( "F4" ) + Interval.MajorSixth );
+    Assert.Equal( Pitch.Parse( "D5" ), Pitch.Parse( "G4" ) + Interval.Fifth );
+    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "F4" ) + Interval.Fifth );
+    Assert.Equal( Pitch.Parse( "E5" ), Pitch.Parse( "A4" ) + Interval.Fifth );
+    Assert.Equal( Pitch.Parse( "Eb5" ), Pitch.Parse( "Ab4" ) + Interval.Fifth );
+    Assert.Equal( Pitch.Parse( "Eb5" ), Pitch.Parse( "G#4" ) + Interval.DiminishedSixth );
+    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "F#4" ) + Interval.AugmentedFourth );
+    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "Gb4" ) + Interval.DiminishedFifth );
+    Assert.Equal( Pitch.Parse( "D#4" ), Pitch.Parse( "C4" ) + Interval.AugmentedSecond );
+    Assert.Equal( Pitch.Parse( "F#4" ), Pitch.Parse( "C4" ) + Interval.DiminishedFifth );
+    Assert.Equal( Pitch.Parse( "Gb4" ), Pitch.Parse( "C4" ) + Interval.AugmentedFourth );
+    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "D#4" ) + Interval.DiminishedSeventh );
+    Assert.Equal( Pitch.Parse( "F4" ), Pitch.Parse( "D#4" ) + Interval.DiminishedThird );
+    Assert.Equal( Pitch.Parse( "G#4" ), Pitch.Parse( "D##4" ) + Interval.DiminishedFourth );
   }
 
   [Fact]
-  public void op_SubtractionIntTest()
+  public void ToStringTest()
   {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+    var target = Pitch.Create( NoteName.A, Accidental.DoubleFlat, 1 );
+    Assert.Equal( "Abb1", target.ToString() );
 
-    Assert.Equal( Pitch.Create( NoteName.B, Accidental.Natural, 1 ), c2 - 1 );
-    Assert.Equal( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ), c2 - 2 );
-  }
+    target = Pitch.Create( NoteName.A, Accidental.Flat, 1 );
+    Assert.Equal( "Ab1", target.ToString() );
 
-  [Fact]
-  public void op_DecrementTest()
-  {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+    target = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    Assert.Equal( "A1", target.ToString() );
 
-    Assert.Equal( Pitch.Create( NoteName.B, Accidental.Natural, 1 ), --c2 );
-    Assert.Equal( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ), --c2 );
+    target = Pitch.Create( NoteName.A, Accidental.Sharp, 1 );
+    Assert.Equal( "A#1", target.ToString() );
+
+    target = Pitch.Create( NoteName.A, Accidental.DoubleSharp, 1 );
+    Assert.Equal( "A##1", target.ToString() );
   }
 
   [Fact]
@@ -377,76 +419,34 @@ public sealed class PitchTest
   }
 
   [Fact]
-  public void ParseTest()
+  public void TypeSafeEqualsContractTest()
   {
-    Assert.Throws<FormatException>( () => Pitch.Parse( "C$4" ) );
-    Assert.Throws<ArgumentOutOfRangeException>( () => { Pitch.Parse( "A9" ); } );
+    var x = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var y = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var z = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
   }
 
   [Fact]
-  public void FrequencyTest()
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
-    Assert.Equal( 440.0, Math.Round( Pitch.Parse( "A4" ).Frequency, 2 ) );
-    Assert.Equal( 523.25, Math.Round( Pitch.Parse( "C5" ).Frequency, 2 ) );
-    Assert.Equal( 349.23, Math.Round( Pitch.Parse( "F4" ).Frequency, 2 ) );
-    Assert.Equal( 880.0, Math.Round( Pitch.Parse( "A5" ).Frequency, 2 ) );
+    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
   }
 
   [Fact]
-  public void MidiTest()
+  public void TypeSafeEqualsFailsWithNullTest()
   {
-    Assert.Equal( 12, Pitch.Parse( "C0" ).Midi );
-    Assert.Equal( 24, Pitch.Parse( "C1" ).Midi );
-    Assert.Equal( 36, Pitch.Parse( "C2" ).Midi );
-    Assert.Equal( 48, Pitch.Parse( "C3" ).Midi );
-    Assert.Equal( 60, Pitch.Parse( "C4" ).Midi );
-    Assert.Equal( 72, Pitch.Parse( "C5" ).Midi );
-    Assert.Equal( 84, Pitch.Parse( "C6" ).Midi );
-    Assert.Equal( 96, Pitch.Parse( "C7" ).Midi );
-    Assert.Equal( 108, Pitch.Parse( "C8" ).Midi );
-    Assert.Equal( 120, Pitch.Parse( "C9" ).Midi );
-    Assert.Equal( 127, Pitch.Parse( "G9" ).Midi );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.CreateFromMidi( 11 ) );
-  }
-
-  [Fact]
-  public void PitchIntervalAdditionTest()
-  {
-    Assert.Equal( Pitch.Parse( "E4" ), Pitch.Parse( "C4" ) + Interval.MajorThird );
-    Assert.Equal( Pitch.Parse( "E4" ), Pitch.Parse( "C#4" ) + Interval.MinorThird );
-    Assert.Equal( Pitch.Parse( "F4" ), Pitch.Parse( "D4" ) + Interval.MinorThird );
-    Assert.Equal( Pitch.Parse( "G4" ), Pitch.Parse( "D4" ) + Interval.Fourth );
-    Assert.Equal( Pitch.Parse( "A4" ), Pitch.Parse( "E4" ) + Interval.Fourth );
-    Assert.Equal( Pitch.Parse( "Ab4" ), Pitch.Parse( "Eb4" ) + Interval.Fourth );
-    Assert.Equal( Pitch.Parse( "G#4" ), Pitch.Parse( "Eb4" ) + Interval.AugmentedThird );
-    Assert.Equal( Pitch.Parse( "D5" ), Pitch.Parse( "F4" ) + Interval.MajorSixth );
-    Assert.Equal( Pitch.Parse( "D5" ), Pitch.Parse( "G4" ) + Interval.Fifth );
-    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "F4" ) + Interval.Fifth );
-    Assert.Equal( Pitch.Parse( "E5" ), Pitch.Parse( "A4" ) + Interval.Fifth );
-    Assert.Equal( Pitch.Parse( "Eb5" ), Pitch.Parse( "Ab4" ) + Interval.Fifth );
-    Assert.Equal( Pitch.Parse( "Eb5" ), Pitch.Parse( "G#4" ) + Interval.DiminishedSixth );
-    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "F#4" ) + Interval.AugmentedFourth );
-    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "Gb4" ) + Interval.DiminishedFifth );
-    Assert.Equal( Pitch.Parse( "D#4" ), Pitch.Parse( "C4" ) + Interval.AugmentedSecond );
-    Assert.Equal( Pitch.Parse( "F#4" ), Pitch.Parse( "C4" ) + Interval.DiminishedFifth );
-    Assert.Equal( Pitch.Parse( "Gb4" ), Pitch.Parse( "C4" ) + Interval.AugmentedFourth );
-    Assert.Equal( Pitch.Parse( "C5" ), Pitch.Parse( "D#4" ) + Interval.DiminishedSeventh );
-    Assert.Equal( Pitch.Parse( "F4" ), Pitch.Parse( "D#4" ) + Interval.DiminishedThird );
-    Assert.Equal( Pitch.Parse( "G#4" ), Pitch.Parse( "D##4" ) + Interval.DiminishedFourth );
-  }
-
-  [Fact]
-  public void MinTest()
-  {
-    Assert.Equal( Pitch.Parse( "A4" ), Pitch.Min( Pitch.Parse( "A4" ), Pitch.Parse( "B4" ) ) );
-    Assert.Equal( Pitch.Parse( "A4" ), Pitch.Min( Pitch.Parse( "B4" ), Pitch.Parse( "A4" ) ) );
-  }
-
-  [Fact]
-  public void MaxTest()
-  {
-    Assert.Equal( Pitch.Parse( "B4" ), Pitch.Max( Pitch.Parse( "A4" ), Pitch.Parse( "B4" ) ) );
-    Assert.Equal( Pitch.Parse( "B4" ), Pitch.Max( Pitch.Parse( "B4" ), Pitch.Parse( "A4" ) ) );
+    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

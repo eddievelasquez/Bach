@@ -32,10 +32,16 @@ public sealed class StringedInstrumentDefinition
   : InstrumentDefinition,
     IEquatable<StringedInstrumentDefinition>
 {
+#region Constructors
+
   internal StringedInstrumentDefinition( StringedInstrumentDefinitionState state )
     : base( state )
   {
   }
+
+#endregion
+
+#region Properties
 
   /// <summary>Gets the number of strings for the instrument.</summary>
   /// <value>The number of strings.</value>
@@ -46,6 +52,10 @@ public sealed class StringedInstrumentDefinition
   public TuningCollection Tunings => State.Tunings;
 
   private new StringedInstrumentDefinitionState State => (StringedInstrumentDefinitionState) base.State;
+
+#endregion
+
+#region Public Methods
 
   /// <inheritdoc />
   public bool Equals( StringedInstrumentDefinition other )
@@ -82,4 +92,6 @@ public sealed class StringedInstrumentDefinition
     hash = ( hash * 23 ) + StringCount;
     return hash;
   }
+
+#endregion
 }

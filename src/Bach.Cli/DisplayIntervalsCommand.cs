@@ -31,6 +31,8 @@ namespace Bach.Cli;
 
 internal sealed class DisplayIntervalsCommand: BachCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public DisplayIntervalsCommand()
   {
@@ -40,8 +42,16 @@ internal sealed class DisplayIntervalsCommand: BachCommand
     Command = command;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public override Command Command { get; }
+
+#endregion
+
+#region Implementation
 
   private static void Execute( IEnumerable<string> notes )
   {
@@ -52,4 +62,6 @@ internal sealed class DisplayIntervalsCommand: BachCommand
     WriteList( "Intervals: ", intervals.Select( interval => interval.ToString( "Sq" ) ) );
     WriteLine();
   }
+
+#endregion
 }

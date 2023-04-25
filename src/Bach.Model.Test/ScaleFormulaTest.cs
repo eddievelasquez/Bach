@@ -33,6 +33,48 @@ public sealed class ScaleFormulaTest
 #region Public Methods
 
   [Fact]
+  public void CategoriesHeptatonicTest()
+  {
+    TestFormulaCategory( "Heptatonic", true, formula => formula.Intervals.Count == 7 );
+  }
+
+  [Fact]
+  public void CategoriesHexatonicTest()
+  {
+    TestFormulaCategory( "Hexatonic", true, formula => formula.Intervals.Count == 6 );
+  }
+
+  [Fact]
+  public void CategoriesMajorTest()
+  {
+    TestFormulaCategory( "Major",
+                         false,
+                         formula => formula.Intervals.Contains( Interval.MajorThird )
+                                    && formula.Intervals.Contains( Interval.Fifth ) );
+  }
+
+  [Fact]
+  public void CategoriesMinorTest()
+  {
+    TestFormulaCategory( "Minor",
+                         false,
+                         formula => formula.Intervals.Contains( Interval.MinorThird )
+                                    && formula.Intervals.Contains( Interval.Fifth ) );
+  }
+
+  [Fact]
+  public void CategoriesOctatonicTest()
+  {
+    TestFormulaCategory( "Octatonic", true, formula => formula.Intervals.Count == 8 );
+  }
+
+  [Fact]
+  public void CategoriesPentatonicTest()
+  {
+    TestFormulaCategory( "Pentatonic", true, formula => formula.Intervals.Count == 5 );
+  }
+
+  [Fact]
   public void ConstructorWithFormulaTest()
   {
     const string Id = "Id";
@@ -86,33 +128,9 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    var y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    var z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
     Assert.False( actual.Equals( int.MinValue ) );
   }
 
@@ -124,17 +142,27 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
     Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GenerateTest()
+  {
+    var formula = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    using var pitches = formula.Generate( Pitch.MinValue ).GetEnumerator();
+    var count = 0;
+
+    while( pitches.MoveNext() )
+    {
+      Assert.True( pitches.Current <= Pitch.MaxValue );
+      ++count;
+    }
+
+    // 3 pitchClasses per octave, 10 octaves total.
+    Assert.Equal( 30, count );
   }
 
   [Fact]
@@ -161,62 +189,11 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void CategoriesMajorTest()
+  public void IntervalsMustBeSortedTest()
   {
-    TestFormulaCategory( "Major",
-                         false,
-                         formula => formula.Intervals.Contains( Interval.MajorThird )
-                                    && formula.Intervals.Contains( Interval.Fifth ) );
-  }
-
-  [Fact]
-  public void CategoriesMinorTest()
-  {
-    TestFormulaCategory( "Minor",
-                         false,
-                         formula => formula.Intervals.Contains( Interval.MinorThird )
-                                    && formula.Intervals.Contains( Interval.Fifth ) );
-  }
-
-  [Fact]
-  public void CategoriesPentatonicTest()
-  {
-    TestFormulaCategory( "Pentatonic", true, formula => formula.Intervals.Count == 5 );
-  }
-
-  [Fact]
-  public void CategoriesHexatonicTest()
-  {
-    TestFormulaCategory( "Hexatonic", true, formula => formula.Intervals.Count == 6 );
-  }
-
-  [Fact]
-  public void CategoriesHeptatonicTest()
-  {
-    TestFormulaCategory( "Heptatonic", true, formula => formula.Intervals.Count == 7 );
-  }
-
-  [Fact]
-  public void CategoriesOctatonicTest()
-  {
-    TestFormulaCategory( "Octatonic", true, formula => formula.Intervals.Count == 8 );
-  }
-
-  [Fact]
-  public void GenerateTest()
-  {
-    var formula = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    using var pitches = formula.Generate( Pitch.MinValue ).GetEnumerator();
-    var count = 0;
-
-    while( pitches.MoveNext() )
-    {
-      Assert.True( pitches.Current <= Pitch.MaxValue );
-      ++count;
-    }
-
-    // 3 pitchClasses per octave, 10 octaves total.
-    Assert.Equal( 30, count );
+    Assert.Throws<InvalidOperationException>( () => new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                .SetIntervals( "R,M3,M2" )
+                                                .Build() );
   }
 
   [Fact]
@@ -228,11 +205,34 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void IntervalsMustBeSortedTest()
+  public void TypeSafeEqualsContractTest()
   {
-    Assert.Throws<InvalidOperationException>( () => new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                .SetIntervals( "R,M3,M2" )
-                                                .Build() );
+    var x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    var y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    var z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

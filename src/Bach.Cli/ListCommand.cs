@@ -28,6 +28,8 @@ namespace Bach.Cli;
 
 internal sealed class ListCommand: BachCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public ListCommand()
   {
@@ -37,6 +39,12 @@ internal sealed class ListCommand: BachCommand
     Command = command;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public override Command Command { get; }
+
+#endregion
 }

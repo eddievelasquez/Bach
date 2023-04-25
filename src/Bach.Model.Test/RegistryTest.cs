@@ -33,20 +33,6 @@ public sealed class RegistryTest
 #region Public Methods
 
   [Fact]
-  public void ScaleFormulasTest()
-  {
-    var scaleFormulas = Registry.ScaleFormulas.ToArray();
-    Assert.NotNull( scaleFormulas );
-    Assert.NotEmpty( scaleFormulas );
-
-    foreach( var expected in scaleFormulas )
-    {
-      var actual = Registry.ScaleFormulas[expected.Id];
-      Assert.Equal( expected, actual );
-    }
-  }
-
-  [Fact]
   public void ChordFormulasTest()
   {
     var chordFormulas = Registry.ChordFormulas.ToArray();
@@ -56,6 +42,20 @@ public sealed class RegistryTest
     foreach( var expected in chordFormulas )
     {
       var actual = Registry.ChordFormulas[expected.Id];
+      Assert.Equal( expected, actual );
+    }
+  }
+
+  [Fact]
+  public void ScaleFormulasTest()
+  {
+    var scaleFormulas = Registry.ScaleFormulas.ToArray();
+    Assert.NotNull( scaleFormulas );
+    Assert.NotEmpty( scaleFormulas );
+
+    foreach( var expected in scaleFormulas )
+    {
+      var actual = Registry.ScaleFormulas[expected.Id];
       Assert.Equal( expected, actual );
     }
   }

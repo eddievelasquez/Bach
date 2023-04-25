@@ -34,6 +34,8 @@ public sealed class StringedInstrument
   : Instrument,
     IEquatable<StringedInstrument>
 {
+#region Constructors
+
   private StringedInstrument(
     StringedInstrumentDefinition definition,
     Tuning tuning,
@@ -47,6 +49,10 @@ public sealed class StringedInstrument
     PositionCount = positionCount;
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the stringed instruments definition.</summary>
   /// <value>The definition.</value>
   public new StringedInstrumentDefinition Definition => (StringedInstrumentDefinition) base.Definition;
@@ -59,38 +65,9 @@ public sealed class StringedInstrument
   /// <value>The tuning.</value>
   public Tuning Tuning { get; }
 
-  /// <inheritdoc />
-  public bool Equals( StringedInstrument other )
-  {
-    if( ReferenceEquals( this, other ) )
-    {
-      return true;
-    }
+#endregion
 
-    if( other is null )
-    {
-      return false;
-    }
-
-    return base.Equals( other ) && Equals( Tuning, other.Tuning ) && PositionCount == other.PositionCount;
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-    if( ReferenceEquals( this, obj ) )
-    {
-      return true;
-    }
-
-    return obj is StringedInstrument other && Equals( other );
-  }
-
-  /// <inheritdoc />
-  public override int GetHashCode()
-  {
-    return HashCode.Combine( base.GetHashCode(), Tuning, PositionCount );
-  }
+#region Public Methods
 
   /// <summary>Creates a new StringedInstrument.</summary>
   /// <param name="definition">The stringed instruments definition.</param>
@@ -125,6 +102,39 @@ public sealed class StringedInstrument
     }
 
     return new StringedInstrument( definition, definition.Tunings[tuningName], positionCount );
+  }
+
+  /// <inheritdoc />
+  public bool Equals( StringedInstrument other )
+  {
+    if( ReferenceEquals( this, other ) )
+    {
+      return true;
+    }
+
+    if( other is null )
+    {
+      return false;
+    }
+
+    return base.Equals( other ) && Equals( Tuning, other.Tuning ) && PositionCount == other.PositionCount;
+  }
+
+  /// <inheritdoc />
+  public override bool Equals( object obj )
+  {
+    if( ReferenceEquals( this, obj ) )
+    {
+      return true;
+    }
+
+    return obj is StringedInstrument other && Equals( other );
+  }
+
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return HashCode.Combine( base.GetHashCode(), Tuning, PositionCount );
   }
 
   /// <summary>Render a chord in the starting position with an optional position span.</summary>
@@ -243,6 +253,10 @@ public sealed class StringedInstrument
     }
   }
 
+#endregion
+
+#region Implementation
+
   private Fingering GetChordFingering(
     IEnumerator<Pitch> notes,
     int stringNumber,
@@ -284,4 +298,6 @@ public sealed class StringedInstrument
 
     return Tuning[@string] + position;
   }
+
+#endregion
 }

@@ -1,4 +1,4 @@
-// Module Name: InstrumentTest.cs
+﻿// Module Name: InstrumentTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -50,23 +50,6 @@ public sealed class InstrumentTest
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
-
-    Instrument x = StringedInstrument.Create( definition, 22 );
-    Instrument y = StringedInstrument.Create( definition, 22 );
-    Instrument z = StringedInstrument.Create( definition, 22 );
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
@@ -80,31 +63,10 @@ public sealed class InstrumentTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Instrument a = StringedInstrument.Create( definition, 22 );
-    Instrument b = StringedInstrument.Create( Registry.StringedInstrumentDefinitions["bass"], 22 );
-
-    Assert.False( a.Equals( b ) );
-    Assert.False( b.Equals( a ) );
-    Assert.False( Equals( a, b ) );
-    Assert.False( Equals( b, a ) );
-  }
-
-  [Fact]
   public void EqualsFailsWithNullTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     object actual = StringedInstrument.Create( definition, 22 );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Instrument actual = StringedInstrument.Create( definition, 22 );
     Assert.False( actual.Equals( null ) );
   }
 
@@ -124,6 +86,44 @@ public sealed class InstrumentTest
     Instrument expected = StringedInstrument.Create( definition, 22 );
     Assert.True( expected.Equals( actual ) );
     Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+
+    Instrument x = StringedInstrument.Create( definition, 22 );
+    Instrument y = StringedInstrument.Create( definition, 22 );
+    Instrument z = StringedInstrument.Create( definition, 22 );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    Instrument a = StringedInstrument.Create( definition, 22 );
+    Instrument b = StringedInstrument.Create( Registry.StringedInstrumentDefinitions["bass"], 22 );
+
+    Assert.False( a.Equals( b ) );
+    Assert.False( b.Equals( a ) );
+    Assert.False( Equals( a, b ) );
+    Assert.False( Equals( b, a ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    Instrument actual = StringedInstrument.Create( definition, 22 );
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

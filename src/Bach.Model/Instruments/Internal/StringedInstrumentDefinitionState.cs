@@ -28,6 +28,8 @@ namespace Bach.Model.Instruments.Internal;
 
 internal sealed class StringedInstrumentDefinitionState: InstrumentDefinitionState
 {
+#region Constructors
+
   public StringedInstrumentDefinitionState(
     string id,
     string name,
@@ -40,6 +42,12 @@ internal sealed class StringedInstrumentDefinitionState: InstrumentDefinitionSta
     Tunings = new TuningCollection( id );
   }
 
+#endregion
+
+#region Properties
+
   public int StringCount { get; }
   public TuningCollection Tunings { get; }
+
+#endregion
 }

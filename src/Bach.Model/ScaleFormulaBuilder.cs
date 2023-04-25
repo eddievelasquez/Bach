@@ -33,11 +33,17 @@ namespace Bach.Model;
 /// <summary>Creates scale formulas.</summary>
 public sealed class ScaleFormulaBuilder
 {
+#region Fields
+
   private readonly List<Interval> _intervals = new();
   private readonly HashSet<string> _aliases = new( Comparer.NameComparer );
   private readonly HashSet<string> _categories = new( Comparer.NameComparer );
   private string _id;
   private string _name;
+
+#endregion
+
+#region Constructors
 
   /// <summary>Initializes a new instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
   public ScaleFormulaBuilder()
@@ -62,66 +68,9 @@ public sealed class ScaleFormulaBuilder
     SetName( name );
   }
 
-  /// <summary>Sets the scale formula's id.</summary>
-  /// <param name="id">The scale formula's identifier.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetId( string id )
-  {
-    _id = RemoveWhitespace( id );
-    return this;
-  }
+#endregion
 
-  /// <summary>Sets the scale formula's name.</summary>
-  /// <param name="name">The name.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetName( string name )
-  {
-    if( name != null )
-    {
-      _name = name.Trim();
-    }
-
-    return this;
-  }
-
-  /// <summary>Sets the scale formula's intervals.</summary>
-  /// <param name="intervals">The intervals.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals( IEnumerable<Interval> intervals )
-  {
-    _intervals.Clear();
-
-    if( intervals != null )
-    {
-      _intervals.AddRange( intervals );
-    }
-
-    return this;
-  }
-
-  /// <summary>Sets the scale formula's intervals.</summary>
-  /// <param name="intervals">The intervals.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals( string intervals )
-  {
-    _intervals.Clear();
-
-    if( !string.IsNullOrEmpty( intervals ) )
-    {
-      _intervals.AddRange( Formula.ParseIntervals( intervals ) );
-    }
-
-    return this;
-  }
-
-  /// <summary>Appends an interval to the scale formula's list of intervals.</summary>
-  /// <param name="interval">The interval to append.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AppendInterval( Interval interval )
-  {
-    _intervals.Add( interval );
-    return this;
-  }
+#region Public Methods
 
   /// <summary>Adds one or more aliases for the scale formula; multiple aliases are separated by semi-colons.</summary>
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
@@ -166,24 +115,6 @@ public sealed class ScaleFormulaBuilder
     return this;
   }
 
-  /// <summary>Adds one or more categories for the scale formula; multiple categories are separated by semi-colons.</summary>
-  /// <remarks>
-  ///   A category is a user defined value that assists in the classification of a scale formula. e.g Major, Diatonic,
-  ///   Pentatonic, etc.
-  /// </remarks>
-  /// <param name="category">The alias.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddCategory( string category )
-  {
-    if( category == null )
-    {
-      return this;
-    }
-
-    var categories = category.Split( ';' );
-    return AddCategories( categories );
-  }
-
   /// <summary>Adds one or more categories for the scale formula.</summary>
   /// <remarks>
   ///   A category is a user defined value that assists in the classification of a scale formula. e.g Major, Diatonic,
@@ -212,6 +143,33 @@ public sealed class ScaleFormulaBuilder
       }
     }
 
+    return this;
+  }
+
+  /// <summary>Adds one or more categories for the scale formula; multiple categories are separated by semi-colons.</summary>
+  /// <remarks>
+  ///   A category is a user defined value that assists in the classification of a scale formula. e.g Major, Diatonic,
+  ///   Pentatonic, etc.
+  /// </remarks>
+  /// <param name="category">The alias.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder AddCategory( string category )
+  {
+    if( category == null )
+    {
+      return this;
+    }
+
+    var categories = category.Split( ';' );
+    return AddCategories( categories );
+  }
+
+  /// <summary>Appends an interval to the scale formula's list of intervals.</summary>
+  /// <param name="interval">The interval to append.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder AppendInterval( Interval interval )
+  {
+    _intervals.Add( interval );
     return this;
   }
 
@@ -288,6 +246,62 @@ public sealed class ScaleFormulaBuilder
     return formula;
   }
 
+  /// <summary>Sets the scale formula's id.</summary>
+  /// <param name="id">The scale formula's identifier.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetId( string id )
+  {
+    _id = RemoveWhitespace( id );
+    return this;
+  }
+
+  /// <summary>Sets the scale formula's intervals.</summary>
+  /// <param name="intervals">The intervals.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetIntervals( IEnumerable<Interval> intervals )
+  {
+    _intervals.Clear();
+
+    if( intervals != null )
+    {
+      _intervals.AddRange( intervals );
+    }
+
+    return this;
+  }
+
+  /// <summary>Sets the scale formula's intervals.</summary>
+  /// <param name="intervals">The intervals.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetIntervals( string intervals )
+  {
+    _intervals.Clear();
+
+    if( !string.IsNullOrEmpty( intervals ) )
+    {
+      _intervals.AddRange( Formula.ParseIntervals( intervals ) );
+    }
+
+    return this;
+  }
+
+  /// <summary>Sets the scale formula's name.</summary>
+  /// <param name="name">The name.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetName( string name )
+  {
+    if( name != null )
+    {
+      _name = name.Trim();
+    }
+
+    return this;
+  }
+
+#endregion
+
+#region Implementation
+
   private bool IsDiatonic()
   {
     if( _intervals.Count != 7 )
@@ -343,4 +357,6 @@ public sealed class ScaleFormulaBuilder
 
     return builder.ToString();
   }
+
+#endregion
 }

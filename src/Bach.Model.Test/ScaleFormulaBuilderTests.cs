@@ -1,4 +1,4 @@
-// Module Name: ScaleFormulaBuilderTests.cs
+﻿// Module Name: ScaleFormulaBuilderTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -32,146 +32,14 @@ public sealed class ScaleFormulaBuilderTest
 #region Public Methods
 
   [Fact]
-  public void ParseSpanTest()
-  {
-    const string IntervalString = "R,M2,m6";
-    var intervalsFromString = Formula.ParseIntervals( IntervalString );
-    var intervalsFromSpan = Formula.ParseIntervals( IntervalString.AsSpan() );
-
-    Assert.Equal( intervalsFromString, intervalsFromSpan );
-  }
-
-  [Fact]
-  public void SetNameAndIntervalsStringTest()
+  public void AddAliasEnumerableStringTest()
   {
     const string Name = "Name";
+    string[] aliases = { "Alias1", "Alias2" };
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void SetNameIsTrimmedTest()
-  {
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder().SetName( "   Name    " ).SetIntervals( IntervalString );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( "Name", formula.Name );
-    Assert.Equal( "Name", formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void SetIntervalsStringTest()
-  {
-    const string Name = "Name";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void SetIntervalEnumerableIntervalTest()
-  {
-    const string Name = "Name";
-    Interval[] intervals = { Interval.Unison, Interval.MajorSecond, Interval.MinorSixth };
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( intervals );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void AppendIntervalTest()
-  {
-    const string Name = "Name";
-    Interval[] intervals = { Interval.Unison, Interval.MajorSecond, Interval.MinorSixth };
-
-    var builder = new ScaleFormulaBuilder( Name );
-    foreach( var interval in intervals )
-    {
-      builder.AppendInterval( interval );
-    }
-
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void SetKeyTest()
-  {
-    const string Name = "Name";
-    const string Id = "Id";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetId( Id ).SetIntervals( IntervalString );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Id, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void SetKeyIsNameWithoutSpacesTest()
-  {
-    const string Name = "Name With Spaces";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( "NameWithSpaces", formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void AddAliasStringSingleTest()
-  {
-    const string Name = "Name";
-    const string Alias = "Alias";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAliases( aliases );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -179,7 +47,31 @@ public sealed class ScaleFormulaBuilderTest
     Assert.Equal( intervals, formula.Intervals );
     Assert.Empty( formula.Categories );
     Assert.NotEmpty( formula.Aliases );
-    Assert.Contains( Alias, formula.Aliases );
+    Assert.Contains( aliases[0], formula.Aliases );
+    Assert.Contains( aliases[1], formula.Aliases );
+  }
+
+  [Fact]
+  public void AddAliasEnumerableStringWithNullTest()
+  {
+    const string Name = "Name";
+    string[] aliases = { "Alias1", "Alias2" };
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddAliases( aliases )
+                                                 .AddAliases( new string[] { null } );
+
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
+    Assert.NotEmpty( formula.Aliases );
+    Assert.Contains( aliases[0], formula.Aliases );
+    Assert.Contains( aliases[1], formula.Aliases );
   }
 
   [Fact]
@@ -242,14 +134,14 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddAliasEnumerableStringTest()
+  public void AddAliasStringSingleTest()
   {
     const string Name = "Name";
-    string[] aliases = { "Alias1", "Alias2" };
+    const string Alias = "Alias";
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAliases( aliases );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -257,92 +149,7 @@ public sealed class ScaleFormulaBuilderTest
     Assert.Equal( intervals, formula.Intervals );
     Assert.Empty( formula.Categories );
     Assert.NotEmpty( formula.Aliases );
-    Assert.Contains( aliases[0], formula.Aliases );
-    Assert.Contains( aliases[1], formula.Aliases );
-  }
-
-  [Fact]
-  public void AddAliasEnumerableStringWithNullTest()
-  {
-    const string Name = "Name";
-    string[] aliases = { "Alias1", "Alias2" };
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddAliases( aliases )
-                                                 .AddAliases( new string[] { null } );
-
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.NotEmpty( formula.Aliases );
-    Assert.Contains( aliases[0], formula.Aliases );
-    Assert.Contains( aliases[1], formula.Aliases );
-  }
-
-  [Fact]
-  public void AddCategoryStringSingleTest()
-  {
-    const string Name = "Name";
-    const string Category = "Category";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Category );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.NotEmpty( formula.Categories );
-    Assert.Contains( Category, formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void AddCategoryNullStringTest()
-  {
-    const string Name = "Name";
-    const string Category = "Category";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategory( null )
-                                                 .AddCategory( Category );
-
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.NotEmpty( formula.Categories );
-    Assert.Contains( Category, formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
-  public void AddCategoryStringMultipleTest()
-  {
-    const string Name = "Name";
-    const string Categories = "Category1;Category2";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Categories );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.NotEmpty( formula.Categories );
-    Assert.Contains( "Category1", formula.Categories );
-    Assert.Contains( "Category2", formula.Categories );
-    Assert.Empty( formula.Aliases );
+    Assert.Contains( Alias, formula.Aliases );
   }
 
   [Fact]
@@ -409,10 +216,103 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void NameIsRequiredTest()
+  public void AddCategoryNullStringTest()
   {
-    var builder = new ScaleFormulaBuilder().SetIntervals( "R,M2,m6" );
-    Assert.Throws<InvalidOperationException>( () => builder.Build() );
+    const string Name = "Name";
+    const string Category = "Category";
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddCategory( null )
+                                                 .AddCategory( Category );
+
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.NotEmpty( formula.Categories );
+    Assert.Contains( Category, formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void AddCategoryStringMultipleTest()
+  {
+    const string Name = "Name";
+    const string Categories = "Category1;Category2";
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Categories );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.NotEmpty( formula.Categories );
+    Assert.Contains( "Category1", formula.Categories );
+    Assert.Contains( "Category2", formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void AddCategoryStringSingleTest()
+  {
+    const string Name = "Name";
+    const string Category = "Category";
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Category );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.NotEmpty( formula.Categories );
+    Assert.Contains( Category, formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void AppendIntervalTest()
+  {
+    const string Name = "Name";
+    Interval[] intervals = { Interval.Unison, Interval.MajorSecond, Interval.MinorSixth };
+
+    var builder = new ScaleFormulaBuilder( Name );
+    foreach( var interval in intervals )
+    {
+      builder.AppendInterval( interval );
+    }
+
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void DiatonicCategoryIsAddedTest()
+  {
+    const string Name = "Name";
+    const string IntervalString = "R,M2,M3,4,5,M6,M7";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.NotEmpty( formula.Categories );
+    Assert.Contains( "Diatonic", formula.Categories );
+    Assert.Empty( formula.Aliases );
   }
 
   [Fact]
@@ -434,24 +334,6 @@ public sealed class ScaleFormulaBuilderTest
   {
     var builder = new ScaleFormulaBuilder( "Name" ).SetIntervals( "R,M2,M2" );
     Assert.Throws<InvalidOperationException>( () => builder.Build() );
-  }
-
-  [Fact]
-  public void DiatonicCategoryIsAddedTest()
-  {
-    const string Name = "Name";
-    const string IntervalString = "R,M2,M3,4,5,M6,M7";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.NotEmpty( formula.Categories );
-    Assert.Contains( "Diatonic", formula.Categories );
-    Assert.Empty( formula.Aliases );
   }
 
   [Fact]
@@ -487,6 +369,124 @@ public sealed class ScaleFormulaBuilderTest
     Assert.Equal( intervals, formula.Intervals );
     Assert.NotEmpty( formula.Categories );
     Assert.Contains( "Minor", formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void NameIsRequiredTest()
+  {
+    var builder = new ScaleFormulaBuilder().SetIntervals( "R,M2,m6" );
+    Assert.Throws<InvalidOperationException>( () => builder.Build() );
+  }
+
+  [Fact]
+  public void ParseSpanTest()
+  {
+    const string IntervalString = "R,M2,m6";
+    var intervalsFromString = Formula.ParseIntervals( IntervalString );
+    var intervalsFromSpan = Formula.ParseIntervals( IntervalString.AsSpan() );
+
+    Assert.Equal( intervalsFromString, intervalsFromSpan );
+  }
+
+  [Fact]
+  public void SetIntervalEnumerableIntervalTest()
+  {
+    const string Name = "Name";
+    Interval[] intervals = { Interval.Unison, Interval.MajorSecond, Interval.MinorSixth };
+
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( intervals );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void SetIntervalsStringTest()
+  {
+    const string Name = "Name";
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void SetKeyIsNameWithoutSpacesTest()
+  {
+    const string Name = "Name With Spaces";
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( "NameWithSpaces", formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void SetKeyTest()
+  {
+    const string Name = "Name";
+    const string Id = "Id";
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder( Name ).SetId( Id ).SetIntervals( IntervalString );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Id, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void SetNameAndIntervalsStringTest()
+  {
+    const string Name = "Name";
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( Name, formula.Name );
+    Assert.Equal( Name, formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
+    Assert.Empty( formula.Aliases );
+  }
+
+  [Fact]
+  public void SetNameIsTrimmedTest()
+  {
+    const string IntervalString = "R,M2,m6";
+    var intervals = Formula.ParseIntervals( IntervalString );
+
+    var builder = new ScaleFormulaBuilder().SetName( "   Name    " ).SetIntervals( IntervalString );
+    var formula = builder.Build();
+    Assert.NotNull( formula );
+    Assert.Equal( "Name", formula.Name );
+    Assert.Equal( "Name", formula.Id );
+    Assert.Equal( intervals, formula.Intervals );
+    Assert.Empty( formula.Categories );
     Assert.Empty( formula.Aliases );
   }
 

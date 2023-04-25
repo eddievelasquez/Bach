@@ -40,6 +40,8 @@ namespace Bach.Model;
 /// </summary>
 public static class Registry
 {
+#region Nested Types
+
   /// <summary>
   ///   The JSON Deserializer for System.Text.Json doesn't support System.Version as
   ///   of version 3.0...
@@ -47,6 +49,8 @@ public static class Registry
   /// <seealso cref="JsonConverter{Version}" />
   private sealed class VersionParser: JsonConverter<Version>
   {
+#region Public Methods
+
     /// <inheritdoc />
     public override Version Read(
       ref Utf8JsonReader reader,
@@ -67,9 +71,19 @@ public static class Registry
       // Unused for now.
       throw new NotImplementedException();
     }
+
+#endregion
   }
 
+#endregion
+
+#region Constants
+
   private const string LibraryFileName = "Bach.Model.Library.json";
+
+#endregion
+
+#region Constructors
 
   static Registry()
   {
@@ -123,6 +137,10 @@ public static class Registry
     }
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the collection of scale formulas.</summary>
   /// <value>The scale formulas.</value>
   public static NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
@@ -134,4 +152,6 @@ public static class Registry
   /// <summary>Gets the collection of stringed instrument definitions.</summary>
   /// <value>The stringed instrument definitions.</value>
   public static NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
+
+#endregion
 }

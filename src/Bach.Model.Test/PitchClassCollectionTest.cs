@@ -32,25 +32,6 @@ public sealed class PitchClassCollectionTest
 #region Public Methods
 
   [Fact]
-  public void TryParseTest()
-  {
-    Assert.True( PitchClassCollection.TryParse( "C,Db", out var actual ) );
-    Assert.Equal( new[] { PitchClass.C, PitchClass.DFlat }, actual );
-    Assert.False( PitchClassCollection.TryParse( null, out actual ) );
-    Assert.False( PitchClassCollection.TryParse( "", out actual ) );
-    Assert.False( PitchClassCollection.TryParse( "C$", out actual ) );
-  }
-
-  [Fact]
-  public void ParseTest()
-  {
-    Assert.Equal( new[] { PitchClass.C, PitchClass.DFlat }, PitchClassCollection.Parse( "C,Db" ) );
-    Assert.Throws<ArgumentNullException>( () => PitchClassCollection.Parse( null ) );
-    Assert.Throws<ArgumentException>( () => PitchClassCollection.Parse( "" ) );
-    Assert.Throws<FormatException>( () => PitchClassCollection.Parse( "C$" ) );
-  }
-
-  [Fact]
   public void EqualsContractTest()
   {
     object x = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
@@ -64,6 +45,55 @@ public sealed class PitchClassCollectionTest
     Assert.True( y.Equals( z ) ); // Transitive
     Assert.True( x.Equals( z ) );
     Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
+    var expected = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void ParseTest()
+  {
+    Assert.Equal( new[] { PitchClass.C, PitchClass.DFlat }, PitchClassCollection.Parse( "C,Db" ) );
+    Assert.Throws<ArgumentNullException>( () => PitchClassCollection.Parse( null ) );
+    Assert.Throws<ArgumentException>( () => PitchClassCollection.Parse( "" ) );
+    Assert.Throws<FormatException>( () => PitchClassCollection.Parse( "C$" ) );
+  }
+
+  [Fact]
+  public void TryParseTest()
+  {
+    Assert.True( PitchClassCollection.TryParse( "C,Db", out var actual ) );
+    Assert.Equal( new[] { PitchClass.C, PitchClass.DFlat }, actual );
+    Assert.False( PitchClassCollection.TryParse( null, out actual ) );
+    Assert.False( PitchClassCollection.TryParse( "", out actual ) );
+    Assert.False( PitchClassCollection.TryParse( "C$", out actual ) );
   }
 
   [Fact]
@@ -82,13 +112,6 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    object actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
@@ -98,33 +121,10 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
-    var expected = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
   }
 
 #endregion

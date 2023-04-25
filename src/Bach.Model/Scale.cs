@@ -33,7 +33,13 @@ namespace Bach.Model;
 /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
 public sealed class Scale: IEquatable<Scale>
 {
+#region Constants
+
   private const string DefaultToStringFormat = "N {S}";
+
+#endregion
+
+#region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="root">The root pitchClass of the scale.</param>
@@ -73,6 +79,10 @@ public sealed class Scale: IEquatable<Scale>
     : this( root, Registry.ScaleFormulas[formulaIdOrName] )
   {
   }
+
+#endregion
+
+#region Properties
 
   /// <summary>Gets the root pitchClass of the scale.</summary>
   /// <value>The root.</value>
@@ -139,6 +149,18 @@ public sealed class Scale: IEquatable<Scale>
     }
   }
 
+#endregion
+
+#region Public Methods
+
+  /// <summary>Determines if this instance contains the given pitchClasses.</summary>
+  /// <param name="notes">The pitchClasses.</param>
+  /// <returns>True if all the pitchClasses are in this scale; otherwise, false.</returns>
+  public bool Contains( IEnumerable<PitchClass> notes )
+  {
+    return notes.All( note => PitchClasses.IndexOf( note ) >= 0 );
+  }
+
   /// <inheritdoc />
   public bool Equals( Scale other )
   {
@@ -166,26 +188,6 @@ public sealed class Scale: IEquatable<Scale>
     return obj is Scale other && Equals( other );
   }
 
-  /// <inheritdoc />
-  public override int GetHashCode()
-  {
-    return HashCode.Combine( Root, Formula );
-  }
-
-  /// <inheritdoc />
-  public override string ToString()
-  {
-    return ToString( DefaultToStringFormat, null );
-  }
-
-  /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
-  /// <param name="octave">The octave for the first pitch.</param>
-  /// <returns>An enumerator for a pitch sequence for this scale.</returns>
-  public IEnumerable<Pitch> Render( int octave )
-  {
-    return Formula.Generate( Pitch.Create( Root, octave ) );
-  }
-
   /// <summary>Gets a enharmonic scale for this instance.</summary>
   /// <returns>The enharmonic scale.</returns>
   public Scale GetEnharmonicScale()
@@ -201,12 +203,18 @@ public sealed class Scale: IEquatable<Scale>
     return scale;
   }
 
-  /// <summary>Determines if this instance contains the given pitchClasses.</summary>
-  /// <param name="notes">The pitchClasses.</param>
-  /// <returns>True if all the pitchClasses are in this scale; otherwise, false.</returns>
-  public bool Contains( IEnumerable<PitchClass> notes )
+  /// <inheritdoc />
+  public override int GetHashCode()
   {
-    return notes.All( note => PitchClasses.IndexOf( note ) >= 0 );
+    return HashCode.Combine( Root, Formula );
+  }
+
+  /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
+  /// <param name="octave">The octave for the first pitch.</param>
+  /// <returns>An enumerator for a pitch sequence for this scale.</returns>
+  public IEnumerable<Pitch> Render( int octave )
+  {
+    return Formula.Generate( Pitch.Create( Root, octave ) );
   }
 
   /// <summary>Enumerates the scales that contain the given pitchClasses matching exactly the intervals between them.</summary>
@@ -266,6 +274,12 @@ public sealed class Scale: IEquatable<Scale>
       ++rootNotes.Head;
     } while( rootNotes.Head != 0 );
 #endif
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return ToString( DefaultToStringFormat, null );
   }
 
   /// <summary>
@@ -350,10 +364,16 @@ public sealed class Scale: IEquatable<Scale>
     return buf.ToString();
   }
 
+#endregion
+
+#region Implementation
+
   private static bool IsTheoretical( Scale scale )
   {
     // Scale is theoretical when it contains at least one double flat or sharp.
     return scale.PitchClasses.Any( note => note.Accidental == Accidental.DoubleFlat
                                            || note.Accidental == Accidental.DoubleSharp );
   }
+
+#endregion
 }

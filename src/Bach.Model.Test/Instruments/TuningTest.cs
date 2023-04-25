@@ -42,18 +42,6 @@ public sealed class TuningTest
 #region Public Methods
 
   [Fact]
-  public void TestConstructor()
-  {
-    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
-    var actual = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-
-    Assert.Equal( guitar, actual.InstrumentDefinition );
-    Assert.Equal( TuningName, actual.Name );
-    Assert.NotNull( actual.Pitches );
-    Assert.Equal( 6, actual.Pitches.Count );
-  }
-
-  [Fact]
   public void ConstructorFailsWithEmptyKeyTest()
   {
     Assert.Throws<ArgumentException>( () =>
@@ -113,22 +101,6 @@ public sealed class TuningTest
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
-    var x = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    var y = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    var z = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
@@ -142,33 +114,10 @@ public sealed class TuningTest
   }
 
   [Fact]
-  [SuppressMessage( "ReSharper", "SuspiciousTypeConversion.Global" )]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
-    var a = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    var b = guitar;
-
-    Assert.False( a.Equals( b ) );
-    Assert.False( b.Equals( a ) );
-    Assert.False( Equals( a, b ) );
-    Assert.False( Equals( b, a ) );
-  }
-
-  [Fact]
   public void EqualsFailsWithNullTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
     object actual = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
-    var actual = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
 
     Assert.False( actual.Equals( null ) );
   }
@@ -191,6 +140,57 @@ public sealed class TuningTest
 
     Assert.True( expected.Equals( actual ) );
     Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void TestConstructor()
+  {
+    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
+    var actual = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+
+    Assert.Equal( guitar, actual.InstrumentDefinition );
+    Assert.Equal( TuningName, actual.Name );
+    Assert.NotNull( actual.Pitches );
+    Assert.Equal( 6, actual.Pitches.Count );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
+    var x = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var y = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var z = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  [SuppressMessage( "ReSharper", "SuspiciousTypeConversion.Global" )]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
+    var a = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var b = guitar;
+
+    Assert.False( a.Equals( b ) );
+    Assert.False( b.Equals( a ) );
+    Assert.False( Equals( a, b ) );
+    Assert.False( Equals( b, a ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
+    var actual = new Tuning( guitar, TuningKey, TuningName, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

@@ -34,6 +34,8 @@ public readonly struct IntervalQuality
     IComparable<IntervalQuality>,
     IComparable
 {
+#region Constants
+
   /// <summary>A  constant representing a diminished interval.</summary>
   public static readonly IntervalQuality Diminished = new( 0 );
 
@@ -53,13 +55,25 @@ public readonly struct IntervalQuality
   private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
   private static readonly string[] s_long = { "Diminished", "Minor", "Perfect", "Major", "Augmented" };
 
+#endregion
+
+#region Fields
+
   private readonly int _value;
+
+#endregion
+
+#region Constructors
 
   private IntervalQuality( int value )
   {
     Requires.Between( value, 0, 4 );
     _value = value;
   }
+
+#endregion
+
+#region Properties
 
   /// <summary>Returns the symbol for the given interval quality.</summary>
   /// <value>A string.</value>
@@ -72,6 +86,20 @@ public readonly struct IntervalQuality
   /// <summary>Returns the long name for the given interval quality.</summary>
   /// <value>A string.</value>
   public string LongName => s_long[_value];
+
+#endregion
+
+#region Public Methods
+
+  /// <summary>Adds a number of semitones to a pitch class name.</summary>
+  /// <param name="semitones">The number of semitones to add.</param>
+  /// <returns>A IntervalQuality.</returns>
+  [Pure]
+  public IntervalQuality Add( int semitones )
+  {
+    var result = new IntervalQuality( _value + semitones );
+    return result;
+  }
 
   /// <inheritdoc />
   public int CompareTo( object obj )
@@ -99,12 +127,6 @@ public readonly struct IntervalQuality
   }
 
   /// <inheritdoc />
-  public override string ToString()
-  {
-    return LongName;
-  }
-
-  /// <inheritdoc />
   public override bool Equals( object obj )
   {
     return obj is IntervalQuality other && Equals( other );
@@ -114,25 +136,6 @@ public readonly struct IntervalQuality
   public override int GetHashCode()
   {
     return _value;
-  }
-
-  /// <summary>Adds a number of semitones to a pitch class name.</summary>
-  /// <param name="semitones">The number of semitones to add.</param>
-  /// <returns>A IntervalQuality.</returns>
-  [Pure]
-  public IntervalQuality Add( int semitones )
-  {
-    var result = new IntervalQuality( _value + semitones );
-    return result;
-  }
-
-  /// <summary>Subtracts a number of semitones from a pitch class name.</summary>
-  /// <param name="semitones">The number of semitones to subtract.</param>
-  /// <returns>A IntervalQuality.</returns>
-  [Pure]
-  public IntervalQuality Subtract( int semitones )
-  {
-    return Add( -semitones );
   }
 
   /// <summary>
@@ -150,6 +153,21 @@ public readonly struct IntervalQuality
     }
 
     return quality;
+  }
+
+  /// <summary>Subtracts a number of semitones from a pitch class name.</summary>
+  /// <param name="semitones">The number of semitones to subtract.</param>
+  /// <returns>A IntervalQuality.</returns>
+  [Pure]
+  public IntervalQuality Subtract( int semitones )
+  {
+    return Add( -semitones );
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return LongName;
   }
 
   /// <summary>
@@ -179,7 +197,6 @@ public readonly struct IntervalQuality
 
     quality = Perfect;
     return false;
-
   }
 
   /// <summary>
@@ -219,6 +236,10 @@ public readonly struct IntervalQuality
     quality = Perfect;
     return false;
   }
+
+#endregion
+
+#region Operators
 
   /// <summary>Explicit cast that converts the given IntervalQuality to an int.</summary>
   /// <param name="quality">The pitch class name.</param>
@@ -339,4 +360,6 @@ public readonly struct IntervalQuality
   {
     return quality.Subtract( 1 );
   }
+
+#endregion
 }

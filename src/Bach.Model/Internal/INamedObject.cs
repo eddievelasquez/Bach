@@ -31,6 +31,8 @@ namespace Bach.Model.Internal;
 /// </remarks>
 public interface INamedObject
 {
+#region Properties
+
   /// <summary>Returns the language-neutral identifier for the current instance.</summary>
   /// <value>The identifier.</value>
   string Id { get; }
@@ -38,4 +40,6 @@ public interface INamedObject
   /// <summary>Returns the localizable name for the current instance. </summary>
   /// <value>The name.</value>
   string Name { get; }
+
+#endregion
 }

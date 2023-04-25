@@ -31,12 +31,6 @@ public sealed class ModeFormulaTest
 #region Public Methods
 
   [Fact]
-  public void ToStringTest()
-  {
-    Assert.Equal( "Mixolydian", ModeFormula.Mixolydian.ToString() );
-  }
-
-  [Fact]
   public void EqualsContractTest()
   {
     object x = ModeFormula.Dorian;
@@ -50,6 +44,42 @@ public sealed class ModeFormulaTest
     Assert.True( y.Equals( z ) ); // Transitive
     Assert.True( x.Equals( z ) );
     Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = ModeFormula.Dorian;
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = ModeFormula.Dorian;
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = ModeFormula.Dorian;
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = ModeFormula.Dorian;
+    var expected = ModeFormula.Dorian;
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void ToStringTest()
+  {
+    Assert.Equal( "Mixolydian", ModeFormula.Mixolydian.ToString() );
   }
 
   [Fact]
@@ -68,13 +98,6 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    object actual = ModeFormula.Dorian;
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     var actual = ModeFormula.Dorian;
@@ -84,33 +107,10 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = ModeFormula.Dorian;
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = ModeFormula.Dorian;
     Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var actual = ModeFormula.Dorian;
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var actual = ModeFormula.Dorian;
-    var expected = ModeFormula.Dorian;
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
   }
 
 #endregion

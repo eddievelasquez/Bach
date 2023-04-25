@@ -30,6 +30,8 @@ namespace Bach.Model;
 /// <summary>A scale formula defines how the pitchClasses of a scale relate to each other.</summary>
 public class ScaleFormula: Formula
 {
+#region Constructors
+
   /// <inheritdoc />
   internal ScaleFormula(
     string id,
@@ -46,6 +48,10 @@ public class ScaleFormula: Formula
     Aliases = aliases;
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>
   ///   Gets the optional categories for this scale formula
   /// </summary>
@@ -57,4 +63,6 @@ public class ScaleFormula: Formula
   /// </summary>
   /// <value>The aliases.</value>
   public IReadOnlySet<string> Aliases { get; }
+
+#endregion
 }

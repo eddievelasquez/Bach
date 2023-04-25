@@ -35,6 +35,135 @@ namespace Bach.Model.Internal;
 
 internal static class Requires
 {
+#region Public Methods
+
+  public static void Between<T>(
+    T value,
+    T lowerBound,
+    T upperBound,
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
+    where T: IComparable
+  {
+    if( value.CompareTo( lowerBound ) >= 0 && value.CompareTo( upperBound ) <= 0 )
+    {
+      return;
+    }
+
+    callerArgExpr ??= "argument";
+    throw new ArgumentOutOfRangeException( callerArgExpr,
+                                           value,
+                                           message ?? $"Value must be between {lowerBound} and {upperBound}" );
+  }
+
+  public static void Condition<TException>(
+    bool predicate,
+    string? message = null,
+    [CallerArgumentExpression( nameof( predicate ) )] string? callerArgExpr
+      = null )
+    where TException: Exception, new()
+  {
+    if( predicate )
+    {
+      return;
+    }
+
+    // https://stackoverflow.com/questions/41397/asking-a-generic-method-to-throw-specific-exception-type-on-fail/41450#41450
+    TException? exception;
+
+    try
+    {
+      message ??= $"Expectation not met: {callerArgExpr ?? "<unknown>"}";
+      exception = Activator.CreateInstance( typeof( TException ), message ) as TException;
+    }
+    catch( MissingMethodException )
+    {
+      exception = new TException();
+    }
+
+    Debug.Assert( exception != null, nameof( exception ) + " != null" );
+    throw exception;
+  }
+
+  public static void ExactCount<T>(
+    [NotNull] ICollection<T>? value,
+    int expectedCount,
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
+  {
+    if( value == null )
+    {
+      ThrowArgumentNull( message, callerArgExpr );
+    }
+
+    if( value.Count != expectedCount )
+    {
+      ThrowArgumentInvalidCount( expectedCount, message, callerArgExpr );
+    }
+  }
+
+  public static void ExactCount<T>(
+    [NotNull] IReadOnlyCollection<T>? value,
+    int expectedCount,
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
+  {
+    if( value == null )
+    {
+      ThrowArgumentNull( message, callerArgExpr );
+    }
+
+    if( value.Count != expectedCount )
+    {
+      ThrowArgumentInvalidCount( expectedCount, message, callerArgExpr );
+    }
+  }
+
+  public static void GreaterThan<T>(
+    T value,
+    T lowerBound,
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
+    where T: IComparable
+  {
+    if( value.CompareTo( lowerBound ) > 0 )
+    {
+      return;
+    }
+
+    callerArgExpr ??= "argument";
+    throw new ArgumentOutOfRangeException( callerArgExpr,
+                                           value,
+                                           message ?? $"Value must be greater than {lowerBound}" );
+  }
+
+  public static void LessThan<T>(
+    T value,
+    T upperBound,
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
+    where T: IComparable
+  {
+    if( value.CompareTo( upperBound ) < 0 )
+    {
+      return;
+    }
+
+    callerArgExpr ??= "argument";
+    throw new ArgumentOutOfRangeException( callerArgExpr, value, message ?? $"Value must be less than {upperBound}" );
+  }
+
+  public static void NotEmpty<T>(
+    ReadOnlySpan<T> value,
+    string? message = null,
+    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
+  {
+    if( value.IsEmpty )
+    {
+      ThrowArgumentEmpty( message, callerArgExpr );
+    }
+  }
+
   public static void NotNull<T>(
     [NoEnumeration] [NotNull] T? value,
     string? message = null,
@@ -78,132 +207,9 @@ internal static class Requires
     }
   }
 
-  public static void NotEmpty<T>(
-    ReadOnlySpan<T> value,
-    string? message = null,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
-  {
-    if( value.IsEmpty )
-    {
-      ThrowArgumentEmpty( message, callerArgExpr );
-    }
-  }
+#endregion
 
-  public static void ExactCount<T>(
-    [NotNull] ICollection<T>? value,
-    int expectedCount,
-    string? message = null,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
-  {
-    if( value == null )
-    {
-      ThrowArgumentNull( message, callerArgExpr );
-    }
-
-    if( value.Count != expectedCount )
-    {
-      ThrowArgumentInvalidCount( expectedCount, message, callerArgExpr );
-    }
-  }
-
-  public static void ExactCount<T>(
-    [NotNull] IReadOnlyCollection<T>? value,
-    int expectedCount,
-    string? message = null,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
-  {
-    if( value == null )
-    {
-      ThrowArgumentNull( message, callerArgExpr );
-    }
-
-    if( value.Count != expectedCount )
-    {
-      ThrowArgumentInvalidCount( expectedCount, message, callerArgExpr );
-    }
-  }
-
-  public static void Between<T>(
-    T value,
-    T lowerBound,
-    T upperBound,
-    string? message = null,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
-    where T: IComparable
-  {
-    if( value.CompareTo( lowerBound ) >= 0 && value.CompareTo( upperBound ) <= 0 )
-    {
-      return;
-    }
-
-    callerArgExpr ??= "argument";
-    throw new ArgumentOutOfRangeException( callerArgExpr,
-                                           value,
-                                           message ?? $"Value must be between {lowerBound} and {upperBound}" );
-  }
-
-  public static void GreaterThan<T>(
-    T value,
-    T lowerBound,
-    string? message = null,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
-    where T: IComparable
-  {
-    if( value.CompareTo( lowerBound ) > 0 )
-    {
-      return;
-    }
-
-    callerArgExpr ??= "argument";
-    throw new ArgumentOutOfRangeException( callerArgExpr,
-                                           value,
-                                           message ?? $"Value must be greater than {lowerBound}" );
-  }
-
-  public static void LessThan<T>(
-    T value,
-    T upperBound,
-    string? message = null,
-    [CallerArgumentExpression( nameof( value ) )] string? callerArgExpr = null )
-    where T: IComparable
-  {
-    if( value.CompareTo( upperBound ) < 0 )
-    {
-      return;
-    }
-
-    callerArgExpr ??= "argument";
-    throw new ArgumentOutOfRangeException( callerArgExpr, value, message ?? $"Value must be less than {upperBound}" );
-  }
-
-  public static void Condition<TException>(
-    bool predicate,
-    string? message = null,
-    [CallerArgumentExpression( nameof( predicate ) )] string? callerArgExpr
-      = null )
-    where TException: Exception, new()
-  {
-    if( predicate )
-    {
-      return;
-    }
-
-    // https://stackoverflow.com/questions/41397/asking-a-generic-method-to-throw-specific-exception-type-on-fail/41450#41450
-    TException? exception;
-
-    try
-    {
-      message ??= $"Expectation not met: {callerArgExpr ?? "<unknown>"}";
-      exception = Activator.CreateInstance( typeof( TException ), message ) as TException;
-    }
-    catch( MissingMethodException )
-    {
-      exception = new TException();
-    }
-
-    Debug.Assert( exception != null, nameof( exception ) + " != null" );
-    throw exception;
-  }
+#region Implementation
 
   [DoesNotReturn]
   private static void ThrowArgumentNull(
@@ -234,4 +240,6 @@ internal static class Requires
     throw new ArgumentException( callerArgExpr,
                                  message ?? $"{callerArgExpr} must have exactly {expectedCount} elements" );
   }
+
+#endregion
 }

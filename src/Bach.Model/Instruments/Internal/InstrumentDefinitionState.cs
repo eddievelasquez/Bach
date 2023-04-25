@@ -28,6 +28,8 @@ namespace Bach.Model.Instruments.Internal;
 
 internal abstract class InstrumentDefinitionState
 {
+#region Constructors
+
   protected InstrumentDefinitionState(
     string id,
     string name )
@@ -39,6 +41,12 @@ internal abstract class InstrumentDefinitionState
     Name = name;
   }
 
+#endregion
+
+#region Properties
+
   public string Id { get; }
   public string Name { get; }
+
+#endregion
 }

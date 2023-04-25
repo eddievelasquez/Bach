@@ -29,6 +29,8 @@ namespace Bach.Model;
 /// <summary>A triad is a set of three pitchClasses stacked in thirds.</summary>
 public sealed class Triad: Chord
 {
+#region Constants
+
   private static readonly ChordFormula s_majorTriad
     = new( "MajorTriad", "MajorTriad", "", Interval.Unison, Interval.MajorThird, Interval.Fifth );
 
@@ -49,6 +51,10 @@ public sealed class Triad: Chord
                                                                Interval.MajorThird,
                                                                Interval.AugmentedFifth );
 
+#endregion
+
+#region Constructors
+
   /// <summary>Constructor.</summary>
   /// <param name="root">The triad's root pitch class.</param>
   /// <param name="quality">The triad's quality.</param>
@@ -68,9 +74,17 @@ public sealed class Triad: Chord
   {
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the triad's quality.</summary>
   /// <value>The quality.</value>
   public TriadQuality Quality { get; }
+
+#endregion
+
+#region Public Methods
 
   /// <summary>Generates an inversion for the current triad.</summary>
   /// <param name="inversion">The inversion to generate.</param>
@@ -80,6 +94,10 @@ public sealed class Triad: Chord
     var result = new Triad( Root, Formula, inversion );
     return result;
   }
+
+#endregion
+
+#region Implementation
 
   private static ChordFormula GetFormula( TriadQuality quality )
   {
@@ -101,4 +119,6 @@ public sealed class Triad: Chord
         throw new ArgumentOutOfRangeException( nameof( quality ), quality, null );
     }
   }
+
+#endregion
 }

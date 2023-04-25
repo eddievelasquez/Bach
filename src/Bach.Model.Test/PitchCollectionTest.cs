@@ -32,6 +32,52 @@ public sealed class PitchCollectionTest
 #region Public Methods
 
   [Fact]
+  public void EqualsContractTest()
+  {
+    object x = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+    object y = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+    object z = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+    var expected = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
   public void ParseTest()
   {
     var expected = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
@@ -62,22 +108,6 @@ public sealed class PitchCollectionTest
   }
 
   [Fact]
-  public void EqualsContractTest()
-  {
-    object x = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-    object y = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-    object z = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void TypeSafeEqualsContractTest()
   {
     var x = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
@@ -93,13 +123,6 @@ public sealed class PitchCollectionTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    object actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     var actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
@@ -109,33 +132,10 @@ public sealed class PitchCollectionTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
     Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var actual = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-    var expected = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
   }
 
 #endregion

@@ -37,6 +37,8 @@ public readonly struct Accidental
     IComparable<Accidental>,
     IComparable
 {
+#region Constants
+
   /// <summary>
   ///   Double flat (𝄫)
   /// </summary>
@@ -66,12 +68,34 @@ public readonly struct Accidental
   private static readonly string[] s_names = { "DoubleFlat", "Flat", "Natural", "Sharp", "DoubleSharp" };
   private static readonly int s_doubleFlatOffset = Math.Abs( (int) DoubleFlat );
 
+#endregion
+
+#region Fields
+
   private readonly int _value;
+
+#endregion
+
+#region Constructors
 
   private Accidental( int value )
   {
     Requires.Between( value, -2, 2 );
     _value = value;
+  }
+
+#endregion
+
+#region Public Methods
+
+  /// <summary>Adds a number of steps to a pitch class name.</summary>
+  /// <param name="steps">The number of steps to add.</param>
+  /// <returns>A Accidental.</returns>
+  [Pure]
+  public Accidental Add( int steps )
+  {
+    var result = new Accidental( _value + steps );
+    return result;
   }
 
   /// <inheritdoc />
@@ -100,12 +124,6 @@ public readonly struct Accidental
   }
 
   /// <inheritdoc />
-  public override string ToString()
-  {
-    return s_names[_value + s_doubleFlatOffset];
-  }
-
-  /// <inheritdoc />
   public override bool Equals( object obj )
   {
     return obj is Accidental other && Equals( other );
@@ -117,14 +135,20 @@ public readonly struct Accidental
     return _value;
   }
 
-  /// <summary>Adds a number of steps to a pitch class name.</summary>
-  /// <param name="steps">The number of steps to add.</param>
-  /// <returns>A Accidental.</returns>
-  [Pure]
-  public Accidental Add( int steps )
+  /// <summary>
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent.
+  /// </summary>
+  /// <param name="value">A string containing the accidental to convert.</param>
+  /// <returns>An object that is equivalent to the accidental contained in value.</returns>
+  /// <exception cref="FormatException">value does not contain a valid string representation of an accidental.</exception>
+  public static Accidental Parse( string value )
   {
-    var result = new Accidental( _value + steps );
-    return result;
+    if( !TryParse( value, out var accidental ) )
+    {
+      throw new FormatException( $"{value} is not a valid accidental" );
+    }
+
+    return accidental;
   }
 
   /// <summary>Subtracts a number of steps from a pitch class name.</summary>
@@ -134,6 +158,12 @@ public readonly struct Accidental
   public Accidental Subtract( int steps )
   {
     return Add( -steps );
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return s_names[_value + s_doubleFlatOffset];
   }
 
   /// <summary>
@@ -206,21 +236,9 @@ public readonly struct Accidental
     return accidental != Natural;
   }
 
-  /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent.
-  /// </summary>
-  /// <param name="value">A string containing the accidental to convert.</param>
-  /// <returns>An object that is equivalent to the accidental contained in value.</returns>
-  /// <exception cref="FormatException">value does not contain a valid string representation of an accidental.</exception>
-  public static Accidental Parse( string value )
-  {
-    if( !TryParse( value, out var accidental ) )
-    {
-      throw new FormatException( $"{value} is not a valid accidental" );
-    }
+#endregion
 
-    return accidental;
-  }
+#region Operators
 
   /// <summary>Explicit cast that converts the given Accidental to an int.</summary>
   /// <param name="accidental">The pitch class name.</param>
@@ -341,4 +359,6 @@ public readonly struct Accidental
   {
     return accidental.Subtract( 1 );
   }
+
+#endregion
 }

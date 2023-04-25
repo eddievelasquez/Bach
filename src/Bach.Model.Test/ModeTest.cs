@@ -29,22 +29,82 @@ namespace Bach.Model.Test;
 
 public sealed class ModeTest
 {
-#region Implementation
+#region Public Methods
 
-  private static void TestMode(
-    string expectedNotes,
-    Scale root,
-    ModeFormula formula )
+  [Fact]
+  public void EnumeratorTest()
   {
-    var expected = PitchClassCollection.Parse( expectedNotes );
-    var mode = new Mode( root, formula );
-    Assert.Equal( expected, mode.PitchClasses );
-    Assert.Equal( expectedNotes, mode.ToString() );
+    var scale = new Scale( PitchClass.C, "Major" );
+    var mode = new Mode( scale, ModeFormula.Ionian );
+    var enumerator = ( (IEnumerable) mode ).GetEnumerator();
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.C, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.D, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.E, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.F, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.G, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.A, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.B, enumerator.Current );
+    Assert.True( enumerator.MoveNext() ); // Mode enumerator wraps around infinitely
+    Assert.Equal( PitchClass.C, enumerator.Current );
   }
 
-#endregion
+  [Fact]
+  public void EqualsContractTest()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+    object x = new Mode( scale, ModeFormula.Dorian );
+    object y = new Mode( scale, ModeFormula.Dorian );
+    object z = new Mode( scale, ModeFormula.Dorian );
 
-#region Public Methods
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+    object actual = new Mode( scale, ModeFormula.Dorian );
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+    object actual = new Mode( scale, ModeFormula.Dorian );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+    var actual = new Mode( scale, ModeFormula.Dorian );
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+    var actual = new Mode( scale, ModeFormula.Dorian );
+    var expected = new Mode( scale, ModeFormula.Dorian );
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
 
   [Fact]
   public void ModeConstructorTest()
@@ -73,23 +133,6 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void EqualsContractTest()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-    object x = new Mode( scale, ModeFormula.Dorian );
-    object y = new Mode( scale, ModeFormula.Dorian );
-    object z = new Mode( scale, ModeFormula.Dorian );
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void TypeSafeEqualsContractTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
@@ -106,14 +149,6 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-    object actual = new Mode( scale, ModeFormula.Dorian );
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
@@ -124,14 +159,6 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-    object actual = new Mode( scale, ModeFormula.Dorian );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
@@ -139,46 +166,19 @@ public sealed class ModeTest
     Assert.False( actual.Equals( null ) );
   }
 
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-    var actual = new Mode( scale, ModeFormula.Dorian );
-    Assert.True( actual.Equals( actual ) );
-  }
+#endregion
 
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-    var actual = new Mode( scale, ModeFormula.Dorian );
-    var expected = new Mode( scale, ModeFormula.Dorian );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
-  }
+#region Implementation
 
-  [Fact]
-  public void EnumeratorTest()
+  private static void TestMode(
+    string expectedNotes,
+    Scale root,
+    ModeFormula formula )
   {
-    var scale = new Scale( PitchClass.C, "Major" );
-    var mode = new Mode( scale, ModeFormula.Ionian );
-    var enumerator = ( (IEnumerable) mode ).GetEnumerator();
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.C, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.D, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.E, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.F, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.G, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.A, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.B, enumerator.Current );
-    Assert.True( enumerator.MoveNext() ); // Mode enumerator wraps around infinitely
-    Assert.Equal( PitchClass.C, enumerator.Current );
+    var expected = PitchClassCollection.Parse( expectedNotes );
+    var mode = new Mode( root, formula );
+    Assert.Equal( expected, mode.PitchClasses );
+    Assert.Equal( expectedNotes, mode.ToString() );
   }
 
 #endregion

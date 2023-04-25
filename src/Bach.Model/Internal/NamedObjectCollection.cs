@@ -34,8 +34,14 @@ namespace Bach.Model.Internal;
 public sealed class NamedObjectCollection<T>: Collection<T>
   where T: INamedObject
 {
+#region Fields
+
   private readonly Dictionary<string, T> _byId;
   private readonly Dictionary<string, T> _byName;
+
+#endregion
+
+#region Constructors
 
   /// <inheritdoc />
   internal NamedObjectCollection()
@@ -44,6 +50,10 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     _byId = new Dictionary<string, T>( Comparer.IdComparer );
     _byName = new Dictionary<string, T>( Comparer.NameComparer );
   }
+
+#endregion
+
+#region Properties
 
   private new List<T> Items
   {
@@ -66,6 +76,34 @@ public sealed class NamedObjectCollection<T>: Collection<T>
       throw new KeyNotFoundException( string.Format( $"Id or name not found: {idOrName}" ) );
     }
   }
+
+#endregion
+
+#region Public Methods
+
+  public bool TryGetValue(
+    string idOrName,
+    out T item )
+  {
+    Requires.NotNullOrEmpty( idOrName );
+
+    if( _byId.TryGetValue( idOrName, out item ) )
+    {
+      return true;
+    }
+
+    if( _byName.TryGetValue( idOrName, out item ) )
+    {
+      return true;
+    }
+
+    item = default;
+    return false;
+  }
+
+#endregion
+
+#region Implementation
 
   /// <inheritdoc />
   protected override void ClearItems()
@@ -113,26 +151,6 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     base.SetItem( index, item );
   }
 
-  public bool TryGetValue(
-    string idOrName,
-    out T item )
-  {
-    Requires.NotNullOrEmpty( idOrName );
-
-    if( _byId.TryGetValue( idOrName, out item ) )
-    {
-      return true;
-    }
-
-    if( _byName.TryGetValue( idOrName, out item ) )
-    {
-      return true;
-    }
-
-    item = default;
-    return false;
-  }
-
   private static void SetItem(
     Dictionary<string, T> dictionary,
     string newId,
@@ -153,4 +171,6 @@ public sealed class NamedObjectCollection<T>: Collection<T>
       dictionary.Remove( existingId );
     }
   }
+
+#endregion
 }

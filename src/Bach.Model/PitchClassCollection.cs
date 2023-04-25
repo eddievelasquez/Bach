@@ -35,7 +35,13 @@ public sealed class PitchClassCollection
   : IReadOnlyList<PitchClass>,
     IEquatable<IEnumerable<PitchClass>>
 {
+#region Fields
+
   private readonly PitchClass[] _pitchClasses;
+
+#endregion
+
+#region Constructors
 
   public PitchClassCollection( IEnumerable<PitchClass> pitchClasses )
   {
@@ -49,11 +55,19 @@ public sealed class PitchClassCollection
     _pitchClasses = pitchClasses;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public int Count => _pitchClasses.Length;
 
   /// <inheritdoc />
   public PitchClass this[ int index ] => _pitchClasses[index];
+
+#endregion
+
+#region Public Methods
 
   /// <inheritdoc />
   public bool Equals( IEnumerable<PitchClass> other )
@@ -72,9 +86,14 @@ public sealed class PitchClassCollection
   }
 
   /// <inheritdoc />
-  IEnumerator IEnumerable.GetEnumerator()
+  public override bool Equals( object obj )
   {
-    return GetEnumerator();
+    if( ReferenceEquals( this, obj ) )
+    {
+      return true;
+    }
+
+    return obj is PitchClassCollection other && Equals( other );
   }
 
   /// <inheritdoc />
@@ -84,20 +103,9 @@ public sealed class PitchClassCollection
   }
 
   /// <inheritdoc />
-  public override string ToString()
+  IEnumerator IEnumerable.GetEnumerator()
   {
-    return string.Join( ",", _pitchClasses );
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-    if( ReferenceEquals( this, obj ) )
-    {
-      return true;
-    }
-
-    return obj is PitchClassCollection other && Equals( other );
+    return GetEnumerator();
   }
 
   /// <inheritdoc />
@@ -110,6 +118,35 @@ public sealed class PitchClassCollection
     }
 
     return hash.ToHashCode();
+  }
+
+  public int IndexOf( PitchClass pitchClass )
+  {
+    return Array.IndexOf( _pitchClasses, pitchClass );
+  }
+
+  /// <summary>Parses the provided string.</summary>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch class collection.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  /// <param name="value">The value to parse.</param>
+  /// <returns>A PitchClassCollection.</returns>
+  public static PitchClassCollection Parse( string value )
+  {
+    Requires.NotNullOrEmpty( value );
+
+    if( !TryParse( value, out var notes ) )
+    {
+      throw new FormatException( $"{value} contains invalid pitchClasses" );
+    }
+
+    return notes;
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return string.Join( ",", _pitchClasses );
   }
 
   /// <summary>Attempts to parse a PitchClass collection from the given string.</summary>
@@ -143,26 +180,5 @@ public sealed class PitchClassCollection
     return true;
   }
 
-  /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch class collection.</exception>
-  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
-  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>A PitchClassCollection.</returns>
-  public static PitchClassCollection Parse( string value )
-  {
-    Requires.NotNullOrEmpty( value );
-
-    if( !TryParse( value, out var notes ) )
-    {
-      throw new FormatException( $"{value} contains invalid pitchClasses" );
-    }
-
-    return notes;
-  }
-
-  public int IndexOf( PitchClass pitchClass )
-  {
-    return Array.IndexOf( _pitchClasses, pitchClass );
-  }
+#endregion
 }

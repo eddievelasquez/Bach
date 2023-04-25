@@ -29,6 +29,8 @@ namespace Bach.Cli;
 
 internal sealed class ListChordsCommand: BachCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public ListChordsCommand()
   {
@@ -37,8 +39,16 @@ internal sealed class ListChordsCommand: BachCommand
     Command = command;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public override Command Command { get; }
+
+#endregion
+
+#region Implementation
 
   private static void Execute()
   {
@@ -52,4 +62,6 @@ internal sealed class ListChordsCommand: BachCommand
       WriteLine();
     }
   }
+
+#endregion
 }

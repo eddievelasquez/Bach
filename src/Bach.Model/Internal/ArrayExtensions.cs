@@ -30,6 +30,29 @@ namespace Bach.Model.Internal;
 
 internal static class ArrayExtensions
 {
+#region Public Methods
+
+  /// <summary>Determines whether the provided list is sorted and only contains unique elements</summary>
+  /// <typeparam name="T">Type of the list elements.</typeparam>
+  /// <param name="values">The values.</param>
+  /// <returns>
+  ///   <c>true</c> if the list is sorted and only contains unique elements; otherwise, <c>false</c>.
+  /// </returns>
+  public static bool IsSortedUnique<T>( this IReadOnlyList<T> values )
+    where T: IComparable<T>
+  {
+    for( var i = 1; i < values.Count; ++i )
+    {
+      var result = values[i - 1].CompareTo( values[i] );
+      if( result >= 0 )
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   /// <summary>  Handles underflow and overflow of the provided index given a size.</summary>
   /// <param name="size">The size.</param>
   /// <param name="index">The index.</param>
@@ -65,24 +88,5 @@ internal static class ArrayExtensions
     return WrapIndex( array.GetLength( dimension ), index );
   }
 
-  /// <summary>Determines whether the provided list is sorted and only contains unique elements</summary>
-  /// <typeparam name="T">Type of the list elements.</typeparam>
-  /// <param name="values">The values.</param>
-  /// <returns>
-  ///   <c>true</c> if the list is sorted and only contains unique elements; otherwise, <c>false</c>.
-  /// </returns>
-  public static bool IsSortedUnique<T>( this IReadOnlyList<T> values )
-    where T: IComparable<T>
-  {
-    for( var i = 1; i < values.Count; ++i )
-    {
-      var result = values[i - 1].CompareTo( values[i] );
-      if( result >= 0 )
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
+#endregion
 }

@@ -36,7 +36,13 @@ public sealed class PitchCollection
   : IReadOnlyList<Pitch>,
     IEquatable<IEnumerable<Pitch>>
 {
+#region Fields
+
   private readonly Pitch[] _pitches;
+
+#endregion
+
+#region Constructors
 
   public PitchCollection( Pitch[] notes )
   {
@@ -50,11 +56,19 @@ public sealed class PitchCollection
     _pitches = notes.ToArray();
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public int Count => _pitches.Length;
 
   /// <inheritdoc />
   public Pitch this[ int index ] => _pitches[index];
+
+#endregion
+
+#region Public Methods
 
   /// <inheritdoc />
   public bool Equals( IEnumerable<Pitch> other )
@@ -65,24 +79,6 @@ public sealed class PitchCollection
     }
 
     return other is not null && _pitches.SequenceEqual( other );
-  }
-
-  /// <inheritdoc />
-  IEnumerator IEnumerable.GetEnumerator()
-  {
-    return GetEnumerator();
-  }
-
-  /// <inheritdoc />
-  public IEnumerator<Pitch> GetEnumerator()
-  {
-    return ( (IEnumerable<Pitch>) _pitches ).GetEnumerator();
-  }
-
-  /// <inheritdoc />
-  public override string ToString()
-  {
-    return ToString( this );
   }
 
   /// <inheritdoc />
@@ -97,6 +93,18 @@ public sealed class PitchCollection
   }
 
   /// <inheritdoc />
+  public IEnumerator<Pitch> GetEnumerator()
+  {
+    return ( (IEnumerable<Pitch>) _pitches ).GetEnumerator();
+  }
+
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  /// <inheritdoc />
   public override int GetHashCode()
   {
     var hash = new HashCode();
@@ -106,6 +114,57 @@ public sealed class PitchCollection
     }
 
     return hash.ToHashCode();
+  }
+
+  /// <summary>Parses the provided string.</summary>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch collection.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  /// <param name="value">The value to parse.</param>
+  /// <returns>A PitchCollection.</returns>
+  public static PitchCollection Parse( string value )
+  {
+    Requires.NotNullOrEmpty( value );
+
+    if( !TryParse( value, out var notes ) )
+    {
+      throw new FormatException( $"{value} contains invalid pitches" );
+    }
+
+    return notes;
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return ToString( this );
+  }
+
+  /// <summary>Converts a sequence of pitches into a string representation.</summary>
+  /// <exception cref="ArgumentNullException">Thrown when pitches argument is null.</exception>
+  /// <returns>A string that represents the sequence of pitches.</returns>
+  public static string ToString( IEnumerable<Pitch> pitches )
+  {
+    Requires.NotNull( pitches );
+
+    var buf = new StringBuilder();
+    var needsComma = false;
+
+    foreach( var note in pitches )
+    {
+      if( needsComma )
+      {
+        buf.Append( ',' );
+      }
+      else
+      {
+        needsComma = true;
+      }
+
+      buf.Append( note );
+    }
+
+    return buf.ToString();
   }
 
   /// <summary>Attempts to parse a pitch collection from the given string.</summary>
@@ -138,48 +197,5 @@ public sealed class PitchCollection
     return true;
   }
 
-  /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch collection.</exception>
-  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
-  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>A PitchCollection.</returns>
-  public static PitchCollection Parse( string value )
-  {
-    Requires.NotNullOrEmpty( value );
-
-    if( !TryParse( value, out var notes ) )
-    {
-      throw new FormatException( $"{value} contains invalid pitches" );
-    }
-
-    return notes;
-  }
-
-  /// <summary>Converts a sequence of pitches into a string representation.</summary>
-  /// <exception cref="ArgumentNullException">Thrown when pitches argument is null.</exception>
-  /// <returns>A string that represents the sequence of pitches.</returns>
-  public static string ToString( IEnumerable<Pitch> pitches )
-  {
-    Requires.NotNull( pitches );
-
-    var buf = new StringBuilder();
-    var needsComma = false;
-
-    foreach( var note in pitches )
-    {
-      if( needsComma )
-      {
-        buf.Append( ',' );
-      }
-      else
-      {
-        needsComma = true;
-      }
-
-      buf.Append( note );
-    }
-
-    return buf.ToString();
-  }
+#endregion
 }

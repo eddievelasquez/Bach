@@ -32,30 +32,6 @@ public sealed class NoteNameTest
 #region Public Methods
 
   [Fact]
-  public void AddTest()
-  {
-    Assert.Equal( NoteName.C, NoteName.C.Add( 0 ) );
-    Assert.Equal( NoteName.D, NoteName.C.Add( 1 ) );
-    Assert.Equal( NoteName.E, NoteName.C.Add( 2 ) );
-    Assert.Equal( NoteName.B, NoteName.C.Add( 6 ) );
-    Assert.Equal( NoteName.C, NoteName.C.Add( 7 ) );
-    Assert.Equal( NoteName.D, NoteName.C.Add( 8 ) );
-  }
-
-  [Fact]
-  public void IncrementOperatorTest()
-  {
-    var noteName = NoteName.C;
-    Assert.Equal( NoteName.D, ++noteName );
-    Assert.Equal( NoteName.E, ++noteName );
-    Assert.Equal( NoteName.F, ++noteName );
-    Assert.Equal( NoteName.G, ++noteName );
-    Assert.Equal( NoteName.A, ++noteName );
-    Assert.Equal( NoteName.B, ++noteName );
-    Assert.Equal( NoteName.C, ++noteName );
-  }
-
-  [Fact]
   public void AdditionOperatorTest()
   {
     Assert.Equal( NoteName.C, NoteName.C + 0 );
@@ -65,6 +41,17 @@ public sealed class NoteNameTest
     Assert.Equal( NoteName.C, NoteName.C + 7 );
     Assert.Equal( NoteName.D, NoteName.C + 8 );
     Assert.Equal( NoteName.C, NoteName.B + 1 );
+  }
+
+  [Fact]
+  public void AddTest()
+  {
+    Assert.Equal( NoteName.C, NoteName.C.Add( 0 ) );
+    Assert.Equal( NoteName.D, NoteName.C.Add( 1 ) );
+    Assert.Equal( NoteName.E, NoteName.C.Add( 2 ) );
+    Assert.Equal( NoteName.B, NoteName.C.Add( 6 ) );
+    Assert.Equal( NoteName.C, NoteName.C.Add( 7 ) );
+    Assert.Equal( NoteName.D, NoteName.C.Add( 8 ) );
   }
 
   [Fact]
@@ -82,23 +69,62 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void SubtractIntegerTest()
+  public void EqualsContractTest()
   {
-    Assert.Equal( NoteName.B, NoteName.B.Subtract( 0 ) );
-    Assert.Equal( NoteName.A, NoteName.B.Subtract( 1 ) );
-    Assert.Equal( NoteName.G, NoteName.B.Subtract( 2 ) );
-    Assert.Equal( NoteName.C, NoteName.B.Subtract( 6 ) );
-    Assert.Equal( NoteName.B, NoteName.B.Subtract( 7 ) );
-    Assert.Equal( NoteName.A, NoteName.B.Subtract( 8 ) );
+    object x = NoteName.C;
+    object y = new NoteName();
+    object z = (NoteName) 0;
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
   }
 
   [Fact]
-  public void SubtractNoteNameTest()
+  public void EqualsFailsWithDifferentTypeTest()
   {
-    Assert.Equal( 0, NoteName.B.Subtract( NoteName.B ) );
-    Assert.Equal( 1, NoteName.B.Subtract( NoteName.A ) );
-    Assert.Equal( 2, NoteName.B.Subtract( NoteName.G ) );
-    Assert.Equal( 6, NoteName.B.Subtract( NoteName.C ) );
+    object actual = NoteName.C;
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = NoteName.C;
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = NoteName.C;
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = NoteName.C;
+    var expected = new NoteName();
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void IncrementOperatorTest()
+  {
+    var noteName = NoteName.C;
+    Assert.Equal( NoteName.D, ++noteName );
+    Assert.Equal( NoteName.E, ++noteName );
+    Assert.Equal( NoteName.F, ++noteName );
+    Assert.Equal( NoteName.G, ++noteName );
+    Assert.Equal( NoteName.A, ++noteName );
+    Assert.Equal( NoteName.B, ++noteName );
+    Assert.Equal( NoteName.C, ++noteName );
   }
 
   [Fact]
@@ -128,15 +154,15 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void ParseUppercaseTest()
+  public void ParseEmptyThrowsTest()
   {
-    Assert.Equal( NoteName.C, NoteName.Parse( "C" ) );
-    Assert.Equal( NoteName.D, NoteName.Parse( "D" ) );
-    Assert.Equal( NoteName.E, NoteName.Parse( "E" ) );
-    Assert.Equal( NoteName.F, NoteName.Parse( "F" ) );
-    Assert.Equal( NoteName.G, NoteName.Parse( "G" ) );
-    Assert.Equal( NoteName.A, NoteName.Parse( "A" ) );
-    Assert.Equal( NoteName.B, NoteName.Parse( "B" ) );
+    Assert.Throws<ArgumentException>( () => NoteName.Parse( "" ) );
+  }
+
+  [Fact]
+  public void ParseInvalidThrowsTest()
+  {
+    Assert.Throws<FormatException>( () => NoteName.Parse( "Z" ) );
   }
 
   [Fact]
@@ -158,21 +184,35 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void ParseEmptyThrowsTest()
+  public void ParseUppercaseTest()
   {
-    Assert.Throws<ArgumentException>( () => NoteName.Parse( "" ) );
+    Assert.Equal( NoteName.C, NoteName.Parse( "C" ) );
+    Assert.Equal( NoteName.D, NoteName.Parse( "D" ) );
+    Assert.Equal( NoteName.E, NoteName.Parse( "E" ) );
+    Assert.Equal( NoteName.F, NoteName.Parse( "F" ) );
+    Assert.Equal( NoteName.G, NoteName.Parse( "G" ) );
+    Assert.Equal( NoteName.A, NoteName.Parse( "A" ) );
+    Assert.Equal( NoteName.B, NoteName.Parse( "B" ) );
   }
 
   [Fact]
-  public void ParseInvalidThrowsTest()
+  public void SubtractIntegerTest()
   {
-    Assert.Throws<FormatException>( () => NoteName.Parse( "Z" ) );
+    Assert.Equal( NoteName.B, NoteName.B.Subtract( 0 ) );
+    Assert.Equal( NoteName.A, NoteName.B.Subtract( 1 ) );
+    Assert.Equal( NoteName.G, NoteName.B.Subtract( 2 ) );
+    Assert.Equal( NoteName.C, NoteName.B.Subtract( 6 ) );
+    Assert.Equal( NoteName.B, NoteName.B.Subtract( 7 ) );
+    Assert.Equal( NoteName.A, NoteName.B.Subtract( 8 ) );
   }
 
   [Fact]
-  public void TryParseNullFailsTest()
+  public void SubtractNoteNameTest()
   {
-    Assert.False( NoteName.TryParse( null, out var _ ) );
+    Assert.Equal( 0, NoteName.B.Subtract( NoteName.B ) );
+    Assert.Equal( 1, NoteName.B.Subtract( NoteName.A ) );
+    Assert.Equal( 2, NoteName.B.Subtract( NoteName.G ) );
+    Assert.Equal( 6, NoteName.B.Subtract( NoteName.C ) );
   }
 
   [Fact]
@@ -182,19 +222,9 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void TryParseNullFailsTest()
   {
-    object x = NoteName.C;
-    object y = new NoteName();
-    object z = (NoteName) 0;
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    Assert.False( NoteName.TryParse( null, out var _ ) );
   }
 
   [Fact]
@@ -213,13 +243,6 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    object actual = NoteName.C;
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     var actual = NoteName.C;
@@ -229,33 +252,10 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = NoteName.C;
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = NoteName.C;
     Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var actual = NoteName.C;
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var actual = NoteName.C;
-    var expected = new NoteName();
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
   }
 
 #endregion

@@ -43,20 +43,20 @@ public sealed class FingeringTest
   }
 
   [Fact]
-  public void CreateThrowsWithOutOfRangeStringNumberTest()
-  {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 0, 5 ) );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 7, 5 ) );
-  }
-
-  [Fact]
   public void CreateThrowsWithOutOfRangePositionNumberTest()
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 6, -1 ) );
 
     Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 6, 23 ) );
+  }
+
+  [Fact]
+  public void CreateThrowsWithOutOfRangeStringNumberTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 0, 5 ) );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 7, 5 ) );
   }
 
   [Fact]
@@ -77,22 +77,6 @@ public sealed class FingeringTest
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var x = Fingering.Create( instrument, 6, 5 );
-    var y = Fingering.Create( instrument, 6, 5 );
-    var z = Fingering.Create( instrument, 6, 5 );
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
@@ -101,28 +85,10 @@ public sealed class FingeringTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var actual = Fingering.Create( instrument, 6, 5 );
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void EqualsFailsWithNullTest()
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     object actual = Fingering.Create( instrument, 6, 5 );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var actual = Fingering.Create( instrument, 6, 5 );
     Assert.False( actual.Equals( null ) );
   }
 
@@ -150,6 +116,40 @@ public sealed class FingeringTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
     Assert.Equal( "65", Fingering.Create( instrument, 6, 5 ).ToString() );
     Assert.Equal( "612", Fingering.Create( instrument, 6, 12 ).ToString() );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var x = Fingering.Create( instrument, 6, 5 );
+    var y = Fingering.Create( instrument, 6, 5 );
+    var z = Fingering.Create( instrument, 6, 5 );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var actual = Fingering.Create( instrument, 6, 5 );
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var actual = Fingering.Create( instrument, 6, 5 );
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

@@ -29,8 +29,12 @@ namespace Bach.Model.Serialization;
 
 internal sealed class Library
 {
+#region Properties
+
   public Version Version { get; set; } = null!;
   public List<PersistentScale> Scales { get; set; } = null!;
   public List<PersistentChord> Chords { get; set; } = null!;
   public List<PersistentStringedInstrument> StringedInstruments { get; set; } = null!;
+
+#endregion
 }

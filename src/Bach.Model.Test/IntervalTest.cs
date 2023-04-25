@@ -32,6 +32,163 @@ public sealed class IntervalTest
 #region Public Methods
 
   [Fact]
+  public void EqualityFailsWithNullTest()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+#pragma warning disable CS8073
+    Assert.False( lhs == null );
+#pragma warning restore CS8073
+  }
+
+  [Fact]
+  public void EqualitySucceedsWithSameObjectTest()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+#pragma warning disable 1718
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( lhs == lhs );
+#pragma warning restore 1718
+  }
+
+  [Fact]
+  public void EqualitySucceedsWithTwoObjectsTest()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    Assert.True( lhs == rhs );
+  }
+
+  [Fact]
+  public void EqualsContractTest()
+  {
+    object x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    object y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    object z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var expected = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void GetSemitoneCountTest()
+  {
+    Assert.Throws<ArgumentException>( () => Interval.GetSemitoneCount( IntervalQuantity.Unison,
+                                                                       IntervalQuality.Diminished ) );
+
+    Assert.Throws<ArgumentException>(
+      () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Minor ) );
+
+    Assert.Equal( 0, Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Perfect ) );
+    Assert.Throws<ArgumentException>(
+      () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Major ) );
+
+    Assert.Equal( 1, Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Augmented ) );
+  }
+
+  [Fact]
+  public void InequalityFailsWithSameObjectTest()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+#pragma warning disable 1718
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.False( lhs != lhs );
+#pragma warning restore 1718
+  }
+
+  [Fact]
+  public void InequalitySucceedsWithTwoObjectsTest()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Augmented );
+    Assert.True( lhs != rhs );
+  }
+
+  [Fact]
+  public void InversionTest()
+  {
+    Assert.Equal( Interval.Octave, Interval.Unison.Inversion );
+    Assert.Equal( Interval.MajorSeventh, Interval.MinorSecond.Inversion );
+    Assert.Equal( Interval.MinorSeventh, Interval.MajorSecond.Inversion );
+    Assert.Equal( Interval.MajorSixth, Interval.MinorThird.Inversion );
+    Assert.Equal( Interval.MinorSixth, Interval.MajorThird.Inversion );
+    Assert.Equal( Interval.Fifth, Interval.Fourth.Inversion );
+    Assert.Equal( Interval.DiminishedFifth, Interval.AugmentedFourth.Inversion );
+    Assert.Equal( Interval.Fourth, Interval.Fifth.Inversion );
+    Assert.Equal( Interval.DiminishedFourth, Interval.AugmentedFifth.Inversion );
+    Assert.Equal( Interval.MajorThird, Interval.MinorSixth.Inversion );
+    Assert.Equal( Interval.MinorThird, Interval.MajorSixth.Inversion );
+    Assert.Equal( Interval.MajorSecond, Interval.MinorSeventh.Inversion );
+    Assert.Equal( Interval.MinorSecond, Interval.MajorSeventh.Inversion );
+    Assert.Equal( Interval.Unison, Interval.Octave.Inversion );
+  }
+
+  [Fact]
+  public void IsValidTest()
+  {
+    Assert.False( Interval.IsValid( IntervalQuantity.Unison, IntervalQuality.Diminished ) );
+    Assert.False( Interval.IsValid( IntervalQuantity.Fourth, IntervalQuality.Minor ) );
+    Assert.False( Interval.IsValid( IntervalQuantity.Fifth, IntervalQuality.Major ) );
+    Assert.False( Interval.IsValid( (IntervalQuantity) ( -1 ), IntervalQuality.Major ) );
+    Assert.False( Interval.IsValid( (IntervalQuantity) ( 14 ), IntervalQuality.Major ) );
+  }
+
+  [Fact]
+  public void LogicalOperatorsTest()
+  {
+    Assert.True( Interval.Unison == Interval.Parse( "P1" ) );
+    Assert.True( Interval.Unison != Interval.Fourth );
+    Assert.True( Interval.Unison < Interval.Fourth );
+    Assert.True( Interval.Unison <= Interval.Fourth );
+    Assert.True( Interval.Fourth > Interval.Unison );
+    Assert.True( Interval.Fourth >= Interval.Unison );
+    Assert.True( Interval.MinorThird < Interval.MajorThird );
+  }
+
+  [Fact]
+  public void ParseTest()
+  {
+    Assert.Equal( Interval.Unison, Interval.Parse( "P1" ) );
+    Assert.Throws<FormatException>( () => Interval.Parse( "X2" ) );
+  }
+
+  [Fact]
   public void SemitoneCountTest()
   {
     Assert.Equal( 0, Interval.Unison.SemitoneCount );
@@ -63,127 +220,32 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void TryParseReturnsFalseBlankStringTest()
   {
-    object x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    object y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    object z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    Assert.False( Interval.TryParse( "", out var _ ) );
+    Assert.False( Interval.TryParse( "   ", out var _ ) );
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void TryParseReturnsFalseWithNonsensicalIntervalsTest()
   {
-    var x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    Assert.False( Interval.TryParse( "M1", out var _ ) );
+    Assert.False( Interval.TryParse( "P2", out var _ ) );
+    Assert.False( Interval.TryParse( "L2", out var _ ) );
+    Assert.False( Interval.TryParse( "Px", out var _ ) );
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void TryParseReturnsFalseWithNullTest()
   {
-    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    Assert.False( actual.Equals( int.MinValue ) );
+    Assert.False( Interval.TryParse( null, out var _ ) );
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void TryParseSkipsLeadingWhitespaceTest()
   {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var expected = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
-  }
-
-  [Fact]
-  public void EqualitySucceedsWithTwoObjectsTest()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    Assert.True( lhs == rhs );
-  }
-
-  [Fact]
-  public void EqualitySucceedsWithSameObjectTest()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-#pragma warning disable 1718
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.True( lhs == lhs );
-#pragma warning restore 1718
-  }
-
-  [Fact]
-  public void EqualityFailsWithNullTest()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-#pragma warning disable CS8073
-    Assert.False( lhs == null );
-#pragma warning restore CS8073
-  }
-
-  [Fact]
-  public void InequalitySucceedsWithTwoObjectsTest()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Augmented );
-    Assert.True( lhs != rhs );
-  }
-
-  [Fact]
-  public void InequalityFailsWithSameObjectTest()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-#pragma warning disable 1718
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.False( lhs != lhs );
-#pragma warning restore 1718
+    Assert.True( Interval.TryParse( "  P5", out var actual ) );
+    Assert.Equal( Interval.Fifth, actual );
   }
 
   [Fact]
@@ -213,96 +275,34 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void TryParseSkipsLeadingWhitespaceTest()
+  public void TypeSafeEqualsContractTest()
   {
-    Assert.True( Interval.TryParse( "  P5", out var actual ) );
-    Assert.Equal( Interval.Fifth, actual );
+    var x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
   }
 
   [Fact]
-  public void TryParseReturnsFalseWithNullTest()
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
-    Assert.False( Interval.TryParse( null, out var _ ) );
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
   }
 
   [Fact]
-  public void TryParseReturnsFalseBlankStringTest()
+  public void TypeSafeEqualsFailsWithNullTest()
   {
-    Assert.False( Interval.TryParse( "", out var _ ) );
-    Assert.False( Interval.TryParse( "   ", out var _ ) );
-  }
-
-  [Fact]
-  public void TryParseReturnsFalseWithNonsensicalIntervalsTest()
-  {
-    Assert.False( Interval.TryParse( "M1", out var _ ) );
-    Assert.False( Interval.TryParse( "P2", out var _ ) );
-    Assert.False( Interval.TryParse( "L2", out var _ ) );
-    Assert.False( Interval.TryParse( "Px", out var _ ) );
-  }
-
-  [Fact]
-  public void ParseTest()
-  {
-    Assert.Equal( Interval.Unison, Interval.Parse( "P1" ) );
-    Assert.Throws<FormatException>( () => Interval.Parse( "X2" ) );
-  }
-
-  [Fact]
-  public void GetSemitoneCountTest()
-  {
-    Assert.Throws<ArgumentException>( () => Interval.GetSemitoneCount( IntervalQuantity.Unison,
-                                                                       IntervalQuality.Diminished ) );
-
-    Assert.Throws<ArgumentException>(
-      () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Minor ) );
-
-    Assert.Equal( 0, Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Perfect ) );
-    Assert.Throws<ArgumentException>(
-      () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Major ) );
-
-    Assert.Equal( 1, Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Augmented ) );
-  }
-
-  [Fact]
-  public void IsValidTest()
-  {
-    Assert.False( Interval.IsValid( IntervalQuantity.Unison, IntervalQuality.Diminished ) );
-    Assert.False( Interval.IsValid( IntervalQuantity.Fourth, IntervalQuality.Minor ) );
-    Assert.False( Interval.IsValid( IntervalQuantity.Fifth, IntervalQuality.Major ) );
-    Assert.False( Interval.IsValid( (IntervalQuantity) ( -1 ), IntervalQuality.Major ) );
-    Assert.False( Interval.IsValid( (IntervalQuantity) ( 14 ), IntervalQuality.Major ) );
-  }
-
-  [Fact]
-  public void LogicalOperatorsTest()
-  {
-    Assert.True( Interval.Unison == Interval.Parse( "P1" ) );
-    Assert.True( Interval.Unison != Interval.Fourth );
-    Assert.True( Interval.Unison < Interval.Fourth );
-    Assert.True( Interval.Unison <= Interval.Fourth );
-    Assert.True( Interval.Fourth > Interval.Unison );
-    Assert.True( Interval.Fourth >= Interval.Unison );
-    Assert.True( Interval.MinorThird < Interval.MajorThird );
-  }
-
-  [Fact]
-  public void InversionTest()
-  {
-    Assert.Equal( Interval.Octave, Interval.Unison.Inversion );
-    Assert.Equal( Interval.MajorSeventh, Interval.MinorSecond.Inversion );
-    Assert.Equal( Interval.MinorSeventh, Interval.MajorSecond.Inversion );
-    Assert.Equal( Interval.MajorSixth, Interval.MinorThird.Inversion );
-    Assert.Equal( Interval.MinorSixth, Interval.MajorThird.Inversion );
-    Assert.Equal( Interval.Fifth, Interval.Fourth.Inversion );
-    Assert.Equal( Interval.DiminishedFifth, Interval.AugmentedFourth.Inversion );
-    Assert.Equal( Interval.Fourth, Interval.Fifth.Inversion );
-    Assert.Equal( Interval.DiminishedFourth, Interval.AugmentedFifth.Inversion );
-    Assert.Equal( Interval.MajorThird, Interval.MinorSixth.Inversion );
-    Assert.Equal( Interval.MinorThird, Interval.MajorSixth.Inversion );
-    Assert.Equal( Interval.MajorSecond, Interval.MinorSeventh.Inversion );
-    Assert.Equal( Interval.MinorSecond, Interval.MajorSeventh.Inversion );
-    Assert.Equal( Interval.Unison, Interval.Octave.Inversion );
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

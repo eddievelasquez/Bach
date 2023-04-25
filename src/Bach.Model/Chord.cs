@@ -36,6 +36,8 @@ public class Chord
   : IEquatable<Chord>,
     IEnumerable<PitchClass>
 {
+#region Constructors
+
   /// <summary>Constructor.</summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
@@ -82,6 +84,10 @@ public class Chord
     Name = GenerateName( root, formula, PitchClasses.First() );
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the root pitch class for the chord.</summary>
   /// <value>The root.</value>
   public PitchClass Root { get; }
@@ -117,17 +123,9 @@ public class Chord
     }
   }
 
-  /// <inheritdoc />
-  IEnumerator IEnumerable.GetEnumerator()
-  {
-    return GetEnumerator();
-  }
+#endregion
 
-  /// <inheritdoc />
-  public IEnumerator<PitchClass> GetEnumerator()
-  {
-    return PitchClasses.GetEnumerator();
-  }
+#region Public Methods
 
   /// <inheritdoc />
   public bool Equals( Chord other )
@@ -157,15 +155,30 @@ public class Chord
   }
 
   /// <inheritdoc />
+  public IEnumerator<PitchClass> GetEnumerator()
+  {
+    return PitchClasses.GetEnumerator();
+  }
+
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  /// <inheritdoc />
   public override int GetHashCode()
   {
     return HashCode.Combine( Root, Formula );
   }
 
-  /// <inheritdoc />
-  public override string ToString()
+  /// <summary>Generates an inversion for the current chord.</summary>
+  /// <param name="inversion">The inversion to generate.</param>
+  /// <returns>A Chord.</returns>
+  public Chord GetInversion( int inversion )
   {
-    return Name;
+    var result = new Chord( Root, Formula, inversion );
+    return result;
   }
 
   /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
@@ -186,14 +199,15 @@ public class Chord
     }
   }
 
-  /// <summary>Generates an inversion for the current chord.</summary>
-  /// <param name="inversion">The inversion to generate.</param>
-  /// <returns>A Chord.</returns>
-  public Chord GetInversion( int inversion )
+  /// <inheritdoc />
+  public override string ToString()
   {
-    var result = new Chord( Root, Formula, inversion );
-    return result;
+    return Name;
   }
+
+#endregion
+
+#region Implementation
 
   private static string GenerateName(
     PitchClass root,
@@ -213,4 +227,6 @@ public class Chord
     var result = buf.ToString();
     return result;
   }
+
+#endregion
 }

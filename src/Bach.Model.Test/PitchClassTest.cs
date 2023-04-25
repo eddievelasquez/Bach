@@ -32,6 +32,52 @@ public sealed class PitchClassTest
 #region Public Methods
 
   [Fact]
+  public void AddTest()
+  {
+    AddTestImpl( PitchClass.C, 1, PitchClass.CSharp, PitchClass.DFlat );
+    AddTestImpl( PitchClass.C, 2, PitchClass.D );
+    AddTestImpl( PitchClass.C, 3, PitchClass.DSharp, PitchClass.EFlat );
+    AddTestImpl( PitchClass.C, 4, PitchClass.E );
+    AddTestImpl( PitchClass.C, 5, PitchClass.F );
+    AddTestImpl( PitchClass.C, 6, PitchClass.FSharp, PitchClass.GFlat );
+    AddTestImpl( PitchClass.C, 7, PitchClass.G );
+    AddTestImpl( PitchClass.C, 8, PitchClass.GSharp, PitchClass.AFlat );
+    AddTestImpl( PitchClass.C, 9, PitchClass.A );
+    AddTestImpl( PitchClass.C, 10, PitchClass.ASharp, PitchClass.BFlat );
+    AddTestImpl( PitchClass.C, 11, PitchClass.B );
+    AddTestImpl( PitchClass.C, 12, PitchClass.C );
+  }
+
+  [Fact]
+  public void ArithmeticOperatorsTest()
+  {
+    Assert.Equal( PitchClass.C, PitchClass.B + 1 );
+    Assert.Equal( PitchClass.C, PitchClass.C + 12 );
+    Assert.Equal( PitchClass.B, PitchClass.C - 1 );
+    Assert.Equal( PitchClass.C, PitchClass.C - 12 );
+
+    var pitchClass = PitchClass.B;
+    Assert.Equal( PitchClass.B, pitchClass++ );
+    Assert.Equal( PitchClass.C, pitchClass );
+    Assert.Equal( PitchClass.CSharp, ++pitchClass );
+
+    pitchClass = PitchClass.C;
+    Assert.Equal( PitchClass.C, pitchClass-- );
+    Assert.Equal( PitchClass.B, pitchClass );
+    Assert.Equal( PitchClass.BFlat, --pitchClass );
+  }
+
+  [Fact]
+  public void CompareToTest()
+  {
+    Assert.True( PitchClass.C.CompareTo( PitchClass.C ) == 0 );
+    Assert.True( PitchClass.C.CompareTo( PitchClass.D ) < 0 );
+    Assert.True( PitchClass.D.CompareTo( PitchClass.C ) > 0 );
+    Assert.True( PitchClass.C.CompareTo( PitchClass.B ) < 0 );
+    Assert.True( PitchClass.B.CompareTo( PitchClass.C ) > 0 );
+  }
+
+  [Fact]
   public void ConstructorTest()
   {
     ConstructorTestImpl( NoteName.C, Accidental.DoubleFlat );
@@ -78,25 +124,53 @@ public sealed class PitchClassTest
   }
 
   [Fact]
-  public void PredefinedNoteTest()
+  public void EqualsTest()
   {
-    NoteMemberTestImpl( PitchClass.C, NoteName.C, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.CSharp, NoteName.C, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.DFlat, NoteName.D, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.D, NoteName.D, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.DSharp, NoteName.D, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.EFlat, NoteName.E, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.E, NoteName.E, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.F, NoteName.F, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.FSharp, NoteName.F, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.GFlat, NoteName.G, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.G, NoteName.G, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.GSharp, NoteName.G, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.AFlat, NoteName.A, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.A, NoteName.A, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.ASharp, NoteName.A, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.BFlat, NoteName.B, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.B, NoteName.B, Accidental.Natural );
+    object actual = PitchClass.Create( NoteName.C );
+    Assert.True( PitchClass.C.Equals( actual ) );
+    Assert.False( PitchClass.C.Equals( null ) );
+  }
+
+  [Fact]
+  public void GetEnharmonicTest()
+  {
+    EnharmonicTestImpl( PitchClass.C, "Dbb", "B#" );
+    EnharmonicTestImpl( PitchClass.CSharp, "Db", "B##" );
+    EnharmonicTestImpl( PitchClass.D, "Ebb", "C##" );
+    EnharmonicTestImpl( PitchClass.DSharp, "Fbb", "Eb" );
+    EnharmonicTestImpl( PitchClass.E, "Fb", "D##" );
+    EnharmonicTestImpl( PitchClass.F, "Gbb", "E#" );
+    EnharmonicTestImpl( PitchClass.FSharp, "Gb", "E##" );
+    EnharmonicTestImpl( PitchClass.G, "Abb", "F##" );
+    EnharmonicTestImpl( PitchClass.GSharp, "Ab" );
+    EnharmonicTestImpl( PitchClass.A, "Bbb", "G##" );
+    EnharmonicTestImpl( PitchClass.ASharp, "Cbb", "Bb" );
+    EnharmonicTestImpl( PitchClass.B, "Cb", "A##" );
+
+    // Not enharmonic
+    NotEnharmonicTestImpl( PitchClass.C, NoteName.E, NoteName.G );
+    NotEnharmonicTestImpl( PitchClass.CSharp, NoteName.E, NoteName.G );
+    NotEnharmonicTestImpl( PitchClass.D, NoteName.F, NoteName.C );
+    NotEnharmonicTestImpl( PitchClass.DSharp, NoteName.G, NoteName.D );
+    NotEnharmonicTestImpl( PitchClass.E, NoteName.G, NoteName.D );
+    NotEnharmonicTestImpl( PitchClass.F, NoteName.A, NoteName.E );
+    NotEnharmonicTestImpl( PitchClass.FSharp, NoteName.A, NoteName.E );
+    NotEnharmonicTestImpl( PitchClass.G, NoteName.B, NoteName.F );
+    NotEnharmonicTestImpl( PitchClass.GSharp, NoteName.B, NoteName.G );
+    NotEnharmonicTestImpl( PitchClass.A, NoteName.C, NoteName.G );
+    NotEnharmonicTestImpl( PitchClass.ASharp, NoteName.D, NoteName.A );
+    NotEnharmonicTestImpl( PitchClass.B, NoteName.D, NoteName.A );
+  }
+
+  [Fact]
+  public void LogicalOperatorsTest()
+  {
+    Assert.True( PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ) );
+    Assert.True( PitchClass.C != PitchClass.B );
+    Assert.True( PitchClass.C < PitchClass.B );
+    Assert.True( PitchClass.C <= PitchClass.B );
+    Assert.True( PitchClass.D > PitchClass.C );
+    Assert.True( PitchClass.D >= PitchClass.C );
   }
 
   [Fact]
@@ -123,192 +197,6 @@ public sealed class PitchClassTest
     NextTestImpl( PitchClass.Create( NoteName.C, Accidental.DoubleSharp ), PitchClass.DSharp, PitchClass.EFlat );
     NextTestImpl( PitchClass.Create( NoteName.E, Accidental.DoubleSharp ), PitchClass.G );
     NextTestImpl( PitchClass.Create( NoteName.B, Accidental.DoubleSharp ), PitchClass.D );
-  }
-
-  [Fact]
-  public void AddTest()
-  {
-    AddTestImpl( PitchClass.C, 1, PitchClass.CSharp, PitchClass.DFlat );
-    AddTestImpl( PitchClass.C, 2, PitchClass.D );
-    AddTestImpl( PitchClass.C, 3, PitchClass.DSharp, PitchClass.EFlat );
-    AddTestImpl( PitchClass.C, 4, PitchClass.E );
-    AddTestImpl( PitchClass.C, 5, PitchClass.F );
-    AddTestImpl( PitchClass.C, 6, PitchClass.FSharp, PitchClass.GFlat );
-    AddTestImpl( PitchClass.C, 7, PitchClass.G );
-    AddTestImpl( PitchClass.C, 8, PitchClass.GSharp, PitchClass.AFlat );
-    AddTestImpl( PitchClass.C, 9, PitchClass.A );
-    AddTestImpl( PitchClass.C, 10, PitchClass.ASharp, PitchClass.BFlat );
-    AddTestImpl( PitchClass.C, 11, PitchClass.B );
-    AddTestImpl( PitchClass.C, 12, PitchClass.C );
-  }
-
-  [Fact]
-  public void PreviousTest()
-  {
-    PreviousTestImpl( PitchClass.C, PitchClass.B );
-    PreviousTestImpl( PitchClass.CSharp, PitchClass.C );
-    PreviousTestImpl( PitchClass.DFlat, PitchClass.C );
-    PreviousTestImpl( PitchClass.D, PitchClass.CSharp, PitchClass.DFlat );
-    PreviousTestImpl( PitchClass.DSharp, PitchClass.D );
-    PreviousTestImpl( PitchClass.EFlat, PitchClass.D );
-    PreviousTestImpl( PitchClass.E, PitchClass.DSharp, PitchClass.EFlat );
-    PreviousTestImpl( PitchClass.F, PitchClass.E );
-    PreviousTestImpl( PitchClass.FSharp, PitchClass.F );
-    PreviousTestImpl( PitchClass.GFlat, PitchClass.F );
-    PreviousTestImpl( PitchClass.G, PitchClass.FSharp, PitchClass.GFlat );
-    PreviousTestImpl( PitchClass.GSharp, PitchClass.G );
-    PreviousTestImpl( PitchClass.AFlat, PitchClass.G );
-    PreviousTestImpl( PitchClass.A, PitchClass.GSharp, PitchClass.AFlat );
-    PreviousTestImpl( PitchClass.ASharp, PitchClass.A );
-    PreviousTestImpl( PitchClass.BFlat, PitchClass.A );
-    PreviousTestImpl( PitchClass.B, PitchClass.ASharp, PitchClass.BFlat );
-
-    PreviousTestImpl( PitchClass.Create( NoteName.B, Accidental.DoubleFlat ), PitchClass.GSharp, PitchClass.AFlat );
-    PreviousTestImpl( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), PitchClass.A );
-  }
-
-  [Fact]
-  public void SubtractTest()
-  {
-    SubtractTestImpl( PitchClass.B, 1, PitchClass.BFlat, PitchClass.ASharp );
-    SubtractTestImpl( PitchClass.B, 2, PitchClass.A );
-    SubtractTestImpl( PitchClass.B, 3, PitchClass.GSharp, PitchClass.AFlat );
-    SubtractTestImpl( PitchClass.B, 4, PitchClass.G );
-    SubtractTestImpl( PitchClass.B, 5, PitchClass.FSharp, PitchClass.GFlat );
-    SubtractTestImpl( PitchClass.B, 6, PitchClass.F );
-    SubtractTestImpl( PitchClass.B, 7, PitchClass.E );
-    SubtractTestImpl( PitchClass.B, 8, PitchClass.DSharp, PitchClass.EFlat );
-    SubtractTestImpl( PitchClass.B, 9, PitchClass.D );
-    SubtractTestImpl( PitchClass.B, 10, PitchClass.CSharp, PitchClass.DFlat );
-    SubtractTestImpl( PitchClass.B, 11, PitchClass.C );
-    SubtractTestImpl( PitchClass.B, 12, PitchClass.B );
-  }
-
-  [Fact]
-  public void CompareToTest()
-  {
-    Assert.True( PitchClass.C.CompareTo( PitchClass.C ) == 0 );
-    Assert.True( PitchClass.C.CompareTo( PitchClass.D ) < 0 );
-    Assert.True( PitchClass.D.CompareTo( PitchClass.C ) > 0 );
-    Assert.True( PitchClass.C.CompareTo( PitchClass.B ) < 0 );
-    Assert.True( PitchClass.B.CompareTo( PitchClass.C ) > 0 );
-  }
-
-  [Fact]
-  public void TryParseTest()
-  {
-    TryParseTestImpl( "C", PitchClass.C );
-    TryParseTestImpl( "C#", PitchClass.CSharp );
-    TryParseTestImpl( "C##", PitchClass.D );
-    TryParseTestImpl( "Cb", PitchClass.B );
-    TryParseTestImpl( "Cbb", PitchClass.BFlat );
-    TryParseTestImpl( "B#", PitchClass.C );
-    TryParseTestImpl( "B##", PitchClass.CSharp );
-    TryParseTestImpl( "Bb", PitchClass.BFlat );
-    TryParseTestImpl( "Bbb", PitchClass.A );
-  }
-
-  [Fact]
-  public void TryParseRejectsInvalidStringsTest()
-  {
-    Assert.False( PitchClass.TryParse( null, out _ ) );
-    Assert.False( PitchClass.TryParse( "", out _ ) );
-    Assert.False( PitchClass.TryParse( "J", out _ ) );
-    Assert.False( PitchClass.TryParse( "C$", out _ ) );
-  }
-
-  [Fact]
-  public void ParseTest()
-  {
-    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), PitchClass.Parse( "Cbb" ) );
-    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.Flat ), PitchClass.Parse( "CB" ) );
-    Assert.Equal( PitchClass.C, PitchClass.Parse( "C" ) );
-    Assert.Equal( PitchClass.CSharp, PitchClass.Parse( "c#" ) );
-    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.DoubleSharp ), PitchClass.Parse( "c##" ) );
-  }
-
-  [Fact]
-  public void ParseRejectsInvalidStringsTest()
-  {
-    Assert.Throws<ArgumentNullException>( () => PitchClass.Parse( null ) );
-    Assert.Throws<ArgumentException>( () => PitchClass.Parse( "" ) );
-    Assert.Throws<FormatException>( () => PitchClass.Parse( "J" ) );
-    Assert.Throws<FormatException>( () => PitchClass.Parse( "C$" ) );
-  }
-
-  [Fact]
-  public void EqualsTest()
-  {
-    object actual = PitchClass.Create( NoteName.C );
-    Assert.True( PitchClass.C.Equals( actual ) );
-    Assert.False( PitchClass.C.Equals( null ) );
-  }
-
-  [Fact]
-  public void LogicalOperatorsTest()
-  {
-    Assert.True( PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ) );
-    Assert.True( PitchClass.C != PitchClass.B );
-    Assert.True( PitchClass.C < PitchClass.B );
-    Assert.True( PitchClass.C <= PitchClass.B );
-    Assert.True( PitchClass.D > PitchClass.C );
-    Assert.True( PitchClass.D >= PitchClass.C );
-  }
-
-  [Fact]
-  public void ArithmeticOperatorsTest()
-  {
-    Assert.Equal( PitchClass.C, PitchClass.B + 1 );
-    Assert.Equal( PitchClass.C, PitchClass.C + 12 );
-    Assert.Equal( PitchClass.B, PitchClass.C - 1 );
-    Assert.Equal( PitchClass.C, PitchClass.C - 12 );
-
-    var pitchClass = PitchClass.B;
-    Assert.Equal( PitchClass.B, pitchClass++ );
-    Assert.Equal( PitchClass.C, pitchClass );
-    Assert.Equal( PitchClass.CSharp, ++pitchClass );
-
-    pitchClass = PitchClass.C;
-    Assert.Equal( PitchClass.C, pitchClass-- );
-    Assert.Equal( PitchClass.B, pitchClass );
-    Assert.Equal( PitchClass.BFlat, --pitchClass );
-  }
-
-  [Fact]
-  public void ToStringTest()
-  {
-    Assert.Equal( "Cbb", PitchClass.Create( NoteName.C, Accidental.DoubleFlat ).ToString() );
-    Assert.Equal( "Cb", PitchClass.Create( NoteName.C, Accidental.Flat ).ToString() );
-    Assert.Equal( "C", PitchClass.Create( NoteName.C ).ToString() );
-    Assert.Equal( "C#", PitchClass.Create( NoteName.C, Accidental.Sharp ).ToString() );
-    Assert.Equal( "C##", PitchClass.Create( NoteName.C, Accidental.DoubleSharp ).ToString() );
-  }
-
-  [Fact]
-  public void NoteSubtractionTest()
-  {
-    Assert.Equal( Interval.MajorThird, PitchClass.C - PitchClass.E );
-    Assert.Equal( Interval.MinorThird, PitchClass.CSharp - PitchClass.E );
-    Assert.Equal( Interval.MinorThird, PitchClass.D - PitchClass.F );
-    Assert.Equal( Interval.Fourth, PitchClass.D - PitchClass.G );
-    Assert.Equal( Interval.Fourth, PitchClass.E - PitchClass.A );
-    Assert.Equal( Interval.Fourth, PitchClass.EFlat - PitchClass.AFlat );
-    Assert.Equal( Interval.AugmentedThird, PitchClass.EFlat - PitchClass.GSharp );
-    Assert.Equal( Interval.MajorSixth, PitchClass.F - PitchClass.D );
-    Assert.Equal( Interval.Fifth, PitchClass.G - PitchClass.D );
-    Assert.Equal( Interval.Fifth, PitchClass.F - PitchClass.C );
-    Assert.Equal( Interval.Fifth, PitchClass.A - PitchClass.E );
-    Assert.Equal( Interval.Fifth, PitchClass.AFlat - PitchClass.EFlat );
-    Assert.Equal( Interval.DiminishedSixth, PitchClass.GSharp - PitchClass.EFlat );
-    Assert.Equal( Interval.AugmentedFourth, PitchClass.C - PitchClass.FSharp );
-    Assert.Equal( Interval.DiminishedFifth, PitchClass.C - PitchClass.GFlat );
-    Assert.Equal( Interval.AugmentedSecond, PitchClass.C - PitchClass.DSharp );
-    Assert.Equal( Interval.DiminishedFifth, PitchClass.FSharp - PitchClass.C );
-    Assert.Equal( Interval.AugmentedFourth, PitchClass.GFlat - PitchClass.C );
-    Assert.Equal( Interval.DiminishedSeventh, PitchClass.DSharp - PitchClass.C );
-    Assert.Equal( Interval.DiminishedThird, PitchClass.C - PitchClass.Create( NoteName.E, Accidental.DoubleFlat ) );
-    Assert.Equal( Interval.DiminishedFourth,
-                  PitchClass.Create( NoteName.D, Accidental.DoubleSharp ) - PitchClass.GSharp );
   }
 
   [Fact]
@@ -365,34 +253,146 @@ public sealed class PitchClassTest
   }
 
   [Fact]
-  public void GetEnharmonicTest()
+  public void NoteSubtractionTest()
   {
-    EnharmonicTestImpl( PitchClass.C, "Dbb", "B#" );
-    EnharmonicTestImpl( PitchClass.CSharp, "Db", "B##" );
-    EnharmonicTestImpl( PitchClass.D, "Ebb", "C##" );
-    EnharmonicTestImpl( PitchClass.DSharp, "Fbb", "Eb" );
-    EnharmonicTestImpl( PitchClass.E, "Fb", "D##" );
-    EnharmonicTestImpl( PitchClass.F, "Gbb", "E#" );
-    EnharmonicTestImpl( PitchClass.FSharp, "Gb", "E##" );
-    EnharmonicTestImpl( PitchClass.G, "Abb", "F##" );
-    EnharmonicTestImpl( PitchClass.GSharp, "Ab" );
-    EnharmonicTestImpl( PitchClass.A, "Bbb", "G##" );
-    EnharmonicTestImpl( PitchClass.ASharp, "Cbb", "Bb" );
-    EnharmonicTestImpl( PitchClass.B, "Cb", "A##" );
+    Assert.Equal( Interval.MajorThird, PitchClass.C - PitchClass.E );
+    Assert.Equal( Interval.MinorThird, PitchClass.CSharp - PitchClass.E );
+    Assert.Equal( Interval.MinorThird, PitchClass.D - PitchClass.F );
+    Assert.Equal( Interval.Fourth, PitchClass.D - PitchClass.G );
+    Assert.Equal( Interval.Fourth, PitchClass.E - PitchClass.A );
+    Assert.Equal( Interval.Fourth, PitchClass.EFlat - PitchClass.AFlat );
+    Assert.Equal( Interval.AugmentedThird, PitchClass.EFlat - PitchClass.GSharp );
+    Assert.Equal( Interval.MajorSixth, PitchClass.F - PitchClass.D );
+    Assert.Equal( Interval.Fifth, PitchClass.G - PitchClass.D );
+    Assert.Equal( Interval.Fifth, PitchClass.F - PitchClass.C );
+    Assert.Equal( Interval.Fifth, PitchClass.A - PitchClass.E );
+    Assert.Equal( Interval.Fifth, PitchClass.AFlat - PitchClass.EFlat );
+    Assert.Equal( Interval.DiminishedSixth, PitchClass.GSharp - PitchClass.EFlat );
+    Assert.Equal( Interval.AugmentedFourth, PitchClass.C - PitchClass.FSharp );
+    Assert.Equal( Interval.DiminishedFifth, PitchClass.C - PitchClass.GFlat );
+    Assert.Equal( Interval.AugmentedSecond, PitchClass.C - PitchClass.DSharp );
+    Assert.Equal( Interval.DiminishedFifth, PitchClass.FSharp - PitchClass.C );
+    Assert.Equal( Interval.AugmentedFourth, PitchClass.GFlat - PitchClass.C );
+    Assert.Equal( Interval.DiminishedSeventh, PitchClass.DSharp - PitchClass.C );
+    Assert.Equal( Interval.DiminishedThird, PitchClass.C - PitchClass.Create( NoteName.E, Accidental.DoubleFlat ) );
+    Assert.Equal( Interval.DiminishedFourth,
+                  PitchClass.Create( NoteName.D, Accidental.DoubleSharp ) - PitchClass.GSharp );
+  }
 
-    // Not enharmonic
-    NotEnharmonicTestImpl( PitchClass.C, NoteName.E, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.CSharp, NoteName.E, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.D, NoteName.F, NoteName.C );
-    NotEnharmonicTestImpl( PitchClass.DSharp, NoteName.G, NoteName.D );
-    NotEnharmonicTestImpl( PitchClass.E, NoteName.G, NoteName.D );
-    NotEnharmonicTestImpl( PitchClass.F, NoteName.A, NoteName.E );
-    NotEnharmonicTestImpl( PitchClass.FSharp, NoteName.A, NoteName.E );
-    NotEnharmonicTestImpl( PitchClass.G, NoteName.B, NoteName.F );
-    NotEnharmonicTestImpl( PitchClass.GSharp, NoteName.B, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.A, NoteName.C, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.ASharp, NoteName.D, NoteName.A );
-    NotEnharmonicTestImpl( PitchClass.B, NoteName.D, NoteName.A );
+  [Fact]
+  public void ParseRejectsInvalidStringsTest()
+  {
+    Assert.Throws<ArgumentNullException>( () => PitchClass.Parse( null ) );
+    Assert.Throws<ArgumentException>( () => PitchClass.Parse( "" ) );
+    Assert.Throws<FormatException>( () => PitchClass.Parse( "J" ) );
+    Assert.Throws<FormatException>( () => PitchClass.Parse( "C$" ) );
+  }
+
+  [Fact]
+  public void ParseTest()
+  {
+    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), PitchClass.Parse( "Cbb" ) );
+    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.Flat ), PitchClass.Parse( "CB" ) );
+    Assert.Equal( PitchClass.C, PitchClass.Parse( "C" ) );
+    Assert.Equal( PitchClass.CSharp, PitchClass.Parse( "c#" ) );
+    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.DoubleSharp ), PitchClass.Parse( "c##" ) );
+  }
+
+  [Fact]
+  public void PredefinedNoteTest()
+  {
+    NoteMemberTestImpl( PitchClass.C, NoteName.C, Accidental.Natural );
+    NoteMemberTestImpl( PitchClass.CSharp, NoteName.C, Accidental.Sharp );
+    NoteMemberTestImpl( PitchClass.DFlat, NoteName.D, Accidental.Flat );
+    NoteMemberTestImpl( PitchClass.D, NoteName.D, Accidental.Natural );
+    NoteMemberTestImpl( PitchClass.DSharp, NoteName.D, Accidental.Sharp );
+    NoteMemberTestImpl( PitchClass.EFlat, NoteName.E, Accidental.Flat );
+    NoteMemberTestImpl( PitchClass.E, NoteName.E, Accidental.Natural );
+    NoteMemberTestImpl( PitchClass.F, NoteName.F, Accidental.Natural );
+    NoteMemberTestImpl( PitchClass.FSharp, NoteName.F, Accidental.Sharp );
+    NoteMemberTestImpl( PitchClass.GFlat, NoteName.G, Accidental.Flat );
+    NoteMemberTestImpl( PitchClass.G, NoteName.G, Accidental.Natural );
+    NoteMemberTestImpl( PitchClass.GSharp, NoteName.G, Accidental.Sharp );
+    NoteMemberTestImpl( PitchClass.AFlat, NoteName.A, Accidental.Flat );
+    NoteMemberTestImpl( PitchClass.A, NoteName.A, Accidental.Natural );
+    NoteMemberTestImpl( PitchClass.ASharp, NoteName.A, Accidental.Sharp );
+    NoteMemberTestImpl( PitchClass.BFlat, NoteName.B, Accidental.Flat );
+    NoteMemberTestImpl( PitchClass.B, NoteName.B, Accidental.Natural );
+  }
+
+  [Fact]
+  public void PreviousTest()
+  {
+    PreviousTestImpl( PitchClass.C, PitchClass.B );
+    PreviousTestImpl( PitchClass.CSharp, PitchClass.C );
+    PreviousTestImpl( PitchClass.DFlat, PitchClass.C );
+    PreviousTestImpl( PitchClass.D, PitchClass.CSharp, PitchClass.DFlat );
+    PreviousTestImpl( PitchClass.DSharp, PitchClass.D );
+    PreviousTestImpl( PitchClass.EFlat, PitchClass.D );
+    PreviousTestImpl( PitchClass.E, PitchClass.DSharp, PitchClass.EFlat );
+    PreviousTestImpl( PitchClass.F, PitchClass.E );
+    PreviousTestImpl( PitchClass.FSharp, PitchClass.F );
+    PreviousTestImpl( PitchClass.GFlat, PitchClass.F );
+    PreviousTestImpl( PitchClass.G, PitchClass.FSharp, PitchClass.GFlat );
+    PreviousTestImpl( PitchClass.GSharp, PitchClass.G );
+    PreviousTestImpl( PitchClass.AFlat, PitchClass.G );
+    PreviousTestImpl( PitchClass.A, PitchClass.GSharp, PitchClass.AFlat );
+    PreviousTestImpl( PitchClass.ASharp, PitchClass.A );
+    PreviousTestImpl( PitchClass.BFlat, PitchClass.A );
+    PreviousTestImpl( PitchClass.B, PitchClass.ASharp, PitchClass.BFlat );
+
+    PreviousTestImpl( PitchClass.Create( NoteName.B, Accidental.DoubleFlat ), PitchClass.GSharp, PitchClass.AFlat );
+    PreviousTestImpl( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), PitchClass.A );
+  }
+
+  [Fact]
+  public void SubtractTest()
+  {
+    SubtractTestImpl( PitchClass.B, 1, PitchClass.BFlat, PitchClass.ASharp );
+    SubtractTestImpl( PitchClass.B, 2, PitchClass.A );
+    SubtractTestImpl( PitchClass.B, 3, PitchClass.GSharp, PitchClass.AFlat );
+    SubtractTestImpl( PitchClass.B, 4, PitchClass.G );
+    SubtractTestImpl( PitchClass.B, 5, PitchClass.FSharp, PitchClass.GFlat );
+    SubtractTestImpl( PitchClass.B, 6, PitchClass.F );
+    SubtractTestImpl( PitchClass.B, 7, PitchClass.E );
+    SubtractTestImpl( PitchClass.B, 8, PitchClass.DSharp, PitchClass.EFlat );
+    SubtractTestImpl( PitchClass.B, 9, PitchClass.D );
+    SubtractTestImpl( PitchClass.B, 10, PitchClass.CSharp, PitchClass.DFlat );
+    SubtractTestImpl( PitchClass.B, 11, PitchClass.C );
+    SubtractTestImpl( PitchClass.B, 12, PitchClass.B );
+  }
+
+  [Fact]
+  public void ToStringTest()
+  {
+    Assert.Equal( "Cbb", PitchClass.Create( NoteName.C, Accidental.DoubleFlat ).ToString() );
+    Assert.Equal( "Cb", PitchClass.Create( NoteName.C, Accidental.Flat ).ToString() );
+    Assert.Equal( "C", PitchClass.Create( NoteName.C ).ToString() );
+    Assert.Equal( "C#", PitchClass.Create( NoteName.C, Accidental.Sharp ).ToString() );
+    Assert.Equal( "C##", PitchClass.Create( NoteName.C, Accidental.DoubleSharp ).ToString() );
+  }
+
+  [Fact]
+  public void TryParseRejectsInvalidStringsTest()
+  {
+    Assert.False( PitchClass.TryParse( null, out _ ) );
+    Assert.False( PitchClass.TryParse( "", out _ ) );
+    Assert.False( PitchClass.TryParse( "J", out _ ) );
+    Assert.False( PitchClass.TryParse( "C$", out _ ) );
+  }
+
+  [Fact]
+  public void TryParseTest()
+  {
+    TryParseTestImpl( "C", PitchClass.C );
+    TryParseTestImpl( "C#", PitchClass.CSharp );
+    TryParseTestImpl( "C##", PitchClass.D );
+    TryParseTestImpl( "Cb", PitchClass.B );
+    TryParseTestImpl( "Cbb", PitchClass.BFlat );
+    TryParseTestImpl( "B#", PitchClass.C );
+    TryParseTestImpl( "B##", PitchClass.CSharp );
+    TryParseTestImpl( "Bb", PitchClass.BFlat );
+    TryParseTestImpl( "Bbb", PitchClass.A );
   }
 
 #endregion

@@ -30,6 +30,8 @@ namespace Bach.Cli;
 
 internal sealed class DisplayScaleCommand: BachCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public DisplayScaleCommand()
   {
@@ -41,8 +43,16 @@ internal sealed class DisplayScaleCommand: BachCommand
     Command = command;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public override Command Command { get; }
+
+#endregion
+
+#region Implementation
 
   private static void Execute(
     string scaleName,
@@ -61,4 +71,6 @@ internal sealed class DisplayScaleCommand: BachCommand
 
     WriteLine();
   }
+
+#endregion
 }
