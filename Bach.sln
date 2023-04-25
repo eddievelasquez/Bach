@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bach.Cli", "src\Bach.Cli\Ba
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8AFA9D67-FBA4-4F3E-A750-712C0D85C26D}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		GitVersion.yml = GitVersion.yml
 		LICENSE = LICENSE
 		README.md = README.md

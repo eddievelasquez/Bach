@@ -34,44 +34,28 @@ public sealed class ChordTest
 #region Public Methods
 
   [Fact]
-  public void StringConstructorTest()
+  public void ChordIsExtendedTest()
   {
-    var target = new Chord( PitchClass.C, "Minor" );
-    Assert.Equal( PitchClass.C, target.Root );
-    Assert.Equal( Registry.ChordFormulas["Minor"], target.Formula );
-    Assert.Equal( "Cm", target.Name );
-    Assert.Equal( PitchClassCollection.Parse( "C,Eb,G" ), target.PitchClasses );
-    Assert.Equal( target.Name, target.ToString() );
-  }
-
-  [Fact]
-  public void StringConstructorThrowsOnNullFormulaNameTest()
-  {
-    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (string) null ) );
-  }
-
-  [Fact]
-  public void StringConstructorThrowsOnEmptyFormulaNameTest()
-  {
-    Assert.Throws<ArgumentException>( () => new Chord( PitchClass.C, "" ) );
-  }
-
-  [Fact]
-  public void FormulaConstructorTest()
-  {
-    var formula = Registry.ChordFormulas["Minor"];
-    var target = new Chord( PitchClass.C, formula );
-    Assert.Equal( PitchClass.C, target.Root );
-    Assert.Equal( Registry.ChordFormulas["Minor"], target.Formula );
-    Assert.Equal( "Cm", target.Name );
-    Assert.Equal( PitchClassCollection.Parse( "C,Eb,G" ), target.PitchClasses );
-    Assert.Equal( target.Name, target.ToString() );
-  }
-
-  [Fact]
-  public void FormulaConstructorThrowsOnNullFormulaTest()
-  {
-    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (ChordFormula) null ) );
+    ChordIsExtended( PitchClass.C, "Major", false );
+    ChordIsExtended( PitchClass.C, "Major7", false );
+    ChordIsExtended( PitchClass.C, "Major9", true );
+    ChordIsExtended( PitchClass.C, "Major11", true );
+    ChordIsExtended( PitchClass.C, "Major13", true );
+    ChordIsExtended( PitchClass.C, "Minor", false );
+    ChordIsExtended( PitchClass.C, "Minor7", false );
+    ChordIsExtended( PitchClass.C, "Minor9", true );
+    ChordIsExtended( PitchClass.C, "Minor11", true );
+    ChordIsExtended( PitchClass.C, "Minor13", true );
+    ChordIsExtended( PitchClass.C, "Dominant7", false );
+    ChordIsExtended( PitchClass.C, "Dominant9", true );
+    ChordIsExtended( PitchClass.C, "Dominant11", true );
+    ChordIsExtended( PitchClass.C, "Dominant13", true );
+    ChordIsExtended( PitchClass.C, "SixNine", true );
+    ChordIsExtended( PitchClass.C, "AddNine", true );
+    ChordIsExtended( PitchClass.C, "Diminished", false );
+    ChordIsExtended( PitchClass.C, "Diminished7", false );
+    ChordIsExtended( PitchClass.C, "HalfDiminished", false );
+    ChordIsExtended( PitchClass.C, "Augmented", false );
   }
 
   [Fact]
@@ -100,28 +84,18 @@ public sealed class ChordTest
   }
 
   [Fact]
-  public void ChordIsExtendedTest()
+  public void EnumeratorTest()
   {
-    ChordIsExtended( PitchClass.C, "Major", false );
-    ChordIsExtended( PitchClass.C, "Major7", false );
-    ChordIsExtended( PitchClass.C, "Major9", true );
-    ChordIsExtended( PitchClass.C, "Major11", true );
-    ChordIsExtended( PitchClass.C, "Major13", true );
-    ChordIsExtended( PitchClass.C, "Minor", false );
-    ChordIsExtended( PitchClass.C, "Minor7", false );
-    ChordIsExtended( PitchClass.C, "Minor9", true );
-    ChordIsExtended( PitchClass.C, "Minor11", true );
-    ChordIsExtended( PitchClass.C, "Minor13", true );
-    ChordIsExtended( PitchClass.C, "Dominant7", false );
-    ChordIsExtended( PitchClass.C, "Dominant9", true );
-    ChordIsExtended( PitchClass.C, "Dominant11", true );
-    ChordIsExtended( PitchClass.C, "Dominant13", true );
-    ChordIsExtended( PitchClass.C, "SixNine", true );
-    ChordIsExtended( PitchClass.C, "AddNine", true );
-    ChordIsExtended( PitchClass.C, "Diminished", false );
-    ChordIsExtended( PitchClass.C, "Diminished7", false );
-    ChordIsExtended( PitchClass.C, "HalfDiminished", false );
-    ChordIsExtended( PitchClass.C, "Augmented", false );
+    var cMajor = new Chord( PitchClass.C, "Major" );
+    var enumerator = ( (IEnumerable) cMajor ).GetEnumerator();
+    Assert.NotNull( enumerator );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.C, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.E, enumerator.Current );
+    Assert.True( enumerator.MoveNext() );
+    Assert.Equal( PitchClass.G, enumerator.Current );
+    Assert.False( enumerator.MoveNext() );
   }
 
   [Fact]
@@ -141,33 +115,9 @@ public sealed class ChordTest
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var x = new Chord( PitchClass.C, "Major" );
-    var y = new Chord( PitchClass.C, "Major" );
-    var z = new Chord( PitchClass.C, "Major" );
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = new Chord( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var actual = new Chord( PitchClass.C, "Major" );
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
     Assert.False( actual.Equals( int.MinValue ) );
   }
 
@@ -179,17 +129,28 @@ public sealed class ChordTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var actual = new Chord( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = new Chord( PitchClass.C, "Major" );
     Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void FormulaConstructorTest()
+  {
+    var formula = Registry.ChordFormulas["Minor"];
+    var target = new Chord( PitchClass.C, formula );
+    Assert.Equal( PitchClass.C, target.Root );
+    Assert.Equal( Registry.ChordFormulas["Minor"], target.Formula );
+    Assert.Equal( "Cm", target.Name );
+    Assert.Equal( PitchClassCollection.Parse( "C,Eb,G" ), target.PitchClasses );
+    Assert.Equal( target.Name, target.ToString() );
+  }
+
+  [Fact]
+  public void FormulaConstructorThrowsOnNullFormulaTest()
+  {
+    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (ChordFormula) null ) );
   }
 
   [Fact]
@@ -219,18 +180,57 @@ public sealed class ChordTest
   }
 
   [Fact]
-  public void EnumeratorTest()
+  public void StringConstructorTest()
   {
-    var cMajor = new Chord( PitchClass.C, "Major" );
-    var enumerator = ( (IEnumerable) cMajor ).GetEnumerator();
-    Assert.NotNull( enumerator );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.C, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.E, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.G, enumerator.Current );
-    Assert.False( enumerator.MoveNext() );
+    var target = new Chord( PitchClass.C, "Minor" );
+    Assert.Equal( PitchClass.C, target.Root );
+    Assert.Equal( Registry.ChordFormulas["Minor"], target.Formula );
+    Assert.Equal( "Cm", target.Name );
+    Assert.Equal( PitchClassCollection.Parse( "C,Eb,G" ), target.PitchClasses );
+    Assert.Equal( target.Name, target.ToString() );
+  }
+
+  [Fact]
+  public void StringConstructorThrowsOnEmptyFormulaNameTest()
+  {
+    Assert.Throws<ArgumentException>( () => new Chord( PitchClass.C, "" ) );
+  }
+
+  [Fact]
+  public void StringConstructorThrowsOnNullFormulaNameTest()
+  {
+    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (string) null ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var x = new Chord( PitchClass.C, "Major" );
+    var y = new Chord( PitchClass.C, "Major" );
+    var z = new Chord( PitchClass.C, "Major" );
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var actual = new Chord( PitchClass.C, "Major" );
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var actual = new Chord( PitchClass.C, "Major" );
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

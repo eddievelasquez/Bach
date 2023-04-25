@@ -30,18 +30,28 @@ namespace Bach.Model.Instruments;
 /// <summary>The base class for an instrument.</summary>
 public abstract class Instrument: IEquatable<Instrument>
 {
+#region Constructors
+
   protected Instrument( InstrumentDefinition definition )
   {
     Requires.NotNull( definition );
     Definition = definition;
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the instrument's definition.</summary>
   /// <value>The definition.</value>
   public InstrumentDefinition Definition { get; }
 
+#endregion
+
+#region Public Methods
+
   /// <inheritdoc />
-  public bool Equals( Instrument other )
+  public bool Equals( Instrument? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -52,7 +62,7 @@ public abstract class Instrument: IEquatable<Instrument>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -67,4 +77,6 @@ public abstract class Instrument: IEquatable<Instrument>
   {
     return Definition.GetHashCode();
   }
+
+#endregion
 }

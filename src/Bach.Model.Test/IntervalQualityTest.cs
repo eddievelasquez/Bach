@@ -32,6 +32,22 @@ public sealed class IntervalQualityTest
 #region Public Methods
 
   [Fact]
+  public void AdditionOperatorTest()
+  {
+    Assert.Equal( IntervalQuality.Diminished, IntervalQuality.Diminished + 0 );
+    Assert.Equal( IntervalQuality.Minor, IntervalQuality.Diminished + 1 );
+    Assert.Equal( IntervalQuality.Perfect, IntervalQuality.Minor + 1 );
+    Assert.Equal( IntervalQuality.Major, IntervalQuality.Perfect + 1 );
+    Assert.Equal( IntervalQuality.Augmented, IntervalQuality.Major + 1 );
+  }
+
+  [Fact]
+  public void AdditionOperatorThrowsWhenOutOfRangeTest()
+  {
+    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Augmented + 1 );
+  }
+
+  [Fact]
   public void AddTest()
   {
     Assert.Equal( IntervalQuality.Diminished, IntervalQuality.Diminished.Add( 0 ) );
@@ -49,53 +65,18 @@ public sealed class IntervalQualityTest
   }
 
   [Fact]
-  public void AdditionOperatorTest()
+  public void CompareToContractTest()
   {
-    Assert.Equal( IntervalQuality.Diminished, IntervalQuality.Diminished + 0 );
-    Assert.Equal( IntervalQuality.Minor, IntervalQuality.Diminished + 1 );
-    Assert.Equal( IntervalQuality.Perfect, IntervalQuality.Minor + 1 );
-    Assert.Equal( IntervalQuality.Major, IntervalQuality.Perfect + 1 );
-    Assert.Equal( IntervalQuality.Augmented, IntervalQuality.Major + 1 );
-  }
+    object x = IntervalQuality.Diminished;
+    object y = new IntervalQuality();
+    object z = (IntervalQuality) 0;
 
-  [Fact]
-  public void AdditionOperatorThrowsWhenOutOfRangeTest()
-  {
-    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Augmented + 1 );
-  }
-
-  [Fact]
-  public void IncrementOperatorTest()
-  {
-    var quality = IntervalQuality.Diminished;
-    Assert.Equal( IntervalQuality.Minor, ++quality );
-    Assert.Equal( IntervalQuality.Perfect, ++quality );
-    Assert.Equal( IntervalQuality.Major, ++quality );
-    Assert.Equal( IntervalQuality.Augmented, ++quality );
-  }
-
-  [Fact]
-  public void IncrementOperatorThrowsWhenOutOfRangeTest()
-  {
-    var quality = IntervalQuality.Augmented;
-    Assert.Throws<ArgumentOutOfRangeException>( () => ++quality );
-  }
-
-  [Fact]
-  public void SubtractTest()
-  {
-    Assert.Equal( IntervalQuality.Augmented, IntervalQuality.Augmented.Subtract( 0 ) );
-    Assert.Equal( IntervalQuality.Major, IntervalQuality.Augmented.Subtract( 1 ) );
-    Assert.Equal( IntervalQuality.Perfect, IntervalQuality.Major.Subtract( 1 ) );
-    Assert.Equal( IntervalQuality.Minor, IntervalQuality.Perfect.Subtract( 1 ) );
-    Assert.Equal( IntervalQuality.Diminished, IntervalQuality.Minor.Subtract( 1 ) );
-  }
-
-  [Fact]
-  public void SubtractThrowsWhenOutOfRangeTest()
-  {
-    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Diminished.Subtract( 1 ) );
-    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Augmented.Subtract( -1 ) );
+    Assert.Equal( 0, ( (IComparable) x ).CompareTo( x ) ); // Reflexive
+    Assert.Equal( 0, ( (IComparable) x ).CompareTo( y ) ); // Symmetric
+    Assert.Equal( 0, ( (IComparable) y ).CompareTo( x ) );
+    Assert.Equal( 0, ( (IComparable) y ).CompareTo( z ) ); // Transitive
+    Assert.Equal( 0, ( (IComparable) x ).CompareTo( z ) );
+    Assert.NotEqual( 0, ( (IComparable) x ).CompareTo( null ) ); // Never equal to null
   }
 
   [Fact]
@@ -116,19 +97,101 @@ public sealed class IntervalQualityTest
   }
 
   [Fact]
-  public void SubtractOperatorTest()
+  public void EqualsContractTest()
   {
-    Assert.Equal( IntervalQuality.Augmented, IntervalQuality.Augmented - 0 );
-    Assert.Equal( IntervalQuality.Major, IntervalQuality.Augmented - 1 );
-    Assert.Equal( IntervalQuality.Perfect, IntervalQuality.Major - 1 );
-    Assert.Equal( IntervalQuality.Minor, IntervalQuality.Perfect - 1 );
-    Assert.Equal( IntervalQuality.Diminished, IntervalQuality.Minor - 1 );
+    object x = IntervalQuality.Diminished;
+    object y = new IntervalQuality();
+    object z = (IntervalQuality) 0;
+
+    // ReSharper disable once EqualExpressionComparison
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
   }
 
   [Fact]
-  public void SubtractOperatorThrowsWhenOutOfRangeTest()
+  public void EqualsFailsWithDifferentTypeTest()
   {
-    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Diminished - 1 );
+    object actual = IntervalQuality.Diminished;
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = IntervalQuality.Diminished;
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    var actual = IntervalQuality.Diminished;
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    var actual = IntervalQuality.Diminished;
+    var expected = (IntervalQuality) 0;
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void IncrementOperatorTest()
+  {
+    var quality = IntervalQuality.Diminished;
+    Assert.Equal( IntervalQuality.Minor, ++quality );
+    Assert.Equal( IntervalQuality.Perfect, ++quality );
+    Assert.Equal( IntervalQuality.Major, ++quality );
+    Assert.Equal( IntervalQuality.Augmented, ++quality );
+  }
+
+  [Fact]
+  public void IncrementOperatorThrowsWhenOutOfRangeTest()
+  {
+    var quality = IntervalQuality.Augmented;
+    Assert.Throws<ArgumentOutOfRangeException>( () => ++quality );
+  }
+
+  [Fact]
+  public void LogicalOperatorsTest()
+  {
+    Assert.True( IntervalQuality.Diminished == (IntervalQuality) 0 );
+    Assert.True( IntervalQuality.Perfect != IntervalQuality.Major );
+
+    Assert.True( IntervalQuality.Diminished < IntervalQuality.Minor );
+    Assert.True( IntervalQuality.Diminished <= IntervalQuality.Minor );
+    Assert.True( IntervalQuality.Minor < IntervalQuality.Perfect );
+    Assert.True( IntervalQuality.Minor <= IntervalQuality.Perfect );
+    Assert.True( IntervalQuality.Perfect < IntervalQuality.Major );
+    Assert.True( IntervalQuality.Perfect <= IntervalQuality.Major );
+    Assert.True( IntervalQuality.Major < IntervalQuality.Augmented );
+    Assert.True( IntervalQuality.Major <= IntervalQuality.Augmented );
+
+    Assert.True( IntervalQuality.Augmented > IntervalQuality.Major );
+    Assert.True( IntervalQuality.Augmented >= IntervalQuality.Major );
+    Assert.True( IntervalQuality.Major > IntervalQuality.Perfect );
+    Assert.True( IntervalQuality.Major >= IntervalQuality.Perfect );
+    Assert.True( IntervalQuality.Perfect > IntervalQuality.Minor );
+    Assert.True( IntervalQuality.Perfect >= IntervalQuality.Minor );
+    Assert.True( IntervalQuality.Minor > IntervalQuality.Diminished );
+    Assert.True( IntervalQuality.Minor >= IntervalQuality.Diminished );
+  }
+
+  [Fact]
+  public void LongNameTest()
+  {
+    Assert.Equal( "Diminished", IntervalQuality.Diminished.LongName );
+    Assert.Equal( "Minor", IntervalQuality.Minor.LongName );
+    Assert.Equal( "Perfect", IntervalQuality.Perfect.LongName );
+    Assert.Equal( "Major", IntervalQuality.Major.LongName );
+    Assert.Equal( "Augmented", IntervalQuality.Augmented.LongName );
   }
 
   [Fact]
@@ -158,13 +221,36 @@ public sealed class IntervalQualityTest
   }
 
   [Fact]
-  public void LongNameTest()
+  public void SubtractOperatorTest()
   {
-    Assert.Equal( "Diminished", IntervalQuality.Diminished.LongName );
-    Assert.Equal( "Minor", IntervalQuality.Minor.LongName );
-    Assert.Equal( "Perfect", IntervalQuality.Perfect.LongName );
-    Assert.Equal( "Major", IntervalQuality.Major.LongName );
-    Assert.Equal( "Augmented", IntervalQuality.Augmented.LongName );
+    Assert.Equal( IntervalQuality.Augmented, IntervalQuality.Augmented - 0 );
+    Assert.Equal( IntervalQuality.Major, IntervalQuality.Augmented - 1 );
+    Assert.Equal( IntervalQuality.Perfect, IntervalQuality.Major - 1 );
+    Assert.Equal( IntervalQuality.Minor, IntervalQuality.Perfect - 1 );
+    Assert.Equal( IntervalQuality.Diminished, IntervalQuality.Minor - 1 );
+  }
+
+  [Fact]
+  public void SubtractOperatorThrowsWhenOutOfRangeTest()
+  {
+    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Diminished - 1 );
+  }
+
+  [Fact]
+  public void SubtractTest()
+  {
+    Assert.Equal( IntervalQuality.Augmented, IntervalQuality.Augmented.Subtract( 0 ) );
+    Assert.Equal( IntervalQuality.Major, IntervalQuality.Augmented.Subtract( 1 ) );
+    Assert.Equal( IntervalQuality.Perfect, IntervalQuality.Major.Subtract( 1 ) );
+    Assert.Equal( IntervalQuality.Minor, IntervalQuality.Perfect.Subtract( 1 ) );
+    Assert.Equal( IntervalQuality.Diminished, IntervalQuality.Minor.Subtract( 1 ) );
+  }
+
+  [Fact]
+  public void SubtractThrowsWhenOutOfRangeTest()
+  {
+    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Diminished.Subtract( 1 ) );
+    Assert.Throws<ArgumentOutOfRangeException>( () => IntervalQuality.Augmented.Subtract( -1 ) );
   }
 
   [Fact]
@@ -175,98 +261,6 @@ public sealed class IntervalQualityTest
     Assert.Equal( "Perfect", IntervalQuality.Perfect.ToString() );
     Assert.Equal( "Major", IntervalQuality.Major.ToString() );
     Assert.Equal( "Augmented", IntervalQuality.Augmented.ToString() );
-  }
-
-  [Fact]
-  public void EqualsContractTest()
-  {
-    object x = IntervalQuality.Diminished;
-    object y = new IntervalQuality();
-    object z = (IntervalQuality) 0;
-
-    // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var x = IntervalQuality.Diminished;
-    var y = new IntervalQuality();
-    var z = (IntervalQuality) 0;
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    object actual = IntervalQuality.Diminished;
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var actual = IntervalQuality.Diminished;
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = IntervalQuality.Diminished;
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var actual = IntervalQuality.Diminished;
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    var actual = IntervalQuality.Diminished;
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    var actual = IntervalQuality.Diminished;
-    var expected = (IntervalQuality) 0;
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
-  }
-
-  [Fact]
-  public void CompareToContractTest()
-  {
-    object x = IntervalQuality.Diminished;
-    object y = new IntervalQuality();
-    object z = (IntervalQuality) 0;
-
-    Assert.Equal( 0, ( (IComparable) x ).CompareTo( x ) ); // Reflexive
-    Assert.Equal( 0, ( (IComparable) x ).CompareTo( y ) ); // Symmetric
-    Assert.Equal( 0, ( (IComparable) y ).CompareTo( x ) );
-    Assert.Equal( 0, ( (IComparable) y ).CompareTo( z ) ); // Transitive
-    Assert.Equal( 0, ( (IComparable) x ).CompareTo( z ) );
-    Assert.NotEqual( 0, ( (IComparable) x ).CompareTo( null ) ); // Never equal to null
   }
 
   [Fact]
@@ -285,28 +279,34 @@ public sealed class IntervalQualityTest
   }
 
   [Fact]
-  public void LogicalOperatorsTest()
+  public void TypeSafeEqualsContractTest()
   {
-    Assert.True( IntervalQuality.Diminished == (IntervalQuality) 0 );
-    Assert.True( IntervalQuality.Perfect != IntervalQuality.Major );
+    var x = IntervalQuality.Diminished;
+    var y = new IntervalQuality();
+    var z = (IntervalQuality) 0;
 
-    Assert.True( IntervalQuality.Diminished < IntervalQuality.Minor );
-    Assert.True( IntervalQuality.Diminished <= IntervalQuality.Minor );
-    Assert.True( IntervalQuality.Minor < IntervalQuality.Perfect );
-    Assert.True( IntervalQuality.Minor <= IntervalQuality.Perfect );
-    Assert.True( IntervalQuality.Perfect < IntervalQuality.Major );
-    Assert.True( IntervalQuality.Perfect <= IntervalQuality.Major );
-    Assert.True( IntervalQuality.Major < IntervalQuality.Augmented );
-    Assert.True( IntervalQuality.Major <= IntervalQuality.Augmented );
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
 
-    Assert.True( IntervalQuality.Augmented > IntervalQuality.Major );
-    Assert.True( IntervalQuality.Augmented >= IntervalQuality.Major );
-    Assert.True( IntervalQuality.Major > IntervalQuality.Perfect );
-    Assert.True( IntervalQuality.Major >= IntervalQuality.Perfect );
-    Assert.True( IntervalQuality.Perfect > IntervalQuality.Minor );
-    Assert.True( IntervalQuality.Perfect >= IntervalQuality.Minor );
-    Assert.True( IntervalQuality.Minor > IntervalQuality.Diminished );
-    Assert.True( IntervalQuality.Minor >= IntervalQuality.Diminished );
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var actual = IntervalQuality.Diminished;
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var actual = IntervalQuality.Diminished;
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

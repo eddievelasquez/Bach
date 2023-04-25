@@ -48,6 +48,48 @@ public sealed class InstrumentDefinitionTest
   }
 
   [Fact]
+  public void EqualsFailsWithDifferentTypeTest()
+  {
+    object actual = Registry.StringedInstrumentDefinitions["guitar"];
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void EqualsFailsWithNullTest()
+  {
+    object actual = Registry.StringedInstrumentDefinitions["guitar"];
+    Assert.False( actual.Equals( null ) );
+  }
+
+  [Fact]
+  public void EqualsSucceedsWithSameObjectTest()
+  {
+    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
+    Assert.True( actual.Equals( actual ) );
+  }
+
+  [Fact]
+  public void EqualsTest()
+  {
+    var builder = new StringedInstrumentDefinitionBuilder( "GuitarX", "GuitarX", 6 );
+    builder.AddTuning( "Standard", "Standard", PitchCollection.Parse( "E4,B3,G3,D3,A2,E2" ) );
+
+    object a = builder.Build();
+    object b = Registry.StringedInstrumentDefinitions["guitar"];
+    Assert.False( a.Equals( b ) );
+    Assert.False( b.Equals( a ) );
+  }
+
+  [Fact]
+  public void GetHashcodeTest()
+  {
+    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition expected = Registry.StringedInstrumentDefinitions["guitar"];
+    Assert.True( expected.Equals( actual ) );
+    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
   public void TypeSafeEqualsContractTest()
   {
     InstrumentDefinition x = Registry.StringedInstrumentDefinitions["guitar"];
@@ -63,13 +105,6 @@ public sealed class InstrumentDefinitionTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
-  {
-    object actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
@@ -79,45 +114,10 @@ public sealed class InstrumentDefinitionTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
-  {
-    object actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
     Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
-  {
-    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.True( actual.Equals( actual ) );
-  }
-
-  [Fact]
-  public void GetHashcodeTest()
-  {
-    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
-    InstrumentDefinition expected = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
-  }
-
-  [Fact]
-  public void EqualsTest()
-  {
-    var builder = new StringedInstrumentDefinitionBuilder( "GuitarX", "GuitarX", 6 );
-    builder.AddTuning( "Standard", "Standard", PitchCollection.Parse( "E4,B3,G3,D3,A2,E2" ) );
-
-    object a = builder.Build();
-    object b = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.False( a.Equals( b ) );
-    Assert.False( b.Equals( a ) );
   }
 
 #endregion

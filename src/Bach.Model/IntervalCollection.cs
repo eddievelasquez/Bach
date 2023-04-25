@@ -34,7 +34,13 @@ public sealed class IntervalCollection
   : IReadOnlyList<Interval>,
     IEquatable<IEnumerable<Interval>>
 {
+#region Fields
+
   private readonly Interval[] _intervals;
+
+#endregion
+
+#region Constructors
 
   internal IntervalCollection( Interval[] intervals )
   {
@@ -45,14 +51,22 @@ public sealed class IntervalCollection
     _intervals = intervals;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public int Count => _intervals.Length;
 
   /// <inheritdoc />
   public Interval this[ int index ] => _intervals[index];
 
+#endregion
+
+#region Public Methods
+
   /// <inheritdoc />
-  public bool Equals( IEnumerable<Interval> other )
+  public bool Equals( IEnumerable<Interval>? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -60,6 +74,17 @@ public sealed class IntervalCollection
     }
 
     return other is not null && _intervals.SequenceEqual( other );
+  }
+
+  /// <inheritdoc />
+  public override bool Equals( object? obj )
+  {
+    if( ReferenceEquals( this, obj ) )
+    {
+      return true;
+    }
+
+    return obj is IntervalCollection other && Equals( other );
   }
 
   /// <inheritdoc />
@@ -75,17 +100,6 @@ public sealed class IntervalCollection
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-    if( ReferenceEquals( this, obj ) )
-    {
-      return true;
-    }
-
-    return obj is IntervalCollection other && Equals( other );
-  }
-
-  /// <inheritdoc />
   public override int GetHashCode()
   {
     var hash = new HashCode();
@@ -95,12 +109,6 @@ public sealed class IntervalCollection
     }
 
     return hash.ToHashCode();
-  }
-
-  /// <inheritdoc />
-  public override string ToString()
-  {
-    return string.Join( ",", _intervals );
   }
 
   /// <summary>
@@ -115,8 +123,16 @@ public sealed class IntervalCollection
   /// <returns>The index of the occurrence of <paramref name="interval" /> in the collection, if found; otherwise, -1.</returns>
   public int IndexOf(
     Interval interval,
-    IComparer<Interval> comparer = null )
+    IComparer<Interval>? comparer = null )
   {
     return Array.BinarySearch( _intervals, interval, comparer ?? Comparer<Interval>.Default );
   }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return string.Join( ",", _intervals );
+  }
+
+#endregion
 }

@@ -30,6 +30,8 @@ namespace Bach.Model;
 /// <summary>Provides common extensions.</summary>
 public static class Extensions
 {
+#region Public Methods
+
   /// <summary>Returns the intervals that separate the provided pitch classes.</summary>
   /// <param name="pitchClasses">The pitch classes.</param>
   /// <returns>An intervals iterator.</returns>
@@ -58,4 +60,6 @@ public static class Extensions
       yield return interval;
     } while( e.MoveNext() );
   }
+
+#endregion
 }

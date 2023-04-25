@@ -47,21 +47,6 @@ public sealed class StringedInstrumentDefinitionTest
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var x = Registry.StringedInstrumentDefinitions["guitar"];
-    var y = Registry.StringedInstrumentDefinitions["guitar"];
-    var z = Registry.StringedInstrumentDefinitions["guitar"];
-
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
-  }
-
-  [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = Registry.StringedInstrumentDefinitions["guitar"];
@@ -69,25 +54,9 @@ public sealed class StringedInstrumentDefinitionTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var actual = Registry.StringedInstrumentDefinitions["guitar"];
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
-  }
-
-  [Fact]
   public void EqualsFailsWithNullTest()
   {
     object actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.False( actual.Equals( null ) );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
-  {
-    var actual = Registry.StringedInstrumentDefinitions["guitar"];
     Assert.False( actual.Equals( null ) );
   }
 
@@ -105,6 +74,37 @@ public sealed class StringedInstrumentDefinitionTest
     var expected = Registry.StringedInstrumentDefinitions["guitar"];
     Assert.True( expected.Equals( actual ) );
     Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var x = Registry.StringedInstrumentDefinitions["guitar"];
+    var y = Registry.StringedInstrumentDefinitions["guitar"];
+    var z = Registry.StringedInstrumentDefinitions["guitar"];
+
+    Assert.True( x.Equals( x ) ); // Reflexive
+    Assert.True( x.Equals( y ) ); // Symmetric
+    Assert.True( y.Equals( x ) );
+    Assert.True( y.Equals( z ) ); // Transitive
+    Assert.True( x.Equals( z ) );
+    Assert.False( x.Equals( null ) ); // Never equal to null
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  {
+    var actual = Registry.StringedInstrumentDefinitions["guitar"];
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    Assert.False( actual.Equals( int.MinValue ) );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsFailsWithNullTest()
+  {
+    var actual = Registry.StringedInstrumentDefinitions["guitar"];
+    Assert.False( actual.Equals( null ) );
   }
 
 #endregion

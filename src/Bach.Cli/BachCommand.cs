@@ -31,7 +31,13 @@ namespace Bach.Cli;
 
 internal abstract class BachCommand
 {
+#region Properties
+
   public abstract Command Command { get; }
+
+#endregion
+
+#region Implementation
 
   protected static Argument<T> CreateArgument<T>(
     string name,
@@ -146,4 +152,6 @@ internal abstract class BachCommand
     WriteList( values );
     AnsiConsole.WriteLine();
   }
+
+#endregion
 }

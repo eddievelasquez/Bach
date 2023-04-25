@@ -29,8 +29,12 @@ namespace Bach.Model.Serialization;
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class PersistentStringedInstrument
 {
+#region Properties
+
   public string Id { get; set; } = null!;
   public string Name { get; set; } = null!;
   public int StringCount { get; set; }
   public List<PersistentTuning> Tunings { get; set; } = null!;
+
+#endregion
 }

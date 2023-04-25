@@ -25,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Bach.Model.Internal;
@@ -36,7 +37,13 @@ public sealed class PitchCollection
   : IReadOnlyList<Pitch>,
     IEquatable<IEnumerable<Pitch>>
 {
+#region Fields
+
   private readonly Pitch[] _pitches;
+
+#endregion
+
+#region Constructors
 
   public PitchCollection( Pitch[] notes )
   {
@@ -50,14 +57,22 @@ public sealed class PitchCollection
     _pitches = notes.ToArray();
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public int Count => _pitches.Length;
 
   /// <inheritdoc />
   public Pitch this[ int index ] => _pitches[index];
 
+#endregion
+
+#region Public Methods
+
   /// <inheritdoc />
-  public bool Equals( IEnumerable<Pitch> other )
+  public bool Equals( IEnumerable<Pitch>? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -68,9 +83,14 @@ public sealed class PitchCollection
   }
 
   /// <inheritdoc />
-  IEnumerator IEnumerable.GetEnumerator()
+  public override bool Equals( object? obj )
   {
-    return GetEnumerator();
+    if( ReferenceEquals( obj, this ) )
+    {
+      return true;
+    }
+
+    return obj is PitchCollection other && Equals( other );
   }
 
   /// <inheritdoc />
@@ -80,20 +100,9 @@ public sealed class PitchCollection
   }
 
   /// <inheritdoc />
-  public override string ToString()
+  IEnumerator IEnumerable.GetEnumerator()
   {
-    return ToString( this );
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-    if( ReferenceEquals( obj, this ) )
-    {
-      return true;
-    }
-
-    return obj is PitchCollection other && Equals( other );
+    return GetEnumerator();
   }
 
   /// <inheritdoc />
@@ -106,36 +115,6 @@ public sealed class PitchCollection
     }
 
     return hash.ToHashCode();
-  }
-
-  /// <summary>Attempts to parse a pitch collection from the given string.</summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="pitches">[out] The pitch collection.</param>
-  /// <returns>True if it succeeds, false if it fails.</returns>
-  public static bool TryParse(
-    string value,
-    out PitchCollection pitches )
-  {
-    if( string.IsNullOrEmpty( value ) )
-    {
-      pitches = null;
-      return false;
-    }
-
-    var tmp = new List<Pitch>();
-    foreach( var s in value.Split( ',' ) )
-    {
-      if( !Pitch.TryParse( s, out var note ) )
-      {
-        pitches = null;
-        return false;
-      }
-
-      tmp.Add( note );
-    }
-
-    pitches = new PitchCollection( tmp );
-    return true;
   }
 
   /// <summary>Parses the provided string.</summary>
@@ -154,6 +133,12 @@ public sealed class PitchCollection
     }
 
     return notes;
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return ToString( this );
   }
 
   /// <summary>Converts a sequence of pitches into a string representation.</summary>
@@ -182,4 +167,36 @@ public sealed class PitchCollection
 
     return buf.ToString();
   }
+
+  /// <summary>Attempts to parse a pitch collection from the given string.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="pitches">[out] The pitch collection.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    string value,
+    [NotNullWhen( true )] out PitchCollection? pitches )
+  {
+    if( string.IsNullOrEmpty( value ) )
+    {
+      pitches = null;
+      return false;
+    }
+
+    var tmp = new List<Pitch>();
+    foreach( var s in value.Split( ',' ) )
+    {
+      if( !Pitch.TryParse( s, out var note ) )
+      {
+        pitches = null;
+        return false;
+      }
+
+      tmp.Add( note );
+    }
+
+    pitches = new PitchCollection( tmp );
+    return true;
+  }
+
+#endregion
 }

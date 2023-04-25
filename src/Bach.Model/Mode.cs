@@ -36,6 +36,8 @@ public sealed class Mode
   : IEquatable<Mode>,
     IEnumerable<PitchClass>
 {
+#region Constructors
+
   /// <summary>Constructor.</summary>
   /// <param name="scale">The scale.</param>
   /// <param name="formula">The mode formula.</param>
@@ -60,6 +62,10 @@ public sealed class Mode
       = new PitchClassCollection( scale.Ascending.Skip( Formula.Tonic - 1 ).Take( scale.PitchClasses.Count ) );
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the mode's pitchClasses.</summary>
   /// <value>The pitchClasses.</value>
   public PitchClassCollection PitchClasses { get; }
@@ -76,10 +82,35 @@ public sealed class Mode
   /// <value>The formula.</value>
   public ModeFormula Formula { get; }
 
+#endregion
+
+#region Public Methods
+
   /// <inheritdoc />
-  IEnumerator IEnumerable.GetEnumerator()
+  public bool Equals( Mode? other )
   {
-    return GetEnumerator();
+    if( ReferenceEquals( other, this ) )
+    {
+      return true;
+    }
+
+    if( other is null )
+    {
+      return false;
+    }
+
+    return Scale.Equals( other.Scale ) && Formula.Equals( other.Formula );
+  }
+
+  /// <inheritdoc />
+  public override bool Equals( object? obj )
+  {
+    if( ReferenceEquals( obj, this ) )
+    {
+      return true;
+    }
+
+    return obj is Mode other && Equals( other );
   }
 
   /// <inheritdoc />
@@ -98,30 +129,9 @@ public sealed class Mode
   }
 
   /// <inheritdoc />
-  public bool Equals( Mode other )
+  IEnumerator IEnumerable.GetEnumerator()
   {
-    if( ReferenceEquals( other, this ) )
-    {
-      return true;
-    }
-
-    if( other is null )
-    {
-      return false;
-    }
-
-    return Scale.Equals( other.Scale ) && Formula.Equals( other.Formula );
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-    if( ReferenceEquals( obj, this ) )
-    {
-      return true;
-    }
-
-    return obj is Mode other && Equals( other );
+    return GetEnumerator();
   }
 
   /// <inheritdoc />
@@ -135,4 +145,6 @@ public sealed class Mode
   {
     return string.Join( ",", PitchClasses );
   }
+
+#endregion
 }

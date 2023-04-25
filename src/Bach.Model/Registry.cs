@@ -24,6 +24,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -40,6 +41,8 @@ namespace Bach.Model;
 /// </summary>
 public static class Registry
 {
+#region Nested Types
+
   /// <summary>
   ///   The JSON Deserializer for System.Text.Json doesn't support System.Version as
   ///   of version 3.0...
@@ -47,6 +50,8 @@ public static class Registry
   /// <seealso cref="JsonConverter{Version}" />
   private sealed class VersionParser: JsonConverter<Version>
   {
+#region Public Methods
+
     /// <inheritdoc />
     public override Version Read(
       ref Utf8JsonReader reader,
@@ -67,10 +72,23 @@ public static class Registry
       // Unused for now.
       throw new NotImplementedException();
     }
+
+#endregion
   }
+
+#endregion
+
+#region Constants
 
   private const string LibraryFileName = "Bach.Model.Library.json";
 
+#endregion
+
+#region Constructors
+
+  [SuppressMessage( "Blocker Code Smell",
+                    "S3877:Exceptions should not be thrown from unexpected methods",
+                    Justification = "Must abort if the library cannot be loaded" )]
   static Registry()
   {
     // Load the library from the JSON file in the same directory as
@@ -88,6 +106,11 @@ public static class Registry
     options.Converters.Add( new VersionParser() );
 
     var library = JsonSerializer.Deserialize<Library>( s, options );
+    if( library is null )
+    {
+      // NOTE: Throwing in a static ctor will cause the application to terminate
+      throw new InvalidOperationException( $"Could not load the library from {path}" );
+    }
 
     // Load data
     ScaleFormulas = new NamedObjectCollection<ScaleFormula>();
@@ -123,6 +146,10 @@ public static class Registry
     }
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the collection of scale formulas.</summary>
   /// <value>The scale formulas.</value>
   public static NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
@@ -134,4 +161,6 @@ public static class Registry
   /// <summary>Gets the collection of stringed instrument definitions.</summary>
   /// <value>The stringed instrument definitions.</value>
   public static NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
+
+#endregion
 }

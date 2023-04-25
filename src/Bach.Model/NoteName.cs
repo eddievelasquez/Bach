@@ -36,6 +36,8 @@ public readonly struct NoteName
   : IEquatable<NoteName>,
     IComparable<NoteName>
 {
+#region Constants
+
   private const int NoteNameCount = 7;
   public static readonly NoteName C = new( 0 );
   public static readonly NoteName D = new( 1 );
@@ -48,12 +50,34 @@ public readonly struct NoteName
   // ReSharper disable once StringLiteralTypo
   private static readonly string s_names = "CDEFGAB";
 
+#endregion
+
+#region Fields
+
   private readonly int _value;
+
+#endregion
+
+#region Constructors
 
   private NoteName( int value )
   {
     Requires.Between( value, 0, NoteNameCount - 1 );
     _value = value;
+  }
+
+#endregion
+
+#region Public Methods
+
+  /// <summary>Adds a number of steps to a note name.</summary>
+  /// <param name="steps">The number of steps to add.</param>
+  /// <returns>A NoteName.</returns>
+  [Pure]
+  public NoteName Add( int steps )
+  {
+    var result = (NoteName) ArrayExtensions.WrapIndex( NoteNameCount, _value + steps );
+    return result;
   }
 
   /// <inheritdoc />
@@ -69,7 +93,7 @@ public readonly struct NoteName
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     return obj is NoteName other && Equals( other );
   }
@@ -80,19 +104,21 @@ public readonly struct NoteName
     return _value;
   }
 
-  /// <inheritdoc />
-  public override string ToString()
+  /// <summary>Parses the provided string.</summary>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a NoteName.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  /// <param name="value">The value to parse.</param>
+  /// <returns>A PitchClass.</returns>
+  public static NoteName Parse( string value )
   {
-    return s_names[_value].ToString();
-  }
+    Requires.NotNullOrEmpty( value );
 
-  /// <summary>Adds a number of steps to a note name.</summary>
-  /// <param name="steps">The number of steps to add.</param>
-  /// <returns>A NoteName.</returns>
-  [Pure]
-  public NoteName Add( int steps )
-  {
-    var result = (NoteName) ArrayExtensions.WrapIndex( NoteNameCount, _value + steps );
+    if( !TryParse( value, out var result ) )
+    {
+      throw new FormatException( $"{value} is not a valid note name" );
+    }
+
     return result;
   }
 
@@ -112,6 +138,12 @@ public readonly struct NoteName
   public int Subtract( NoteName name )
   {
     return (int) Add( -(int) name );
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return s_names[_value].ToString();
   }
 
   /// <summary>Attempts to parse a NoteName from the given string.</summary>
@@ -139,23 +171,9 @@ public readonly struct NoteName
     return true;
   }
 
-  /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a NoteName.</exception>
-  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
-  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>A PitchClass.</returns>
-  public static NoteName Parse( string value )
-  {
-    Requires.NotNullOrEmpty( value );
+#endregion
 
-    if( !TryParse( value, out var result ) )
-    {
-      throw new FormatException( $"{value} is not a valid note name" );
-    }
-
-    return result;
-  }
+#region Operators
 
   /// <summary>Explicit cast that converts the given NoteName to an int.</summary>
   /// <param name="noteName">The note name.</param>
@@ -287,4 +305,6 @@ public readonly struct NoteName
   {
     return noteName.Subtract( 1 );
   }
+
+#endregion
 }

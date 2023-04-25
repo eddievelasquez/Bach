@@ -28,6 +28,8 @@ namespace Bach.Cli;
 
 internal sealed class BachRootCommand: RootCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public BachRootCommand()
     : base( "Bach" )
@@ -40,9 +42,15 @@ internal sealed class BachRootCommand: RootCommand
     Add<DisplayNotesCommand>();
   }
 
+#endregion
+
+#region Implementation
+
   private void Add<T>()
     where T: BachCommand, new()
   {
     Add( new T().Command );
   }
+
+#endregion
 }

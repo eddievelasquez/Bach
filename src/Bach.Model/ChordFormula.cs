@@ -29,6 +29,8 @@ namespace Bach.Model;
 /// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
 public sealed class ChordFormula: Formula
 {
+#region Constructors
+
   /// <summary>Constructor.</summary>
   /// <param name="id">The language-neutral id of the chord.</param>
   /// <param name="name">The localizable name of the chord.</param>
@@ -40,7 +42,7 @@ public sealed class ChordFormula: Formula
   public ChordFormula(
     string id,
     string name,
-    string symbol,
+    string? symbol,
     params Interval[] intervals )
     : base( id, name, intervals )
   {
@@ -61,13 +63,19 @@ public sealed class ChordFormula: Formula
   public ChordFormula(
     string id,
     string name,
-    string symbol,
+    string? symbol,
     string formula )
     : this( id, name, symbol, ParseIntervals( formula ) )
   {
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the symbol for the chord.</summary>
   /// <value>The symbol.</value>
   public string Symbol { get; }
+
+#endregion
 }

@@ -32,16 +32,30 @@ namespace Bach.Model.Instruments;
 /// <summary>Creates stringed instrument definitions.</summary>
 public sealed class StringedInstrumentDefinitionBuilder
 {
+#region Nested Types
+
   private struct TuningInfo
   {
+#region Properties
+
     public string Id { get; set; }
     public string Name { get; set; }
     public PitchCollection Pitches { get; set; }
+
+#endregion
   }
+
+#endregion
+
+#region Fields
 
   private readonly StringedInstrumentDefinitionState _state;
   private readonly Dictionary<string, TuningInfo> _tuningInfo = new( Comparer.IdComparer );
   private bool _built;
+
+#endregion
+
+#region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="id">The language-neutral identifier for the instrument to build. The id will be used to create the name.</param>
@@ -64,6 +78,10 @@ public sealed class StringedInstrumentDefinitionBuilder
   {
     _state = new StringedInstrumentDefinitionState( id, name, stringCount );
   }
+
+#endregion
+
+#region Public Methods
 
   /// <summary>Adds a tuning to the instrument to build.</summary>
   /// <param name="id">
@@ -194,6 +212,10 @@ public sealed class StringedInstrumentDefinitionBuilder
     return definition;
   }
 
+#endregion
+
+#region Implementation
+
   private void CheckBuilderReuse()
   {
     if( _built )
@@ -201,4 +223,6 @@ public sealed class StringedInstrumentDefinitionBuilder
       throw new InvalidOperationException( "Cannot reuse a builder" );
     }
   }
+
+#endregion
 }

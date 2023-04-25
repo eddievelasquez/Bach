@@ -33,11 +33,17 @@ public abstract class InstrumentDefinition
   : INamedObject,
     IEquatable<InstrumentDefinition>
 {
+#region Constructors
+
   internal InstrumentDefinition( InstrumentDefinitionState state )
   {
     Requires.NotNull( state );
     State = state;
   }
+
+#endregion
+
+#region Properties
 
   internal InstrumentDefinitionState State { get; }
 
@@ -47,8 +53,12 @@ public abstract class InstrumentDefinition
   /// <inheritdoc />
   public string Name => State.Name;
 
+#endregion
+
+#region Public Methods
+
   /// <inheritdoc />
-  public bool Equals( InstrumentDefinition other )
+  public bool Equals( InstrumentDefinition? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -59,7 +69,7 @@ public abstract class InstrumentDefinition
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -74,4 +84,6 @@ public abstract class InstrumentDefinition
   {
     return Id.GetHashCode();
   }
+
+#endregion
 }

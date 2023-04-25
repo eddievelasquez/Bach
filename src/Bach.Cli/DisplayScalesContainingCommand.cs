@@ -31,6 +31,8 @@ namespace Bach.Cli;
 
 internal sealed class DisplayScalesContainingCommand: BachCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public DisplayScalesContainingCommand()
   {
@@ -41,8 +43,16 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
     Command = command;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public override Command Command { get; }
+
+#endregion
+
+#region Implementation
 
   private static void Execute( IEnumerable<string> notes )
   {
@@ -58,4 +68,6 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
       WriteLine();
     }
   }
+
+#endregion
 }

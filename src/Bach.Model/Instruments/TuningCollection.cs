@@ -26,6 +26,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Bach.Model.Internal;
 using Comparer = Bach.Model.Internal.Comparer;
 
@@ -34,13 +35,23 @@ namespace Bach.Model.Instruments;
 /// <summary>Collection of tunings.</summary>
 public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
 {
+#region Fields
+
   private readonly string _instrumentId;
   private readonly Dictionary<string, Tuning> _tunings = new( Comparer.IdComparer );
+
+#endregion
+
+#region Constructors
 
   internal TuningCollection( string instrumentId )
   {
     _instrumentId = instrumentId;
   }
+
+#endregion
+
+#region Properties
 
   /// <summary>Gets the standard tuning.</summary>
   /// <exception cref="ArgumentOutOfRangeException">Thrown when the tuning collection is empty.</exception>
@@ -75,17 +86,9 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   /// <value>An enumerable collection that contains the tunings.</value>
   public IEnumerable<Tuning> Values => _tunings.Values;
 
-  /// <inheritdoc />
-  public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator()
-  {
-    return _tunings.GetEnumerator();
-  }
+#endregion
 
-  /// <inheritdoc />
-  IEnumerator IEnumerable.GetEnumerator()
-  {
-    return GetEnumerator();
-  }
+#region Public Methods
 
   /// <summary>
   ///   Determines whether the collection contains a tuning that has the specified language-neutral id.
@@ -100,6 +103,18 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
     return _tunings.ContainsKey( id );
   }
 
+  /// <inheritdoc />
+  public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator()
+  {
+    return _tunings.GetEnumerator();
+  }
+
+  /// <inheritdoc />
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
   /// <summary>Gets the value that is associated with the specified id.</summary>
   /// <param name="id">The language-neutral id to locate.</param>
   /// <param name="value">
@@ -111,10 +126,14 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   /// </returns>
   public bool TryGetValue(
     string id,
-    out Tuning value )
+    [MaybeNullWhen( false )] out Tuning value )
   {
     return _tunings.TryGetValue( id, out value );
   }
+
+#endregion
+
+#region Implementation
 
   internal void Add( Tuning tuning )
   {
@@ -123,4 +142,6 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
     Debug.Assert( _instrumentId.Equals( tuning.InstrumentDefinition.Id ) );
     _tunings.Add( tuning.Id, tuning );
   }
+
+#endregion
 }

@@ -31,6 +31,8 @@ namespace Bach.Model.Instruments;
 /// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
 public sealed class Tuning: IEquatable<Tuning>
 {
+#region Constructors
+
   internal Tuning(
     StringedInstrumentDefinition instrumentDefinition,
     string id,
@@ -49,6 +51,10 @@ public sealed class Tuning: IEquatable<Tuning>
     Name = name;
     Pitches = pitches;
   }
+
+#endregion
+
+#region Properties
 
   /// <summary>Gets the instruments definition.</summary>
   /// <value>The instrument definition.</value>
@@ -81,8 +87,12 @@ public sealed class Tuning: IEquatable<Tuning>
     }
   }
 
+#endregion
+
+#region Public Methods
+
   /// <inheritdoc />
-  public bool Equals( Tuning other )
+  public bool Equals( Tuning? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -101,7 +111,7 @@ public sealed class Tuning: IEquatable<Tuning>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -120,4 +130,6 @@ public sealed class Tuning: IEquatable<Tuning>
     hash.Add( Name, Comparer.NameComparer );
     return hash.ToHashCode();
   }
+
+#endregion
 }

@@ -29,6 +29,8 @@ namespace Bach.Cli;
 
 internal sealed class ListScalesCommand: BachCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public ListScalesCommand()
   {
@@ -37,8 +39,16 @@ internal sealed class ListScalesCommand: BachCommand
     Command = command;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public override Command Command { get; }
+
+#endregion
+
+#region Implementation
 
   private static void Execute()
   {
@@ -53,4 +63,6 @@ internal sealed class ListScalesCommand: BachCommand
       WriteLine();
     }
   }
+
+#endregion
 }

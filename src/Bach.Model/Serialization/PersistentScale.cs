@@ -27,9 +27,13 @@ namespace Bach.Model.Serialization;
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class PersistentScale
 {
+#region Properties
+
   public string Id { get; set; } = null!;
   public string Name { get; set; } = null!;
   public string Categories { get; set; } = null!;
   public string Alias { get; set; } = null!;
   public string Formula { get; set; } = null!;
+
+#endregion
 }

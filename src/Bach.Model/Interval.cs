@@ -34,6 +34,8 @@ public readonly struct Interval
   : IEquatable<Interval>,
     IComparable<Interval>
 {
+#region Constants
+
   private const string SymbolQuantityToStringFormat = "sq";
 
   private static readonly int[,] s_steps =
@@ -82,9 +84,17 @@ public readonly struct Interval
   public static readonly Interval DiminishedOctave = new( IntervalQuantity.Octave, IntervalQuality.Diminished );
   public static readonly Interval Octave = new( IntervalQuantity.Octave, IntervalQuality.Perfect );
 
+#endregion
+
+#region Fields
+
   private readonly byte _quality;
   private readonly byte _quantity;
   private readonly byte _semitoneCount;
+
+#endregion
+
+#region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="quantity">The interval quantity.</param>
@@ -123,6 +133,10 @@ public readonly struct Interval
     _semitoneCount = (byte) semitoneCount;
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the interval's quantity.</summary>
   /// <value>The quantity.</value>
   public IntervalQuantity Quantity => (IntervalQuantity) _quantity;
@@ -130,10 +144,6 @@ public readonly struct Interval
   /// <summary>Gets the interval's quality.</summary>
   /// <value>The quality.</value>
   public IntervalQuality Quality => (IntervalQuality) _quality;
-
-  /// <summary>Gets the number of semitones in the interval.</summary>
-  /// <value>The number of semitones.</value>
-  public int SemitoneCount => _semitoneCount;
 
   public Interval Inversion
   {
@@ -146,6 +156,14 @@ public readonly struct Interval
       return result;
     }
   }
+
+  /// <summary>Gets the number of semitones in the interval.</summary>
+  /// <value>The number of semitones.</value>
+  public int SemitoneCount => _semitoneCount;
+
+#endregion
+
+#region Public Methods
 
   /// <inheritdoc />
   public int CompareTo( Interval other )
@@ -167,7 +185,7 @@ public readonly struct Interval
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     return obj is Interval other && Equals( other );
   }
@@ -177,31 +195,6 @@ public readonly struct Interval
   {
     var hashCode = ( _quality << 8 ) | _quantity;
     return hashCode;
-  }
-
-  /// <summary>Returns the fully qualified type name of this instance.</summary>
-  /// <returns>The fully qualified type name.</returns>
-  public override string ToString()
-  {
-    return ToString( SymbolQuantityToStringFormat, null );
-  }
-
-  /// <summary>Determine if the interval quantity and quality refer to a valid interval.</summary>
-  /// <param name="quantity">The interval quantity.</param>
-  /// <param name="quality">The interval quality.</param>
-  /// <returns>True if valid, false if not.</returns>
-  public static bool IsValid(
-    IntervalQuantity quantity,
-    IntervalQuality quality )
-  {
-    // No need to check the interval quality because it doesn't allow invalid values.
-    if( quantity is < IntervalQuantity.Unison or > IntervalQuantity.Fourteenth )
-    {
-      return false;
-    }
-
-    var steps = s_steps[(int) quantity, (int) quality];
-    return steps != -1;
   }
 
   /// <summary>Gets semitone count of the interval.</summary>
@@ -232,6 +225,24 @@ public readonly struct Interval
     return steps;
   }
 
+  /// <summary>Determine if the interval quantity and quality refer to a valid interval.</summary>
+  /// <param name="quantity">The interval quantity.</param>
+  /// <param name="quality">The interval quality.</param>
+  /// <returns>True if valid, false if not.</returns>
+  public static bool IsValid(
+    IntervalQuantity quantity,
+    IntervalQuality quality )
+  {
+    // No need to check the interval quality because it doesn't allow invalid values.
+    if( quantity is < IntervalQuantity.Unison or > IntervalQuantity.Fourteenth )
+    {
+      return false;
+    }
+
+    var steps = s_steps[(int) quantity, (int) quality];
+    return steps != -1;
+  }
+
   /// <summary>
   ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent.
   /// </summary>
@@ -246,6 +257,89 @@ public readonly struct Interval
     }
 
     return interval;
+  }
+
+  /// <summary>Returns the fully qualified type name of this instance.</summary>
+  /// <returns>The fully qualified type name.</returns>
+  public override string ToString()
+  {
+    return ToString( SymbolQuantityToStringFormat, null );
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
+  ///   provided format specifier.
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
+  ///   <para>"S": Symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
+  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+  /// </remarks>
+  public string ToString( string format )
+  {
+    return ToString( format, null );
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
+  ///   provided format specifier and format provider..
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <param name="provider">The format provider. (Currently unused)</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
+  ///   <para>"S": Symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
+  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+  /// </remarks>
+  public string ToString(
+    string format,
+    IFormatProvider? provider )
+  {
+    var buf = new StringBuilder();
+    foreach( var f in format )
+    {
+      switch( f )
+      {
+        case 's':
+        {
+          if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
+          {
+            buf.Append( Quality.Symbol );
+          }
+
+          break;
+        }
+
+        case 'S':
+          buf.Append( Quality.Symbol );
+          break;
+
+        case 'q':
+          buf.Append( (int) ( Quantity + 1 ) );
+          break;
+
+        case 'Q':
+          buf.Append( Quantity );
+          break;
+
+        default:
+          buf.Append( f );
+          break;
+      }
+    }
+
+    return buf.ToString();
   }
 
   /// <summary>
@@ -358,81 +452,9 @@ public readonly struct Interval
     return true;
   }
 
-  /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
-  ///   provided format specifier.
-  /// </summary>
-  /// <param name="format">A custom format string.</param>
-  /// <returns>
-  ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
-  ///   <paramref name="format" />.
-  /// </returns>
-  /// <remarks>
-  ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
-  ///   <para>"S": Symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
-  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
-  /// </remarks>
-  public string ToString( string format )
-  {
-    return ToString( format, null );
-  }
+#endregion
 
-  /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
-  ///   provided format specifier and format provider..
-  /// </summary>
-  /// <param name="format">A custom format string.</param>
-  /// <param name="provider">The format provider. (Currently unused)</param>
-  /// <returns>
-  ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
-  ///   <paramref name="format" />.
-  /// </returns>
-  /// <remarks>
-  ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
-  ///   <para>"S": Symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
-  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
-  /// </remarks>
-  public string ToString(
-    string format,
-    IFormatProvider provider )
-  {
-    var buf = new StringBuilder();
-    foreach( var f in format )
-    {
-      switch( f )
-      {
-        case 's':
-        {
-          if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
-          {
-            buf.Append( Quality.Symbol );
-          }
-
-          break;
-        }
-
-        case 'S':
-          buf.Append( Quality.Symbol );
-          break;
-
-        case 'q':
-          buf.Append( (int) ( Quantity + 1 ) );
-          break;
-
-        case 'Q':
-          buf.Append( Quantity );
-          break;
-
-        default:
-          buf.Append( f );
-          break;
-      }
-    }
-
-    return buf.ToString();
-  }
+#region Operators
 
   /// <summary>Equality operator.</summary>
   /// <param name="lhs">The first instance to compare.</param>
@@ -499,4 +521,6 @@ public readonly struct Interval
   {
     return lhs.CompareTo( rhs ) >= 0;
   }
+
+#endregion
 }

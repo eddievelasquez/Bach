@@ -35,30 +35,48 @@ public abstract class Formula
   : INamedObject,
     IEquatable<Formula>
 {
+#region Nested Types
+
   private sealed class IntervalComparer: IComparer<Interval>
   {
+#region Public Methods
+
     public int Compare(
       Interval x,
       Interval y )
     {
       return x.CompareTo( y );
     }
+
+#endregion
   }
 
   private sealed class SemitoneCountIntervalComparer: IComparer<Interval>
   {
+#region Public Methods
+
     public int Compare(
       Interval x,
       Interval y )
     {
       return x.SemitoneCount - y.SemitoneCount;
     }
+
+#endregion
   }
+
+#endregion
+
+#region Constants
 
   private const string NameIntervalsToStringFormat = "N: I";
 
   private static readonly IntervalComparer s_intervalComparer = new();
   private static readonly SemitoneCountIntervalComparer s_semitoneComparer = new();
+
+#endregion
+
+#region Constructors
 
   /// <summary>Specialized constructor for use only by derived classes.</summary>
   /// <exception cref="ArgumentNullException">Thrown when either the id, name or interval arguments are null.</exception>
@@ -84,6 +102,10 @@ public abstract class Formula
     Intervals = new IntervalCollection( intervals );
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the intervals that compose this formula.</summary>
   /// <value>The intervals.</value>
   public IntervalCollection Intervals { get; }
@@ -96,8 +118,27 @@ public abstract class Formula
   /// <value>The name.</value>
   public string Name { get; }
 
+#endregion
+
+#region Public Methods
+
+  /// <summary>Determines whether this instance contains the provided intervals.</summary>
+  /// <param name="intervals">The intervals to evaluate.</param>
+  /// <param name="match">Interval matching strategy.</param>
+  /// <returns>
+  ///   <c>true</c> if the formula contains the specified intervals; otherwise, <c>false</c>.
+  /// </returns>
+  public bool Contains(
+    IEnumerable<Interval> intervals,
+    IntervalMatch match = IntervalMatch.Exact )
+  {
+    var comparer = ( match == IntervalMatch.Exact ) ? (IComparer<Interval>) s_intervalComparer : s_semitoneComparer;
+
+    return intervals.All( interval => Intervals.IndexOf( interval, comparer ) >= 0 );
+  }
+
   /// <inheritdoc />
-  public bool Equals( Formula other )
+  public bool Equals( Formula? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -115,13 +156,7 @@ public abstract class Formula
   }
 
   /// <inheritdoc />
-  public override string ToString()
-  {
-    return ToString( NameIntervalsToStringFormat, null );
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -129,27 +164,6 @@ public abstract class Formula
     }
 
     return obj is Formula other && Equals( other );
-  }
-
-  /// <inheritdoc />
-  public override int GetHashCode()
-  {
-    return Comparer.IdComparer.GetHashCode( Id );
-  }
-
-  /// <summary>Determines whether this instance contains the provided intervals.</summary>
-  /// <param name="intervals">The intervals to evaluate.</param>
-  /// <param name="match">Interval matching strategy.</param>
-  /// <returns>
-  ///   <c>true</c> if the formula contains the specified intervals; otherwise, <c>false</c>.
-  /// </returns>
-  public bool Contains(
-    IEnumerable<Interval> intervals,
-    IntervalMatch match = IntervalMatch.Exact )
-  {
-    var comparer = ( match == IntervalMatch.Exact ) ? (IComparer<Interval>) s_intervalComparer : s_semitoneComparer;
-
-    return intervals.All( interval => Intervals.IndexOf( interval, comparer ) >= 0 );
   }
 
   /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
@@ -220,6 +234,12 @@ public abstract class Formula
     return intervals.Select( interval => root + interval );
   }
 
+  /// <inheritdoc />
+  public override int GetHashCode()
+  {
+    return Comparer.IdComparer.GetHashCode( Id );
+  }
+
   /// <summary>Gets the relative steps in terms of semitones between the intervals that compose the formula.</summary>
   /// <returns>An array of integral semitone counts.</returns>
   public int[] GetRelativeSteps()
@@ -239,6 +259,36 @@ public abstract class Formula
     // last interval
     steps[^1] = 12 - lastCount;
     return steps;
+  }
+
+  public static Interval[] ParseIntervals( string formula )
+  {
+    Requires.NotNullOrEmpty( formula );
+    return ParseIntervals( formula.AsSpan() );
+  }
+
+  public static Interval[] ParseIntervals( ReadOnlySpan<char> formula )
+  {
+    Requires.NotEmpty( formula, "Must provide a formula" );
+
+    var buf = new List<Interval>();
+    foreach( var value in formula.Split( ',' ) )
+    {
+      if( !Interval.TryParse( formula[value.Start.Value..value.End.Value], out var interval ) )
+      {
+        throw new FormatException( value + " is not a valid interval" );
+      }
+
+      buf.Add( interval );
+    }
+
+    return buf.ToArray();
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return ToString( NameIntervalsToStringFormat, null );
   }
 
   /// <summary>
@@ -277,7 +327,7 @@ public abstract class Formula
   /// </remarks>
   public string ToString(
     string format,
-    IFormatProvider provider )
+    IFormatProvider? provider )
   {
     if( string.IsNullOrEmpty( format ) )
     {
@@ -306,30 +356,9 @@ public abstract class Formula
     return buf.ToString();
   }
 
-  public static Interval[] ParseIntervals( string formula )
-  {
-    Requires.NotNullOrEmpty( formula );
-    return ParseIntervals( formula.AsSpan() );
-  }
+#endregion
 
-  public static Interval[] ParseIntervals( ReadOnlySpan<char> formula )
-  {
-    Requires.NotEmpty( formula, "Must provide a formula" );
-
-    var buf = new List<Interval>();
-    foreach( var value in formula.Split( ',' ) )
-    {
-      if( !Interval.TryParse( formula[value.Start.Value..value.End.Value],
-                              out var interval ) )
-      {
-        throw new FormatException( value + " is not a valid interval" );
-      }
-
-      buf.Add( interval );
-    }
-
-    return buf.ToArray();
-  }
+#region Implementation
 
   internal static int[] GetRelativeSteps( IList<Interval> intervals )
   {
@@ -350,4 +379,6 @@ public abstract class Formula
     steps[^1] = 12 - lastCount;
     return steps;
   }
+
+#endregion
 }

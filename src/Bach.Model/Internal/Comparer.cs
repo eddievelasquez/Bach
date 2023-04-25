@@ -28,6 +28,10 @@ namespace Bach.Model.Internal;
 
 internal static class Comparer
 {
+#region Constants
+
   public static readonly StringComparer IdComparer = StringComparer.InvariantCultureIgnoreCase;
   public static readonly StringComparer NameComparer = StringComparer.CurrentCultureIgnoreCase;
+
+#endregion
 }

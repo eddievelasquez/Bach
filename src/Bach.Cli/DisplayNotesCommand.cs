@@ -31,6 +31,8 @@ namespace Bach.Cli;
 
 internal sealed class DisplayNotesCommand: BachCommand
 {
+#region Constructors
+
   /// <inheritdoc />
   public DisplayNotesCommand()
   {
@@ -42,8 +44,16 @@ internal sealed class DisplayNotesCommand: BachCommand
     Command = command;
   }
 
+#endregion
+
+#region Properties
+
   /// <inheritdoc />
   public override Command Command { get; }
+
+#endregion
+
+#region Implementation
 
   private static void Execute(
     string rootValue,
@@ -56,4 +66,6 @@ internal sealed class DisplayNotesCommand: BachCommand
     WriteList( "Intervals: ", intervals.Select( interval => interval.ToString( "Sq" ) ) );
     WriteLine();
   }
+
+#endregion
 }

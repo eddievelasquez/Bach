@@ -26,3 +26,4 @@ bin/
 .vs/
 experiments/
 Bach.sln.DotSettings
+coverage/

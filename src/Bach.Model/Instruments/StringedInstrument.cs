@@ -34,6 +34,8 @@ public sealed class StringedInstrument
   : Instrument,
     IEquatable<StringedInstrument>
 {
+#region Constructors
+
   private StringedInstrument(
     StringedInstrumentDefinition definition,
     Tuning tuning,
@@ -47,6 +49,10 @@ public sealed class StringedInstrument
     PositionCount = positionCount;
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets the stringed instruments definition.</summary>
   /// <value>The definition.</value>
   public new StringedInstrumentDefinition Definition => (StringedInstrumentDefinition) base.Definition;
@@ -59,8 +65,47 @@ public sealed class StringedInstrument
   /// <value>The tuning.</value>
   public Tuning Tuning { get; }
 
+#endregion
+
+#region Public Methods
+
+  /// <summary>Creates a new StringedInstrument.</summary>
+  /// <param name="definition">The stringed instruments definition.</param>
+  /// <param name="positionCount">The number of positions per string.</param>
+  /// <param name="tuning">(Optional) The tuning of the instrument. If null, the standard tuning for the instrument is used.</param>
+  /// <exception cref="ArgumentNullException">Thrown when instrument definition is null.</exception>
+  /// <returns>A StringedInstrument.</returns>
+  public static StringedInstrument Create(
+    StringedInstrumentDefinition definition,
+    int positionCount,
+    Tuning? tuning = null )
+  {
+    Requires.NotNull( definition );
+
+    return new StringedInstrument( definition, tuning ?? definition.Tunings.Standard, positionCount );
+  }
+
+  /// <summary>Creates a new StringedInstrument.</summary>
+  /// <param name="instrumentKey">The instruments language-neutral key.</param>
+  /// <param name="positionCount">The number of positions per string.</param>
+  /// <param name="tuningName">(Optional) Name of the tuning. If null, the standard tuning for the instrument is used.</param>
+  /// <returns>A StringedInstrument.</returns>
+  public static StringedInstrument Create(
+    string instrumentKey,
+    int positionCount,
+    string? tuningName = null )
+  {
+    var definition = Registry.StringedInstrumentDefinitions[instrumentKey];
+    if( string.IsNullOrEmpty( tuningName ) )
+    {
+      tuningName = "Standard";
+    }
+
+    return new StringedInstrument( definition, definition.Tunings[tuningName], positionCount );
+  }
+
   /// <inheritdoc />
-  public bool Equals( StringedInstrument other )
+  public bool Equals( StringedInstrument? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -76,7 +121,7 @@ public sealed class StringedInstrument
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -90,41 +135,6 @@ public sealed class StringedInstrument
   public override int GetHashCode()
   {
     return HashCode.Combine( base.GetHashCode(), Tuning, PositionCount );
-  }
-
-  /// <summary>Creates a new StringedInstrument.</summary>
-  /// <param name="definition">The stringed instruments definition.</param>
-  /// <param name="positionCount">The number of positions per string.</param>
-  /// <param name="tuning">(Optional) The tuning of the instrument. If null, the standard tuning for the instrument is used.</param>
-  /// <exception cref="ArgumentNullException">Thrown when instrument definition is null.</exception>
-  /// <returns>A StringedInstrument.</returns>
-  public static StringedInstrument Create(
-    StringedInstrumentDefinition definition,
-    int positionCount,
-    Tuning tuning = null )
-  {
-    Requires.NotNull( definition );
-
-    return new StringedInstrument( definition, tuning ?? definition.Tunings.Standard, positionCount );
-  }
-
-  /// <summary>Creates a new StringedInstrument.</summary>
-  /// <param name="instrumentKey">The instruments language-neutral key.</param>
-  /// <param name="positionCount">The number of positions per string.</param>
-  /// <param name="tuningName">(Optional) Name of the tuning. If null, the standard tuning for the instrument is used.</param>
-  /// <returns>A StringedInstrument.</returns>
-  public static StringedInstrument Create(
-    string instrumentKey,
-    int positionCount,
-    string tuningName = null )
-  {
-    var definition = Registry.StringedInstrumentDefinitions[instrumentKey];
-    if( string.IsNullOrEmpty( tuningName ) )
-    {
-      tuningName = "Standard";
-    }
-
-    return new StringedInstrument( definition, definition.Tunings[tuningName], positionCount );
   }
 
   /// <summary>Render a chord in the starting position with an optional position span.</summary>
@@ -243,6 +253,10 @@ public sealed class StringedInstrument
     }
   }
 
+#endregion
+
+#region Implementation
+
   private Fingering GetChordFingering(
     IEnumerator<Pitch> notes,
     int stringNumber,
@@ -284,4 +298,6 @@ public sealed class StringedInstrument
 
     return Tuning[@string] + position;
   }
+
+#endregion
 }

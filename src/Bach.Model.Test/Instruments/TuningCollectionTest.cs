@@ -49,35 +49,21 @@ public sealed class TuningCollectionTest
   }
 
   [Fact]
-  public void TryGetValueTest()
+  public void GetEnumeratorOfObjectTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var tunings = definition.Tunings.ToArray();
 
-    Assert.True( definition.Tunings.TryGetValue( "standard", out var tuning ) );
-    Assert.Equal( definition.Tunings.Standard, tuning );
-  }
+    var enumerator = ( (IEnumerable) definition.Tunings ).GetEnumerator();
 
-  [Fact]
-  public void TryGetValueThrowsOnNullKeyTest()
-  {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    // ReSharper disable once ForCanBeConvertedToForeach
+    for( var i = 0; i < tunings.Length; i++ )
+    {
+      Assert.True( enumerator.MoveNext() );
+      Assert.Equal( tunings[i], enumerator.Current );
+    }
 
-    // ReSharper disable once AssignNullToNotNullAttribute
-    Assert.Throws<ArgumentNullException>( () => definition.Tunings.TryGetValue( null, out _ ) );
-  }
-
-  [Fact]
-  public void KeysTest()
-  {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.Equal( definition.Tunings.Count, definition.Tunings.Keys.Count() );
-  }
-
-  [Fact]
-  public void ValuesTest()
-  {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.Equal( definition.Tunings.Count, definition.Tunings.Values.Count() );
+    Assert.False( enumerator.MoveNext() );
   }
 
   [Fact]
@@ -99,21 +85,35 @@ public sealed class TuningCollectionTest
   }
 
   [Fact]
-  public void GetEnumeratorOfObjectTest()
+  public void KeysTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    var tunings = definition.Tunings.ToArray();
+    Assert.Equal( definition.Tunings.Count, definition.Tunings.Keys.Count() );
+  }
 
-    var enumerator = ( (IEnumerable) definition.Tunings ).GetEnumerator();
+  [Fact]
+  public void TryGetValueTest()
+  {
+    var definition = Registry.StringedInstrumentDefinitions["guitar"];
 
-    // ReSharper disable once ForCanBeConvertedToForeach
-    for( var i = 0; i < tunings.Length; i++ )
-    {
-      Assert.True( enumerator.MoveNext() );
-      Assert.Equal( tunings[i], enumerator.Current );
-    }
+    Assert.True( definition.Tunings.TryGetValue( "standard", out var tuning ) );
+    Assert.Equal( definition.Tunings.Standard, tuning );
+  }
 
-    Assert.False( enumerator.MoveNext() );
+  [Fact]
+  public void TryGetValueThrowsOnNullKeyTest()
+  {
+    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+
+    // ReSharper disable once AssignNullToNotNullAttribute
+    Assert.Throws<ArgumentNullException>( () => definition.Tunings.TryGetValue( null, out _ ) );
+  }
+
+  [Fact]
+  public void ValuesTest()
+  {
+    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    Assert.Equal( definition.Tunings.Count, definition.Tunings.Values.Count() );
   }
 
 #endregion

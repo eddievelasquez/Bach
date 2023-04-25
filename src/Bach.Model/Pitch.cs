@@ -41,6 +41,8 @@ public readonly struct Pitch
   : IEquatable<Pitch>,
     IComparable<Pitch>
 {
+#region Constants
+
   /// <summary>The minimum supported octave.</summary>
   public const int MinOctave = 0;
 
@@ -78,9 +80,17 @@ public readonly struct Pitch
   /// <summary>The maximum possible pitch value.</summary>
   public static readonly Pitch MaxValue = Create( PitchClass.G, MaxOctave );
 
+#endregion
+
+#region Fields
+
   private readonly byte _absoluteValue;
   private readonly byte _octave;
   private readonly ushort _note;
+
+#endregion
+
+#region Constructors
 
   private Pitch( int absoluteValue )
   {
@@ -101,6 +111,10 @@ public readonly struct Pitch
     _absoluteValue = (byte) absoluteValue;
   }
 
+#endregion
+
+#region Properties
+
   /// <summary>Gets a value indicating whether this instance is a valid pitch.</summary>
   /// <value>True if this instance is a valid false, false if it is not.</value>
   public bool IsValid
@@ -115,10 +129,6 @@ public readonly struct Pitch
   /// <summary>Gets the pitch's pitch class.</summary>
   /// <value>The pitch class.</value>
   public PitchClass PitchClass => (PitchClass) _note;
-
-  /// <summary>Gets the pitch's octave.</summary>
-  /// <value>The octave.</value>
-  public int Octave => _octave;
 
   /// <summary>Gets the pitch's frequency.</summary>
   /// <value>The frequency.</value>
@@ -136,34 +146,43 @@ public readonly struct Pitch
   /// <value>The MIDI value.</value>
   public int Midi => _absoluteValue + 12;
 
+  /// <summary>Gets the pitch's octave.</summary>
+  /// <value>The octave.</value>
+  public int Octave => _octave;
+
+#endregion
+
+#region Public Methods
+
+  /// <summary>Adds number of semitones to the current instance.</summary>
+  /// <param name="semitoneCount">Number of semitones.</param>
+  /// <returns>A Pitch.</returns>
+  public Pitch Add( int semitoneCount )
+  {
+    var result = new Pitch( _absoluteValue + semitoneCount );
+    return result;
+  }
+
+  /// <summary>Adds an Interval to a given Pitch.</summary>
+  /// <param name="pitch">The pitch.</param>
+  /// <param name="interval">A interval to add to it.</param>
+  /// <returns>A Pitch.</returns>
+  public static Pitch Add(
+    Pitch pitch,
+    Interval interval )
+  {
+    var absoluteValue = (byte) ( pitch._absoluteValue + interval.SemitoneCount );
+    CalcNote( absoluteValue, out var _, out var octave );
+
+    var newPitchClass = pitch.PitchClass + interval;
+    var result = new Pitch( newPitchClass, octave, absoluteValue );
+    return result;
+  }
+
   /// <inheritdoc />
   public int CompareTo( Pitch other )
   {
     return _absoluteValue - other._absoluteValue;
-  }
-
-  /// <inheritdoc />
-  public bool Equals( Pitch obj )
-  {
-    return obj._absoluteValue == _absoluteValue;
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object obj )
-  {
-    return obj is Pitch other && Equals( other );
-  }
-
-  /// <inheritdoc />
-  public override int GetHashCode()
-  {
-    return _absoluteValue;
-  }
-
-  /// <inheritdoc />
-  public override string ToString()
-  {
-    return $"{PitchClass}{Octave}";
   }
 
   /// <summary>Creates a new Pitch.</summary>
@@ -223,38 +242,33 @@ public readonly struct Pitch
     return note;
   }
 
-  /// <summary>Adds number of semitones to the current instance.</summary>
-  /// <param name="semitoneCount">Number of semitones.</param>
-  /// <returns>A Pitch.</returns>
-  public Pitch Add( int semitoneCount )
+  /// <inheritdoc />
+  public bool Equals( Pitch obj )
   {
-    var result = new Pitch( _absoluteValue + semitoneCount );
-    return result;
+    return obj._absoluteValue == _absoluteValue;
   }
 
-  /// <summary>Adds an Interval to a given Pitch.</summary>
-  /// <param name="pitch">The pitch.</param>
-  /// <param name="interval">A interval to add to it.</param>
-  /// <returns>A Pitch.</returns>
-  public static Pitch Add(
-    Pitch pitch,
-    Interval interval )
+  /// <inheritdoc />
+  public override bool Equals( object? obj )
   {
-    var absoluteValue = (byte) ( pitch._absoluteValue + interval.SemitoneCount );
-    CalcNote( absoluteValue, out var _, out var octave );
-
-    var newPitchClass = pitch.PitchClass + interval;
-    var result = new Pitch( newPitchClass, octave, absoluteValue );
-    return result;
+    return obj is Pitch other && Equals( other );
   }
 
-  /// <summary>Subtracts a number of semitones to the current instance.</summary>
-  /// <param name="semitoneCount">Number of semitones.</param>
-  /// <returns>A Pitch.</returns>
-  public Pitch Subtract( int semitoneCount )
+  /// <inheritdoc />
+  public override int GetHashCode()
   {
-    var result = new Pitch( _absoluteValue - semitoneCount );
-    return result;
+    return _absoluteValue;
+  }
+
+  /// <summary>Determines the maximum of the given pitches.</summary>
+  /// <param name="a">A Pitch to process.</param>
+  /// <param name="b">A Pitch to process.</param>
+  /// <returns>The maximum value.</returns>
+  public static Pitch Max(
+    Pitch a,
+    Pitch b )
+  {
+    return a._absoluteValue >= b._absoluteValue ? a : b;
   }
 
   /// <summary>Determines the minimum of the given pitches.</summary>
@@ -268,15 +282,35 @@ public readonly struct Pitch
     return a._absoluteValue <= b._absoluteValue ? a : b;
   }
 
-  /// <summary>Determines the maximum of the given pitches.</summary>
-  /// <param name="a">A Pitch to process.</param>
-  /// <param name="b">A Pitch to process.</param>
-  /// <returns>The maximum value.</returns>
-  public static Pitch Max(
-    Pitch a,
-    Pitch b )
+  /// <summary>Parses the provided string.</summary>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a Pitch.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  /// <param name="value">The value to parse.</param>
+  /// <returns>A Pitch.</returns>
+  public static Pitch Parse( string value )
   {
-    return a._absoluteValue >= b._absoluteValue ? a : b;
+    if( !TryParse( value, out var result ) )
+    {
+      throw new FormatException( $"{value} is not a valid pitch" );
+    }
+
+    return result;
+  }
+
+  /// <summary>Subtracts a number of semitones to the current instance.</summary>
+  /// <param name="semitoneCount">Number of semitones.</param>
+  /// <returns>A Pitch.</returns>
+  public Pitch Subtract( int semitoneCount )
+  {
+    var result = new Pitch( _absoluteValue - semitoneCount );
+    return result;
+  }
+
+  /// <inheritdoc />
+  public override string ToString()
+  {
+    return $"{PitchClass}{Octave}";
   }
 
   /// <summary>Attempts to parse a Pitch from the given string.</summary>
@@ -296,21 +330,9 @@ public readonly struct Pitch
     return char.IsDigit( value, 0 ) ? TryParseMidi( value, ref pitch ) : TryParseNotes( value, ref pitch );
   }
 
-  /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a Pitch.</exception>
-  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
-  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>A Pitch.</returns>
-  public static Pitch Parse( string value )
-  {
-    if( !TryParse( value, out var result ) )
-    {
-      throw new FormatException( $"{value} is not a valid pitch" );
-    }
+#endregion
 
-    return result;
-  }
+#region Implementation
 
   private static int CalcAbsoluteValue(
     NoteName noteName,
@@ -431,6 +453,10 @@ public readonly struct Pitch
     pitch = CreateFromMidi( midi );
     return true;
   }
+
+#endregion
+
+#region Operators
 
   /// <summary>Equality operator.</summary>
   /// <param name="lhs">The first instance to compare.</param>
@@ -557,4 +583,6 @@ public readonly struct Pitch
   {
     return left._absoluteValue - right._absoluteValue;
   }
+
+#endregion
 }
