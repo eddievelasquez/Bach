@@ -24,6 +24,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -85,6 +86,9 @@ public static class Registry
 
 #region Constructors
 
+  [SuppressMessage( "Blocker Code Smell",
+                    "S3877:Exceptions should not be thrown from unexpected methods",
+                    Justification = "Must abort if the library cannot be loaded" )]
   static Registry()
   {
     // Load the library from the JSON file in the same directory as
@@ -102,6 +106,11 @@ public static class Registry
     options.Converters.Add( new VersionParser() );
 
     var library = JsonSerializer.Deserialize<Library>( s, options );
+    if( library is null )
+    {
+      // NOTE: Throwing in a static ctor will cause the application to terminate
+      throw new InvalidOperationException( $"Could not load the library from {path}" );
+    }
 
     // Load data
     ScaleFormulas = new NamedObjectCollection<ScaleFormula>();

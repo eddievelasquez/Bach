@@ -23,6 +23,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
 
 namespace Bach.Model;
 
@@ -72,6 +73,7 @@ public sealed class Triad: Chord
     int inversion )
     : base( root, formula, inversion )
   {
+    Debug.Assert( formula is not null );
   }
 
 #endregion

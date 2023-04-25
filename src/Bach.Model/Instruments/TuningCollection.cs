@@ -26,6 +26,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Bach.Model.Internal;
 using Comparer = Bach.Model.Internal.Comparer;
 
@@ -125,7 +126,7 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   /// </returns>
   public bool TryGetValue(
     string id,
-    out Tuning value )
+    [MaybeNullWhen( false )] out Tuning value )
   {
     return _tunings.TryGetValue( id, out value );
   }

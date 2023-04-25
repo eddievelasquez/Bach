@@ -102,9 +102,9 @@ public readonly struct IntervalQuality
   }
 
   /// <inheritdoc />
-  public int CompareTo( object obj )
+  public int CompareTo( object? obj )
   {
-    if( ReferenceEquals( null, obj ) )
+    if( obj is null )
     {
       return 1;
     }
@@ -127,7 +127,7 @@ public readonly struct IntervalQuality
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     return obj is IntervalQuality other && Equals( other );
   }

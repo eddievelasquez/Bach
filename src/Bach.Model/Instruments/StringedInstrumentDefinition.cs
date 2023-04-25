@@ -58,7 +58,7 @@ public sealed class StringedInstrumentDefinition
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( StringedInstrumentDefinition other )
+  public bool Equals( StringedInstrumentDefinition? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -74,7 +74,7 @@ public sealed class StringedInstrumentDefinition
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {

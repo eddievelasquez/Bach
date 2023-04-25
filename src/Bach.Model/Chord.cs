@@ -128,7 +128,7 @@ public class Chord
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( Chord other )
+  public bool Equals( Chord? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -144,7 +144,7 @@ public class Chord
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {

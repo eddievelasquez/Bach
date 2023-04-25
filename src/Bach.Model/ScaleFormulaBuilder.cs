@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Bach.Model.Internal;
@@ -38,8 +39,8 @@ public sealed class ScaleFormulaBuilder
   private readonly List<Interval> _intervals = new();
   private readonly HashSet<string> _aliases = new( Comparer.NameComparer );
   private readonly HashSet<string> _categories = new( Comparer.NameComparer );
-  private string _id;
-  private string _name;
+  private string? _id;
+  private string? _name;
 
 #endregion
 
@@ -76,7 +77,9 @@ public sealed class ScaleFormulaBuilder
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="alias">The alias.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddAlias( string alias )
+
+  //TODO: Consider rejecting null alias
+  public ScaleFormulaBuilder AddAlias( string? alias )
   {
     if( alias == null )
     {
@@ -91,7 +94,9 @@ public sealed class ScaleFormulaBuilder
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="aliases">The aliases.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddAliases( IEnumerable<string> aliases )
+
+  //TODO: Consider rejecting null alias enumerations and values
+  public ScaleFormulaBuilder AddAliases( IEnumerable<string?>? aliases )
   {
     if( aliases == null )
     {
@@ -122,7 +127,9 @@ public sealed class ScaleFormulaBuilder
   /// </remarks>
   /// <param name="categories">The categories.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddCategories( IEnumerable<string> categories )
+
+  //TODO: Consider rejecting null alias categories and values
+  public ScaleFormulaBuilder AddCategories( IEnumerable<string?>? categories )
   {
     if( categories == null )
     {
@@ -153,7 +160,9 @@ public sealed class ScaleFormulaBuilder
   /// </remarks>
   /// <param name="category">The alias.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddCategory( string category )
+
+  //TODO: Consider rejecting null category
+  public ScaleFormulaBuilder AddCategory( string? category )
   {
     if( category == null )
     {
@@ -258,7 +267,9 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's intervals.</summary>
   /// <param name="intervals">The intervals.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals( IEnumerable<Interval> intervals )
+
+  //TODO: Consider rejecting null interval enumerations
+  public ScaleFormulaBuilder SetIntervals( IEnumerable<Interval>? intervals )
   {
     _intervals.Clear();
 
@@ -273,7 +284,9 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's intervals.</summary>
   /// <param name="intervals">The intervals.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals( string intervals )
+
+  //TODO: Consider rejecting null intervals
+  public ScaleFormulaBuilder SetIntervals( string? intervals )
   {
     _intervals.Clear();
 
@@ -288,7 +301,9 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's name.</summary>
   /// <param name="name">The name.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetName( string name )
+
+  //TODO: Consider rejecting null name
+  public ScaleFormulaBuilder SetName( string? name )
   {
     if( name != null )
     {
@@ -337,7 +352,8 @@ public sealed class ScaleFormulaBuilder
     return _intervals.Contains( Interval.MinorThird ) && _intervals.Contains( Interval.Fifth );
   }
 
-  private static string RemoveWhitespace( string value )
+  [return: NotNullIfNotNull( nameof( value ) )]
+  private static string? RemoveWhitespace( string? value )
   {
     if( value == null )
     {

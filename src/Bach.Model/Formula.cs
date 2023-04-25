@@ -138,7 +138,7 @@ public abstract class Formula
   }
 
   /// <inheritdoc />
-  public bool Equals( Formula other )
+  public bool Equals( Formula? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -156,7 +156,7 @@ public abstract class Formula
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -327,7 +327,7 @@ public abstract class Formula
   /// </remarks>
   public string ToString(
     string format,
-    IFormatProvider provider )
+    IFormatProvider? provider )
   {
     if( string.IsNullOrEmpty( format ) )
     {

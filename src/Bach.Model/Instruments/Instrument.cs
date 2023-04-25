@@ -51,7 +51,7 @@ public abstract class Instrument: IEquatable<Instrument>
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( Instrument other )
+  public bool Equals( Instrument? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -62,7 +62,7 @@ public abstract class Instrument: IEquatable<Instrument>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {

@@ -249,7 +249,7 @@ public readonly struct Pitch
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     return obj is Pitch other && Equals( other );
   }

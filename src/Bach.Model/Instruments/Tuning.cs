@@ -92,7 +92,7 @@ public sealed class Tuning: IEquatable<Tuning>
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( Tuning other )
+  public bool Equals( Tuning? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -111,7 +111,7 @@ public sealed class Tuning: IEquatable<Tuning>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {

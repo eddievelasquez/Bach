@@ -58,7 +58,7 @@ public abstract class InstrumentDefinition
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( InstrumentDefinition other )
+  public bool Equals( InstrumentDefinition? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -69,7 +69,7 @@ public abstract class InstrumentDefinition
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {

@@ -66,7 +66,7 @@ public sealed class IntervalCollection
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( IEnumerable<Interval> other )
+  public bool Equals( IEnumerable<Interval>? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -77,7 +77,7 @@ public sealed class IntervalCollection
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -123,7 +123,7 @@ public sealed class IntervalCollection
   /// <returns>The index of the occurrence of <paramref name="interval" /> in the collection, if found; otherwise, -1.</returns>
   public int IndexOf(
     Interval interval,
-    IComparer<Interval> comparer = null )
+    IComparer<Interval>? comparer = null )
   {
     return Array.BinarySearch( _intervals, interval, comparer ?? Comparer<Interval>.Default );
   }

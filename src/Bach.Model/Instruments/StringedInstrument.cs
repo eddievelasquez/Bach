@@ -78,7 +78,7 @@ public sealed class StringedInstrument
   public static StringedInstrument Create(
     StringedInstrumentDefinition definition,
     int positionCount,
-    Tuning tuning = null )
+    Tuning? tuning = null )
   {
     Requires.NotNull( definition );
 
@@ -93,7 +93,7 @@ public sealed class StringedInstrument
   public static StringedInstrument Create(
     string instrumentKey,
     int positionCount,
-    string tuningName = null )
+    string? tuningName = null )
   {
     var definition = Registry.StringedInstrumentDefinitions[instrumentKey];
     if( string.IsNullOrEmpty( tuningName ) )
@@ -105,7 +105,7 @@ public sealed class StringedInstrument
   }
 
   /// <inheritdoc />
-  public bool Equals( StringedInstrument other )
+  public bool Equals( StringedInstrument? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -121,7 +121,7 @@ public sealed class StringedInstrument
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {

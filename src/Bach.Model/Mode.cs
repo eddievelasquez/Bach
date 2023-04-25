@@ -87,7 +87,7 @@ public sealed class Mode
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( Mode other )
+  public bool Equals( Mode? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -103,7 +103,7 @@ public sealed class Mode
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {

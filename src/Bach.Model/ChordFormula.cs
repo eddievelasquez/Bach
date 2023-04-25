@@ -42,7 +42,7 @@ public sealed class ChordFormula: Formula
   public ChordFormula(
     string id,
     string name,
-    string symbol,
+    string? symbol,
     params Interval[] intervals )
     : base( id, name, intervals )
   {
@@ -63,7 +63,7 @@ public sealed class ChordFormula: Formula
   public ChordFormula(
     string id,
     string name,
-    string symbol,
+    string? symbol,
     string formula )
     : this( id, name, symbol, ParseIntervals( formula ) )
   {

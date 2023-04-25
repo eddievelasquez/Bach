@@ -88,7 +88,7 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( ModeFormula other )
+  public bool Equals( ModeFormula? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -104,7 +104,7 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {

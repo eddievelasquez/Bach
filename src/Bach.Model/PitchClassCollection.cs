@@ -25,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Bach.Model.Internal;
 
@@ -70,7 +71,7 @@ public sealed class PitchClassCollection
 #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( IEnumerable<PitchClass> other )
+  public bool Equals( IEnumerable<PitchClass>? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -86,7 +87,7 @@ public sealed class PitchClassCollection
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -155,7 +156,7 @@ public sealed class PitchClassCollection
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
     string value,
-    out PitchClassCollection pitchClasses )
+    [NotNullWhen( true )] out PitchClassCollection? pitchClasses )
   {
     if( string.IsNullOrEmpty( value ) )
     {

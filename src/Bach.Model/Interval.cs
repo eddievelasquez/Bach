@@ -185,7 +185,7 @@ public readonly struct Interval
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     return obj is Interval other && Equals( other );
   }
@@ -304,7 +304,7 @@ public readonly struct Interval
   /// </remarks>
   public string ToString(
     string format,
-    IFormatProvider provider )
+    IFormatProvider? provider )
   {
     var buf = new StringBuilder();
     foreach( var f in format )

@@ -162,7 +162,7 @@ public sealed class Scale: IEquatable<Scale>
   }
 
   /// <inheritdoc />
-  public bool Equals( Scale other )
+  public bool Equals( Scale? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -178,7 +178,7 @@ public sealed class Scale: IEquatable<Scale>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object obj )
+  public override bool Equals( object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -323,7 +323,7 @@ public sealed class Scale: IEquatable<Scale>
   /// </remarks>
   public string ToString(
     string format,
-    IFormatProvider provider )
+    IFormatProvider? provider )
   {
     if( string.IsNullOrEmpty( format ) )
     {

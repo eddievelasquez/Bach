@@ -25,6 +25,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Bach.Model.Internal;
 
@@ -83,7 +84,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
 
   public bool TryGetValue(
     string idOrName,
-    out T item )
+    [MaybeNullWhen( false )] out T item )
   {
     Requires.NotNullOrEmpty( idOrName );
 
