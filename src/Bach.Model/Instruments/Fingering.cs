@@ -27,16 +27,19 @@ using Bach.Model.Internal;
 
 namespace Bach.Model.Instruments;
 
-/// <summary>In a stringed instrument, A fingering describes the position in a given string to produce a particular pitch.</summary>
+/// <summary>
+///   In a stringed instrument, A fingering describes the position in a given string to produce a particular
+///   pitch.
+/// </summary>
 public readonly struct Fingering: IEquatable<Fingering>
 {
   private Fingering(
     Pitch pitch,
-    int @string,
+    int stringNumber,
     int position )
   {
     Pitch = pitch;
-    String = @string;
+    StringNumber = stringNumber;
     Position = position;
   }
 
@@ -45,8 +48,8 @@ public readonly struct Fingering: IEquatable<Fingering>
   public Pitch Pitch { get; }
 
   /// <summary>Gets the string number.</summary>
-  /// <value>The string.</value>
-  public int String { get; }
+  /// <value>The string number.</value>
+  public int StringNumber { get; }
 
   /// <summary>Gets the position on the string.</summary>
   /// <remarks>For fretted instruments this corresponds to the fret number.</remarks>
@@ -56,13 +59,13 @@ public readonly struct Fingering: IEquatable<Fingering>
   /// <inheritdoc />
   public bool Equals( Fingering other )
   {
-    return String == other.String && Position == other.Position;
+    return StringNumber == other.StringNumber && Position == other.Position;
   }
 
   /// <inheritdoc />
   public override string ToString()
   {
-    return Position < 0 ? $"{String}x" : $"{String}{Position}";
+    return Position < 0 ? $"{StringNumber}x" : $"{StringNumber}{Position}";
   }
 
   /// <inheritdoc />
@@ -79,7 +82,7 @@ public readonly struct Fingering: IEquatable<Fingering>
   /// <inheritdoc />
   public override int GetHashCode()
   {
-    return HashCode.Combine( String, Position );
+    return HashCode.Combine( StringNumber, Position );
   }
 
   /// <summary>Creates a new Fingering.</summary>
@@ -88,8 +91,7 @@ public readonly struct Fingering: IEquatable<Fingering>
   /// <param name="position">The position.</param>
   /// <exception cref="ArgumentNullException">Thrown when the instrument is null.</exception>
   /// <exception cref="ArgumentOutOfRangeException">
-  ///   Thrown when either the string or the position are out of range for the
-  ///   given instrument.
+  ///   Thrown when either the string number or the position are out of range for the given instrument.
   /// </exception>
   /// <returns>A Fingering.</returns>
   public static Fingering Create(

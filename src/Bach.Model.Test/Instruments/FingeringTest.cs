@@ -37,7 +37,7 @@ public sealed class FingeringTest
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     var actual = Fingering.Create( instrument, 6, 5 );
-    Assert.Equal( 6, actual.String );
+    Assert.Equal( 6, actual.StringNumber );
     Assert.Equal( 5, actual.Position );
     Assert.Equal( Pitch.Parse( "A2" ), actual.Pitch );
   }
