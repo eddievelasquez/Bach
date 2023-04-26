@@ -261,15 +261,25 @@ public abstract class Formula
     return steps;
   }
 
+  /// <summary>Parse intervals.</summary>
+  /// <param name="formula">The formula.</param>
+  /// <returns>.</returns>
   public static Interval[] ParseIntervals( string formula )
   {
-    Requires.NotNullOrEmpty( formula );
+    Requires.NotNull( formula );
     return ParseIntervals( formula.AsSpan() );
   }
 
+  /// <summary>Parse intervals.</summary>
+  /// <exception cref="FormatException">Thrown when the format of the formula is incorrect.</exception>
+  /// <param name="formula">The formula.</param>
+  /// <returns>.</returns>
   public static Interval[] ParseIntervals( ReadOnlySpan<char> formula )
   {
-    Requires.NotEmpty( formula, "Must provide a formula" );
+    if( formula.IsEmpty )
+    {
+      return Array.Empty<Interval>();
+    }
 
     var buf = new List<Interval>();
     foreach( var value in formula.Split( ',' ) )

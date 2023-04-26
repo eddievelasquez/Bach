@@ -29,9 +29,9 @@ internal sealed class PersistentTuning
 {
 #region Properties
 
-  public string Id { get; set; } = null!;
-  public string Name { get; set; } = null!;
-  public string Pitches { get; set; } = null!;
+  public required string Id { get; set; }
+  public required string Name { get; set; }
+  public required string Pitches { get; set; }
 
 #endregion
 }

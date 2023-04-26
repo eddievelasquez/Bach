@@ -31,10 +31,10 @@ internal sealed class PersistentStringedInstrument
 {
 #region Properties
 
-  public string Id { get; set; } = null!;
-  public string Name { get; set; } = null!;
-  public int StringCount { get; set; }
-  public List<PersistentTuning> Tunings { get; set; } = null!;
+  public required string Id { get; set; }
+  public required string Name { get; set; }
+  public required int StringCount { get; set; }
+  public required List<PersistentTuning> Tunings { get; set; }
 
 #endregion
 }

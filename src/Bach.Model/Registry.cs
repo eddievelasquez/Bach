@@ -116,11 +116,19 @@ public static class Registry
     ScaleFormulas = new NamedObjectCollection<ScaleFormula>();
     foreach( var scale in library.Scales )
     {
-      var formula = new ScaleFormulaBuilder( scale.Id, scale.Name ).SetIntervals( scale.Formula )
-                                                                   .AddCategory( scale.Categories )
-                                                                   .AddAlias( scale.Alias )
-                                                                   .Build();
+      var builder = new ScaleFormulaBuilder( scale.Id, scale.Name ).SetIntervals( scale.Formula );
 
+      if( scale.Alias is not null )
+      {
+        builder.AddAlias( scale.Alias );
+      }
+
+      if( scale.Categories is not null )
+      {
+        builder.AddCategory( scale.Categories );
+      }
+
+      var formula = builder.Build();
       ScaleFormulas.Add( formula );
     }
 

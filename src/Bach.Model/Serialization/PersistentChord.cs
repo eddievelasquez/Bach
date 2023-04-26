@@ -29,10 +29,10 @@ internal sealed class PersistentChord
 {
 #region Properties
 
-  public string Id { get; set; } = null!;
-  public string Name { get; set; } = null!;
-  public string Symbol { get; set; } = null!;
-  public string Formula { get; set; } = null!;
+  public required string Id { get; set; }
+  public required string Name { get; set; }
+  public required string Formula { get; set; }
+  public string? Symbol { get; set; }
 
 #endregion
 }

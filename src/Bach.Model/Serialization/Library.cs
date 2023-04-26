@@ -31,10 +31,10 @@ internal sealed class Library
 {
 #region Properties
 
-  public Version Version { get; set; } = null!;
-  public List<PersistentScale> Scales { get; set; } = null!;
-  public List<PersistentChord> Chords { get; set; } = null!;
-  public List<PersistentStringedInstrument> StringedInstruments { get; set; } = null!;
+  public required Version Version { get; set; }
+  public required List<PersistentScale> Scales { get; set; }
+  public required List<PersistentChord> Chords { get; set; }
+  public required List<PersistentStringedInstrument> StringedInstruments { get; set; }
 
 #endregion
 }

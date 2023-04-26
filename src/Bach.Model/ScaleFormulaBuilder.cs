@@ -77,14 +77,9 @@ public sealed class ScaleFormulaBuilder
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="alias">The alias.</param>
   /// <returns>This instance.</returns>
-
-  //TODO: Consider rejecting null alias
   public ScaleFormulaBuilder AddAlias( string? alias )
   {
-    if( alias == null )
-    {
-      return this;
-    }
+    Requires.NotNullOrEmpty( alias );
 
     var aliases = alias.Split( ';' );
     return AddAliases( aliases );
@@ -94,22 +89,12 @@ public sealed class ScaleFormulaBuilder
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="aliases">The aliases.</param>
   /// <returns>This instance.</returns>
-
-  //TODO: Consider rejecting null alias enumerations and values
-  public ScaleFormulaBuilder AddAliases( IEnumerable<string?>? aliases )
+  public ScaleFormulaBuilder AddAliases( IEnumerable<string> aliases )
   {
-    if( aliases == null )
-    {
-      return this;
-    }
+    Requires.NotNull( aliases );
 
     foreach( var alias in aliases )
     {
-      if( alias == null )
-      {
-        continue;
-      }
-
       var trimmed = alias.Trim();
       if( trimmed.Length > 0 )
       {
@@ -127,22 +112,12 @@ public sealed class ScaleFormulaBuilder
   /// </remarks>
   /// <param name="categories">The categories.</param>
   /// <returns>This instance.</returns>
-
-  //TODO: Consider rejecting null alias categories and values
-  public ScaleFormulaBuilder AddCategories( IEnumerable<string?>? categories )
+  public ScaleFormulaBuilder AddCategories( IEnumerable<string> categories )
   {
-    if( categories == null )
-    {
-      return this;
-    }
+    Requires.NotNull( categories );
 
     foreach( var category in categories )
     {
-      if( category == null )
-      {
-        continue;
-      }
-
       var trimmed = category.Trim();
       if( trimmed.Length > 0 )
       {
@@ -160,14 +135,9 @@ public sealed class ScaleFormulaBuilder
   /// </remarks>
   /// <param name="category">The alias.</param>
   /// <returns>This instance.</returns>
-
-  //TODO: Consider rejecting null category
-  public ScaleFormulaBuilder AddCategory( string? category )
+  public ScaleFormulaBuilder AddCategory( string category )
   {
-    if( category == null )
-    {
-      return this;
-    }
+    Requires.NotNull( category );
 
     var categories = category.Split( ';' );
     return AddCategories( categories );
@@ -262,18 +232,15 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's intervals.</summary>
   /// <param name="intervals">The intervals.</param>
   /// <returns>This instance.</returns>
-
-  //TODO: Consider rejecting null interval enumerations
-  public ScaleFormulaBuilder SetIntervals( IEnumerable<Interval>? intervals )
+  public ScaleFormulaBuilder SetIntervals( IEnumerable<Interval> intervals )
   {
+    Requires.NotNull(intervals);
+
     _intervals.Clear();
 
-    if( intervals != null )
+    foreach( var interval in intervals )
     {
-      foreach( var interval in intervals )
-      {
-        _intervals.Add( interval );
-      }
+      _intervals.Add( interval );
     }
 
     return this;
@@ -282,16 +249,10 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's intervals.</summary>
   /// <param name="intervals">The intervals.</param>
   /// <returns>This instance.</returns>
-
-  //TODO: Consider rejecting null intervals
-  public ScaleFormulaBuilder SetIntervals( string? intervals )
+  public ScaleFormulaBuilder SetIntervals( string intervals )
   {
-    _intervals.Clear();
-
-    if( !string.IsNullOrEmpty( intervals ) )
-    {
-      SetIntervals( Formula.ParseIntervals( intervals ) );
-    }
+    Requires.NotNull(intervals);
+    SetIntervals( Formula.ParseIntervals( intervals ) );
 
     return this;
   }
@@ -299,14 +260,10 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's name.</summary>
   /// <param name="name">The name.</param>
   /// <returns>This instance.</returns>
-
-  //TODO: Consider rejecting null name
-  public ScaleFormulaBuilder SetName( string? name )
+  public ScaleFormulaBuilder SetName( string name )
   {
-    if( name != null )
-    {
-      _name = name.Trim();
-    }
+    Requires.NotNull(name);
+    _name = name.Trim();
 
     return this;
   }

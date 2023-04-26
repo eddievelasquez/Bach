@@ -29,11 +29,11 @@ internal sealed class PersistentScale
 {
 #region Properties
 
-  public string Id { get; set; } = null!;
-  public string Name { get; set; } = null!;
-  public string Categories { get; set; } = null!;
-  public string Alias { get; set; } = null!;
-  public string Formula { get; set; } = null!;
+  public required string Id { get; set; }
+  public required string Name { get; set; }
+  public required string Formula { get; set; }
+  public string? Alias { get; set; }
+  public string? Categories { get; set; }
 
 #endregion
 }

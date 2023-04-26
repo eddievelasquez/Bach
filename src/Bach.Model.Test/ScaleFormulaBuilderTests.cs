@@ -52,29 +52,6 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddAliasEnumerableStringWithNullTest()
-  {
-    const string Name = "Name";
-    string[] aliases = { "Alias1", "Alias2" };
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddAliases( aliases )
-                                                 .AddAliases( new string[] { null } );
-
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.Empty( formula.Categories );
-    Assert.NotEmpty( formula.Aliases );
-    Assert.Contains( aliases[0], formula.Aliases );
-    Assert.Contains( aliases[1], formula.Aliases );
-  }
-
-  [Fact]
   public void AddAliasNullStringTest()
   {
     const string Name = "Name";
@@ -82,7 +59,7 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias ).AddAlias( null );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -193,29 +170,6 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddCategoriesEnumerableStringWithNullsTest()
-  {
-    const string Name = "Name";
-    string[] categories = { "Category1", "Category2" };
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategories( categories )
-                                                 .AddCategories( new string[] { null } );
-
-    var formula = builder.Build();
-    Assert.NotNull( formula );
-    Assert.Equal( Name, formula.Name );
-    Assert.Equal( Name, formula.Id );
-    Assert.Equal( intervals, formula.Intervals );
-    Assert.NotEmpty( formula.Categories );
-    Assert.Contains( categories[0], formula.Categories );
-    Assert.Contains( categories[1], formula.Categories );
-    Assert.Empty( formula.Aliases );
-  }
-
-  [Fact]
   public void AddCategoryNullStringTest()
   {
     const string Name = "Name";
@@ -223,9 +177,7 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategory( null )
-                                                 .AddCategory( Category );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Category );
 
     var formula = builder.Build();
     Assert.NotNull( formula );
