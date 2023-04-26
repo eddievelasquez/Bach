@@ -34,16 +34,10 @@ public sealed class StringedInstrumentDefinitionBuilder
 {
 #region Nested Types
 
-  private struct TuningInfo
-  {
-#region Properties
-
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public PitchCollection Pitches { get; set; }
-
-#endregion
-  }
+  private sealed record TuningInfo(
+    string Id,
+    string Name,
+    PitchCollection Pitches );
 
 #endregion
 
@@ -171,14 +165,9 @@ public sealed class StringedInstrumentDefinitionBuilder
     Requires.ExactCount( pitches, _state.StringCount, $"Must provide exactly {_state.StringCount} pitches" );
     CheckBuilderReuse();
 
-    var info = new TuningInfo
-    {
-      Id = id,
-      Name = name,
-      Pitches = pitches
-    };
-
+    var info = new TuningInfo( id, name, pitches );
     _tuningInfo.Add( id, info );
+
     return this;
   }
 

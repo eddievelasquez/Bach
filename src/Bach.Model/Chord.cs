@@ -81,7 +81,7 @@ public class Chord
     PitchClasses
       = new PitchClassCollection( Formula.Generate( Root ).Skip( inversion ).Take( Formula.Intervals.Count ) );
 
-    Name = GenerateName( root, formula, PitchClasses.First() );
+    Name = GenerateName( root, formula, PitchClasses[0] );
   }
 
 #endregion

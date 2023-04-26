@@ -274,7 +274,7 @@ public sealed class StringedInstrument
     }
 
     Fingering fingering;
-    if( current >= low && current <= high )
+    if( current <= high )
     {
       var position = ( current - low ) + startPosition;
       fingering = Fingering.Create( this, stringNumber, position );

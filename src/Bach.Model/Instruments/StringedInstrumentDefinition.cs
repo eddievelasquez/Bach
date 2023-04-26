@@ -87,10 +87,7 @@ public sealed class StringedInstrumentDefinition
   /// <inheritdoc />
   public override int GetHashCode()
   {
-    var hash = 17;
-    hash = ( hash * 23 ) + base.GetHashCode();
-    hash = ( hash * 23 ) + StringCount;
-    return hash;
+    return HashCode.Combine( base.GetHashCode(), StringCount );
   }
 
 #endregion
