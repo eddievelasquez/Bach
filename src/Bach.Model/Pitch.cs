@@ -115,6 +115,11 @@ public readonly struct Pitch
 
 #region Properties
 
+  /// <summary>Gets the number of total pitches.</summary>
+  ///
+  /// <value>The total number of pitch count.</value>
+  public static int TotalPitchCount => MaxValue._absoluteValue - MinValue._absoluteValue;
+
   /// <summary>Gets a value indicating whether this instance is a valid pitch.</summary>
   /// <value>True if this instance is a valid false, false if it is not.</value>
   public bool IsValid
@@ -361,7 +366,7 @@ public readonly struct Pitch
     while( noteName != end )
     {
       semitones += s_semitonesBetween[(int) noteName];
-      noteName = (NoteName) s_semitonesBetween.WrapIndex( (int) noteName + 1 );
+      noteName = (NoteName) s_semitonesBetween.WrapIndex( 0, (int) (noteName + 1) );
     }
 
     return semitones;

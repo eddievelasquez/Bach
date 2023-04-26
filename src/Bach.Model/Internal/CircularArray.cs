@@ -75,7 +75,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   public int Head
   {
     get => _head;
-    set => _head = ( (IList) _items ).WrapIndex( value );
+    set => _head = _items.WrapIndex( value );
   }
 
   /// <summary>

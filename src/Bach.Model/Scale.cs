@@ -112,40 +112,36 @@ public sealed class Scale: IEquatable<Scale>
   public bool Theoretical { get; }
 
   /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
-  /// <value>An enumerable that iterates through the scale in ascending fashion.</value>
-  public IEnumerable<PitchClass> Ascending
+  /// <returns>An enumerable that iterates through the scale in ascending fashion.</returns>
+  public IEnumerable<PitchClass> GetAscending()
   {
-    get
+    // maxIterationCount provides a way to break out of an otherwise infinite
+    // loop, as it doesn't make sense to generate more pitch classes than
+    // the number of pitches that are supported.
+    var maxIterationCount = Pitch.TotalPitchCount;
+    var index = 0;
+
+    while( maxIterationCount-- >= 0 )
     {
-      var index = 0;
-
-      while( true )
-      {
-        yield return PitchClasses[index];
-
-        index = ArrayExtensions.WrapIndex( PitchClasses.Count, ++index );
-      }
-
-      // ReSharper disable once IteratorNeverReturns
+      yield return PitchClasses[index];
+      index = PitchClasses.WrapIndex( index + 1);
     }
   }
 
   /// <summary>Returns an enumerable that iterates through the scale in descending fashion.</summary>
-  /// <value>An enumerable that iterates through the scale in descending fashion.</value>
-  public IEnumerable<PitchClass> Descending
+  /// <returns>An enumerable that iterates through the scale in descending fashion.</returns>
+  public IEnumerable<PitchClass> GetDescending()
   {
-    get
+    // maxIterationCount provides a way to break out of an otherwise infinite
+    // loop, as it doesn't make sense to generate more pitch classes than
+    // the number of pitches that are supported.
+    var maxIterationCount = Pitch.TotalPitchCount;
+    var index = 0;
+
+    while( maxIterationCount-- >= 0 )
     {
-      var index = 0;
-
-      while( true )
-      {
-        yield return PitchClasses[index];
-
-        index = ArrayExtensions.WrapIndex( PitchClasses.Count, --index );
-      }
-
-      // ReSharper disable once IteratorNeverReturns
+      yield return PitchClasses[index];
+      index = PitchClasses.WrapIndex( index - 1 );
     }
   }
 

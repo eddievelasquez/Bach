@@ -59,7 +59,7 @@ public sealed class Mode
 
     Name = buf.ToString();
     PitchClasses
-      = new PitchClassCollection( scale.Ascending.Skip( Formula.Tonic - 1 ).Take( scale.PitchClasses.Count ) );
+      = new PitchClassCollection( scale.GetAscending().Skip( Formula.Tonic - 1 ).Take( scale.PitchClasses.Count ) );
   }
 
 #endregion
@@ -116,16 +116,17 @@ public sealed class Mode
   /// <inheritdoc />
   public IEnumerator<PitchClass> GetEnumerator()
   {
+    // maxIterationCount provides a way to break out of an otherwise infinite
+    // loop, as it doesn't make sense to generate more pitch classes than
+    // the number of pitches that are supported.
+    var maxIterationCount = Pitch.TotalPitchCount;
     var index = 0;
 
-    while( true )
+    while( maxIterationCount-- >= 0 )
     {
       yield return PitchClasses[index];
-
-      index = ArrayExtensions.WrapIndex( PitchClasses.Count, ++index );
+      index = PitchClasses.WrapIndex( index + 1 );
     }
-
-    // ReSharper disable once IteratorNeverReturns
   }
 
   /// <inheritdoc />

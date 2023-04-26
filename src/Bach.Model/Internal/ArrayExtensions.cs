@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Bach.Model.Internal;
@@ -64,15 +63,26 @@ internal static class ArrayExtensions
     return ( ( index % size ) + size ) % size;
   }
 
-  /// <summary>  Handles underflow and overflow of the provided index within the given list.</summary>
-  /// <param name="list">The list.</param>
+  /// <summary>  Handles underflow and overflow of the provided index within the given collection.</summary>
+  /// <param name="collection">The collection.</param>
   /// <param name="index">The index.</param>
   /// <returns>An index that is ensured to be within the range of elements of the list.</returns>
-  public static int WrapIndex(
-    this IList list,
+  public static int WrapIndex<T>(
+    this ICollection<T> collection,
     int index )
   {
-    return WrapIndex( list.Count, index );
+    return WrapIndex( collection.Count, index );
+  }
+
+  /// <summary>  Handles underflow and overflow of the provided index within the given collection.</summary>
+  /// <param name="collection">The collection.</param>
+  /// <param name="index">The index.</param>
+  /// <returns>An index that is ensured to be within the range of elements of the list.</returns>
+  public static int WrapIndex<T>(
+    this IReadOnlyCollection<T> collection,
+    int index )
+  {
+    return WrapIndex( collection.Count, index );
   }
 
   /// <summary>  Handles underflow and overflow of the provided index within the dimension of the given array.</summary>

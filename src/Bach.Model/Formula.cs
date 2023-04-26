@@ -198,16 +198,18 @@ public abstract class Formula
   }
 
   /// <summary>Generates a sequence of pitch classes based on the formula's intervals.</summary>
-  /// <remarks>Warning! By design, this enumerator never ends.</remarks>
   /// <param name="root">The root pitch class.</param>
   /// <returns> An enumerator for a sequence of pitch classes.</returns>
   public IEnumerable<PitchClass> Generate( PitchClass root )
   {
+    // maxIterationCount provides a way to break out of an otherwise infinite
+    // loop, as it doesn't make sense to generate more pitch classes than
+    // the number of pitches that are supported.
+    var maxIterationCount = Pitch.TotalPitchCount;
     var intervalCount = Intervals.Count;
     var index = 0;
 
-    // NOTE: By design, this iterator never returns.
-    while( true )
+    while( maxIterationCount-- >= 0 )
     {
       var interval = Intervals[index % intervalCount];
       var pitchClass = root + interval;
@@ -215,8 +217,6 @@ public abstract class Formula
 
       ++index;
     }
-
-    // ReSharper disable once IteratorNeverReturns
   }
 
   /// <summary>

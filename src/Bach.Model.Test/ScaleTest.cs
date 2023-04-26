@@ -114,7 +114,7 @@ public sealed class ScaleTest
   public void GetAscendingEnumeratorTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    IEnumerator enumerator = scale.Ascending.GetEnumerator();
+    IEnumerator enumerator = scale.GetAscending().GetEnumerator();
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
     Assert.True( enumerator.MoveNext() );
@@ -137,7 +137,7 @@ public sealed class ScaleTest
   public void GetDescendingEnumeratorTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    IEnumerator enumerator = scale.Descending.GetEnumerator();
+    IEnumerator enumerator = scale.GetDescending().GetEnumerator();
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
     Assert.True( enumerator.MoveNext() );
@@ -436,7 +436,7 @@ public sealed class ScaleTest
   {
     var expected = PitchClassCollection.Parse( expectedNotes );
     var scale = new Scale( root, formulaName );
-    var actual = scale.Ascending.Take( expected.Count );
+    var actual = scale.GetAscending().Take( expected.Count );
     Assert.Equal( expected, actual );
   }
 
@@ -447,7 +447,7 @@ public sealed class ScaleTest
   {
     var expected = PitchClassCollection.Parse( expectedNotes );
     var scale = new Scale( root, formulaName );
-    var actual = scale.Descending.Take( expected.Count );
+    var actual = scale.GetDescending().Take( expected.Count );
     Assert.Equal( expected, actual );
   }
 
