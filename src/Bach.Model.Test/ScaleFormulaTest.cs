@@ -189,22 +189,6 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void IntervalsMustBeSortedTest()
-  {
-    Assert.Throws<InvalidOperationException>( () => new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                .SetIntervals( "R,M3,M2" )
-                                                .Build() );
-  }
-
-  [Fact]
-  public void IntervalsMustHaveNoDuplicatesTest()
-  {
-    Assert.Throws<InvalidOperationException>( () => new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                .SetIntervals( "R,M2,M2,M3" )
-                                                .Build() );
-  }
-
-  [Fact]
   public void TypeSafeEqualsContractTest()
   {
     var x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();

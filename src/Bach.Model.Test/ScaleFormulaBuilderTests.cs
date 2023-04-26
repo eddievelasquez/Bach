@@ -323,20 +323,6 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void IntervalsMustBeOrderedTest()
-  {
-    var builder = new ScaleFormulaBuilder( "Name" ).SetIntervals( "R,M3,M2" );
-    Assert.Throws<InvalidOperationException>( () => builder.Build() );
-  }
-
-  [Fact]
-  public void IntervalsMustBeUniqueTest()
-  {
-    var builder = new ScaleFormulaBuilder( "Name" ).SetIntervals( "R,M2,M2" );
-    Assert.Throws<InvalidOperationException>( () => builder.Build() );
-  }
-
-  [Fact]
   public void MajorCategoryIsAddedTest()
   {
     const string Name = "Name";

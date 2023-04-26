@@ -36,7 +36,7 @@ public sealed class ScaleFormulaBuilder
 {
 #region Fields
 
-  private readonly List<Interval> _intervals = new();
+  private readonly SortedSet<Interval> _intervals = new();
   private readonly HashSet<string> _aliases = new( Comparer.NameComparer );
   private readonly HashSet<string> _categories = new( Comparer.NameComparer );
   private string? _id;
@@ -204,14 +204,9 @@ public sealed class ScaleFormulaBuilder
       throw new InvalidOperationException( "Must provide a scale name" );
     }
 
-    if( _intervals.Count == 0 )
+    if( _intervals.Count < 2 )
     {
       throw new InvalidOperationException( "A scale must contain at least two intervals" );
-    }
-
-    if( !_intervals.IsSortedUnique() )
-    {
-      throw new InvalidOperationException( "A scale's intervals must be sorted and without duplicates" );
     }
 
     // Add default values
@@ -275,7 +270,10 @@ public sealed class ScaleFormulaBuilder
 
     if( intervals != null )
     {
-      _intervals.AddRange( intervals );
+      foreach( var interval in intervals )
+      {
+        _intervals.Add( interval );
+      }
     }
 
     return this;
@@ -292,7 +290,7 @@ public sealed class ScaleFormulaBuilder
 
     if( !string.IsNullOrEmpty( intervals ) )
     {
-      _intervals.AddRange( Formula.ParseIntervals( intervals ) );
+      SetIntervals( Formula.ParseIntervals( intervals ) );
     }
 
     return this;
@@ -327,7 +325,7 @@ public sealed class ScaleFormulaBuilder
     var wholeSteps = 0;
     var halfSteps = 0;
 
-    foreach( var step in Formula.GetRelativeSteps( _intervals ) )
+    foreach( var step in Formula.GetRelativeSteps( _intervals.ToArray() ) )
     {
       if( step == 2 )
       {
