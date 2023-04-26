@@ -214,35 +214,35 @@ public sealed class ScaleFormulaBuilder
 
     if( IsDiatonic() )
     {
-      _categories.Add( "Diatonic" );
+      _categories.Add( ScaleCategory.Diatonic );
     }
 
     if( IsMajor() )
     {
-      _categories.Add( "Major" );
+      _categories.Add( ScaleCategory.Major );
     }
 
     if( IsMinor() )
     {
-      _categories.Add( "Minor" );
+      _categories.Add( ScaleCategory.Minor );
     }
 
     switch( _intervals.Count )
     {
       case 5:
-        _categories.Add( "Pentatonic" );
+        _categories.Add( ScaleCategory.Pentatonic );
         break;
 
       case 6:
-        _categories.Add( "Hexatonic" );
+        _categories.Add( ScaleCategory.Hexatonic );
         break;
 
       case 7:
-        _categories.Add( "Heptatonic" );
+        _categories.Add( ScaleCategory.Heptatonic );
         break;
 
       case 8:
-        _categories.Add( "Octatonic" );
+        _categories.Add( ScaleCategory.Octatonic );
         break;
     }
 

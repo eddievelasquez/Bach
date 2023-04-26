@@ -52,17 +52,25 @@ public class ScaleFormula: Formula
 
 #region Properties
 
-  /// <summary>
-  ///   Gets the optional categories for this scale formula
-  /// </summary>
+  /// <summary>Gets the optional categories for this scale formula.</summary>
   /// <value>The categories.</value>
   public IReadOnlySet<string> Categories { get; }
 
-  /// <summary>
-  ///   Gets the optional aliases for this scale formula.
-  /// </summary>
+  /// <summary>Gets the optional aliases for this scale formula.</summary>
   /// <value>The aliases.</value>
   public IReadOnlySet<string> Aliases { get; }
+
+  /// <summary>Gets a value indicating whether this instance is diatonic.</summary>
+  /// <value><c>true</c> if this instance is diatonic, <c>false</c> if not.</value>
+  public bool IsDiatonic => Categories.Contains( ScaleCategory.Diatonic );
+
+  /// <summary>Query if this instance is a major scale formula.</summary>
+  /// <value><c>true</c> if major; otherwise, <c>false</c>.</value>
+  public bool IsMajor => Categories.Contains( ScaleCategory.Major );
+
+  /// <summary>Query if this instance is a minor scale formula.</summary>
+  /// <value><c>true</c> if minor; otherwise, <c>false</c>.</value>
+  public bool IsMinor => Categories.Contains( ScaleCategory.Minor );
 
 #endregion
 }
