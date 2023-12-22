@@ -278,21 +278,28 @@ public abstract class Formula
   {
     if( formula.IsEmpty )
     {
-      return Array.Empty<Interval>();
+      return [ ];
     }
 
     var buf = new List<Interval>();
-    foreach( var value in formula.Split( ',' ) )
+
+    // There can be at most (n / 2) + 1 intervals in an n-character string formula
+    // in which intervals are separated by commas
+    Span<Range> ranges = stackalloc Range[( formula.Length / 2 ) + 1];
+    var count = formula.Split( ranges, ',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+
+    for( var i = 0; i < count; ++i )
     {
-      if( !Interval.TryParse( formula[value.Start.Value..value.End.Value], out var interval ) )
+      var value = formula[ranges[i]];
+      if( !Interval.TryParse( value, out var interval ) )
       {
-        throw new FormatException( value + " is not a valid interval" );
+        throw new FormatException( value.ToString() + " is not a valid interval" );
       }
 
       buf.Add( interval );
     }
 
-    return buf.ToArray();
+    return [ .. buf ];
   }
 
   /// <inheritdoc />
@@ -317,7 +324,7 @@ public abstract class Formula
   /// </remarks>
   public string ToString( string format )
   {
-    return ToString( format, null );
+    return ToString( format, null! );
   }
 
   /// <summary>
