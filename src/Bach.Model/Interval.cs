@@ -57,31 +57,134 @@ public readonly struct Interval
     { 21, 22, -1, 23, 24 } // Fourteenth (Seventh)
   };
 
+  /// <summary>
+  ///   The Unison interval
+  /// </summary>
   public static readonly Interval Unison = new( IntervalQuantity.Unison, IntervalQuality.Perfect );
+
+  /// <summary>
+  ///   The augmented Unison interval
+  /// </summary>
   public static readonly Interval AugmentedFirst = new( IntervalQuantity.Unison, IntervalQuality.Augmented );
+
+  /// <summary>
+  ///   The diminished Second interval
+  /// </summary>
   public static readonly Interval DiminishedSecond = new( IntervalQuantity.Second, IntervalQuality.Diminished );
+
+  /// <summary>
+  ///   The minor Second interval
+  /// </summary>
   public static readonly Interval MinorSecond = new( IntervalQuantity.Second, IntervalQuality.Minor );
+
+  /// <summary>
+  ///   The major Second interval
+  /// </summary>
   public static readonly Interval MajorSecond = new( IntervalQuantity.Second, IntervalQuality.Major );
+
+  /// <summary>
+  ///   The augmented Second interval
+  /// </summary>
   public static readonly Interval AugmentedSecond = new( IntervalQuantity.Second, IntervalQuality.Augmented );
+
+  /// <summary>
+  ///   The diminished Third interval
+  /// </summary>
   public static readonly Interval DiminishedThird = new( IntervalQuantity.Third, IntervalQuality.Diminished );
+
+  /// <summary>
+  ///   The minor Third interval
+  /// </summary>
   public static readonly Interval MinorThird = new( IntervalQuantity.Third, IntervalQuality.Minor );
+
+  /// <summary>
+  ///   The major Third interval
+  /// </summary>
   public static readonly Interval MajorThird = new( IntervalQuantity.Third, IntervalQuality.Major );
+
+  /// <summary>
+  ///   The augmented Third interval
+  /// </summary>
   public static readonly Interval AugmentedThird = new( IntervalQuantity.Third, IntervalQuality.Augmented );
+
+  /// <summary>
+  ///   The diminished Fourth interval
+  /// </summary>
   public static readonly Interval DiminishedFourth = new( IntervalQuantity.Fourth, IntervalQuality.Diminished );
+
+  /// <summary>
+  ///   The perfect Fourth interval
+  /// </summary>
   public static readonly Interval Fourth = new( IntervalQuantity.Fourth, IntervalQuality.Perfect );
+
+  /// <summary>
+  ///   The augmented Fourth interval
+  /// </summary>
   public static readonly Interval AugmentedFourth = new( IntervalQuantity.Fourth, IntervalQuality.Augmented );
+
+  /// <summary>
+  ///   The diminished Fifth interval
+  /// </summary>
   public static readonly Interval DiminishedFifth = new( IntervalQuantity.Fifth, IntervalQuality.Diminished );
+
+  /// <summary>
+  ///   The perfect Fifth interval
+  /// </summary>
   public static readonly Interval Fifth = new( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+  /// <summary>
+  ///   The augmented Fifth interval
+  /// </summary>
   public static readonly Interval AugmentedFifth = new( IntervalQuantity.Fifth, IntervalQuality.Augmented );
+
+  /// <summary>
+  ///   The diminished Sixth interval
+  /// </summary>
   public static readonly Interval DiminishedSixth = new( IntervalQuantity.Sixth, IntervalQuality.Diminished );
+
+  /// <summary>
+  ///   The minor Sixth interval
+  /// </summary>
   public static readonly Interval MinorSixth = new( IntervalQuantity.Sixth, IntervalQuality.Minor );
+
+  /// <summary>
+  ///   The major Sixth interval
+  /// </summary>
   public static readonly Interval MajorSixth = new( IntervalQuantity.Sixth, IntervalQuality.Major );
+
+  /// <summary>
+  ///   The augmented Sixth interval
+  /// </summary>
   public static readonly Interval AugmentedSixth = new( IntervalQuantity.Sixth, IntervalQuality.Augmented );
+
+  /// <summary>
+  ///   The diminished Seventh interval
+  /// </summary>
   public static readonly Interval DiminishedSeventh = new( IntervalQuantity.Seventh, IntervalQuality.Diminished );
+
+  /// <summary>
+  ///   The minor Seventh interval
+  /// </summary>
   public static readonly Interval MinorSeventh = new( IntervalQuantity.Seventh, IntervalQuality.Minor );
+
+  /// <summary>
+  ///   The major Seventh interval
+  /// </summary>
   public static readonly Interval MajorSeventh = new( IntervalQuantity.Seventh, IntervalQuality.Major );
+
+  /// <summary>
+  ///   The augmented Seventh interval
+  /// </summary>
   public static readonly Interval AugmentedSeventh = new( IntervalQuantity.Seventh, IntervalQuality.Augmented );
+
+  /// <summary>
+  ///   The diminished Octave interval
+  /// </summary>
   public static readonly Interval DiminishedOctave = new( IntervalQuantity.Octave, IntervalQuality.Diminished );
+
+  /// <summary>
+  ///   The Octave interval
+  /// </summary>
   public static readonly Interval Octave = new( IntervalQuantity.Octave, IntervalQuality.Perfect );
 
 #endregion
@@ -145,6 +248,9 @@ public readonly struct Interval
   /// <value>The quality.</value>
   public IntervalQuality Quality => (IntervalQuality) _quality;
 
+  /// <summary>
+  ///   Gets the interval's inversion. An interval and its inversion always add up to an octave.
+  /// </summary>
   public Interval Inversion
   {
     get

@@ -39,12 +39,40 @@ public readonly struct NoteName
 #region Constants
 
   private const int NoteNameCount = 7;
+
+  /// <summary>
+  ///   The C (Do) note
+  /// </summary>
   public static readonly NoteName C = new( 0 );
+
+  /// <summary>
+  ///   The D (Re) note
+  /// </summary>
   public static readonly NoteName D = new( 1 );
+
+  /// <summary>
+  ///   The E (Mi) note
+  /// </summary>
   public static readonly NoteName E = new( 2 );
+
+  /// <summary>
+  ///   The F (Fa) note
+  /// </summary>
   public static readonly NoteName F = new( 3 );
+
+  /// <summary>
+  ///   The G (Sol) note
+  /// </summary>
   public static readonly NoteName G = new( 4 );
+
+  /// <summary>
+  ///   The A (La) note
+  /// </summary>
   public static readonly NoteName A = new( 5 );
+
+  /// <summary>
+  ///   The B (Ti) note
+  /// </summary>
   public static readonly NoteName B = new( 6 );
 
   // ReSharper disable once StringLiteralTypo

@@ -30,6 +30,9 @@ using Bach.Model.Internal;
 
 namespace Bach.Model;
 
+/// <summary>
+///   Represents a collection of intervals.
+/// </summary>
 public sealed class IntervalCollection
   : IReadOnlyList<Interval>,
     IEquatable<IEnumerable<Interval>>

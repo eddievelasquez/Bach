@@ -22,7 +22,6 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections;
 using Xunit;
 
 namespace Bach.Model.Test;
@@ -36,7 +35,7 @@ public sealed class ModeTest
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var mode = new Mode( scale, ModeFormula.Ionian );
-    var enumerator = ( (IEnumerable) mode ).GetEnumerator();
+    using var enumerator = mode.GetEnumerator();
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
     Assert.True( enumerator.MoveNext() );

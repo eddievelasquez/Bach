@@ -411,11 +411,11 @@ public sealed class PitchTest
     Assert.False( Pitch.TryParse( "Cb#2", out actual ) );
     Assert.False( actual.IsValid );
 
-    Assert.False( Pitch.TryParse( null, out actual ) );
-    Assert.False( Pitch.TryParse( "", out actual ) );
-    Assert.False( Pitch.TryParse( "256", out actual ) );
-    Assert.False( Pitch.TryParse( "-1", out actual ) );
-    Assert.False( Pitch.TryParse( "1X", out actual ) );
+    Assert.False( Pitch.TryParse( null!, out _ ) );
+    Assert.False( Pitch.TryParse( "", out _ ) );
+    Assert.False( Pitch.TryParse( "256", out _ ) );
+    Assert.False( Pitch.TryParse( "-1", out _ ) );
+    Assert.False( Pitch.TryParse( "1X", out _ ) );
   }
 
   [Fact]

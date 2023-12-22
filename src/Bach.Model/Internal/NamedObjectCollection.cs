@@ -65,6 +65,11 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     }
   }
 
+  /// <summary>
+  /// Gets the value associated with the specified ID or name.
+  /// </summary>
+  /// <param name="idOrName">The ID or name of the object.</param>
+  /// <exception cref="KeyNotFoundException">If the object was not found.</exception>
   public T this[ string idOrName ]
   {
     get
@@ -82,6 +87,16 @@ public sealed class NamedObjectCollection<T>: Collection<T>
 
 #region Public Methods
 
+  /// <summary>
+  ///   Tries to get the value associated with the specified ID or name.
+  /// </summary>
+  /// <param name="idOrName">The ID or name of the object.</param>
+  /// <param name="item">
+  ///   When this method returns, contains the value associated with the specified ID or name, if the ID or
+  ///   name is found; otherwise, the default value for the type of the value parameter. This parameter is passed
+  ///   uninitialized.
+  /// </param>
+  /// <returns>true if the ID or name is found; otherwise, false.</returns>
   public bool TryGetValue(
     string idOrName,
     [MaybeNullWhen( false )] out T item )

@@ -222,23 +222,23 @@ public sealed class IntervalTest
   [Fact]
   public void TryParseReturnsFalseBlankStringTest()
   {
-    Assert.False( Interval.TryParse( "", out var _ ) );
-    Assert.False( Interval.TryParse( "   ", out var _ ) );
+    Assert.False( Interval.TryParse( "", out _ ) );
+    Assert.False( Interval.TryParse( "   ", out _ ) );
   }
 
   [Fact]
   public void TryParseReturnsFalseWithNonsensicalIntervalsTest()
   {
-    Assert.False( Interval.TryParse( "M1", out var _ ) );
-    Assert.False( Interval.TryParse( "P2", out var _ ) );
-    Assert.False( Interval.TryParse( "L2", out var _ ) );
-    Assert.False( Interval.TryParse( "Px", out var _ ) );
+    Assert.False( Interval.TryParse( "M1", out _ ) );
+    Assert.False( Interval.TryParse( "P2", out _ ) );
+    Assert.False( Interval.TryParse( "L2", out _ ) );
+    Assert.False( Interval.TryParse( "Px", out _ ) );
   }
 
   [Fact]
   public void TryParseReturnsFalseWithNullTest()
   {
-    Assert.False( Interval.TryParse( null, out var _ ) );
+    Assert.False( Interval.TryParse( null!, out _ ) );
   }
 
   [Fact]

@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -107,14 +106,14 @@ public sealed class ScaleTest
   [Fact]
   public void FormulaConstructorThrowsOnNullFormulaTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (ScaleFormula) null ) );
+    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (ScaleFormula) null! ) );
   }
 
   [Fact]
   public void GetAscendingEnumeratorTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    IEnumerator enumerator = scale.GetAscending().GetEnumerator();
+    using var enumerator = scale.GetAscending().GetEnumerator();
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
     Assert.True( enumerator.MoveNext() );
@@ -137,7 +136,7 @@ public sealed class ScaleTest
   public void GetDescendingEnumeratorTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    IEnumerator enumerator = scale.GetDescending().GetEnumerator();
+    using var enumerator = scale.GetDescending().GetEnumerator();
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
     Assert.True( enumerator.MoveNext() );
@@ -364,7 +363,7 @@ public sealed class ScaleTest
   [Fact]
   public void StringConstructorThrowsOnNullFormulaNameTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (string) null ) );
+    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (string) null! ) );
   }
 
   [Fact]

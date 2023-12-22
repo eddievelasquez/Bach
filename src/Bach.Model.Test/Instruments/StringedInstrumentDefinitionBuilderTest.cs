@@ -112,7 +112,7 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( null, TuningName, pitches ) );
+    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( null!, TuningName, pitches ) );
   }
 
   [Fact]
@@ -121,7 +121,7 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( TuningId, null, pitches ) );
+    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( TuningId, null!, pitches ) );
   }
 
   [Fact]
@@ -168,7 +168,7 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( null, TuningName, pitches ) );
+    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( null!, TuningName, pitches ) );
   }
 
   [Fact]
@@ -177,7 +177,7 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( TuningId, null, pitches ) );
+    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( TuningId, null!, pitches ) );
   }
 
   [Fact]

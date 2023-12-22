@@ -282,7 +282,7 @@ public sealed class PitchClassTest
   [Fact]
   public void ParseRejectsInvalidStringsTest()
   {
-    Assert.Throws<ArgumentNullException>( () => PitchClass.Parse( null ) );
+    Assert.Throws<ArgumentNullException>( () => PitchClass.Parse( null! ) );
     Assert.Throws<ArgumentException>( () => PitchClass.Parse( "" ) );
     Assert.Throws<FormatException>( () => PitchClass.Parse( "J" ) );
     Assert.Throws<FormatException>( () => PitchClass.Parse( "C$" ) );
@@ -375,7 +375,7 @@ public sealed class PitchClassTest
   [Fact]
   public void TryParseRejectsInvalidStringsTest()
   {
-    Assert.False( PitchClass.TryParse( null, out _ ) );
+    Assert.False( PitchClass.TryParse( null!, out _ ) );
     Assert.False( PitchClass.TryParse( "", out _ ) );
     Assert.False( PitchClass.TryParse( "J", out _ ) );
     Assert.False( PitchClass.TryParse( "C$", out _ ) );

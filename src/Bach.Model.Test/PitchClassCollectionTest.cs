@@ -81,7 +81,7 @@ public sealed class PitchClassCollectionTest
   public void ParseTest()
   {
     Assert.Equal( new[] { PitchClass.C, PitchClass.DFlat }, PitchClassCollection.Parse( "C,Db" ) );
-    Assert.Throws<ArgumentNullException>( () => PitchClassCollection.Parse( null ) );
+    Assert.Throws<ArgumentNullException>( () => PitchClassCollection.Parse( null! ) );
     Assert.Throws<ArgumentException>( () => PitchClassCollection.Parse( "" ) );
     Assert.Throws<FormatException>( () => PitchClassCollection.Parse( "C$" ) );
   }
@@ -91,9 +91,9 @@ public sealed class PitchClassCollectionTest
   {
     Assert.True( PitchClassCollection.TryParse( "C,Db", out var actual ) );
     Assert.Equal( new[] { PitchClass.C, PitchClass.DFlat }, actual );
-    Assert.False( PitchClassCollection.TryParse( null, out actual ) );
-    Assert.False( PitchClassCollection.TryParse( "", out actual ) );
-    Assert.False( PitchClassCollection.TryParse( "C$", out actual ) );
+    Assert.False( PitchClassCollection.TryParse( null!, out _ ) );
+    Assert.False( PitchClassCollection.TryParse( "", out _ ) );
+    Assert.False( PitchClassCollection.TryParse( "C$", out _ ) );
   }
 
   [Fact]

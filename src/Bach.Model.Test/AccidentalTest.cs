@@ -274,7 +274,7 @@ public sealed class AccidentalTest
   [Fact]
   public void TryParseTest()
   {
-    Assert.True( Accidental.TryParse( null, out var accidental ) );
+    Assert.True( Accidental.TryParse( null!, out var accidental ) );
     Assert.Equal( Accidental.Natural, accidental );
     Assert.True( Accidental.TryParse( "", out accidental ) );
     Assert.Equal( Accidental.Natural, accidental );
@@ -284,7 +284,7 @@ public sealed class AccidentalTest
     Assert.Equal( Accidental.DoubleFlat, accidental );
     Assert.True( Accidental.TryParse( "b", out accidental ) );
     Assert.Equal( Accidental.Flat, accidental );
-    Assert.True( Accidental.TryParse( null, out accidental ) );
+    Assert.True( Accidental.TryParse( null!, out accidental ) );
     Assert.Equal( Accidental.Natural, accidental );
     Assert.True( Accidental.TryParse( "", out accidental ) );
     Assert.Equal( Accidental.Natural, accidental );
@@ -292,11 +292,11 @@ public sealed class AccidentalTest
     Assert.Equal( Accidental.Sharp, accidental );
     Assert.True( Accidental.TryParse( "##", out accidental ) );
     Assert.Equal( Accidental.DoubleSharp, accidental );
-    Assert.False( Accidental.TryParse( "b#", out accidental ) );
-    Assert.False( Accidental.TryParse( "#b", out accidental ) );
-    Assert.False( Accidental.TryParse( "bbb", out accidental ) );
-    Assert.False( Accidental.TryParse( "###", out accidental ) );
-    Assert.False( Accidental.TryParse( "$", out accidental ) );
+    Assert.False( Accidental.TryParse( "b#", out _ ) );
+    Assert.False( Accidental.TryParse( "#b", out _ ) );
+    Assert.False( Accidental.TryParse( "bbb", out _ ) );
+    Assert.False( Accidental.TryParse( "###", out _ ) );
+    Assert.False( Accidental.TryParse( "$", out _ ) );
   }
 
   [Fact]

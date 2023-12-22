@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Linq;
 using Xunit;
 
@@ -87,7 +86,7 @@ public sealed class ChordTest
   public void EnumeratorTest()
   {
     var cMajor = new Chord( PitchClass.C, "Major" );
-    var enumerator = ( (IEnumerable) cMajor ).GetEnumerator();
+    using var enumerator = cMajor.GetEnumerator();
     Assert.NotNull( enumerator );
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
@@ -150,7 +149,7 @@ public sealed class ChordTest
   [Fact]
   public void FormulaConstructorThrowsOnNullFormulaTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (ChordFormula) null ) );
+    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (ChordFormula) null! ) );
   }
 
   [Fact]
@@ -199,7 +198,7 @@ public sealed class ChordTest
   [Fact]
   public void StringConstructorThrowsOnNullFormulaNameTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (string) null ) );
+    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (string) null! ) );
   }
 
   [Fact]

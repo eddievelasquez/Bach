@@ -71,7 +71,7 @@ public sealed class StringedInstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var expectedTuning = definition.Tunings.Standard;
-    Assert.Throws<ArgumentNullException>( () => StringedInstrument.Create( null, 22, expectedTuning ) );
+    Assert.Throws<ArgumentNullException>( () => StringedInstrument.Create( null!, 22, expectedTuning ) );
   }
 
   [Fact]
@@ -109,7 +109,7 @@ public sealed class StringedInstrumentTest
   [Fact]
   public void CreateWithNamesThrowsOnNullDefinitionNameTest()
   {
-    Assert.Throws<ArgumentNullException>( () => StringedInstrument.Create( null, 22, "standard" ) );
+    Assert.Throws<ArgumentNullException>( () => StringedInstrument.Create( null!, 22, "standard" ) );
   }
 
   [Fact]
@@ -376,7 +376,7 @@ public sealed class StringedInstrumentTest
   {
     Assert.Throws<ArgumentNullException>( () =>
                                           {
-                                            StringedInstrument.Create( (StringedInstrumentDefinition) null, 22 );
+                                            StringedInstrument.Create( (StringedInstrumentDefinition) null!, 22 );
                                           } );
   }
 

@@ -180,7 +180,7 @@ public sealed class NoteNameTest
   [Fact]
   public void ParseNullThrowsTest()
   {
-    Assert.Throws<ArgumentNullException>( () => NoteName.Parse( null ) );
+    Assert.Throws<ArgumentNullException>( () => NoteName.Parse( null! ) );
   }
 
   [Fact]
@@ -218,13 +218,13 @@ public sealed class NoteNameTest
   [Fact]
   public void TryParseEmptyFailsTest()
   {
-    Assert.False( NoteName.TryParse( "", out var _ ) );
+    Assert.False( NoteName.TryParse( "", out _ ) );
   }
 
   [Fact]
   public void TryParseNullFailsTest()
   {
-    Assert.False( NoteName.TryParse( null, out var _ ) );
+    Assert.False( NoteName.TryParse( null!, out _ ) );
   }
 
   [Fact]

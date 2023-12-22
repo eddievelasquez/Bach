@@ -45,12 +45,20 @@ public sealed class PitchCollection
 
 #region Constructors
 
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
+  /// </summary>
+  /// <param name="notes">The array of pitches.</param>
   public PitchCollection( Pitch[] notes )
   {
     Requires.NotNull( notes );
     _pitches = notes;
   }
 
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
+  /// </summary>
+  /// <param name="notes">The array of pitches.</param>
   public PitchCollection( IEnumerable<Pitch> notes )
   {
     Requires.NotNull( notes );

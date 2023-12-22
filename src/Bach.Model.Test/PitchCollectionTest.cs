@@ -83,7 +83,7 @@ public sealed class PitchCollectionTest
     var expected = new PitchCollection( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "C5" ) } );
     Assert.Equal( expected, PitchCollection.Parse( "C4,C5" ) ); // Using pitches
     Assert.Equal( expected, PitchCollection.Parse( "60,72" ) ); // Using midi
-    Assert.Throws<ArgumentNullException>( () => PitchCollection.Parse( null ) );
+    Assert.Throws<ArgumentNullException>( () => PitchCollection.Parse( null! ) );
     Assert.Throws<ArgumentException>( () => PitchCollection.Parse( "" ) );
     Assert.Throws<FormatException>( () => PitchCollection.Parse( "C$4,Z5" ) );
   }
@@ -100,11 +100,11 @@ public sealed class PitchCollectionTest
   {
     Assert.True( PitchCollection.TryParse( "C4,E4", out var collection ) );
     Assert.Equal( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "E4" ) }, collection );
-    Assert.False( PitchCollection.TryParse( null, out collection ) );
+    Assert.False( PitchCollection.TryParse( null!, out collection ) );
     Assert.Null( collection );
     Assert.False( PitchCollection.TryParse( "", out collection ) );
     Assert.Null( collection );
-    Assert.False( PitchCollection.TryParse( "C$4,Z5", out collection ) );
+    Assert.False( PitchCollection.TryParse( "C$4,Z5", out _ ) );
   }
 
   [Fact]

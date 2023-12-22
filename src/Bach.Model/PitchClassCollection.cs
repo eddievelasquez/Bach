@@ -44,12 +44,20 @@ public sealed class PitchClassCollection
 
 #region Constructors
 
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="PitchClassCollection" /> class.
+  /// </summary>
+  /// <param name="pitchClasses">The collection of pitch classes.</param>
   public PitchClassCollection( IEnumerable<PitchClass> pitchClasses )
   {
     Requires.NotNull( pitchClasses );
     _pitchClasses = pitchClasses.ToArray();
   }
 
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="PitchClassCollection" /> class.
+  /// </summary>
+  /// <param name="pitchClasses">The collection of pitch classes.</param>
   public PitchClassCollection( PitchClass[] pitchClasses )
   {
     Requires.NotNull( pitchClasses );
@@ -121,6 +129,12 @@ public sealed class PitchClassCollection
     return hash.ToHashCode();
   }
 
+  /// <summary>
+  ///   Returns the index of the specified pitch class in the collection.
+  /// </summary>
+  /// z
+  /// <param name="pitchClass">The pitch class to search for.</param>
+  /// <returns>The index of the pitch class, or -1 if not found.</returns>
   public int IndexOf( PitchClass pitchClass )
   {
     return Array.IndexOf( _pitchClasses, pitchClass );

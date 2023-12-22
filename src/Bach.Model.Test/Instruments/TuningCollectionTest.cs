@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Linq;
 using Xunit;
 
@@ -45,7 +44,7 @@ public sealed class TuningCollectionTest
   public void ContainsKeyThrowsOnNullKeyTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.Throws<ArgumentNullException>( () => definition.Tunings.ContainsKey( null ) );
+    Assert.Throws<ArgumentNullException>( () => definition.Tunings.ContainsKey( null! ) );
   }
 
   [Fact]
@@ -54,7 +53,7 @@ public sealed class TuningCollectionTest
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var tunings = definition.Tunings.ToArray();
 
-    var enumerator = ( (IEnumerable) definition.Tunings ).GetEnumerator();
+    using var enumerator = definition.Tunings.GetEnumerator();
 
     // ReSharper disable once ForCanBeConvertedToForeach
     for( var i = 0; i < tunings.Length; i++ )
@@ -104,9 +103,7 @@ public sealed class TuningCollectionTest
   public void TryGetValueThrowsOnNullKeyTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-
-    // ReSharper disable once AssignNullToNotNullAttribute
-    Assert.Throws<ArgumentNullException>( () => definition.Tunings.TryGetValue( null, out _ ) );
+    Assert.Throws<ArgumentNullException>( () => definition.Tunings.TryGetValue( null!, out _ ) );
   }
 
   [Fact]

@@ -32,6 +32,10 @@ public abstract class Instrument: IEquatable<Instrument>
 {
 #region Constructors
 
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="Instrument" /> class.
+  /// </summary>
+  /// <param name="definition">The instrument definition.</param>
   protected Instrument( InstrumentDefinition definition )
   {
     Requires.NotNull( definition );
