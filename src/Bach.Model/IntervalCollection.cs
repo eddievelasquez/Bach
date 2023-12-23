@@ -1,4 +1,4 @@
-﻿// Module Name: IntervalCollection.cs
+// Module Name: IntervalCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,11 +47,13 @@ public sealed class IntervalCollection
   internal IntervalCollection(
     Interval[] intervals )
   {
-    Requires.NotNullOrEmpty( intervals );
-    Requires.Condition<ArgumentException>(
-      intervals.IsSortedUnique(),
-      "Intervals must be sorted and contain no duplicates"
-    );
+    ArgumentNullException.ThrowIfNull( intervals );
+    ArgumentOutOfRangeException.ThrowIfZero( intervals.Length );
+
+    if( !intervals.IsSortedUnique() )
+    {
+      throw new ArgumentException( "Intervals must be sorted and contain no duplicates" );
+    }
 
     _intervals = intervals;
   }

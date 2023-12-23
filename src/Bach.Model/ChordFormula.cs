@@ -24,8 +24,6 @@
 
 namespace Bach.Model;
 
-using Internal;
-
 /// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
 public sealed class ChordFormula: Formula
 {
@@ -46,8 +44,8 @@ public sealed class ChordFormula: Formula
     params Interval[] intervals )
     : base( id, name, intervals )
   {
-    // A chord is composed by three or more pitch classes...
-    Requires.GreaterThan( intervals.Length, 1 );
+    // A chord is composed by two or more pitch classes...
+    ArgumentOutOfRangeException.ThrowIfLessThan( intervals.Length, 2 );
     Symbol = symbol ?? string.Empty;
   }
 

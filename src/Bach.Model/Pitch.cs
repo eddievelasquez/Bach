@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Text;
 using Internal;
 
@@ -95,7 +94,8 @@ public readonly struct Pitch
   private Pitch(
     int absoluteValue )
   {
-    Requires.Between( absoluteValue, 0, 127 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( absoluteValue, 0 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( absoluteValue, 127 );
 
     _absoluteValue = (byte) absoluteValue;
     CalcNote( _absoluteValue, out var note, out _octave );
@@ -201,7 +201,8 @@ public readonly struct Pitch
     PitchClass pitchClass,
     int octave )
   {
-    Requires.Between( octave, MinOctave, MaxOctave );
+    ArgumentOutOfRangeException.ThrowIfLessThan( octave, MinOctave );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( octave, MaxOctave );
 
     var abs = CalcAbsoluteValue( pitchClass.NoteName, pitchClass.Accidental, octave );
     if( abs < s_minAbsoluteValue )
@@ -238,7 +239,8 @@ public readonly struct Pitch
   public static Pitch CreateFromMidi(
     int midi )
   {
-    Requires.Between( midi, 0, 127 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( midi, 0 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( midi, 127 );
 
     var absoluteValue = midi - 12;
     if( absoluteValue < 0 )
@@ -351,7 +353,7 @@ public readonly struct Pitch
     Accidental accidental,
     int octave )
   {
-    var absoluteValue = ( octave * IntervalsPerOctave ) + SemitonesBetween( NoteName.C, noteName ) + (int) accidental;
+    var absoluteValue = octave * IntervalsPerOctave + SemitonesBetween( NoteName.C, noteName ) + (int) accidental;
     return absoluteValue;
   }
 

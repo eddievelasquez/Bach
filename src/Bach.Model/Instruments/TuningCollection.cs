@@ -24,12 +24,10 @@
 
 namespace Bach.Model.Instruments;
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Model.Internal;
 using Comparer = Model.Internal.Comparer;
 
 /// <summary>Collection of tunings.</summary>
@@ -61,7 +59,7 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   {
     get
     {
-      Requires.GreaterThan( Count, 0 );
+      ArgumentOutOfRangeException.ThrowIfLessThan( Count, 1 );
       return this["Standard"];
     }
   }
@@ -141,7 +139,7 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   internal void Add(
     Tuning tuning )
   {
-    Requires.NotNull( tuning );
+    ArgumentNullException.ThrowIfNull( tuning );
 
     Debug.Assert( _instrumentId.Equals( tuning.InstrumentDefinition.Id ) );
     _tunings.Add( tuning.Id, tuning );

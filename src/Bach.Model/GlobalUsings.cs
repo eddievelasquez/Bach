@@ -1,4 +1,4 @@
-﻿// Module Name: Comparer.cs
+// Module Name: GlobalUsings.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -22,14 +22,4 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal;
-
-internal static class Comparer
-{
-  #region Constants
-
-  public static readonly StringComparer IdComparer = StringComparer.InvariantCultureIgnoreCase;
-  public static readonly StringComparer NameComparer = StringComparer.CurrentCultureIgnoreCase;
-
-  #endregion
-}
+global using System;

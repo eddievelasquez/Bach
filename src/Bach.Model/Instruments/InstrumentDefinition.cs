@@ -24,7 +24,6 @@
 
 namespace Bach.Model.Instruments;
 
-using System;
 using Internal;
 using Model.Internal;
 
@@ -38,7 +37,7 @@ public abstract class InstrumentDefinition
   internal InstrumentDefinition(
     InstrumentDefinitionState state )
   {
-    Requires.NotNull( state );
+    ArgumentNullException.ThrowIfNull( state );
     State = state;
   }
 

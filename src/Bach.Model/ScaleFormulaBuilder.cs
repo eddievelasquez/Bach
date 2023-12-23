@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -81,7 +80,7 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder AddAlias(
     string? alias )
   {
-    Requires.NotNullOrEmpty( alias );
+    ArgumentException.ThrowIfNullOrEmpty( alias );
 
     var aliases = alias.Split( ';' );
     return AddAliases( aliases );
@@ -94,7 +93,7 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder AddAliases(
     IEnumerable<string> aliases )
   {
-    Requires.NotNull( aliases );
+    ArgumentNullException.ThrowIfNull( aliases );
 
     foreach( var alias in aliases )
     {
@@ -118,7 +117,7 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder AddCategories(
     IEnumerable<string> categories )
   {
-    Requires.NotNull( categories );
+    ArgumentNullException.ThrowIfNull( categories );
 
     foreach( var category in categories )
     {
@@ -142,7 +141,7 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder AddCategory(
     string category )
   {
-    Requires.NotNull( category );
+    ArgumentNullException.ThrowIfNull( category );
 
     var categories = category.Split( ';' );
     return AddCategories( categories );
@@ -242,7 +241,7 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder SetIntervals(
     IEnumerable<Interval> intervals )
   {
-    Requires.NotNull( intervals );
+    ArgumentNullException.ThrowIfNull( intervals );
 
     _intervals.Clear();
 
@@ -260,7 +259,7 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder SetIntervals(
     string intervals )
   {
-    Requires.NotNull( intervals );
+    ArgumentNullException.ThrowIfNull( intervals );
     SetIntervals( Formula.ParseIntervals( intervals ) );
 
     return this;
@@ -272,7 +271,7 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder SetName(
     string name )
   {
-    Requires.NotNull( name );
+    ArgumentNullException.ThrowIfNull( name );
     _name = name.Trim();
 
     return this;

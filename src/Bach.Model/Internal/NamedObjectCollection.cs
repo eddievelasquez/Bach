@@ -102,7 +102,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     string idOrName,
     [MaybeNullWhen( false )] out T item )
   {
-    Requires.NotNullOrEmpty( idOrName );
+    ArgumentException.ThrowIfNullOrEmpty( idOrName );
 
     if( _byId.TryGetValue( idOrName, out item ) )
     {
@@ -136,7 +136,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     int index,
     T item )
   {
-    Requires.NotNull( item );
+    ArgumentNullException.ThrowIfNull( item );
 
     _byId.Add( item.Id, item );
     _byName.Add( item.Name, item );
@@ -160,7 +160,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     int index,
     T item )
   {
-    Requires.NotNull( item );
+    ArgumentNullException.ThrowIfNull( item );
 
     var existingItem = Items[index];
     SetItem( _byId, item.Id, existingItem.Id, item );

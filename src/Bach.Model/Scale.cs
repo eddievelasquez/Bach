@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,7 +48,7 @@ public sealed class Scale: IEquatable<Scale>
     PitchClass root,
     ScaleFormula formula )
   {
-    Requires.NotNull( formula );
+    ArgumentNullException.ThrowIfNull( formula );
 
     Root = root;
     Formula = formula;

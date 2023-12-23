@@ -24,12 +24,10 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Internal;
 
 /// <summary>Collection of pitch classes.</summary>
 public sealed class PitchClassCollection
@@ -51,7 +49,7 @@ public sealed class PitchClassCollection
   public PitchClassCollection(
     IEnumerable<PitchClass> pitchClasses )
   {
-    Requires.NotNull( pitchClasses );
+    ArgumentNullException.ThrowIfNull( pitchClasses );
     _pitchClasses = pitchClasses.ToArray();
   }
 
@@ -62,7 +60,7 @@ public sealed class PitchClassCollection
   public PitchClassCollection(
     PitchClass[] pitchClasses )
   {
-    Requires.NotNull( pitchClasses );
+    ArgumentNullException.ThrowIfNull( pitchClasses );
     _pitchClasses = pitchClasses;
   }
 
@@ -155,7 +153,7 @@ public sealed class PitchClassCollection
   public static PitchClassCollection Parse(
     string value )
   {
-    Requires.NotNullOrEmpty( value );
+    ArgumentException.ThrowIfNullOrEmpty( value );
 
     if( !TryParse( value, out var notes ) )
     {

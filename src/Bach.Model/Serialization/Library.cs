@@ -24,7 +24,6 @@
 
 namespace Bach.Model.Serialization;
 
-using System;
 using System.Collections.Generic;
 
 internal sealed class Library

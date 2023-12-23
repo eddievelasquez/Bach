@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Diagnostics.Contracts;
 using Internal;
 
@@ -91,7 +90,8 @@ public readonly struct NoteName
   private NoteName(
     int value )
   {
-    Requires.Between( value, 0, NoteNameCount - 1 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( value, 0 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, NoteNameCount - 1 );
     _value = value;
   }
 
@@ -146,7 +146,7 @@ public readonly struct NoteName
   public static NoteName Parse(
     string value )
   {
-    Requires.NotNullOrEmpty( value );
+    ArgumentException.ThrowIfNullOrEmpty( value );
 
     if( !TryParse( value, out var result ) )
     {

@@ -1,4 +1,4 @@
-﻿// Module Name: Accidental.cs
+// Module Name: Accidental.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,9 +24,7 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Diagnostics.Contracts;
-using Internal;
 
 /// <summary>
 ///   An Accidental represents a modification to a <see cref="Accidental" />
@@ -81,7 +79,8 @@ public readonly struct Accidental
   private Accidental(
     int value )
   {
-    Requires.Between( value, -2, 2 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( value, -2 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, 2 );
     _value = value;
   }
 

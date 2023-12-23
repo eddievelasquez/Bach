@@ -24,7 +24,6 @@
 
 namespace Bach.Model.Instruments;
 
-using System;
 using Internal;
 
 /// <summary>A stringed instrument definition.</summary>

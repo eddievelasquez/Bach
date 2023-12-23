@@ -24,9 +24,6 @@
 
 namespace Bach.Model.Instruments;
 
-using System;
-using Model.Internal;
-
 /// <summary>The base class for an instrument.</summary>
 public abstract class Instrument: IEquatable<Instrument>
 {
@@ -39,7 +36,7 @@ public abstract class Instrument: IEquatable<Instrument>
   protected Instrument(
     InstrumentDefinition definition )
   {
-    Requires.NotNull( definition );
+    ArgumentNullException.ThrowIfNull( definition );
     Definition = definition;
   }
 

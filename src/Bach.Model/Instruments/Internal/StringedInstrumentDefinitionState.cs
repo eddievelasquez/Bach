@@ -24,8 +24,6 @@
 
 namespace Bach.Model.Instruments.Internal;
 
-using Model.Internal;
-
 internal sealed class StringedInstrumentDefinitionState: InstrumentDefinitionState
 {
   #region Constructors
@@ -36,7 +34,7 @@ internal sealed class StringedInstrumentDefinitionState: InstrumentDefinitionSta
     int stringCount )
     : base( id, name )
   {
-    Requires.GreaterThan( stringCount, 0 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( stringCount, 1 );
 
     StringCount = stringCount;
     Tunings = new TuningCollection( id );

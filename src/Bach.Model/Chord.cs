@@ -24,12 +24,10 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Internal;
 
 /// <summary>A chord is a set of pitch classes defined by a ChordFormula .</summary>
 public class Chord
@@ -72,8 +70,9 @@ public class Chord
     ChordFormula formula,
     int inversion )
   {
-    Requires.NotNull( formula );
-    Requires.Between( inversion, 0, formula.Intervals.Count - 1 );
+    ArgumentNullException.ThrowIfNull( formula );
+    ArgumentOutOfRangeException.ThrowIfLessThan( inversion, 0 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( inversion, formula.Intervals.Count - 1 );
 
     Root = root;
     Formula = formula;

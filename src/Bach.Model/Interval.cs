@@ -1,4 +1,4 @@
-﻿// Module Name: Interval.cs
+// Module Name: Interval.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,10 +24,8 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Diagnostics;
 using System.Text;
-using Internal;
 
 /// <summary>An interval.</summary>
 public readonly struct Interval
@@ -322,8 +320,10 @@ public readonly struct Interval
     IntervalQuantity quantity,
     IntervalQuality quality )
   {
-    Requires.Between( quantity, IntervalQuantity.Unison, IntervalQuantity.Fourteenth );
-    Requires.Between( quality, IntervalQuality.Diminished, IntervalQuality.Augmented );
+    ArgumentOutOfRangeException.ThrowIfLessThan( (int)quantity, (int)IntervalQuantity.Unison );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int)quantity, (int)IntervalQuantity.Fourteenth );
+    ArgumentOutOfRangeException.ThrowIfLessThan( quality, IntervalQuality.Diminished );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( quality, IntervalQuality.Augmented );
 
     var steps = s_steps[(int) quantity, (int) quality];
     if( steps == -1 )
@@ -549,7 +549,7 @@ public readonly struct Interval
 
     if( !hasExplicitQuality )
     {
-      var temp = ( ( number - 1 ) % 7 ) + 1;
+      var temp = ( number - 1 ) % 7 + 1;
       quality = temp is 1 or 4 or 5 ? IntervalQuality.Perfect : IntervalQuality.Major;
     }
 

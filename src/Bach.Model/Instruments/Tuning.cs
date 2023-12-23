@@ -1,4 +1,4 @@
-﻿// Module Name: Tuning.cs
+// Module Name: Tuning.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,7 +24,6 @@
 
 namespace Bach.Model.Instruments;
 
-using System;
 using System.Linq;
 using Model.Internal;
 
@@ -39,14 +38,10 @@ public sealed class Tuning: IEquatable<Tuning>
     string name,
     PitchCollection pitches )
   {
-    Requires.NotNull( instrumentDefinition );
-    Requires.NotNullOrEmpty( id );
-    Requires.NotNullOrEmpty( name );
-    Requires.ExactCount(
-      pitches,
-      instrumentDefinition.StringCount,
-      $"The number of pitches ({pitches.Count}) must match the instrument's string count ({instrumentDefinition.StringCount})"
-    );
+    ArgumentNullException.ThrowIfNull( instrumentDefinition );
+    ArgumentException.ThrowIfNullOrEmpty( id );
+    ArgumentException.ThrowIfNullOrEmpty( name );
+    ArgumentOutOfRangeException.ThrowIfNotEqual( pitches.Count, instrumentDefinition.StringCount );
 
     InstrumentDefinition = instrumentDefinition;
     Id = id;
@@ -85,7 +80,8 @@ public sealed class Tuning: IEquatable<Tuning>
   {
     get
     {
-      Requires.Between( stringNumber, 1, InstrumentDefinition.StringCount );
+      ArgumentOutOfRangeException.ThrowIfLessThan( stringNumber, 1 );
+      ArgumentOutOfRangeException.ThrowIfGreaterThan( stringNumber, InstrumentDefinition.StringCount );
       return Pitches[stringNumber - 1];
     }
   }

@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,8 +45,8 @@ public sealed class Mode
     Scale scale,
     ModeFormula formula )
   {
-    Requires.NotNull( scale );
-    Requires.NotNull( formula );
+    ArgumentNullException.ThrowIfNull( scale );
+    ArgumentNullException.ThrowIfNull( formula );
 
     Scale = scale;
     Formula = formula;

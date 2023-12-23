@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Diagnostics;
 
 /// <summary>A mode formula.</summary>

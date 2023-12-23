@@ -25,7 +25,6 @@
 namespace Bach.Model;
 
 using System.Collections.Generic;
-using Internal;
 
 /// <summary>Provides common extensions.</summary>
 public static class Extensions
@@ -38,7 +37,7 @@ public static class Extensions
   public static IEnumerable<Interval> Intervals(
     this IEnumerable<PitchClass> pitchClasses )
   {
-    Requires.NotNull( pitchClasses );
+    ArgumentNullException.ThrowIfNull( pitchClasses );
 
     using var e = pitchClasses.GetEnumerator();
     yield return Interval.Unison;

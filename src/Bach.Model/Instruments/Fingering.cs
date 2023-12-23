@@ -1,4 +1,4 @@
-﻿// Module Name: Fingering.cs
+// Module Name: Fingering.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -23,9 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Bach.Model.Instruments;
-
-using System;
-using Model.Internal;
 
 /// <summary>
 ///   In a stringed instrument, A fingering describes the position in a given string to produce a particular
@@ -80,9 +77,11 @@ public readonly struct Fingering: IEquatable<Fingering>
     int stringNumber,
     int position )
   {
-    Requires.NotNull( instrument );
-    Requires.Between( position, 0, instrument.PositionCount );
-    Requires.Between( stringNumber, 1, instrument.Definition.StringCount );
+    ArgumentNullException.ThrowIfNull( instrument );
+    ArgumentOutOfRangeException.ThrowIfLessThan( position, 0 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( position, instrument.PositionCount );
+    ArgumentOutOfRangeException.ThrowIfLessThan( stringNumber, 1 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( stringNumber, instrument.Definition.StringCount );
 
     var pitch = instrument.Tuning[stringNumber] + position;
     var result = new Fingering( pitch, stringNumber, position );
@@ -128,8 +127,9 @@ public readonly struct Fingering: IEquatable<Fingering>
     StringedInstrument instrument,
     int stringNumber )
   {
-    Requires.NotNull( instrument );
-    Requires.Between( stringNumber, 1, instrument.Definition.StringCount );
+    ArgumentNullException.ThrowIfNull( instrument );
+    ArgumentOutOfRangeException.ThrowIfLessThan( stringNumber, 1 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( stringNumber, instrument.Definition.StringCount );
 
     var pitch = Pitch.Empty;
     var result = new Fingering( pitch, stringNumber, -1 );

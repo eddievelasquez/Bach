@@ -24,9 +24,7 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Diagnostics.Contracts;
-using Internal;
 
 /// <summary>Values that represent interval qualities.</summary>
 public readonly struct IntervalQuality
@@ -68,7 +66,8 @@ public readonly struct IntervalQuality
   private IntervalQuality(
     int value )
   {
-    Requires.Between( value, 0, 4 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( value, 0 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, 4 );
     _value = value;
   }
 

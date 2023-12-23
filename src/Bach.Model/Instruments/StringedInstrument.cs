@@ -1,4 +1,4 @@
-﻿// Module Name: StringedInstrument.cs
+// Module Name: StringedInstrument.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,10 +24,8 @@
 
 namespace Bach.Model.Instruments;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Model.Internal;
 
 /// <summary>Represents a stringed instrument, such as guitars, basses, ukeleles, etc.</summary>
 public sealed class StringedInstrument
@@ -42,8 +40,8 @@ public sealed class StringedInstrument
     int positionCount )
     : base( definition )
   {
-    Requires.NotNull( tuning );
-    Requires.GreaterThan( positionCount, 0 );
+    ArgumentNullException.ThrowIfNull( tuning );
+    ArgumentOutOfRangeException.ThrowIfLessThan( positionCount, 1 );
 
     Tuning = tuning;
     PositionCount = positionCount;
@@ -80,7 +78,7 @@ public sealed class StringedInstrument
     int positionCount,
     Tuning? tuning = null )
   {
-    Requires.NotNull( definition );
+    ArgumentNullException.ThrowIfNull( definition );
 
     return new StringedInstrument( definition, tuning ?? definition.Tunings.Standard, positionCount );
   }
@@ -154,9 +152,9 @@ public sealed class StringedInstrument
     int startPosition,
     int positionSpan = 4 )
   {
-    Requires.NotNull( chord );
-    Requires.GreaterThan( positionSpan, 1 );
-    Requires.LessThan( startPosition + positionSpan, PositionCount - 1 );
+    ArgumentNullException.ThrowIfNull( chord );
+    ArgumentOutOfRangeException.ThrowIfLessThan( positionSpan, 2 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( startPosition + positionSpan, PositionCount );
 
     // Always start at the lowest string
     var startString = Definition.StringCount;
@@ -202,9 +200,9 @@ public sealed class StringedInstrument
     int startPosition,
     int positionSpan = 4 )
   {
-    Requires.NotNull( scale );
-    Requires.GreaterThan( positionSpan, 1 );
-    Requires.LessThan( startPosition + positionSpan, PositionCount - 1 );
+    ArgumentNullException.ThrowIfNull( scale );
+    ArgumentOutOfRangeException.ThrowIfLessThan( positionSpan, 2 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( startPosition + positionSpan, PositionCount );
 
     // Always start at the lowest string
     var startString = Definition.StringCount;
@@ -244,7 +242,7 @@ public sealed class StringedInstrument
             break;
           }
 
-          var position = ( current - low ) + startPosition;
+          var position = current - low + startPosition;
           var fingering = Fingering.Create( this, currentString, position );
           yield return fingering;
 
@@ -281,7 +279,7 @@ public sealed class StringedInstrument
     Fingering fingering;
     if( current <= high )
     {
-      var position = ( current - low ) + startPosition;
+      var position = current - low + startPosition;
       fingering = Fingering.Create( this, stringNumber, position );
     }
     else

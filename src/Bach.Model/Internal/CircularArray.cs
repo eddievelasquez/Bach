@@ -1,4 +1,4 @@
-﻿// Module Name: CircularArray.cs
+// Module Name: CircularArray.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,7 +24,6 @@
 
 namespace Bach.Model.Internal;
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,7 +52,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   public CircularArray(
     IEnumerable<T> items )
   {
-    Requires.NotNull( items );
+    ArgumentNullException.ThrowIfNull( items );
     _items = items.ToArray();
     _head = 0;
   }
@@ -65,7 +64,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   public CircularArray(
     IList<T> items )
   {
-    Requires.NotNull( items );
+    ArgumentNullException.ThrowIfNull( items );
     _items = items;
     _head = 0;
   }
@@ -95,12 +94,14 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   {
     get
     {
-      Requires.Between( index, 0, Length - 1 );
+      ArgumentOutOfRangeException.ThrowIfLessThan( index, 0 );
+      ArgumentOutOfRangeException.ThrowIfGreaterThan( index, Length - 1 );
       return GetElement( index );
     }
     set
     {
-      Requires.Between( index, 0, Length - 1 );
+      ArgumentOutOfRangeException.ThrowIfLessThan( index, 0 );
+      ArgumentOutOfRangeException.ThrowIfGreaterThan( index, Length - 1 );
       SetElement( index, value );
     }
   }

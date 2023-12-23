@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Diagnostics;
 
 /// <summary>A triad is a set of three pitchClasses stacked in thirds.</summary>

@@ -24,7 +24,6 @@
 
 namespace Bach.Model.Instruments;
 
-using System;
 using System.Collections.Generic;
 using Internal;
 using Model.Internal;
@@ -160,9 +159,9 @@ public sealed class StringedInstrumentDefinitionBuilder
     string name,
     PitchCollection pitches )
   {
-    Requires.NotNullOrEmpty( id );
-    Requires.NotNullOrEmpty( name );
-    Requires.ExactCount( pitches, _state.StringCount, $"Must provide exactly {_state.StringCount} pitches" );
+    ArgumentException.ThrowIfNullOrEmpty( id );
+    ArgumentException.ThrowIfNullOrEmpty( name );
+    ArgumentOutOfRangeException.ThrowIfNotEqual( pitches.Count, _state.StringCount );
     CheckBuilderReuse();
 
     var info = new TuningInfo( id, name, pitches );

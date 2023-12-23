@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -93,9 +92,10 @@ public abstract class Formula
     string name,
     Interval[] intervals )
   {
-    Requires.NotNullOrEmpty( id );
-    Requires.NotNullOrEmpty( name );
-    Requires.NotNullOrEmpty( intervals );
+    ArgumentException.ThrowIfNullOrEmpty( id );
+    ArgumentException.ThrowIfNullOrEmpty( name );
+    ArgumentNullException.ThrowIfNull( intervals );
+    ArgumentOutOfRangeException.ThrowIfZero( intervals.Length );
 
     Id = id;
     Name = name;
@@ -132,7 +132,7 @@ public abstract class Formula
     IEnumerable<Interval> intervals,
     IntervalMatch match = IntervalMatch.Exact )
   {
-    var comparer = ( match == IntervalMatch.Exact ) ? (IComparer<Interval>) s_intervalComparer : s_semitoneComparer;
+    var comparer = match == IntervalMatch.Exact ? (IComparer<Interval>) s_intervalComparer : s_semitoneComparer;
 
     return intervals.All( interval => Intervals.IndexOf( interval, comparer ) >= 0 );
   }
@@ -234,7 +234,7 @@ public abstract class Formula
     PitchClass root,
     IEnumerable<Interval> intervals )
   {
-    Requires.NotNull( intervals );
+    ArgumentNullException.ThrowIfNull( intervals );
     return intervals.Select( interval => root + interval );
   }
 
@@ -271,7 +271,7 @@ public abstract class Formula
   public static Interval[] ParseIntervals(
     string formula )
   {
-    Requires.NotNull( formula );
+    ArgumentNullException.ThrowIfNull( formula );
     return ParseIntervals( formula.AsSpan() );
   }
 
@@ -291,7 +291,7 @@ public abstract class Formula
 
     // There can be at most (n / 2) + 1 intervals in an n-character string formula
     // in which intervals are separated by commas
-    Span<Range> ranges = stackalloc Range[( formula.Length / 2 ) + 1];
+    Span<Range> ranges = stackalloc Range[formula.Length / 2 + 1];
     var count = formula.Split( ranges, ',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
     for( var i = 0; i < count; ++i )
@@ -387,7 +387,9 @@ public abstract class Formula
   internal static int[] GetRelativeSteps(
     IList<Interval> intervals )
   {
-    Requires.NotNullOrEmpty( intervals );
+    ArgumentNullException.ThrowIfNull( intervals );
+    ArgumentOutOfRangeException.ThrowIfZero( intervals.Count );
+
     var steps = new int[intervals.Count];
     var lastCount = 0;
 

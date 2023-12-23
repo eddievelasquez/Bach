@@ -24,8 +24,6 @@
 
 namespace Bach.Model.Instruments.Internal;
 
-using Model.Internal;
-
 internal abstract class InstrumentDefinitionState
 {
   #region Constructors
@@ -34,8 +32,8 @@ internal abstract class InstrumentDefinitionState
     string id,
     string name )
   {
-    Requires.NotNullOrEmpty( id );
-    Requires.NotNullOrEmpty( name );
+    ArgumentException.ThrowIfNullOrEmpty( id );
+    ArgumentException.ThrowIfNullOrEmpty( name );
 
     Id = id;
     Name = name;

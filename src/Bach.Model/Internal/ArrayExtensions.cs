@@ -24,7 +24,6 @@
 
 namespace Bach.Model.Internal;
 
-using System;
 using System.Collections.Generic;
 
 internal static class ArrayExtensions
@@ -62,7 +61,7 @@ internal static class ArrayExtensions
     int size,
     int index )
   {
-    return ( ( index % size ) + size ) % size;
+    return ( index % size + size ) % size;
   }
 
   /// <summary>  Handles underflow and overflow of the provided index within the given collection.</summary>
