@@ -1,4 +1,4 @@
-﻿// Module Name: ModeTest.cs
+// Module Name: ModeTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,8 +24,6 @@
 
 namespace Bach.Model.Test;
 
-using Xunit;
-
 public sealed class ModeTest
 {
   #region Public Methods
@@ -36,22 +34,46 @@ public sealed class ModeTest
     var scale = new Scale( PitchClass.C, "Major" );
     var mode = new Mode( scale, ModeFormula.Ionian );
     using var enumerator = mode.GetEnumerator();
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.C, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.D, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.E, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.F, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.G, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.A, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.B, enumerator.Current );
-    Assert.True( enumerator.MoveNext() ); // Mode enumerator wraps around infinitely
-    Assert.Equal( PitchClass.C, enumerator.Current );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.C );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.D );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.E );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.F );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.G );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.A );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.B );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue(); // Mode enumerator wraps around infinitely
+    enumerator.Current.Should()
+              .Be( PitchClass.C );
   }
 
   [Fact]
@@ -63,12 +85,24 @@ public sealed class ModeTest
     object z = new Mode( scale, ModeFormula.Dorian );
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -76,7 +110,9 @@ public sealed class ModeTest
   {
     var scale = new Scale( PitchClass.C, "Major" );
     object actual = new Mode( scale, ModeFormula.Dorian );
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -84,7 +120,9 @@ public sealed class ModeTest
   {
     var scale = new Scale( PitchClass.C, "Major" );
     object actual = new Mode( scale, ModeFormula.Dorian );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -92,7 +130,9 @@ public sealed class ModeTest
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var actual = new Mode( scale, ModeFormula.Dorian );
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -101,8 +141,12 @@ public sealed class ModeTest
     var scale = new Scale( PitchClass.C, "Major" );
     var actual = new Mode( scale, ModeFormula.Dorian );
     var expected = new Mode( scale, ModeFormula.Dorian );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
@@ -112,10 +156,15 @@ public sealed class ModeTest
     var formula = ModeFormula.Phrygian;
     var target = new Mode( scale, formula );
 
-    Assert.Equal( scale, target.Scale );
-    Assert.Equal( formula, target.Formula );
-    Assert.Equal( "C Phrygian", target.Name );
-    Assert.Equal( target.PitchClasses, PitchClassCollection.Parse( "E,F,G,A,B,C,D" ) );
+    target.Scale.Should()
+          .Be( scale );
+    target.Formula.Should()
+          .Be( formula );
+    target.Name.Should()
+          .Be( "C Phrygian" );
+    PitchClassCollection.Parse( "E,F,G,A,B,C,D" )
+                        .Should()
+                        .BeEquivalentTo( target.PitchClasses );
   }
 
   [Fact]
@@ -139,12 +188,24 @@ public sealed class ModeTest
     var y = new Mode( scale, ModeFormula.Dorian );
     var z = new Mode( scale, ModeFormula.Dorian );
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -154,7 +215,9 @@ public sealed class ModeTest
     var actual = new Mode( scale, ModeFormula.Dorian );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -162,7 +225,9 @@ public sealed class ModeTest
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var actual = new Mode( scale, ModeFormula.Dorian );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion
@@ -176,8 +241,11 @@ public sealed class ModeTest
   {
     var expected = PitchClassCollection.Parse( expectedNotes );
     var mode = new Mode( root, formula );
-    Assert.Equal( expected, mode.PitchClasses );
-    Assert.Equal( expectedNotes, mode.ToString() );
+    mode.PitchClasses.Should()
+        .BeEquivalentTo( expected );
+    mode.ToString()
+        .Should()
+        .Be( expectedNotes );
   }
 
   #endregion

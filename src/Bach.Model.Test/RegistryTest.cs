@@ -1,4 +1,4 @@
-﻿// Module Name: RegistryTest.cs
+// Module Name: RegistryTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -26,7 +26,6 @@ namespace Bach.Model.Test;
 
 using System.Linq;
 using Model.Instruments;
-using Xunit;
 
 public sealed class RegistryTest
 {
@@ -36,13 +35,16 @@ public sealed class RegistryTest
   public void ChordFormulasTest()
   {
     var chordFormulas = Registry.ChordFormulas.ToArray();
-    Assert.NotNull( chordFormulas );
-    Assert.NotEmpty( chordFormulas );
+    chordFormulas.Should()
+                 .NotBeNull();
+    chordFormulas.Should()
+                 .NotBeEmpty();
 
     foreach( var expected in chordFormulas )
     {
       var actual = Registry.ChordFormulas[expected.Id];
-      Assert.Equal( expected, actual );
+      actual.Should()
+            .Be( expected );
     }
   }
 
@@ -50,13 +52,16 @@ public sealed class RegistryTest
   public void ScaleFormulasTest()
   {
     var scaleFormulas = Registry.ScaleFormulas.ToArray();
-    Assert.NotNull( scaleFormulas );
-    Assert.NotEmpty( scaleFormulas );
+    scaleFormulas.Should()
+                 .NotBeNull();
+    scaleFormulas.Should()
+                 .NotBeEmpty();
 
     foreach( var expected in scaleFormulas )
     {
       var actual = Registry.ScaleFormulas[expected.Id];
-      Assert.Equal( expected, actual );
+      actual.Should()
+            .Be( expected );
     }
   }
 
@@ -64,13 +69,16 @@ public sealed class RegistryTest
   public void StringedInstrumentDefinitionsTest()
   {
     var instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
-    Assert.NotNull( instrumentDefinitions );
-    Assert.NotEmpty( instrumentDefinitions );
+    instrumentDefinitions.Should()
+                         .NotBeNull();
+    instrumentDefinitions.Should()
+                         .NotBeEmpty();
 
     foreach( var expected in instrumentDefinitions )
     {
       InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Id];
-      Assert.Equal( expected, actual );
+      actual.Should()
+            .Be( expected );
     }
   }
 

@@ -1,4 +1,4 @@
-﻿// Module Name: ScaleFormulaTest.cs
+// Module Name: ScaleFormulaTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,9 +24,7 @@
 
 namespace Bach.Model.Test;
 
-using System;
 using System.Linq;
-using Xunit;
 
 public sealed class ScaleFormulaTest
 {
@@ -86,11 +84,16 @@ public sealed class ScaleFormulaTest
                                                 .SetIntervals( Formula )
                                                 .Build();
 
-    Assert.Equal( Id, actual.Id );
-    Assert.Equal( Name, actual.Name );
-    Assert.Equal( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals );
+    actual.Id.Should()
+          .Be( Id );
+    actual.Name.Should()
+          .Be( Name );
+    actual.Intervals.Should()
+          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
 
-    Assert.Equal( "Name: 1,2,3", actual.ToString() );
+    actual.ToString()
+          .Should()
+          .Be( "Name: 1,2,3" );
   }
 
   [Fact]
@@ -105,11 +108,16 @@ public sealed class ScaleFormulaTest
                                                 )
                                                 .Build();
 
-    Assert.Equal( Id, actual.Id );
-    Assert.Equal( Name, actual.Name );
-    Assert.Equal( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals );
+    actual.Id.Should()
+          .Be( Id );
+    actual.Name.Should()
+          .Be( Name );
+    actual.Intervals.Should()
+          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
 
-    Assert.Equal( "Name: 1,2,3", actual.ToString() );
+    actual.ToString()
+          .Should()
+          .Be( "Name: 1,2,3" );
   }
 
   [Fact]
@@ -126,12 +134,24 @@ public sealed class ScaleFormulaTest
                                                 .Build();
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -140,7 +160,9 @@ public sealed class ScaleFormulaTest
     object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                      .SetIntervals( "R,M2,M3" )
                                                      .Build();
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -149,7 +171,9 @@ public sealed class ScaleFormulaTest
     object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                      .SetIntervals( "R,M2,M3" )
                                                      .Build();
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -158,7 +182,9 @@ public sealed class ScaleFormulaTest
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                   .SetIntervals( "R,M2,M3" )
                                                   .Build();
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -173,12 +199,14 @@ public sealed class ScaleFormulaTest
 
     while( pitches.MoveNext() )
     {
-      Assert.True( pitches.Current <= Pitch.MaxValue );
+      ( pitches.Current <= Pitch.MaxValue ).Should()
+                                           .BeTrue();
       ++count;
     }
 
     // 3 pitchClasses per octave, 10 octaves total.
-    Assert.Equal( 30, count );
+    count.Should()
+         .Be( 30 );
   }
 
   [Fact]
@@ -190,8 +218,12 @@ public sealed class ScaleFormulaTest
     var expected = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                     .SetIntervals( "R,M2,M3" )
                                                     .Build();
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
@@ -297,12 +329,24 @@ public sealed class ScaleFormulaTest
                                              .SetIntervals( "R,M2,M3" )
                                              .Build();
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -313,7 +357,9 @@ public sealed class ScaleFormulaTest
                                                   .Build();
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -322,7 +368,9 @@ public sealed class ScaleFormulaTest
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                   .SetIntervals( "R,M2,M3" )
                                                   .Build();
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion
@@ -338,11 +386,13 @@ public sealed class ScaleFormulaTest
     {
       if( predicate( formula ) )
       {
-        Assert.Contains( category, formula.Categories );
+        formula.Categories.Should()
+               .Contain( category );
       }
       else if( strict )
       {
-        Assert.DoesNotContain( category, formula.Categories );
+        formula.Categories.Should()
+               .NotContain( category );
       }
     }
   }
@@ -352,7 +402,9 @@ public sealed class ScaleFormulaTest
     params int[] expected )
   {
     var scale = Registry.ScaleFormulas[scaleName];
-    Assert.Equal( expected, scale.GetRelativeSteps() );
+    scale.GetRelativeSteps()
+         .Should()
+         .BeEquivalentTo( expected );
   }
 
   #endregion

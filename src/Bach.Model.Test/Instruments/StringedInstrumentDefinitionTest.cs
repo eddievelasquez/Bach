@@ -1,4 +1,4 @@
-﻿// Module Name: StringedInstrumentDefinitionTest.cs
+// Module Name: StringedInstrumentDefinitionTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,8 +24,6 @@
 
 namespace Bach.Model.Test.Instruments;
 
-using Xunit;
-
 public sealed class StringedInstrumentDefinitionTest
 {
   #region Public Methods
@@ -38,33 +36,51 @@ public sealed class StringedInstrumentDefinitionTest
     object z = Registry.StringedInstrumentDefinitions["guitar"];
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsFailsWithNullTest()
   {
     object actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -72,8 +88,12 @@ public sealed class StringedInstrumentDefinitionTest
   {
     var actual = Registry.StringedInstrumentDefinitions["guitar"];
     var expected = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
@@ -83,12 +103,24 @@ public sealed class StringedInstrumentDefinitionTest
     var y = Registry.StringedInstrumentDefinitions["guitar"];
     var z = Registry.StringedInstrumentDefinitions["guitar"];
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -97,14 +129,18 @@ public sealed class StringedInstrumentDefinitionTest
     var actual = Registry.StringedInstrumentDefinitions["guitar"];
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion

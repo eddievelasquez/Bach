@@ -1,4 +1,4 @@
-﻿// Module Name: FingeringTest.cs
+// Module Name: FingeringTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,9 +24,7 @@
 
 namespace Bach.Model.Test.Instruments;
 
-using System;
 using Model.Instruments;
-using Xunit;
 
 public sealed class FingeringTest
 {
@@ -37,26 +35,37 @@ public sealed class FingeringTest
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     var actual = Fingering.Create( instrument, 6, 5 );
-    Assert.Equal( 6, actual.StringNumber );
-    Assert.Equal( 5, actual.Position );
-    Assert.Equal( Pitch.Parse( "A2" ), actual.Pitch );
+    actual.StringNumber.Should()
+          .Be( 6 );
+    actual.Position.Should()
+          .Be( 5 );
+    actual.Pitch.Should()
+          .Be( Pitch.Parse( "A2" ) );
   }
 
   [Fact]
   public void CreateThrowsWithOutOfRangePositionNumberTest()
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 6, -1 ) );
+    var act1 = () => Fingering.Create( instrument, 6, -1 );
+    act1.Should()
+        .Throw<ArgumentOutOfRangeException>();
 
-    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 6, 23 ) );
+    var act2 = () => Fingering.Create( instrument, 6, 23 );
+    act2.Should()
+        .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
   public void CreateThrowsWithOutOfRangeStringNumberTest()
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 0, 5 ) );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Fingering.Create( instrument, 7, 5 ) );
+    var act1 = () => Fingering.Create( instrument, 0, 5 );
+    act1.Should()
+        .Throw<ArgumentOutOfRangeException>();
+    var act2 = () => Fingering.Create( instrument, 7, 5 );
+    act2.Should()
+        .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
@@ -68,12 +77,24 @@ public sealed class FingeringTest
     object z = Fingering.Create( instrument, 6, 5 );
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -81,7 +102,9 @@ public sealed class FingeringTest
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     object actual = Fingering.Create( instrument, 6, 5 );
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -89,7 +112,9 @@ public sealed class FingeringTest
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     object actual = Fingering.Create( instrument, 6, 5 );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -97,7 +122,9 @@ public sealed class FingeringTest
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     var actual = Fingering.Create( instrument, 6, 5 );
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -106,24 +133,26 @@ public sealed class FingeringTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
     var actual = Fingering.Create( instrument, 6, 5 );
     var expected = Fingering.Create( instrument, 6, 5 );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
   public void ToStringTest()
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
-    Assert.Equal(
-      "65",
-      Fingering.Create( instrument, 6, 5 )
-               .ToString()
-    );
-    Assert.Equal(
-      "612",
-      Fingering.Create( instrument, 6, 12 )
-               .ToString()
-    );
+    Fingering.Create( instrument, 6, 5 )
+             .ToString()
+             .Should()
+             .Be( "65" );
+    Fingering.Create( instrument, 6, 12 )
+             .ToString()
+             .Should()
+             .Be( "612" );
   }
 
   [Fact]
@@ -134,12 +163,24 @@ public sealed class FingeringTest
     var y = Fingering.Create( instrument, 6, 5 );
     var z = Fingering.Create( instrument, 6, 5 );
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -149,7 +190,9 @@ public sealed class FingeringTest
     var actual = Fingering.Create( instrument, 6, 5 );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -157,7 +200,9 @@ public sealed class FingeringTest
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
     var actual = Fingering.Create( instrument, 6, 5 );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion

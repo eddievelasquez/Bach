@@ -1,4 +1,4 @@
-﻿// Module Name: NoteNameTest.cs
+// Module Name: NoteNameTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,9 +24,6 @@
 
 namespace Bach.Model.Test;
 
-using System;
-using Xunit;
-
 public sealed class NoteNameTest
 {
   #region Public Methods
@@ -34,38 +31,65 @@ public sealed class NoteNameTest
   [Fact]
   public void AdditionOperatorTest()
   {
-    Assert.Equal( NoteName.C, NoteName.C + 0 );
-    Assert.Equal( NoteName.D, NoteName.C + 1 );
-    Assert.Equal( NoteName.E, NoteName.C + 2 );
-    Assert.Equal( NoteName.B, NoteName.C + 6 );
-    Assert.Equal( NoteName.C, NoteName.C + 7 );
-    Assert.Equal( NoteName.D, NoteName.C + 8 );
-    Assert.Equal( NoteName.C, NoteName.B + 1 );
+    ( NoteName.C + 0 ).Should()
+                      .Be( NoteName.C );
+    ( NoteName.C + 1 ).Should()
+                      .Be( NoteName.D );
+    ( NoteName.C + 2 ).Should()
+                      .Be( NoteName.E );
+    ( NoteName.C + 6 ).Should()
+                      .Be( NoteName.B );
+    ( NoteName.C + 7 ).Should()
+                      .Be( NoteName.C );
+    ( NoteName.C + 8 ).Should()
+                      .Be( NoteName.D );
+    ( NoteName.B + 1 ).Should()
+                      .Be( NoteName.C );
   }
 
   [Fact]
   public void AddTest()
   {
-    Assert.Equal( NoteName.C, NoteName.C.Add( 0 ) );
-    Assert.Equal( NoteName.D, NoteName.C.Add( 1 ) );
-    Assert.Equal( NoteName.E, NoteName.C.Add( 2 ) );
-    Assert.Equal( NoteName.B, NoteName.C.Add( 6 ) );
-    Assert.Equal( NoteName.C, NoteName.C.Add( 7 ) );
-    Assert.Equal( NoteName.D, NoteName.C.Add( 8 ) );
+    NoteName.C.Add( 0 )
+            .Should()
+            .Be( NoteName.C );
+    NoteName.C.Add( 1 )
+            .Should()
+            .Be( NoteName.D );
+    NoteName.C.Add( 2 )
+            .Should()
+            .Be( NoteName.E );
+    NoteName.C.Add( 6 )
+            .Should()
+            .Be( NoteName.B );
+    NoteName.C.Add( 7 )
+            .Should()
+            .Be( NoteName.C );
+    NoteName.C.Add( 8 )
+            .Should()
+            .Be( NoteName.D );
   }
 
   [Fact]
   public void DecrementOperatorTest()
   {
     var noteName = NoteName.C;
-    Assert.Equal( NoteName.B, --noteName );
-    Assert.Equal( NoteName.A, --noteName );
-    Assert.Equal( NoteName.G, --noteName );
-    Assert.Equal( NoteName.F, --noteName );
-    Assert.Equal( NoteName.E, --noteName );
-    Assert.Equal( NoteName.D, --noteName );
-    Assert.Equal( NoteName.C, --noteName );
-    Assert.Equal( NoteName.B, --noteName );
+    ( --noteName ).Should()
+                  .Be( NoteName.B );
+    ( --noteName ).Should()
+                  .Be( NoteName.A );
+    ( --noteName ).Should()
+                  .Be( NoteName.G );
+    ( --noteName ).Should()
+                  .Be( NoteName.F );
+    ( --noteName ).Should()
+                  .Be( NoteName.E );
+    ( --noteName ).Should()
+                  .Be( NoteName.D );
+    ( --noteName ).Should()
+                  .Be( NoteName.C );
+    ( --noteName ).Should()
+                  .Be( NoteName.B );
   }
 
   [Fact]
@@ -76,33 +100,51 @@ public sealed class NoteNameTest
     object z = (NoteName) 0;
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = NoteName.C;
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsFailsWithNullTest()
   {
     object actual = NoteName.C;
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = NoteName.C;
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -110,121 +152,206 @@ public sealed class NoteNameTest
   {
     var actual = NoteName.C;
     var expected = new NoteName();
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
   public void IncrementOperatorTest()
   {
     var noteName = NoteName.C;
-    Assert.Equal( NoteName.D, ++noteName );
-    Assert.Equal( NoteName.E, ++noteName );
-    Assert.Equal( NoteName.F, ++noteName );
-    Assert.Equal( NoteName.G, ++noteName );
-    Assert.Equal( NoteName.A, ++noteName );
-    Assert.Equal( NoteName.B, ++noteName );
-    Assert.Equal( NoteName.C, ++noteName );
+    ( ++noteName ).Should()
+                  .Be( NoteName.D );
+    ( ++noteName ).Should()
+                  .Be( NoteName.E );
+    ( ++noteName ).Should()
+                  .Be( NoteName.F );
+    ( ++noteName ).Should()
+                  .Be( NoteName.G );
+    ( ++noteName ).Should()
+                  .Be( NoteName.A );
+    ( ++noteName ).Should()
+                  .Be( NoteName.B );
+    ( ++noteName ).Should()
+                  .Be( NoteName.C );
   }
 
   [Fact]
   public void IntegerSubtractionOperatorTest()
   {
-    Assert.Equal( NoteName.B, NoteName.B - 0 );
-    Assert.Equal( NoteName.A, NoteName.B - 1 );
-    Assert.Equal( NoteName.G, NoteName.B - 2 );
-    Assert.Equal( NoteName.C, NoteName.B - 6 );
-    Assert.Equal( NoteName.B, NoteName.B - 7 );
-    Assert.Equal( NoteName.A, NoteName.B - 8 );
-    Assert.Equal( NoteName.C, NoteName.D - 1 );
-    Assert.Equal( NoteName.B, NoteName.C - 1 );
+    ( NoteName.B - 0 ).Should()
+                      .Be( NoteName.B );
+    ( NoteName.B - 1 ).Should()
+                      .Be( NoteName.A );
+    ( NoteName.B - 2 ).Should()
+                      .Be( NoteName.G );
+    ( NoteName.B - 6 ).Should()
+                      .Be( NoteName.C );
+    ( NoteName.B - 7 ).Should()
+                      .Be( NoteName.B );
+    ( NoteName.B - 8 ).Should()
+                      .Be( NoteName.A );
+    ( NoteName.D - 1 ).Should()
+                      .Be( NoteName.C );
+    ( NoteName.C - 1 ).Should()
+                      .Be( NoteName.B );
   }
 
   [Fact]
   public void NoteNameSubtractionOperatorTest()
   {
-    Assert.Equal( 0, NoteName.B - NoteName.B );
-    Assert.Equal( 1, NoteName.B - NoteName.A );
-    Assert.Equal( 5, NoteName.B - NoteName.D );
-    Assert.Equal( 2, NoteName.B - NoteName.G );
-    Assert.Equal( 6, NoteName.B - NoteName.C );
-    Assert.Equal( 1, NoteName.D - NoteName.C );
-    Assert.Equal( 2, NoteName.D - NoteName.B );
-    Assert.Equal( 1, NoteName.C - NoteName.B );
+    ( NoteName.B - NoteName.B ).Should()
+                               .Be( 0 );
+    ( NoteName.B - NoteName.A ).Should()
+                               .Be( 1 );
+    ( NoteName.B - NoteName.D ).Should()
+                               .Be( 5 );
+    ( NoteName.B - NoteName.G ).Should()
+                               .Be( 2 );
+    ( NoteName.B - NoteName.C ).Should()
+                               .Be( 6 );
+    ( NoteName.D - NoteName.C ).Should()
+                               .Be( 1 );
+    ( NoteName.D - NoteName.B ).Should()
+                               .Be( 2 );
+    ( NoteName.C - NoteName.B ).Should()
+                               .Be( 1 );
   }
 
   [Fact]
   public void ParseEmptyThrowsTest()
   {
-    Assert.Throws<ArgumentException>( () => NoteName.Parse( "" ) );
+    var act = () => NoteName.Parse( "" );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
   public void ParseInvalidThrowsTest()
   {
-    Assert.Throws<FormatException>( () => NoteName.Parse( "Z" ) );
+    var act = () => NoteName.Parse( "Z" );
+    act.Should()
+       .Throw<FormatException>();
   }
 
   [Fact]
   public void ParseLowercaseTest()
   {
-    Assert.Equal( NoteName.C, NoteName.Parse( "c" ) );
-    Assert.Equal( NoteName.D, NoteName.Parse( "d" ) );
-    Assert.Equal( NoteName.E, NoteName.Parse( "e" ) );
-    Assert.Equal( NoteName.F, NoteName.Parse( "f" ) );
-    Assert.Equal( NoteName.G, NoteName.Parse( "g" ) );
-    Assert.Equal( NoteName.A, NoteName.Parse( "a" ) );
-    Assert.Equal( NoteName.B, NoteName.Parse( "b" ) );
+    NoteName.Parse( "c" )
+            .Should()
+            .Be( NoteName.C );
+    NoteName.Parse( "d" )
+            .Should()
+            .Be( NoteName.D );
+    NoteName.Parse( "e" )
+            .Should()
+            .Be( NoteName.E );
+    NoteName.Parse( "f" )
+            .Should()
+            .Be( NoteName.F );
+    NoteName.Parse( "g" )
+            .Should()
+            .Be( NoteName.G );
+    NoteName.Parse( "a" )
+            .Should()
+            .Be( NoteName.A );
+    NoteName.Parse( "b" )
+            .Should()
+            .Be( NoteName.B );
   }
 
   [Fact]
   public void ParseNullThrowsTest()
   {
-    Assert.Throws<ArgumentNullException>( () => NoteName.Parse( null! ) );
+    var act = () => NoteName.Parse( null! );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
   public void ParseUppercaseTest()
   {
-    Assert.Equal( NoteName.C, NoteName.Parse( "C" ) );
-    Assert.Equal( NoteName.D, NoteName.Parse( "D" ) );
-    Assert.Equal( NoteName.E, NoteName.Parse( "E" ) );
-    Assert.Equal( NoteName.F, NoteName.Parse( "F" ) );
-    Assert.Equal( NoteName.G, NoteName.Parse( "G" ) );
-    Assert.Equal( NoteName.A, NoteName.Parse( "A" ) );
-    Assert.Equal( NoteName.B, NoteName.Parse( "B" ) );
+    NoteName.Parse( "C" )
+            .Should()
+            .Be( NoteName.C );
+    NoteName.Parse( "D" )
+            .Should()
+            .Be( NoteName.D );
+    NoteName.Parse( "E" )
+            .Should()
+            .Be( NoteName.E );
+    NoteName.Parse( "F" )
+            .Should()
+            .Be( NoteName.F );
+    NoteName.Parse( "G" )
+            .Should()
+            .Be( NoteName.G );
+    NoteName.Parse( "A" )
+            .Should()
+            .Be( NoteName.A );
+    NoteName.Parse( "B" )
+            .Should()
+            .Be( NoteName.B );
   }
 
   [Fact]
   public void SubtractIntegerTest()
   {
-    Assert.Equal( NoteName.B, NoteName.B.Subtract( 0 ) );
-    Assert.Equal( NoteName.A, NoteName.B.Subtract( 1 ) );
-    Assert.Equal( NoteName.G, NoteName.B.Subtract( 2 ) );
-    Assert.Equal( NoteName.C, NoteName.B.Subtract( 6 ) );
-    Assert.Equal( NoteName.B, NoteName.B.Subtract( 7 ) );
-    Assert.Equal( NoteName.A, NoteName.B.Subtract( 8 ) );
+    NoteName.B.Subtract( 0 )
+            .Should()
+            .Be( NoteName.B );
+    NoteName.B.Subtract( 1 )
+            .Should()
+            .Be( NoteName.A );
+    NoteName.B.Subtract( 2 )
+            .Should()
+            .Be( NoteName.G );
+    NoteName.B.Subtract( 6 )
+            .Should()
+            .Be( NoteName.C );
+    NoteName.B.Subtract( 7 )
+            .Should()
+            .Be( NoteName.B );
+    NoteName.B.Subtract( 8 )
+            .Should()
+            .Be( NoteName.A );
   }
 
   [Fact]
   public void SubtractNoteNameTest()
   {
-    Assert.Equal( 0, NoteName.B.Subtract( NoteName.B ) );
-    Assert.Equal( 1, NoteName.B.Subtract( NoteName.A ) );
-    Assert.Equal( 2, NoteName.B.Subtract( NoteName.G ) );
-    Assert.Equal( 6, NoteName.B.Subtract( NoteName.C ) );
+    NoteName.B.Subtract( NoteName.B )
+            .Should()
+            .Be( 0 );
+    NoteName.B.Subtract( NoteName.A )
+            .Should()
+            .Be( 1 );
+    NoteName.B.Subtract( NoteName.G )
+            .Should()
+            .Be( 2 );
+    NoteName.B.Subtract( NoteName.C )
+            .Should()
+            .Be( 6 );
   }
 
   [Fact]
   public void TryParseEmptyFailsTest()
   {
-    Assert.False( NoteName.TryParse( "", out _ ) );
+    NoteName.TryParse( "", out _ )
+            .Should()
+            .BeFalse();
   }
 
   [Fact]
   public void TryParseNullFailsTest()
   {
-    Assert.False( NoteName.TryParse( null!, out _ ) );
+    NoteName.TryParse( null!, out _ )
+            .Should()
+            .BeFalse();
   }
 
   [Fact]
@@ -234,12 +361,24 @@ public sealed class NoteNameTest
     var y = new NoteName();
     var z = (NoteName) 0;
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -248,14 +387,18 @@ public sealed class NoteNameTest
     var actual = NoteName.C;
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = NoteName.C;
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion
@@ -264,13 +407,19 @@ public sealed class NoteNameTest
   [Fact]
   public void RelationalOperatorsTest()
   {
-    Assert.True( NoteName.B > NoteName.C );
-    Assert.True( NoteName.B >= NoteName.C );
-    Assert.True( NoteName.C < NoteName.B );
-    Assert.True( NoteName.C <= NoteName.B );
+    ( NoteName.B > NoteName.C ).Should()
+                               .BeTrue();
+    ( NoteName.B >= NoteName.C ).Should()
+                                .BeTrue();
+    ( NoteName.C < NoteName.B ).Should()
+                               .BeTrue();
+    ( NoteName.C <= NoteName.B ).Should()
+                                .BeTrue();
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( NoteName.C == NoteName.C );
-    Assert.True( NoteName.C != NoteName.B );
+    ( NoteName.C == NoteName.C ).Should()
+                                .BeTrue();
+    ( NoteName.C != NoteName.B ).Should()
+                                .BeTrue();
   }
 }

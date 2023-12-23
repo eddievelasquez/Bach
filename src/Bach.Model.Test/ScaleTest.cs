@@ -1,4 +1,4 @@
-﻿// Module Name: ScaleTest.cs
+// Module Name: ScaleTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,10 +24,8 @@
 
 namespace Bach.Model.Test;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
 
 public sealed class ScaleTest
 {
@@ -37,10 +35,16 @@ public sealed class ScaleTest
   public void ContainsTest()
   {
     var scale = new Scale( PitchClass.C, "major" );
-    Assert.True( scale.Contains( new[] { PitchClass.C } ) );
-    Assert.True( scale.Contains( new[] { PitchClass.C, PitchClass.E, PitchClass.G } ) );
+    scale.Contains( new[] { PitchClass.C } )
+         .Should()
+         .BeTrue();
+    scale.Contains( new[] { PitchClass.C, PitchClass.E, PitchClass.G } )
+         .Should()
+         .BeTrue();
 
-    Assert.False( scale.Contains( new[] { PitchClass.C, PitchClass.E, PitchClass.GFlat } ) );
+    scale.Contains( new[] { PitchClass.C, PitchClass.E, PitchClass.GFlat } )
+         .Should()
+         .BeFalse();
   }
 
   [Fact]
@@ -64,33 +68,51 @@ public sealed class ScaleTest
     object z = new Scale( PitchClass.C, "Major" );
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = new Scale( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsFailsWithNullTest()
   {
     object actual = new Scale( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = new Scale( PitchClass.C, "Major" );
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -98,15 +120,20 @@ public sealed class ScaleTest
   {
     var formula = Registry.ScaleFormulas["Major"];
     var actual = new Scale( PitchClass.C, formula );
-    Assert.Equal( "C", actual.Name );
-    Assert.Equal( PitchClass.C, actual.Root );
-    Assert.Equal( Registry.ScaleFormulas["Major"], actual.Formula );
+    actual.Name.Should()
+          .BeEquivalentTo( "C" );
+    actual.Root.Should()
+          .BeEquivalentTo( PitchClass.C );
+    actual.Formula.Should()
+          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
   }
 
   [Fact]
   public void FormulaConstructorThrowsOnNullFormulaTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (ScaleFormula) null! ) );
+    var act = () => new Scale( PitchClass.C, (ScaleFormula) null! );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -115,22 +142,46 @@ public sealed class ScaleTest
     var scale = new Scale( PitchClass.C, "Major" );
     using var enumerator = scale.GetAscending()
                                 .GetEnumerator();
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.C, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.D, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.E, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.F, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.G, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.A, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.B, enumerator.Current );
-    Assert.True( enumerator.MoveNext() ); // Scale enumerator wraps around infinitely
-    Assert.Equal( PitchClass.C, enumerator.Current );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.D );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.E );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.F );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.G );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.A );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.B );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue(); // Scale enumerator wraps around infinitely
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
   }
 
   [Fact]
@@ -139,22 +190,46 @@ public sealed class ScaleTest
     var scale = new Scale( PitchClass.C, "Major" );
     using var enumerator = scale.GetDescending()
                                 .GetEnumerator();
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.C, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.B, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.A, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.G, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.F, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.E, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.D, enumerator.Current );
-    Assert.True( enumerator.MoveNext() ); // Scale enumerator wraps around infinitely
-    Assert.Equal( PitchClass.C, enumerator.Current );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.B );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.A );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.G );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.F );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.E );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.D );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue(); // Scale enumerator wraps around infinitely
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
   }
 
   [Fact]
@@ -162,8 +237,12 @@ public sealed class ScaleTest
   {
     var actual = new Scale( PitchClass.C, "Major" );
     var expected = new Scale( PitchClass.C, "Major" );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
@@ -211,31 +290,49 @@ public sealed class ScaleTest
   [Fact]
   public void IsTheoreticalTest()
   {
-    Assert.False( new Scale( PitchClass.C, "major" ).Theoretical );
-    Assert.True( new Scale( PitchClass.DSharp, "major" ).Theoretical );
-    Assert.True( new Scale( PitchClass.Parse( "E#" ), "major" ).Theoretical );
-    Assert.True( new Scale( PitchClass.Parse( "Fb" ), "major" ).Theoretical );
-    Assert.True( new Scale( PitchClass.GSharp, "major" ).Theoretical );
-    Assert.True( new Scale( PitchClass.ASharp, "major" ).Theoretical );
-    Assert.True( new Scale( PitchClass.Parse( "B#" ), "major" ).Theoretical );
+    new Scale( PitchClass.C, "major" ).Theoretical.Should()
+                                      .BeFalse();
+    new Scale( PitchClass.DSharp, "major" ).Theoretical.Should()
+                                           .BeTrue();
+    new Scale( PitchClass.Parse( "E#" ), "major" ).Theoretical.Should()
+                                                  .BeTrue();
+    new Scale( PitchClass.Parse( "Fb" ), "major" ).Theoretical.Should()
+                                                  .BeTrue();
+    new Scale( PitchClass.GSharp, "major" ).Theoretical.Should()
+                                           .BeTrue();
+    new Scale( PitchClass.ASharp, "major" ).Theoretical.Should()
+                                           .BeTrue();
+    new Scale( PitchClass.Parse( "B#" ), "major" ).Theoretical.Should()
+                                                  .BeTrue();
   }
 
   [Fact]
   public void NoteCountTest()
   {
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
-    Assert.Equal( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count, scale.PitchClasses.Count );
+    scale.PitchClasses.Count.Should()
+         .Be( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count );
   }
 
   [Fact]
   public void NotesTest()
   {
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
-    Assert.Equal( PitchClass.C, scale.PitchClasses[0] );
-    Assert.Equal( PitchClass.EFlat, scale.PitchClasses[1] );
-    Assert.Equal( PitchClass.F, scale.PitchClasses[2] );
-    Assert.Equal( PitchClass.G, scale.PitchClasses[3] );
-    Assert.Equal( PitchClass.BFlat, scale.PitchClasses[4] );
+    scale.PitchClasses[0]
+         .Should()
+         .BeEquivalentTo( PitchClass.C );
+    scale.PitchClasses[1]
+         .Should()
+         .BeEquivalentTo( PitchClass.EFlat );
+    scale.PitchClasses[2]
+         .Should()
+         .BeEquivalentTo( PitchClass.F );
+    scale.PitchClasses[3]
+         .Should()
+         .BeEquivalentTo( PitchClass.G );
+    scale.PitchClasses[4]
+         .Should()
+         .BeEquivalentTo( PitchClass.BFlat );
   }
 
   [Fact]
@@ -338,41 +435,57 @@ public sealed class ScaleTest
     IDictionary<string, Scale> scales = Scale.ScalesContaining( new[] { PitchClass.C, PitchClass.E, PitchClass.G } )
                                              .ToDictionary( scale => scale.Name );
 
-    Assert.Contains( "C", scales );
-    Assert.Contains( "C Pentatonic", scales );
-    Assert.Contains( "E Natural Minor", scales );
-    Assert.Contains( "E Harmonic Minor", scales );
-    Assert.Contains( "G", scales );
-    Assert.Contains( "G Melodic Minor", scales );
-    Assert.Contains( "G Diminished", scales );
+    scales.Should()
+          .ContainKey( "C" );
+    scales.Should()
+          .ContainKey( "C Pentatonic" );
+    scales.Should()
+          .ContainKey( "E Natural Minor" );
+    scales.Should()
+          .ContainKey( "E Harmonic Minor" );
+    scales.Should()
+          .ContainKey( "G" );
+    scales.Should()
+          .ContainKey( "G Melodic Minor" );
+    scales.Should()
+          .ContainKey( "G Diminished" );
   }
 
   [Fact]
   public void StringConstructorTest()
   {
     var actual = new Scale( PitchClass.C, "Major" );
-    Assert.Equal( "C", actual.Name );
-    Assert.Equal( PitchClass.C, actual.Root );
-    Assert.Equal( Registry.ScaleFormulas["Major"], actual.Formula );
+    actual.Name.Should()
+          .BeEquivalentTo( "C" );
+    actual.Root.Should()
+          .BeEquivalentTo( PitchClass.C );
+    actual.Formula.Should()
+          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
   }
 
   [Fact]
   public void StringConstructorThrowsOnEmptyFormulaNameTest()
   {
-    Assert.Throws<ArgumentException>( () => new Scale( PitchClass.C, "" ) );
+    var act = () => new Scale( PitchClass.C, "" );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
   public void StringConstructorThrowsOnNullFormulaNameTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Scale( PitchClass.C, (string) null! ) );
+    var act = () => new Scale( PitchClass.C, (string) null! );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
   public void ToStringTest()
   {
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
-    Assert.Equal( "C Minor Pentatonic {C,Eb,F,G,Bb}", scale.ToString() );
+    scale.ToString()
+         .Should()
+         .BeEquivalentTo( "C Minor Pentatonic {C,Eb,F,G,Bb}" );
   }
 
   [Fact]
@@ -382,12 +495,24 @@ public sealed class ScaleTest
     var y = new Scale( PitchClass.C, "Major" );
     var z = new Scale( PitchClass.C, "Major" );
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -396,14 +521,18 @@ public sealed class ScaleTest
     var actual = new Scale( PitchClass.C, "Major" );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = new Scale( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion
@@ -418,7 +547,8 @@ public sealed class ScaleTest
     var scale = new Scale( root, scaleKey );
     var actual = scale.GetEnharmonicScale();
     var expected = new Scale( enharmonicRoot, scaleKey );
-    Assert.Equal( expected, actual );
+    actual.Should()
+          .BeEquivalentTo( expected );
   }
 
   private static void TestRender(
@@ -429,7 +559,8 @@ public sealed class ScaleTest
     var actual = scale.Render( octave )
                       .Take( scale.Formula.Intervals.Count )
                       .ToArray();
-    Assert.Equal( PitchCollection.Parse( expectedNotes ), actual );
+    actual.Should()
+          .BeEquivalentTo( PitchCollection.Parse( expectedNotes ) );
   }
 
   private static void TestScaleAscending(
@@ -441,7 +572,8 @@ public sealed class ScaleTest
     var scale = new Scale( root, formulaName );
     var actual = scale.GetAscending()
                       .Take( expected.Count );
-    Assert.Equal( expected, actual );
+    actual.Should()
+          .BeEquivalentTo( expected );
   }
 
   private static void TestScaleDescending(
@@ -453,7 +585,8 @@ public sealed class ScaleTest
     var scale = new Scale( root, formulaName );
     var actual = scale.GetDescending()
                       .Take( expected.Count );
-    Assert.Equal( expected, actual );
+    actual.Should()
+          .BeEquivalentTo( expected );
   }
 
   private static void TestPredicate(
@@ -462,7 +595,9 @@ public sealed class ScaleTest
     Predicate<Scale> predicate )
   {
     var scale = new Scale( root, formulaName );
-    Assert.True( predicate( scale ) );
+    predicate( scale )
+      .Should()
+      .BeTrue();
   }
 
   #endregion

@@ -1,4 +1,4 @@
-﻿// Module Name: ChordFormulaTest.cs
+// Module Name: ChordFormulaTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,9 +24,6 @@
 
 namespace Bach.Model.Test;
 
-using System;
-using Xunit;
-
 public sealed class ChordFormulaTest
 {
   #region Public Methods
@@ -40,12 +37,18 @@ public sealed class ChordFormulaTest
     const string Formula = "R,M2,M3";
     var actual = new ChordFormula( Id, Name, Symbol, Formula );
 
-    Assert.Equal( Id, actual.Id );
-    Assert.Equal( Name, actual.Name );
-    Assert.Equal( Symbol, actual.Symbol );
-    Assert.Equal( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals );
+    actual.Id.Should()
+          .Be( Id );
+    actual.Name.Should()
+          .Be( Name );
+    actual.Symbol.Should()
+          .Be( Symbol );
+    actual.Intervals.Should()
+          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
 
-    Assert.Equal( "Name: 1,2,3", actual.ToString() );
+    actual.ToString()
+          .Should()
+          .Be( "Name: 1,2,3" );
   }
 
   [Fact]
@@ -63,12 +66,18 @@ public sealed class ChordFormulaTest
       Interval.MajorThird
     );
 
-    Assert.Equal( Id, actual.Id );
-    Assert.Equal( Name, actual.Name );
-    Assert.Equal( Symbol, actual.Symbol );
-    Assert.Equal( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }, actual.Intervals );
+    actual.Id.Should()
+          .Be( Id );
+    actual.Name.Should()
+          .Be( Name );
+    actual.Symbol.Should()
+          .Be( Symbol );
+    actual.Intervals.Should()
+          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
 
-    Assert.Equal( "Name: 1,2,3", actual.ToString() );
+    actual.ToString()
+          .Should()
+          .Be( "Name: 1,2,3" );
   }
 
   [Fact]
@@ -79,33 +88,51 @@ public sealed class ChordFormulaTest
     object z = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsFailsWithNullTest()
   {
     object actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -118,12 +145,14 @@ public sealed class ChordFormulaTest
 
     while( pitches.MoveNext() )
     {
-      Assert.True( pitches.Current <= Pitch.MaxValue );
+      ( pitches.Current <= Pitch.MaxValue ).Should()
+                                           .BeTrue();
       ++count;
     }
 
     // 3 pitchClasses per octave, 10 octaves total.
-    Assert.Equal( 30, count );
+    count.Should()
+         .Be( 30 );
   }
 
   [Fact]
@@ -131,20 +160,28 @@ public sealed class ChordFormulaTest
   {
     var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
     var expected = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
   public void IntervalsMustBeSortedTest()
   {
-    Assert.Throws<ArgumentException>( () => new ChordFormula( "Id", "Name", "Symbol", "R,M3,M2" ) );
+    var act = () => new ChordFormula( "Id", "Name", "Symbol", "R,M3,M2" );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
   public void IntervalsMustHaveNoDuplicatesTest()
   {
-    Assert.Throws<ArgumentException>( () => new ChordFormula( "Id", "Name", "Symbol", "R,M2,M2,M3" ) );
+    var act = () => new ChordFormula( "Id", "Name", "Symbol", "R,M2,M2,M3" );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -154,12 +191,24 @@ public sealed class ChordFormulaTest
     var y = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
     var z = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -168,14 +217,18 @@ public sealed class ChordFormulaTest
     var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion

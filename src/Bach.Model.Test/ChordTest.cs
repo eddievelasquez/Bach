@@ -1,4 +1,4 @@
-﻿// Module Name: ChordTest.cs
+// Module Name: ChordTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,9 +24,7 @@
 
 namespace Bach.Model.Test;
 
-using System;
 using System.Linq;
-using Xunit;
 
 public sealed class ChordTest
 {
@@ -87,14 +85,26 @@ public sealed class ChordTest
   {
     var cMajor = new Chord( PitchClass.C, "Major" );
     using var enumerator = cMajor.GetEnumerator();
-    Assert.NotNull( enumerator );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.C, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.E, enumerator.Current );
-    Assert.True( enumerator.MoveNext() );
-    Assert.Equal( PitchClass.G, enumerator.Current );
-    Assert.False( enumerator.MoveNext() );
+    enumerator.Should()
+              .NotBeNull();
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.C );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.E );
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+    enumerator.Current.Should()
+              .Be( PitchClass.G );
+    enumerator.MoveNext()
+              .Should()
+              .BeFalse();
   }
 
   [Fact]
@@ -105,33 +115,51 @@ public sealed class ChordTest
     object z = new Chord( PitchClass.C, "Major" );
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = new Chord( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsFailsWithNullTest()
   {
     object actual = new Chord( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = new Chord( PitchClass.C, "Major" );
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -139,17 +167,25 @@ public sealed class ChordTest
   {
     var formula = Registry.ChordFormulas["Minor"];
     var target = new Chord( PitchClass.C, formula );
-    Assert.Equal( PitchClass.C, target.Root );
-    Assert.Equal( Registry.ChordFormulas["Minor"], target.Formula );
-    Assert.Equal( "Cm", target.Name );
-    Assert.Equal( PitchClassCollection.Parse( "C,Eb,G" ), target.PitchClasses );
-    Assert.Equal( target.Name, target.ToString() );
+    target.Root.Should()
+          .Be( PitchClass.C );
+    target.Formula.Should()
+          .Be( Registry.ChordFormulas["Minor"] );
+    target.Name.Should()
+          .Be( "Cm" );
+    target.PitchClasses.Should()
+          .BeEquivalentTo( PitchClassCollection.Parse( "C,Eb,G" ) );
+    target.ToString()
+          .Should()
+          .Be( target.Name );
   }
 
   [Fact]
   public void FormulaConstructorThrowsOnNullFormulaTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (ChordFormula) null! ) );
+    var act = () => new Chord( PitchClass.C, (ChordFormula) null! );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -157,8 +193,12 @@ public sealed class ChordTest
   {
     var actual = new Chord( PitchClass.C, "Major" );
     var expected = new Chord( PitchClass.C, "Major" );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
@@ -166,39 +206,57 @@ public sealed class ChordTest
   {
     var cMajor = new Chord( PitchClass.C, "Major" );
     var firstInversion = cMajor.GetInversion( 1 );
-    Assert.NotNull( firstInversion );
-    Assert.Equal( "C/E", firstInversion.Name );
-    Assert.Equal( PitchClassCollection.Parse( "E,G,C" ), firstInversion.PitchClasses );
+    firstInversion.Should()
+                  .NotBeNull();
+    firstInversion.Name.Should()
+                  .Be( "C/E" );
+    firstInversion.PitchClasses.Should()
+                  .BeEquivalentTo( PitchClassCollection.Parse( "E,G,C" ) );
 
     var secondInversion = cMajor.GetInversion( 2 );
-    Assert.NotNull( secondInversion );
-    Assert.Equal( "C/G", secondInversion.Name );
-    Assert.Equal( PitchClassCollection.Parse( "G,C,E" ), secondInversion.PitchClasses );
+    secondInversion.Should()
+                   .NotBeNull();
+    secondInversion.Name.Should()
+                   .Be( "C/G" );
+    secondInversion.PitchClasses.Should()
+                   .BeEquivalentTo( PitchClassCollection.Parse( "G,C,E" ) );
 
-    Assert.Throws<ArgumentOutOfRangeException>( () => cMajor.GetInversion( 3 ) );
+    var act = () => cMajor.GetInversion( 3 );
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
   public void StringConstructorTest()
   {
     var target = new Chord( PitchClass.C, "Minor" );
-    Assert.Equal( PitchClass.C, target.Root );
-    Assert.Equal( Registry.ChordFormulas["Minor"], target.Formula );
-    Assert.Equal( "Cm", target.Name );
-    Assert.Equal( PitchClassCollection.Parse( "C,Eb,G" ), target.PitchClasses );
-    Assert.Equal( target.Name, target.ToString() );
+    target.Root.Should()
+          .Be( PitchClass.C );
+    target.Formula.Should()
+          .Be( Registry.ChordFormulas["Minor"] );
+    target.Name.Should()
+          .Be( "Cm" );
+    target.PitchClasses.Should()
+          .BeEquivalentTo( PitchClassCollection.Parse( "C,Eb,G" ) );
+    target.ToString()
+          .Should()
+          .Be( target.Name );
   }
 
   [Fact]
   public void StringConstructorThrowsOnEmptyFormulaNameTest()
   {
-    Assert.Throws<ArgumentException>( () => new Chord( PitchClass.C, "" ) );
+    var act = () => new Chord( PitchClass.C, "" );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
   public void StringConstructorThrowsOnNullFormulaNameTest()
   {
-    Assert.Throws<ArgumentNullException>( () => new Chord( PitchClass.C, (string) null! ) );
+    var act = () => new Chord( PitchClass.C, (string) null! );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -208,12 +266,24 @@ public sealed class ChordTest
     var y = new Chord( PitchClass.C, "Major" );
     var z = new Chord( PitchClass.C, "Major" );
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -222,14 +292,18 @@ public sealed class ChordTest
     var actual = new Chord( PitchClass.C, "Major" );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
-    Assert.False( actual.Equals( int.MinValue ) );
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = new Chord( PitchClass.C, "Major" );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion
@@ -246,7 +320,8 @@ public sealed class ChordTest
       PitchClassCollection.Parse( expectedNotes )
                           .Count
     );
-    Assert.Equal( PitchClassCollection.Parse( expectedNotes ), actualNotes );
+    actualNotes.Should()
+               .BeEquivalentTo( PitchClassCollection.Parse( expectedNotes ) );
   }
 
   private static void ChordIsExtended(
@@ -255,7 +330,8 @@ public sealed class ChordTest
     bool expected )
   {
     var chord = new Chord( root, formulaName );
-    Assert.Equal( expected, chord.IsExtended );
+    chord.IsExtended.Should()
+         .Be( expected );
   }
 
   #endregion

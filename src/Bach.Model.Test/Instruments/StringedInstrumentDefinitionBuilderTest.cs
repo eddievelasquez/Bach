@@ -1,4 +1,4 @@
-﻿// Module Name: StringedInstrumentDefinitionBuilderTest.cs
+// Module Name: StringedInstrumentDefinitionBuilderTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,10 +24,8 @@
 
 namespace Bach.Model.Test.Instruments;
 
-using System;
 using System.Linq;
 using Model.Instruments;
-using Xunit;
 
 public sealed class StringedInstrumentDefinitionBuilderTest
 {
@@ -47,7 +45,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void AddTuningThrowsOnStringMismatchTest()
   {
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    Assert.Throws<ArgumentException>( () => builder.AddTuning( TuningId, TuningName, "C4,D4,E4,F4" ) );
+    var act = () => builder.AddTuning( TuningId, TuningName, "C4,D4,E4,F4" );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -59,14 +59,22 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     builder.AddTuning( TuningId, TuningName, pitches );
 
     var definition = builder.Build();
-    Assert.NotNull( definition );
-    Assert.Equal( InstrumentName, definition.Name );
-    Assert.Equal( InstrumentStringCount, definition.StringCount );
-    Assert.NotNull( definition.Tunings );
-    Assert.Single( definition.Tunings );
-    Assert.Equal( TuningName, definition.Tunings.Standard.Name );
-    Assert.Equal( TuningName, definition.Tunings.Standard.Name );
-    Assert.Equal( pitches, definition.Tunings.Standard.Pitches );
+    definition.Should()
+              .NotBeNull();
+    definition.Name.Should()
+              .Be( InstrumentName );
+    definition.StringCount.Should()
+              .Be( InstrumentStringCount );
+    definition.Tunings.Should()
+              .NotBeNull();
+    definition.Tunings.Should()
+              .ContainSingle();
+    definition.Tunings.Standard.Name.Should()
+              .Be( TuningName );
+    definition.Tunings.Standard.Name.Should()
+              .Be( TuningName );
+    definition.Tunings.Standard.Pitches.Should()
+              .BeEquivalentTo( pitches );
   }
 
   [Fact]
@@ -78,7 +86,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     builder.AddTuning( TuningId, TuningName, pitches );
     builder.Build();
 
-    Assert.Throws<InvalidOperationException>( () => builder.AddTuning( "ATuning", "A tuning", pitches ) );
+    var act = () => builder.AddTuning( "ATuning", "A tuning", pitches );
+    act.Should()
+       .Throw<InvalidOperationException>();
   }
 
   [Fact]
@@ -88,7 +98,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
                                  .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentException>( () => builder.AddTuning( "", TuningName, pitches ) );
+    var act = () => builder.AddTuning( "", TuningName, pitches );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -98,7 +110,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
                                  .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentException>( () => builder.AddTuning( TuningId, "", pitches ) );
+    var act = () => builder.AddTuning( TuningId, "", pitches );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -108,7 +122,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
                                  .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentException>( () => builder.AddTuning( TuningId, TuningName, pitches ) );
+    var act = () => builder.AddTuning( TuningId, TuningName, pitches );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -118,7 +134,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
                                  .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( null!, TuningName, pitches ) );
+    var act = () => builder.AddTuning( null!, TuningName, pitches );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -128,7 +146,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
                                  .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( TuningId, null!, pitches ) );
+    var act = () => builder.AddTuning( TuningId, null!, pitches );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -139,7 +159,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     builder.AddTuning( TuningId, TuningName, pitches );
     builder.Build();
 
-    Assert.Throws<InvalidOperationException>( () => builder.AddTuning( "ATuning", "A tuning", pitches ) );
+    var act = () => builder.AddTuning( "ATuning", "A tuning", pitches );
+    act.Should()
+       .Throw<InvalidOperationException>();
   }
 
   [Fact]
@@ -148,7 +170,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentException>( () => builder.AddTuning( "", TuningName, pitches ) );
+    var act = () => builder.AddTuning( "", TuningName, pitches );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -157,7 +181,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentException>( () => builder.AddTuning( TuningId, "", pitches ) );
+    var act = () => builder.AddTuning( TuningId, "", pitches );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -166,7 +192,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4,F4" );
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentException>( () => builder.AddTuning( TuningId, TuningName, pitches ) );
+    var act = () => builder.AddTuning( TuningId, TuningName, pitches );
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Fact]
@@ -175,7 +203,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( null!, TuningName, pitches ) );
+    var act = () => builder.AddTuning( null!, TuningName, pitches );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -184,7 +214,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
-    Assert.Throws<ArgumentNullException>( () => builder.AddTuning( TuningId, null!, pitches ) );
+    var act = () => builder.AddTuning( TuningId, null!, pitches );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -195,21 +227,31 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     builder.AddTuning( TuningId, TuningName, pitches );
 
     var definition = builder.Build();
-    Assert.NotNull( definition );
-    Assert.Equal( InstrumentName, definition.Name );
-    Assert.Equal( InstrumentStringCount, definition.StringCount );
-    Assert.NotNull( definition.Tunings );
-    Assert.Single( definition.Tunings );
-    Assert.Equal( TuningName, definition.Tunings.Standard.Name );
-    Assert.Equal( TuningName, definition.Tunings.Standard.Name );
-    Assert.Equal( pitches, definition.Tunings.Standard.Pitches );
+    definition.Should()
+              .NotBeNull();
+    definition.Name.Should()
+              .Be( InstrumentName );
+    definition.StringCount.Should()
+              .Be( InstrumentStringCount );
+    definition.Tunings.Should()
+              .NotBeNull();
+    definition.Tunings.Should()
+              .ContainSingle();
+    definition.Tunings.Standard.Name.Should()
+              .Be( TuningName );
+    definition.Tunings.Standard.Name.Should()
+              .Be( TuningName );
+    definition.Tunings.Standard.Pitches.Should()
+              .BeEquivalentTo( pitches );
   }
 
   [Fact]
   public void BuildThrowOnEmptyTuningsTest()
   {
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    Assert.Throws<InvalidOperationException>( () => builder.Build() );
+    var act = () => builder.Build();
+    act.Should()
+       .Throw<InvalidOperationException>();
   }
 
   [Fact]
@@ -220,7 +262,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
     builder.AddTuning( "ATuning", "A tuning", pitches );
 
-    Assert.Throws<InvalidOperationException>( () => builder.Build() );
+    var act = () => builder.Build();
+    act.Should()
+       .Throw<InvalidOperationException>();
   }
 
   [Fact]
@@ -231,7 +275,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     builder.AddTuning( TuningId, TuningName, pitches );
     builder.Build();
 
-    Assert.Throws<InvalidOperationException>( () => builder.Build() );
+    var act = () => builder.Build();
+    act.Should()
+       .Throw<InvalidOperationException>();
   }
 
   #endregion

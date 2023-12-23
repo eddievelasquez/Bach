@@ -1,4 +1,4 @@
-﻿// Module Name: InstrumentTest.cs
+// Module Name: InstrumentTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -25,7 +25,6 @@
 namespace Bach.Model.Test.Instruments;
 
 using Model.Instruments;
-using Xunit;
 
 public sealed class InstrumentTest
 {
@@ -41,12 +40,24 @@ public sealed class InstrumentTest
     object z = StringedInstrument.Create( definition, 22 );
 
     // ReSharper disable once EqualExpressionComparison
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -56,10 +67,18 @@ public sealed class InstrumentTest
     object a = StringedInstrument.Create( definition, 22 );
     object b = StringedInstrument.Create( Registry.StringedInstrumentDefinitions["bass"], 22 );
 
-    Assert.False( a.Equals( b ) );
-    Assert.False( b.Equals( a ) );
-    Assert.False( Equals( a, b ) );
-    Assert.False( Equals( b, a ) );
+    a.Equals( b )
+     .Should()
+     .BeFalse();
+    b.Equals( a )
+     .Should()
+     .BeFalse();
+    Equals( a, b )
+      .Should()
+      .BeFalse();
+    Equals( b, a )
+      .Should()
+      .BeFalse();
   }
 
   [Fact]
@@ -67,7 +86,9 @@ public sealed class InstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     object actual = StringedInstrument.Create( definition, 22 );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   [Fact]
@@ -75,7 +96,9 @@ public sealed class InstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     Instrument actual = StringedInstrument.Create( definition, 22 );
-    Assert.True( actual.Equals( actual ) );
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -84,8 +107,12 @@ public sealed class InstrumentTest
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     Instrument actual = StringedInstrument.Create( definition, 22 );
     Instrument expected = StringedInstrument.Create( definition, 22 );
-    Assert.True( expected.Equals( actual ) );
-    Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
@@ -97,12 +124,24 @@ public sealed class InstrumentTest
     Instrument y = StringedInstrument.Create( definition, 22 );
     Instrument z = StringedInstrument.Create( definition, 22 );
 
-    Assert.True( x.Equals( x ) ); // Reflexive
-    Assert.True( x.Equals( y ) ); // Symmetric
-    Assert.True( y.Equals( x ) );
-    Assert.True( y.Equals( z ) ); // Transitive
-    Assert.True( x.Equals( z ) );
-    Assert.False( x.Equals( null ) ); // Never equal to null
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -112,10 +151,18 @@ public sealed class InstrumentTest
     Instrument a = StringedInstrument.Create( definition, 22 );
     Instrument b = StringedInstrument.Create( Registry.StringedInstrumentDefinitions["bass"], 22 );
 
-    Assert.False( a.Equals( b ) );
-    Assert.False( b.Equals( a ) );
-    Assert.False( Equals( a, b ) );
-    Assert.False( Equals( b, a ) );
+    a.Equals( b )
+     .Should()
+     .BeFalse();
+    b.Equals( a )
+     .Should()
+     .BeFalse();
+    Equals( a, b )
+      .Should()
+      .BeFalse();
+    Equals( b, a )
+      .Should()
+      .BeFalse();
   }
 
   [Fact]
@@ -123,7 +170,9 @@ public sealed class InstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     Instrument actual = StringedInstrument.Create( definition, 22 );
-    Assert.False( actual.Equals( null ) );
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
   }
 
   #endregion

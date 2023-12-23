@@ -1,4 +1,4 @@
-﻿// Module Name: TuningCollectionTest.cs
+// Module Name: TuningCollectionTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,9 +24,7 @@
 
 namespace Bach.Model.Test.Instruments;
 
-using System;
 using System.Linq;
-using Xunit;
 
 public sealed class TuningCollectionTest
 {
@@ -36,15 +34,21 @@ public sealed class TuningCollectionTest
   public void ContainsKeyTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.True( definition.Tunings.ContainsKey( "standard" ) );
-    Assert.False( definition.Tunings.ContainsKey( "DoesNotExist!!!" ) );
+    definition.Tunings.ContainsKey( "standard" )
+              .Should()
+              .BeTrue();
+    definition.Tunings.ContainsKey( "DoesNotExist!!!" )
+              .Should()
+              .BeFalse();
   }
 
   [Fact]
   public void ContainsKeyThrowsOnNullKeyTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.Throws<ArgumentNullException>( () => definition.Tunings.ContainsKey( null! ) );
+    var act = () => definition.Tunings.ContainsKey( null! );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -58,11 +62,16 @@ public sealed class TuningCollectionTest
     // ReSharper disable once ForCanBeConvertedToForeach
     for( var i = 0; i < tunings.Length; i++ )
     {
-      Assert.True( enumerator.MoveNext() );
-      Assert.Equal( tunings[i], enumerator.Current );
+      enumerator.MoveNext()
+                .Should()
+                .BeTrue();
+      enumerator.Current.Should()
+                .Be( tunings[i] );
     }
 
-    Assert.False( enumerator.MoveNext() );
+    enumerator.MoveNext()
+              .Should()
+              .BeFalse();
   }
 
   [Fact]
@@ -76,18 +85,25 @@ public sealed class TuningCollectionTest
     // ReSharper disable once ForCanBeConvertedToForeach
     for( var i = 0; i < tunings.Length; i++ )
     {
-      Assert.True( enumerator.MoveNext() );
-      Assert.Equal( tunings[i], enumerator.Current );
+      enumerator.MoveNext()
+                .Should()
+                .BeTrue();
+      enumerator.Current.Should()
+                .Be( tunings[i] );
     }
 
-    Assert.False( enumerator.MoveNext() );
+    enumerator.MoveNext()
+              .Should()
+              .BeFalse();
   }
 
   [Fact]
   public void KeysTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.Equal( definition.Tunings.Count, definition.Tunings.Keys.Count() );
+    definition.Tunings.Keys.Count()
+              .Should()
+              .Be( definition.Tunings.Count );
   }
 
   [Fact]
@@ -95,22 +111,29 @@ public sealed class TuningCollectionTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
 
-    Assert.True( definition.Tunings.TryGetValue( "standard", out var tuning ) );
-    Assert.Equal( definition.Tunings.Standard, tuning );
+    definition.Tunings.TryGetValue( "standard", out var tuning )
+              .Should()
+              .BeTrue();
+    tuning.Should()
+          .Be( definition.Tunings.Standard );
   }
 
   [Fact]
   public void TryGetValueThrowsOnNullKeyTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.Throws<ArgumentNullException>( () => definition.Tunings.TryGetValue( null!, out _ ) );
+    var act = () => definition.Tunings.TryGetValue( null!, out _ );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
   public void ValuesTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Assert.Equal( definition.Tunings.Count, definition.Tunings.Values.Count() );
+    definition.Tunings.Values.Count()
+              .Should()
+              .Be( definition.Tunings.Count );
   }
 
   #endregion

@@ -24,9 +24,6 @@
 
 namespace Bach.Model.Test;
 
-using System;
-using Xunit;
-
 public sealed class PitchClassTest
 {
   #region Public Methods
@@ -51,30 +48,45 @@ public sealed class PitchClassTest
   [Fact]
   public void ArithmeticOperatorsTest()
   {
-    Assert.Equal( PitchClass.C, PitchClass.B + 1 );
-    Assert.Equal( PitchClass.C, PitchClass.C + 12 );
-    Assert.Equal( PitchClass.B, PitchClass.C - 1 );
-    Assert.Equal( PitchClass.C, PitchClass.C - 12 );
+    ( PitchClass.B + 1 ).Should()
+                        .Be( PitchClass.C );
+    ( PitchClass.C + 12 ).Should()
+                         .Be( PitchClass.C );
+    ( PitchClass.C - 1 ).Should()
+                        .Be( PitchClass.B );
+    ( PitchClass.C - 12 ).Should()
+                         .Be( PitchClass.C );
 
     var pitchClass = PitchClass.B;
-    Assert.Equal( PitchClass.B, pitchClass++ );
-    Assert.Equal( PitchClass.C, pitchClass );
-    Assert.Equal( PitchClass.CSharp, ++pitchClass );
+    ( pitchClass++ ).Should()
+                    .Be( PitchClass.B );
+    pitchClass.Should()
+              .Be( PitchClass.C );
+    ( ++pitchClass ).Should()
+                    .Be( PitchClass.CSharp );
 
     pitchClass = PitchClass.C;
-    Assert.Equal( PitchClass.C, pitchClass-- );
-    Assert.Equal( PitchClass.B, pitchClass );
-    Assert.Equal( PitchClass.BFlat, --pitchClass );
+    ( pitchClass-- ).Should()
+                    .Be( PitchClass.C );
+    pitchClass.Should()
+              .Be( PitchClass.B );
+    ( --pitchClass ).Should()
+                    .Be( PitchClass.BFlat );
   }
 
   [Fact]
   public void CompareToTest()
   {
-    Assert.True( PitchClass.C.CompareTo( PitchClass.C ) == 0 );
-    Assert.True( PitchClass.C.CompareTo( PitchClass.D ) < 0 );
-    Assert.True( PitchClass.D.CompareTo( PitchClass.C ) > 0 );
-    Assert.True( PitchClass.C.CompareTo( PitchClass.B ) < 0 );
-    Assert.True( PitchClass.B.CompareTo( PitchClass.C ) > 0 );
+    ( PitchClass.C.CompareTo( PitchClass.C ) == 0 ).Should()
+                                                   .BeTrue();
+    ( PitchClass.C.CompareTo( PitchClass.D ) < 0 ).Should()
+                                                  .BeTrue();
+    ( PitchClass.D.CompareTo( PitchClass.C ) > 0 ).Should()
+                                                  .BeTrue();
+    ( PitchClass.C.CompareTo( PitchClass.B ) < 0 ).Should()
+                                                  .BeTrue();
+    ( PitchClass.B.CompareTo( PitchClass.C ) > 0 ).Should()
+                                                  .BeTrue();
   }
 
   [Fact]
@@ -127,8 +139,12 @@ public sealed class PitchClassTest
   public void EqualsTest()
   {
     object actual = PitchClass.Create( NoteName.C );
-    Assert.True( PitchClass.C.Equals( actual ) );
-    Assert.False( PitchClass.C.Equals( null ) );
+    PitchClass.C.Equals( actual )
+              .Should()
+              .BeTrue();
+    PitchClass.C.Equals( null )
+              .Should()
+              .BeFalse();
   }
 
   [Fact]
@@ -165,12 +181,18 @@ public sealed class PitchClassTest
   [Fact]
   public void LogicalOperatorsTest()
   {
-    Assert.True( PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ) );
-    Assert.True( PitchClass.C != PitchClass.B );
-    Assert.True( PitchClass.C < PitchClass.B );
-    Assert.True( PitchClass.C <= PitchClass.B );
-    Assert.True( PitchClass.D > PitchClass.C );
-    Assert.True( PitchClass.D >= PitchClass.C );
+    ( PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ) ).Should()
+                                                                         .BeTrue();
+    ( PitchClass.C != PitchClass.B ).Should()
+                                    .BeTrue();
+    ( PitchClass.C < PitchClass.B ).Should()
+                                   .BeTrue();
+    ( PitchClass.C <= PitchClass.B ).Should()
+                                    .BeTrue();
+    ( PitchClass.D > PitchClass.C ).Should()
+                                   .BeTrue();
+    ( PitchClass.D >= PitchClass.C ).Should()
+                                    .BeTrue();
   }
 
   [Fact]
@@ -202,102 +224,182 @@ public sealed class PitchClassTest
   [Fact]
   public void NoteIntervalAdditionTest()
   {
-    Assert.Equal( PitchClass.E, PitchClass.C + Interval.MajorThird );
-    Assert.Equal( PitchClass.E, PitchClass.CSharp + Interval.MinorThird );
-    Assert.Equal( PitchClass.F, PitchClass.D + Interval.MinorThird );
-    Assert.Equal( PitchClass.G, PitchClass.D + Interval.Fourth );
-    Assert.Equal( PitchClass.A, PitchClass.E + Interval.Fourth );
-    Assert.Equal( PitchClass.AFlat, PitchClass.EFlat + Interval.Fourth );
-    Assert.Equal( PitchClass.GSharp, PitchClass.EFlat + Interval.AugmentedThird );
-    Assert.Equal( PitchClass.D, PitchClass.F + Interval.MajorSixth );
-    Assert.Equal( PitchClass.D, PitchClass.G + Interval.Fifth );
-    Assert.Equal( PitchClass.C, PitchClass.F + Interval.Fifth );
-    Assert.Equal( PitchClass.E, PitchClass.A + Interval.Fifth );
-    Assert.Equal( PitchClass.EFlat, PitchClass.AFlat + Interval.Fifth );
-    Assert.Equal( PitchClass.EFlat, PitchClass.GSharp + Interval.DiminishedSixth );
-    Assert.Equal( PitchClass.C, PitchClass.FSharp + Interval.AugmentedFourth );
-    Assert.Equal( PitchClass.C, PitchClass.GFlat + Interval.DiminishedFifth );
-    Assert.Equal( PitchClass.DSharp, PitchClass.C + Interval.AugmentedSecond );
-    Assert.Equal( PitchClass.FSharp, PitchClass.C + Interval.DiminishedFifth );
-    Assert.Equal( PitchClass.GFlat, PitchClass.C + Interval.AugmentedFourth );
-    Assert.Equal( PitchClass.C, PitchClass.DSharp + Interval.DiminishedSeventh );
-    Assert.Equal( PitchClass.F, PitchClass.DSharp + Interval.DiminishedThird );
-    Assert.Equal( PitchClass.GSharp, PitchClass.Parse( "D##" ) + Interval.DiminishedFourth );
+    ( PitchClass.C + Interval.MajorThird ).Should()
+                                          .Be( PitchClass.E );
+    ( PitchClass.CSharp + Interval.MinorThird ).Should()
+                                               .Be( PitchClass.E );
+    ( PitchClass.D + Interval.MinorThird ).Should()
+                                          .Be( PitchClass.F );
+    ( PitchClass.D + Interval.Fourth ).Should()
+                                      .Be( PitchClass.G );
+    ( PitchClass.E + Interval.Fourth ).Should()
+                                      .Be( PitchClass.A );
+    ( PitchClass.EFlat + Interval.Fourth ).Should()
+                                          .Be( PitchClass.AFlat );
+    ( PitchClass.EFlat + Interval.AugmentedThird ).Should()
+                                                  .Be( PitchClass.GSharp );
+    ( PitchClass.F + Interval.MajorSixth ).Should()
+                                          .Be( PitchClass.D );
+    ( PitchClass.G + Interval.Fifth ).Should()
+                                     .Be( PitchClass.D );
+    ( PitchClass.F + Interval.Fifth ).Should()
+                                     .Be( PitchClass.C );
+    ( PitchClass.A + Interval.Fifth ).Should()
+                                     .Be( PitchClass.E );
+    ( PitchClass.AFlat + Interval.Fifth ).Should()
+                                         .Be( PitchClass.EFlat );
+    ( PitchClass.GSharp + Interval.DiminishedSixth ).Should()
+                                                    .Be( PitchClass.EFlat );
+    ( PitchClass.FSharp + Interval.AugmentedFourth ).Should()
+                                                    .Be( PitchClass.C );
+    ( PitchClass.GFlat + Interval.DiminishedFifth ).Should()
+                                                   .Be( PitchClass.C );
+    ( PitchClass.C + Interval.AugmentedSecond ).Should()
+                                               .Be( PitchClass.DSharp );
+    ( PitchClass.C + Interval.DiminishedFifth ).Should()
+                                               .Be( PitchClass.FSharp );
+    ( PitchClass.C + Interval.AugmentedFourth ).Should()
+                                               .Be( PitchClass.GFlat );
+    ( PitchClass.DSharp + Interval.DiminishedSeventh ).Should()
+                                                      .Be( PitchClass.C );
+    ( PitchClass.DSharp + Interval.DiminishedThird ).Should()
+                                                    .Be( PitchClass.F );
+    ( PitchClass.Parse( "D##" ) + Interval.DiminishedFourth ).Should()
+                                                             .Be( PitchClass.GSharp );
   }
 
   [Fact]
   public void NoteSubtractIntervalTest()
   {
-    Assert.Equal( PitchClass.Parse( "Cb" ), PitchClass.F - Interval.AugmentedFourth );
-    Assert.Equal( PitchClass.C, PitchClass.E - Interval.MajorThird );
-    Assert.Equal( PitchClass.CSharp, PitchClass.E - Interval.MinorThird );
-    Assert.Equal( PitchClass.D, PitchClass.F - Interval.MinorThird );
-    Assert.Equal( PitchClass.D, PitchClass.G - Interval.Fourth );
-    Assert.Equal( PitchClass.E, PitchClass.A - Interval.Fourth );
-    Assert.Equal( PitchClass.EFlat, PitchClass.AFlat - Interval.Fourth );
-    Assert.Equal( PitchClass.EFlat, PitchClass.GSharp - Interval.AugmentedThird );
-    Assert.Equal( PitchClass.F, PitchClass.D - Interval.MajorSixth );
-    Assert.Equal( PitchClass.G, PitchClass.D - Interval.Fifth );
-    Assert.Equal( PitchClass.F, PitchClass.C - Interval.Fifth );
-    Assert.Equal( PitchClass.A, PitchClass.E - Interval.Fifth );
-    Assert.Equal( PitchClass.AFlat, PitchClass.EFlat - Interval.Fifth );
-    Assert.Equal( PitchClass.GSharp, PitchClass.EFlat - Interval.DiminishedSixth );
-    Assert.Equal( PitchClass.FSharp, PitchClass.C - Interval.AugmentedFourth );
-    Assert.Equal( PitchClass.GFlat, PitchClass.C - Interval.DiminishedFifth );
-    Assert.Equal( PitchClass.C, PitchClass.DSharp - Interval.AugmentedSecond );
-    Assert.Equal( PitchClass.C, PitchClass.FSharp - Interval.DiminishedFifth );
-    Assert.Equal( PitchClass.C, PitchClass.GFlat - Interval.AugmentedFourth );
-    Assert.Equal( PitchClass.DSharp, PitchClass.C - Interval.DiminishedSeventh );
-    Assert.Equal( PitchClass.DSharp, PitchClass.F - Interval.DiminishedThird );
-    Assert.Equal( PitchClass.Parse( "D##" ), PitchClass.GSharp - Interval.DiminishedFourth );
+    ( PitchClass.F - Interval.AugmentedFourth ).Should()
+                                               .Be( PitchClass.Parse( "Cb" ) );
+    ( PitchClass.E - Interval.MajorThird ).Should()
+                                          .Be( PitchClass.C );
+    ( PitchClass.E - Interval.MinorThird ).Should()
+                                          .Be( PitchClass.CSharp );
+    ( PitchClass.F - Interval.MinorThird ).Should()
+                                          .Be( PitchClass.D );
+    ( PitchClass.G - Interval.Fourth ).Should()
+                                      .Be( PitchClass.D );
+    ( PitchClass.A - Interval.Fourth ).Should()
+                                      .Be( PitchClass.E );
+    ( PitchClass.AFlat - Interval.Fourth ).Should()
+                                          .Be( PitchClass.EFlat );
+    ( PitchClass.GSharp - Interval.AugmentedThird ).Should()
+                                                   .Be( PitchClass.EFlat );
+    ( PitchClass.D - Interval.MajorSixth ).Should()
+                                          .Be( PitchClass.F );
+    ( PitchClass.D - Interval.Fifth ).Should()
+                                     .Be( PitchClass.G );
+    ( PitchClass.C - Interval.Fifth ).Should()
+                                     .Be( PitchClass.F );
+    ( PitchClass.E - Interval.Fifth ).Should()
+                                     .Be( PitchClass.A );
+    ( PitchClass.EFlat - Interval.Fifth ).Should()
+                                         .Be( PitchClass.AFlat );
+    ( PitchClass.EFlat - Interval.DiminishedSixth ).Should()
+                                                   .Be( PitchClass.GSharp );
+    ( PitchClass.C - Interval.AugmentedFourth ).Should()
+                                               .Be( PitchClass.FSharp );
+    ( PitchClass.C - Interval.DiminishedFifth ).Should()
+                                               .Be( PitchClass.GFlat );
+    ( PitchClass.DSharp - Interval.AugmentedSecond ).Should()
+                                                    .Be( PitchClass.C );
+    ( PitchClass.FSharp - Interval.DiminishedFifth ).Should()
+                                                    .Be( PitchClass.C );
+    ( PitchClass.GFlat - Interval.AugmentedFourth ).Should()
+                                                   .Be( PitchClass.C );
+    ( PitchClass.C - Interval.DiminishedSeventh ).Should()
+                                                 .Be( PitchClass.DSharp );
+    ( PitchClass.F - Interval.DiminishedThird ).Should()
+                                               .Be( PitchClass.DSharp );
+    ( PitchClass.GSharp - Interval.DiminishedFourth ).Should()
+                                                     .Be( PitchClass.Parse( "D##" ) );
   }
 
   [Fact]
   public void NoteSubtractionTest()
   {
-    Assert.Equal( Interval.MajorThird, PitchClass.C - PitchClass.E );
-    Assert.Equal( Interval.MinorThird, PitchClass.CSharp - PitchClass.E );
-    Assert.Equal( Interval.MinorThird, PitchClass.D - PitchClass.F );
-    Assert.Equal( Interval.Fourth, PitchClass.D - PitchClass.G );
-    Assert.Equal( Interval.Fourth, PitchClass.E - PitchClass.A );
-    Assert.Equal( Interval.Fourth, PitchClass.EFlat - PitchClass.AFlat );
-    Assert.Equal( Interval.AugmentedThird, PitchClass.EFlat - PitchClass.GSharp );
-    Assert.Equal( Interval.MajorSixth, PitchClass.F - PitchClass.D );
-    Assert.Equal( Interval.Fifth, PitchClass.G - PitchClass.D );
-    Assert.Equal( Interval.Fifth, PitchClass.F - PitchClass.C );
-    Assert.Equal( Interval.Fifth, PitchClass.A - PitchClass.E );
-    Assert.Equal( Interval.Fifth, PitchClass.AFlat - PitchClass.EFlat );
-    Assert.Equal( Interval.DiminishedSixth, PitchClass.GSharp - PitchClass.EFlat );
-    Assert.Equal( Interval.AugmentedFourth, PitchClass.C - PitchClass.FSharp );
-    Assert.Equal( Interval.DiminishedFifth, PitchClass.C - PitchClass.GFlat );
-    Assert.Equal( Interval.AugmentedSecond, PitchClass.C - PitchClass.DSharp );
-    Assert.Equal( Interval.DiminishedFifth, PitchClass.FSharp - PitchClass.C );
-    Assert.Equal( Interval.AugmentedFourth, PitchClass.GFlat - PitchClass.C );
-    Assert.Equal( Interval.DiminishedSeventh, PitchClass.DSharp - PitchClass.C );
-    Assert.Equal( Interval.DiminishedThird, PitchClass.C - PitchClass.Create( NoteName.E, Accidental.DoubleFlat ) );
-    Assert.Equal(
-      Interval.DiminishedFourth,
-      PitchClass.Create( NoteName.D, Accidental.DoubleSharp ) - PitchClass.GSharp
-    );
+    ( PitchClass.C - PitchClass.E ).Should()
+                                   .Be( Interval.MajorThird );
+    ( PitchClass.CSharp - PitchClass.E ).Should()
+                                        .Be( Interval.MinorThird );
+    ( PitchClass.D - PitchClass.F ).Should()
+                                   .Be( Interval.MinorThird );
+    ( PitchClass.D - PitchClass.G ).Should()
+                                   .Be( Interval.Fourth );
+    ( PitchClass.E - PitchClass.A ).Should()
+                                   .Be( Interval.Fourth );
+    ( PitchClass.EFlat - PitchClass.AFlat ).Should()
+                                           .Be( Interval.Fourth );
+    ( PitchClass.EFlat - PitchClass.GSharp ).Should()
+                                            .Be( Interval.AugmentedThird );
+    ( PitchClass.F - PitchClass.D ).Should()
+                                   .Be( Interval.MajorSixth );
+    ( PitchClass.G - PitchClass.D ).Should()
+                                   .Be( Interval.Fifth );
+    ( PitchClass.F - PitchClass.C ).Should()
+                                   .Be( Interval.Fifth );
+    ( PitchClass.A - PitchClass.E ).Should()
+                                   .Be( Interval.Fifth );
+    ( PitchClass.AFlat - PitchClass.EFlat ).Should()
+                                           .Be( Interval.Fifth );
+    ( PitchClass.GSharp - PitchClass.EFlat ).Should()
+                                            .Be( Interval.DiminishedSixth );
+    ( PitchClass.C - PitchClass.FSharp ).Should()
+                                        .Be( Interval.AugmentedFourth );
+    ( PitchClass.C - PitchClass.GFlat ).Should()
+                                       .Be( Interval.DiminishedFifth );
+    ( PitchClass.C - PitchClass.DSharp ).Should()
+                                        .Be( Interval.AugmentedSecond );
+    ( PitchClass.FSharp - PitchClass.C ).Should()
+                                        .Be( Interval.DiminishedFifth );
+    ( PitchClass.GFlat - PitchClass.C ).Should()
+                                       .Be( Interval.AugmentedFourth );
+    ( PitchClass.DSharp - PitchClass.C ).Should()
+                                        .Be( Interval.DiminishedSeventh );
+    ( PitchClass.C - PitchClass.Create( NoteName.E, Accidental.DoubleFlat ) ).Should()
+                                                                             .Be( Interval.DiminishedThird );
+
+    ( PitchClass.Create( NoteName.D, Accidental.DoubleSharp ) - PitchClass.GSharp ).Should()
+      .Be( Interval.DiminishedFourth );
   }
 
   [Fact]
   public void ParseRejectsInvalidStringsTest()
   {
-    Assert.Throws<ArgumentNullException>( () => PitchClass.Parse( null! ) );
-    Assert.Throws<ArgumentException>( () => PitchClass.Parse( "" ) );
-    Assert.Throws<FormatException>( () => PitchClass.Parse( "J" ) );
-    Assert.Throws<FormatException>( () => PitchClass.Parse( "C$" ) );
+    var act1 = () => PitchClass.Parse( null! );
+    act1.Should()
+        .Throw<ArgumentNullException>();
+    var act2 = () => PitchClass.Parse( "" );
+    act2.Should()
+        .Throw<ArgumentException>();
+    var act3 = () => PitchClass.Parse( "J" );
+    act3.Should()
+        .Throw<FormatException>();
+    var act4 = () => PitchClass.Parse( "C$" );
+    act4.Should()
+        .Throw<FormatException>();
   }
 
   [Fact]
   public void ParseTest()
   {
-    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), PitchClass.Parse( "Cbb" ) );
-    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.Flat ), PitchClass.Parse( "CB" ) );
-    Assert.Equal( PitchClass.C, PitchClass.Parse( "C" ) );
-    Assert.Equal( PitchClass.CSharp, PitchClass.Parse( "c#" ) );
-    Assert.Equal( PitchClass.Create( NoteName.C, Accidental.DoubleSharp ), PitchClass.Parse( "c##" ) );
+    PitchClass.Parse( "Cbb" )
+              .Should()
+              .Be( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ) );
+    PitchClass.Parse( "CB" )
+              .Should()
+              .Be( PitchClass.Create( NoteName.C, Accidental.Flat ) );
+    PitchClass.Parse( "C" )
+              .Should()
+              .Be( PitchClass.C );
+    PitchClass.Parse( "c#" )
+              .Should()
+              .Be( PitchClass.CSharp );
+    PitchClass.Parse( "c##" )
+              .Should()
+              .Be( PitchClass.Create( NoteName.C, Accidental.DoubleSharp ) );
   }
 
   [Fact]
@@ -367,40 +469,43 @@ public sealed class PitchClassTest
   [Fact]
   public void ToStringTest()
   {
-    Assert.Equal(
-      "Cbb",
-      PitchClass.Create( NoteName.C, Accidental.DoubleFlat )
-                .ToString()
-    );
-    Assert.Equal(
-      "Cb",
-      PitchClass.Create( NoteName.C, Accidental.Flat )
-                .ToString()
-    );
-    Assert.Equal(
-      "C",
-      PitchClass.Create( NoteName.C )
-                .ToString()
-    );
-    Assert.Equal(
-      "C#",
-      PitchClass.Create( NoteName.C, Accidental.Sharp )
-                .ToString()
-    );
-    Assert.Equal(
-      "C##",
-      PitchClass.Create( NoteName.C, Accidental.DoubleSharp )
-                .ToString()
-    );
+    PitchClass.Create( NoteName.C, Accidental.DoubleFlat )
+              .ToString()
+              .Should()
+              .Be( "Cbb" );
+    PitchClass.Create( NoteName.C, Accidental.Flat )
+              .ToString()
+              .Should()
+              .Be( "Cb" );
+    PitchClass.Create( NoteName.C )
+              .ToString()
+              .Should()
+              .Be( "C" );
+    PitchClass.Create( NoteName.C, Accidental.Sharp )
+              .ToString()
+              .Should()
+              .Be( "C#" );
+    PitchClass.Create( NoteName.C, Accidental.DoubleSharp )
+              .ToString()
+              .Should()
+              .Be( "C##" );
   }
 
   [Fact]
   public void TryParseRejectsInvalidStringsTest()
   {
-    Assert.False( PitchClass.TryParse( null!, out _ ) );
-    Assert.False( PitchClass.TryParse( "", out _ ) );
-    Assert.False( PitchClass.TryParse( "J", out _ ) );
-    Assert.False( PitchClass.TryParse( "C$", out _ ) );
+    PitchClass.TryParse( null!, out _ )
+              .Should()
+              .BeFalse();
+    PitchClass.TryParse( "", out _ )
+              .Should()
+              .BeFalse();
+    PitchClass.TryParse( "J", out _ )
+              .Should()
+              .BeFalse();
+    PitchClass.TryParse( "C$", out _ )
+              .Should()
+              .BeFalse();
   }
 
   [Fact]
@@ -428,7 +533,9 @@ public sealed class PitchClassTest
   {
     while( startInclusive != lastExclusive )
     {
-      Assert.Null( pitchClass.GetEnharmonic( startInclusive ) );
+      pitchClass.GetEnharmonic( startInclusive )
+                .Should()
+                .BeNull();
       ++startInclusive;
     }
   }
@@ -440,7 +547,9 @@ public sealed class PitchClassTest
     foreach( var s in enharmonics )
     {
       var enharmonic = PitchClass.Parse( s );
-      Assert.Equal( enharmonic, pitchClass.GetEnharmonic( enharmonic.NoteName ) );
+      pitchClass.GetEnharmonic( enharmonic.NoteName )
+                .Should()
+                .Be( enharmonic );
     }
   }
 
@@ -457,16 +566,21 @@ public sealed class PitchClassTest
     NoteName noteName,
     Accidental accidental )
   {
-    Assert.Equal( noteName, pitchClass.NoteName );
-    Assert.Equal( accidental, pitchClass.Accidental );
+    pitchClass.NoteName.Should()
+              .Be( noteName );
+    pitchClass.Accidental.Should()
+              .Be( accidental );
   }
 
   private static void TryParseTestImpl(
     string value,
     PitchClass expected )
   {
-    Assert.True( PitchClass.TryParse( value, out var actual ) );
-    Assert.Equal( expected, actual );
+    PitchClass.TryParse( value, out var actual )
+              .Should()
+              .BeTrue();
+    actual.Should()
+          .Be( expected );
   }
 
   private static void NextTestImpl(
@@ -491,8 +605,12 @@ public sealed class PitchClassTest
     PitchClass expectedSharp,
     PitchClass? expectedFlat = null )
   {
-    Assert.Equal( expectedSharp, pitchClass.Add( interval ) );
-    Assert.Equal( expectedFlat ?? expectedSharp, pitchClass.Add( interval ) );
+    pitchClass.Add( interval )
+              .Should()
+              .Be( expectedSharp );
+    pitchClass.Add( interval )
+              .Should()
+              .Be( expectedFlat ?? expectedSharp );
   }
 
   private static void SubtractTestImpl(
@@ -501,8 +619,12 @@ public sealed class PitchClassTest
     PitchClass expectedSharp,
     PitchClass? expectedFlat = null )
   {
-    Assert.Equal( expectedSharp, pitchClass.Subtract( interval ) );
-    Assert.Equal( expectedFlat ?? expectedSharp, pitchClass.Subtract( interval ) );
+    pitchClass.Subtract( interval )
+              .Should()
+              .Be( expectedSharp );
+    pitchClass.Subtract( interval )
+              .Should()
+              .Be( expectedFlat ?? expectedSharp );
   }
 
   #endregion
