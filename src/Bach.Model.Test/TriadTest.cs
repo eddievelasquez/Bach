@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class TriadTests
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void AugmentedTriadTest()
@@ -135,5 +135,5 @@ public sealed class TriadTests
     Assert.Equal( PitchClass.B, inversion.PitchClasses[2] );
   }
 
-#endregion
+  #endregion
 }

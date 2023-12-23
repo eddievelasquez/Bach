@@ -22,6 +22,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Cli;
+
 using System.CommandLine.Builder;
 using System.CommandLine.Help;
 using System.CommandLine.Parsing;
@@ -29,27 +31,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using Spectre.Console;
 
-namespace Bach.Cli;
-
 internal static class Program
 {
-#region Public Methods
+  #region Public Methods
 
-  public static async Task<int> Main( string[] args )
+  public static async Task<int> Main(
+    string[] args )
   {
     var rootCommand = new BachRootCommand();
     var parser = new CommandLineBuilder( rootCommand ).UseDefaults()
-                                                      .UseHelp( ctx => ctx.HelpBuilder.CustomizeLayout(
-                                                                  _ => HelpBuilder.Default.GetLayout()
-                                                                    .Skip( 1 )
-                                                                    .Prepend( _ => AnsiConsole.Write(
-                                                                                new FigletText(
-                                                                                  rootCommand.Description! ).Color(
-                                                                                  Color.CadetBlue ) ) ) ) )
+                                                      .UseHelp(
+                                                        ctx => ctx.HelpBuilder.CustomizeLayout(
+                                                          _ => HelpBuilder.Default.GetLayout()
+                                                                          .Skip( 1 )
+                                                                          .Prepend(
+                                                                            _ => AnsiConsole.Write(
+                                                                              new FigletText( rootCommand.Description! )
+                                                                                .Color( Color.CadetBlue )
+                                                                            )
+                                                                          )
+                                                        )
+                                                      )
                                                       .Build();
 
     return await parser.InvokeAsync( args );
   }
 
-#endregion
+  #endregion
 }

@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Linq;
-using Bach.Model.Instruments;
-using Xunit;
-
 namespace Bach.Model.Test;
+
+using System.Linq;
+using Model.Instruments;
+using Xunit;
 
 public sealed class RegistryTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void ChordFormulasTest()
@@ -74,5 +74,5 @@ public sealed class RegistryTest
     }
   }
 
-#endregion
+  #endregion
 }

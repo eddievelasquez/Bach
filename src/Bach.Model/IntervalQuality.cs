@@ -22,11 +22,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics.Contracts;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>Values that represent interval qualities.</summary>
 public readonly struct IntervalQuality
@@ -34,7 +34,7 @@ public readonly struct IntervalQuality
     IComparable<IntervalQuality>,
     IComparable
 {
-#region Constants
+  #region Constants
 
   /// <summary>A  constant representing a diminished interval.</summary>
   public static readonly IntervalQuality Diminished = new( 0 );
@@ -55,25 +55,26 @@ public readonly struct IntervalQuality
   private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
   private static readonly string[] s_long = { "Diminished", "Minor", "Perfect", "Major", "Augmented" };
 
-#endregion
+  #endregion
 
-#region Fields
+  #region Fields
 
   private readonly int _value;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
-  private IntervalQuality( int value )
+  private IntervalQuality(
+    int value )
   {
     Requires.Between( value, 0, 4 );
     _value = value;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Returns the symbol for the given interval quality.</summary>
   /// <value>A string.</value>
@@ -87,22 +88,24 @@ public readonly struct IntervalQuality
   /// <value>A string.</value>
   public string LongName => s_long[_value];
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Adds a number of semitones to a pitch class name.</summary>
   /// <param name="semitones">The number of semitones to add.</param>
   /// <returns>A IntervalQuality.</returns>
   [Pure]
-  public IntervalQuality Add( int semitones )
+  public IntervalQuality Add(
+    int semitones )
   {
     var result = new IntervalQuality( _value + semitones );
     return result;
   }
 
   /// <inheritdoc />
-  public int CompareTo( object? obj )
+  public int CompareTo(
+    object? obj )
   {
     if( obj is null )
     {
@@ -110,24 +113,27 @@ public readonly struct IntervalQuality
     }
 
     return obj is IntervalQuality other
-             ? CompareTo( other )
-             : throw new ArgumentException( $"Object must be of type {nameof( IntervalQuality )}" );
+      ? CompareTo( other )
+      : throw new ArgumentException( $"Object must be of type {nameof( IntervalQuality )}" );
   }
 
   /// <inheritdoc />
-  public int CompareTo( IntervalQuality other )
+  public int CompareTo(
+    IntervalQuality other )
   {
     return _value.CompareTo( other._value );
   }
 
   /// <inheritdoc />
-  public bool Equals( IntervalQuality other )
+  public bool Equals(
+    IntervalQuality other )
   {
     return _value == other._value;
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     return obj is IntervalQuality other && Equals( other );
   }
@@ -145,7 +151,8 @@ public readonly struct IntervalQuality
   /// <param name="value">A string containing the interval quality to convert.</param>
   /// <returns>An object that is equivalent to the interval quality contained in value.</returns>
   /// <exception cref="FormatException">value does not contain a valid string representation of an interval quality.</exception>
-  public static IntervalQuality Parse( string value )
+  public static IntervalQuality Parse(
+    string value )
   {
     if( !TryParse( value, out var quality ) )
     {
@@ -159,7 +166,8 @@ public readonly struct IntervalQuality
   /// <param name="semitones">The number of semitones to subtract.</param>
   /// <returns>A IntervalQuality.</returns>
   [Pure]
-  public IntervalQuality Subtract( int semitones )
+  public IntervalQuality Subtract(
+    int semitones )
   {
     return Add( -semitones );
   }
@@ -237,14 +245,15 @@ public readonly struct IntervalQuality
     return false;
   }
 
-#endregion
+  #endregion
 
-#region Operators
+  #region Operators
 
   /// <summary>Explicit cast that converts the given IntervalQuality to an int.</summary>
   /// <param name="quality">The pitch class name.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator int( IntervalQuality quality )
+  public static explicit operator int(
+    IntervalQuality quality )
   {
     return quality._value;
   }
@@ -252,7 +261,8 @@ public readonly struct IntervalQuality
   /// <summary>Explicit cast that converts the given int to a IntervalQuality.</summary>
   /// <param name="value">The value.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator IntervalQuality( int value )
+  public static explicit operator IntervalQuality(
+    int value )
   {
     return new IntervalQuality( value );
   }
@@ -337,7 +347,8 @@ public readonly struct IntervalQuality
   /// <summary>Increment operator.</summary>
   /// <param name="quality">The interval quality to increment.</param>
   /// <returns>The result of the operation.</returns>
-  public static IntervalQuality operator ++( IntervalQuality quality )
+  public static IntervalQuality operator ++(
+    IntervalQuality quality )
   {
     return quality.Add( 1 );
   }
@@ -356,10 +367,11 @@ public readonly struct IntervalQuality
   /// <summary>Decrement operator.</summary>
   /// <param name="quality">The interval quality to decrement.</param>
   /// <returns>The result of the operation.</returns>
-  public static IntervalQuality operator --( IntervalQuality quality )
+  public static IntervalQuality operator --(
+    IntervalQuality quality )
   {
     return quality.Subtract( 1 );
   }
 
-#endregion
+  #endregion
 }

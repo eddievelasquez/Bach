@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class IntervalTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void EqualityFailsWithNullTest()
@@ -108,15 +108,17 @@ public sealed class IntervalTest
   [Fact]
   public void GetSemitoneCountTest()
   {
-    Assert.Throws<ArgumentException>( () => Interval.GetSemitoneCount( IntervalQuantity.Unison,
-                                                                       IntervalQuality.Diminished ) );
-
     Assert.Throws<ArgumentException>(
-      () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Minor ) );
+      () => Interval.GetSemitoneCount(
+        IntervalQuantity.Unison,
+        IntervalQuality.Diminished
+      )
+    );
+
+    Assert.Throws<ArgumentException>( () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Minor ) );
 
     Assert.Equal( 0, Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Perfect ) );
-    Assert.Throws<ArgumentException>(
-      () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Major ) );
+    Assert.Throws<ArgumentException>( () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Major ) );
 
     Assert.Equal( 1, Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Augmented ) );
   }
@@ -305,5 +307,5 @@ public sealed class IntervalTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 }

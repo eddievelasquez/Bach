@@ -22,10 +22,10 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Bach.Model.Internal;
-
 namespace Bach.Model.Instruments;
+
+using System;
+using Model.Internal;
 
 /// <summary>
 ///   In a stringed instrument, A fingering describes the position in a given string to produce a particular
@@ -33,7 +33,7 @@ namespace Bach.Model.Instruments;
 /// </summary>
 public readonly struct Fingering: IEquatable<Fingering>
 {
-#region Constructors
+  #region Constructors
 
   private Fingering(
     Pitch pitch,
@@ -45,9 +45,9 @@ public readonly struct Fingering: IEquatable<Fingering>
     Position = position;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the fingering's pitch.</summary>
   /// <value>The pitch.</value>
@@ -62,9 +62,9 @@ public readonly struct Fingering: IEquatable<Fingering>
   /// <value>The position.</value>
   public int Position { get; }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Creates a new Fingering.</summary>
   /// <param name="instrument">The instrument.</param>
@@ -90,13 +90,15 @@ public readonly struct Fingering: IEquatable<Fingering>
   }
 
   /// <inheritdoc />
-  public bool Equals( Fingering other )
+  public bool Equals(
+    Fingering other )
   {
     return StringNumber == other.StringNumber && Position == other.Position;
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( obj is null )
     {
@@ -118,9 +120,9 @@ public readonly struct Fingering: IEquatable<Fingering>
     return Position < 0 ? $"{StringNumber}x" : $"{StringNumber}{Position}";
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   internal static Fingering Create(
     StringedInstrument instrument,
@@ -134,5 +136,5 @@ public readonly struct Fingering: IEquatable<Fingering>
     return result;
   }
 
-#endregion
+  #endregion
 }

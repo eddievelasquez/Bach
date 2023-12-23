@@ -22,19 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Serialization;
+
 using System;
 using System.Collections.Generic;
 
-namespace Bach.Model.Serialization;
-
 internal sealed class Library
 {
-#region Properties
+  #region Properties
 
   public required Version Version { get; set; }
   public required List<PersistentScale> Scales { get; set; }
   public required List<PersistentChord> Chords { get; set; }
   public required List<PersistentStringedInstrument> StringedInstruments { get; set; }
 
-#endregion
+  #endregion
 }

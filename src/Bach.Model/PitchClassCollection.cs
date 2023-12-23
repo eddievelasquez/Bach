@@ -22,33 +22,34 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>Collection of pitch classes.</summary>
 public sealed class PitchClassCollection
   : IReadOnlyList<PitchClass>,
     IEquatable<IEnumerable<PitchClass>>
 {
-#region Fields
+  #region Fields
 
   private readonly PitchClass[] _pitchClasses;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>
   ///   Initializes a new instance of the <see cref="PitchClassCollection" /> class.
   /// </summary>
   /// <param name="pitchClasses">The collection of pitch classes.</param>
-  public PitchClassCollection( IEnumerable<PitchClass> pitchClasses )
+  public PitchClassCollection(
+    IEnumerable<PitchClass> pitchClasses )
   {
     Requires.NotNull( pitchClasses );
     _pitchClasses = pitchClasses.ToArray();
@@ -58,28 +59,31 @@ public sealed class PitchClassCollection
   ///   Initializes a new instance of the <see cref="PitchClassCollection" /> class.
   /// </summary>
   /// <param name="pitchClasses">The collection of pitch classes.</param>
-  public PitchClassCollection( PitchClass[] pitchClasses )
+  public PitchClassCollection(
+    PitchClass[] pitchClasses )
   {
     Requires.NotNull( pitchClasses );
     _pitchClasses = pitchClasses;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <inheritdoc />
   public int Count => _pitchClasses.Length;
 
   /// <inheritdoc />
-  public PitchClass this[ int index ] => _pitchClasses[index];
+  public PitchClass this[
+    int index ] => _pitchClasses[index];
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( IEnumerable<PitchClass>? other )
+  public bool Equals(
+    IEnumerable<PitchClass>? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -95,7 +99,8 @@ public sealed class PitchClassCollection
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -135,7 +140,8 @@ public sealed class PitchClassCollection
   /// z
   /// <param name="pitchClass">The pitch class to search for.</param>
   /// <returns>The index of the pitch class, or -1 if not found.</returns>
-  public int IndexOf( PitchClass pitchClass )
+  public int IndexOf(
+    PitchClass pitchClass )
   {
     return Array.IndexOf( _pitchClasses, pitchClass );
   }
@@ -146,7 +152,8 @@ public sealed class PitchClassCollection
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   /// <param name="value">The value to parse.</param>
   /// <returns>A PitchClassCollection.</returns>
-  public static PitchClassCollection Parse( string value )
+  public static PitchClassCollection Parse(
+    string value )
   {
     Requires.NotNullOrEmpty( value );
 
@@ -195,5 +202,5 @@ public sealed class PitchClassCollection
     return true;
   }
 
-#endregion
+  #endregion
 }

@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class PitchTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void CompareToContractTest()
@@ -101,17 +101,27 @@ public sealed class PitchTest
     Assert.Equal( PitchClass.A, target.PitchClass );
     Assert.Equal( 1, target.Octave );
 
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( PitchClass.Create( NoteName.C, Accidental.Flat ),
-                                                                    Pitch.MinOctave ) );
+    Assert.Throws<ArgumentOutOfRangeException>(
+      () => Pitch.Create(
+        PitchClass.Create( NoteName.C, Accidental.Flat ),
+        Pitch.MinOctave
+      )
+    );
 
     Assert.Throws<ArgumentOutOfRangeException>(
-      () => Pitch.Create( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), Pitch.MinOctave ) );
-
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( PitchClass.Create( NoteName.B, Accidental.Sharp ),
-                                                                    Pitch.MaxOctave ) );
+      () => Pitch.Create( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), Pitch.MinOctave )
+    );
 
     Assert.Throws<ArgumentOutOfRangeException>(
-      () => Pitch.Create( PitchClass.Create( NoteName.B, Accidental.DoubleSharp ), Pitch.MaxOctave ) );
+      () => Pitch.Create(
+        PitchClass.Create( NoteName.B, Accidental.Sharp ),
+        Pitch.MaxOctave
+      )
+    );
+
+    Assert.Throws<ArgumentOutOfRangeException>(
+      () => Pitch.Create( PitchClass.Create( NoteName.B, Accidental.DoubleSharp ), Pitch.MaxOctave )
+    );
   }
 
   [Fact]
@@ -123,13 +133,16 @@ public sealed class PitchTest
     Assert.Equal( 1, target.Octave );
 
     Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.C, Accidental.Flat, Pitch.MinOctave ) );
-    Assert.Throws<ArgumentOutOfRangeException>(
-      () => Pitch.Create( NoteName.C, Accidental.DoubleFlat, Pitch.MinOctave ) );
+    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.C, Accidental.DoubleFlat, Pitch.MinOctave ) );
 
     Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.B, Accidental.Sharp, Pitch.MaxOctave ) );
-    Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.Create( NoteName.B,
-                                                                    Accidental.DoubleSharp,
-                                                                    Pitch.MaxOctave ) );
+    Assert.Throws<ArgumentOutOfRangeException>(
+      () => Pitch.Create(
+        NoteName.B,
+        Accidental.DoubleSharp,
+        Pitch.MaxOctave
+      )
+    );
   }
 
   [Fact]
@@ -172,10 +185,38 @@ public sealed class PitchTest
   [Fact]
   public void FrequencyTest()
   {
-    Assert.Equal( 440.0, Math.Round( Pitch.Parse( "A4" ).Frequency, 2 ) );
-    Assert.Equal( 523.25, Math.Round( Pitch.Parse( "C5" ).Frequency, 2 ) );
-    Assert.Equal( 349.23, Math.Round( Pitch.Parse( "F4" ).Frequency, 2 ) );
-    Assert.Equal( 880.0, Math.Round( Pitch.Parse( "A5" ).Frequency, 2 ) );
+    Assert.Equal(
+      440.0,
+      Math.Round(
+        Pitch.Parse( "A4" )
+             .Frequency,
+        2
+      )
+    );
+    Assert.Equal(
+      523.25,
+      Math.Round(
+        Pitch.Parse( "C5" )
+             .Frequency,
+        2
+      )
+    );
+    Assert.Equal(
+      349.23,
+      Math.Round(
+        Pitch.Parse( "F4" )
+             .Frequency,
+        2
+      )
+    );
+    Assert.Equal(
+      880.0,
+      Math.Round(
+        Pitch.Parse( "A5" )
+             .Frequency,
+        2
+      )
+    );
   }
 
   [Fact]
@@ -197,17 +238,61 @@ public sealed class PitchTest
   [Fact]
   public void MidiTest()
   {
-    Assert.Equal( 12, Pitch.Parse( "C0" ).Midi );
-    Assert.Equal( 24, Pitch.Parse( "C1" ).Midi );
-    Assert.Equal( 36, Pitch.Parse( "C2" ).Midi );
-    Assert.Equal( 48, Pitch.Parse( "C3" ).Midi );
-    Assert.Equal( 60, Pitch.Parse( "C4" ).Midi );
-    Assert.Equal( 72, Pitch.Parse( "C5" ).Midi );
-    Assert.Equal( 84, Pitch.Parse( "C6" ).Midi );
-    Assert.Equal( 96, Pitch.Parse( "C7" ).Midi );
-    Assert.Equal( 108, Pitch.Parse( "C8" ).Midi );
-    Assert.Equal( 120, Pitch.Parse( "C9" ).Midi );
-    Assert.Equal( 127, Pitch.Parse( "G9" ).Midi );
+    Assert.Equal(
+      12,
+      Pitch.Parse( "C0" )
+           .Midi
+    );
+    Assert.Equal(
+      24,
+      Pitch.Parse( "C1" )
+           .Midi
+    );
+    Assert.Equal(
+      36,
+      Pitch.Parse( "C2" )
+           .Midi
+    );
+    Assert.Equal(
+      48,
+      Pitch.Parse( "C3" )
+           .Midi
+    );
+    Assert.Equal(
+      60,
+      Pitch.Parse( "C4" )
+           .Midi
+    );
+    Assert.Equal(
+      72,
+      Pitch.Parse( "C5" )
+           .Midi
+    );
+    Assert.Equal(
+      84,
+      Pitch.Parse( "C6" )
+           .Midi
+    );
+    Assert.Equal(
+      96,
+      Pitch.Parse( "C7" )
+           .Midi
+    );
+    Assert.Equal(
+      108,
+      Pitch.Parse( "C8" )
+           .Midi
+    );
+    Assert.Equal(
+      120,
+      Pitch.Parse( "C9" )
+           .Midi
+    );
+    Assert.Equal(
+      127,
+      Pitch.Parse( "G9" )
+           .Midi
+    );
     Assert.Throws<ArgumentOutOfRangeException>( () => Pitch.CreateFromMidi( 11 ) );
   }
 
@@ -449,5 +534,5 @@ public sealed class PitchTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 }

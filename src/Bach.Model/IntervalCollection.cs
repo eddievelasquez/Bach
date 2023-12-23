@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>
 ///   Represents a collection of intervals.
@@ -37,39 +37,44 @@ public sealed class IntervalCollection
   : IReadOnlyList<Interval>,
     IEquatable<IEnumerable<Interval>>
 {
-#region Fields
+  #region Fields
 
   private readonly Interval[] _intervals;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
-  internal IntervalCollection( Interval[] intervals )
+  internal IntervalCollection(
+    Interval[] intervals )
   {
     Requires.NotNullOrEmpty( intervals );
-    Requires.Condition<ArgumentException>( intervals.IsSortedUnique(),
-                                           "Intervals must be sorted and contain no duplicates" );
+    Requires.Condition<ArgumentException>(
+      intervals.IsSortedUnique(),
+      "Intervals must be sorted and contain no duplicates"
+    );
 
     _intervals = intervals;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <inheritdoc />
   public int Count => _intervals.Length;
 
   /// <inheritdoc />
-  public Interval this[ int index ] => _intervals[index];
+  public Interval this[
+    int index ] => _intervals[index];
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( IEnumerable<Interval>? other )
+  public bool Equals(
+    IEnumerable<Interval>? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -80,7 +85,8 @@ public sealed class IntervalCollection
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -137,5 +143,5 @@ public sealed class IntervalCollection
     return string.Join( ",", _intervals );
   }
 
-#endregion
+  #endregion
 }

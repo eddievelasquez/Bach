@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test.Instruments;
+
 using System;
 using System.Linq;
 using Xunit;
 
-namespace Bach.Model.Test.Instruments;
-
 public sealed class TuningCollectionTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void ContainsKeyTest()
@@ -113,5 +113,5 @@ public sealed class TuningCollectionTest
     Assert.Equal( definition.Tunings.Count, definition.Tunings.Values.Count() );
   }
 
-#endregion
+  #endregion
 }

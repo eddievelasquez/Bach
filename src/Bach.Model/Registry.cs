@@ -22,6 +22,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -29,11 +31,9 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Bach.Model.Instruments;
-using Bach.Model.Internal;
-using Bach.Model.Serialization;
-
-namespace Bach.Model;
+using Instruments;
+using Internal;
+using Serialization;
 
 /// <summary>
 ///   The registry provides access to all the predefined formulas and definitions that can be found in the
@@ -41,7 +41,7 @@ namespace Bach.Model;
 /// </summary>
 public static class Registry
 {
-#region Nested Types
+  #region Nested Types
 
   /// <summary>
   ///   The JSON Deserializer for System.Text.Json doesn't support System.Version as
@@ -50,7 +50,7 @@ public static class Registry
   /// <seealso cref="JsonConverter{Version}" />
   private sealed class VersionParser: JsonConverter<Version>
   {
-#region Public Methods
+    #region Public Methods
 
     /// <inheritdoc />
     public override Version Read(
@@ -73,22 +73,24 @@ public static class Registry
       throw new NotImplementedException();
     }
 
-#endregion
+    #endregion
   }
 
-#endregion
+  #endregion
 
-#region Constants
+  #region Constants
 
   private const string LibraryFileName = "Bach.Model.Library.json";
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
-  [SuppressMessage( "Blocker Code Smell",
-                    "S3877:Exceptions should not be thrown from unexpected methods",
-                    Justification = "Must abort if the library cannot be loaded" )]
+  [SuppressMessage(
+    "Blocker Code Smell",
+    "S3877:Exceptions should not be thrown from unexpected methods",
+    Justification = "Must abort if the library cannot be loaded"
+  )]
   static Registry()
   {
     // Load the library from the JSON file in the same directory as
@@ -154,9 +156,9 @@ public static class Registry
     }
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the collection of scale formulas.</summary>
   /// <value>The scale formulas.</value>
@@ -170,5 +172,5 @@ public static class Registry
   /// <value>The stringed instrument definitions.</value>
   public static NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
 
-#endregion
+  #endregion
 }

@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test.Instruments;
+
 using System;
 using System.Linq;
-using Bach.Model.Instruments;
+using Model.Instruments;
 using Xunit;
-
-namespace Bach.Model.Test.Instruments;
 
 public sealed class StringedInstrumentDefinitionBuilderTest
 {
-#region Constants
+  #region Constants
 
   private const string InstrumentId = "Id";
   private const string InstrumentName = "Name";
@@ -39,9 +39,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   private const string TuningId = "Standard";
   private const string TuningName = "Standard";
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void AddTuningThrowsOnStringMismatchTest()
@@ -53,7 +53,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningWithNoteArrayTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
     builder.AddTuning( TuningId, TuningName, pitches );
 
@@ -71,7 +72,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningWithNoteArrayThrowsOnBuilderReuseTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
     builder.AddTuning( TuningId, TuningName, pitches );
     builder.Build();
@@ -82,7 +84,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningWithNoteArrayThrowsOnEmptyKeyTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
     Assert.Throws<ArgumentException>( () => builder.AddTuning( "", TuningName, pitches ) );
@@ -91,7 +94,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningWithNoteArrayThrowsOnEmptyNameTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
     Assert.Throws<ArgumentException>( () => builder.AddTuning( TuningId, "", pitches ) );
@@ -100,7 +104,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningWithNoteArrayThrowsOnMismatchedNoteCountTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4,F4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4,F4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
     Assert.Throws<ArgumentException>( () => builder.AddTuning( TuningId, TuningName, pitches ) );
@@ -109,7 +114,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningWithNoteArrayThrowsOnNullKeyTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
     Assert.Throws<ArgumentNullException>( () => builder.AddTuning( null!, TuningName, pitches ) );
@@ -118,7 +124,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningWithNoteArrayThrowsOnNullNameTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
 
     Assert.Throws<ArgumentNullException>( () => builder.AddTuning( TuningId, null!, pitches ) );
@@ -208,7 +215,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void BuildThrowOnMissingStandardTuningTest()
   {
-    var pitches = PitchCollection.Parse( "C4,D4,E4" ).ToArray();
+    var pitches = PitchCollection.Parse( "C4,D4,E4" )
+                                 .ToArray();
     var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
     builder.AddTuning( "ATuning", "A tuning", pitches );
 
@@ -226,5 +234,5 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     Assert.Throws<InvalidOperationException>( () => builder.Build() );
   }
 
-#endregion
+  #endregion
 }

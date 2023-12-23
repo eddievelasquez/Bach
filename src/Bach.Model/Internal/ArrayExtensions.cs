@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Internal;
+
 using System;
 using System.Collections.Generic;
 
-namespace Bach.Model.Internal;
-
 internal static class ArrayExtensions
 {
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Determines whether the provided list is sorted and only contains unique elements</summary>
   /// <typeparam name="T">Type of the list elements.</typeparam>
@@ -37,12 +37,14 @@ internal static class ArrayExtensions
   /// <returns>
   ///   <c>true</c> if the list is sorted and only contains unique elements; otherwise, <c>false</c>.
   /// </returns>
-  public static bool IsSortedUnique<T>( this IReadOnlyList<T> values )
+  public static bool IsSortedUnique<T>(
+    this IReadOnlyList<T> values )
     where T: IComparable<T>
   {
     for( var i = 1; i < values.Count; ++i )
     {
-      var result = values[i - 1].CompareTo( values[i] );
+      var result = values[i - 1]
+        .CompareTo( values[i] );
       if( result >= 0 )
       {
         return false;
@@ -98,5 +100,5 @@ internal static class ArrayExtensions
     return WrapIndex( array.GetLength( dimension ), index );
   }
 
-#endregion
+  #endregion
 }

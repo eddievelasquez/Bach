@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Xunit;
-
 namespace Bach.Model.Test.Instruments;
+
+using Xunit;
 
 public sealed class StringedInstrumentDefinitionTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void EqualsContractTest()
@@ -107,5 +107,5 @@ public sealed class StringedInstrumentDefinitionTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 }

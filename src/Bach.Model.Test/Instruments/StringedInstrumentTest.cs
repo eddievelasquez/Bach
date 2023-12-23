@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test.Instruments;
+
 using System;
 using System.Linq;
-using Bach.Model.Instruments;
+using Model.Instruments;
 using Xunit;
-
-namespace Bach.Model.Test.Instruments;
 
 public sealed class StringedInstrumentTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void CreateWithDefinitionDefaultTuningTest()
@@ -363,21 +363,21 @@ public sealed class StringedInstrumentTest
   [Fact]
   public void TestFactoryInvalidPositionCount()
   {
-    Assert.Throws<ArgumentOutOfRangeException>( () =>
-                                                {
-                                                  StringedInstrument.Create(
-                                                    Registry.StringedInstrumentDefinitions["bass"],
-                                                    0 );
-                                                } );
+    Assert.Throws<ArgumentOutOfRangeException>(
+      () =>
+      {
+        StringedInstrument.Create(
+          Registry.StringedInstrumentDefinitions["bass"],
+          0
+        );
+      }
+    );
   }
 
   [Fact]
   public void TestFactoryNullDefinition()
   {
-    Assert.Throws<ArgumentNullException>( () =>
-                                          {
-                                            StringedInstrument.Create( (StringedInstrumentDefinition) null!, 22 );
-                                          } );
+    Assert.Throws<ArgumentNullException>( () => { StringedInstrument.Create( (StringedInstrumentDefinition) null!, 22 ); } );
   }
 
   [Fact]
@@ -418,9 +418,9 @@ public sealed class StringedInstrumentTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static string RenderScale(
     StringedInstrument instrument,
@@ -428,9 +428,14 @@ public sealed class StringedInstrumentTest
     int startPosition,
     int positionSpan )
   {
-    var result = string.Join( " ",
-                              Array.ConvertAll( instrument.Render( scale, startPosition, positionSpan ).ToArray(),
-                                                f => f.ToString() ) );
+    var result = string.Join(
+      " ",
+      Array.ConvertAll(
+        instrument.Render( scale, startPosition, positionSpan )
+                  .ToArray(),
+        f => f.ToString()
+      )
+    );
 
     return result;
   }
@@ -441,12 +446,17 @@ public sealed class StringedInstrumentTest
     int startPosition,
     int positionSpan )
   {
-    var result = string.Join( " ",
-                              Array.ConvertAll( instrument.Render( chord, startPosition, positionSpan ).ToArray(),
-                                                f => f.ToString() ) );
+    var result = string.Join(
+      " ",
+      Array.ConvertAll(
+        instrument.Render( chord, startPosition, positionSpan )
+                  .ToArray(),
+        f => f.ToString()
+      )
+    );
 
     return result;
   }
 
-#endregion
+  #endregion
 }

@@ -22,22 +22,22 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Cli;
+
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
 using Spectre.Console;
 
-namespace Bach.Cli;
-
 internal abstract class BachCommand
 {
-#region Properties
+  #region Properties
 
   public abstract Command Command { get; }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   protected static Argument<T> CreateArgument<T>(
     string name,
@@ -86,7 +86,8 @@ internal abstract class BachCommand
     return command;
   }
 
-  protected static void WriteTitle( string title )
+  protected static void WriteTitle(
+    string title )
   {
     AnsiConsole.Write( new FigletText( title ).Color( Color.CadetBlue ) );
   }
@@ -108,17 +109,20 @@ internal abstract class BachCommand
     AnsiConsole.MarkupLine( $"{prompt}[yellow]{value}[/]" );
   }
 
-  protected static void Write<T>( T value )
+  protected static void Write<T>(
+    T value )
   {
     AnsiConsole.Markup( $"[yellow]{value}[/]" );
   }
 
-  protected static void WriteLine<T>( T value )
+  protected static void WriteLine<T>(
+    T value )
   {
     AnsiConsole.MarkupLine( $"[yellow]{value}[/]" );
   }
 
-  protected static void WriteList<T>( IEnumerable<T> values )
+  protected static void WriteList<T>(
+    IEnumerable<T> values )
   {
     var needsSep = false;
     foreach( var value in values )
@@ -153,5 +157,5 @@ internal abstract class BachCommand
     AnsiConsole.WriteLine();
   }
 
-#endregion
+  #endregion
 }

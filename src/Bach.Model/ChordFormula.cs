@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Bach.Model.Internal;
-
 namespace Bach.Model;
+
+using Internal;
 
 /// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
 public sealed class ChordFormula: Formula
 {
-#region Constructors
+  #region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="id">The language-neutral id of the chord.</param>
@@ -69,13 +69,13 @@ public sealed class ChordFormula: Formula
   {
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the symbol for the chord.</summary>
   /// <value>The symbol.</value>
   public string Symbol { get; }
 
-#endregion
+  #endregion
 }

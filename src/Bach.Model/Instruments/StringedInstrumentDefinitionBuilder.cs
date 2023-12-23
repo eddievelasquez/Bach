@@ -22,34 +22,34 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Instruments;
+
 using System;
 using System.Collections.Generic;
-using Bach.Model.Instruments.Internal;
-using Bach.Model.Internal;
-
-namespace Bach.Model.Instruments;
+using Internal;
+using Model.Internal;
 
 /// <summary>Creates stringed instrument definitions.</summary>
 public sealed class StringedInstrumentDefinitionBuilder
 {
-#region Nested Types
+  #region Nested Types
 
   private sealed record TuningInfo(
     string Id,
     string Name,
     PitchCollection Pitches );
 
-#endregion
+  #endregion
 
-#region Fields
+  #region Fields
 
   private readonly StringedInstrumentDefinitionState _state;
   private readonly Dictionary<string, TuningInfo> _tuningInfo = new( Comparer.IdComparer );
   private bool _built;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="id">The language-neutral identifier for the instrument to build. The id will be used to create the name.</param>
@@ -73,9 +73,9 @@ public sealed class StringedInstrumentDefinitionBuilder
     _state = new StringedInstrumentDefinitionState( id, name, stringCount );
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Adds a tuning to the instrument to build.</summary>
   /// <param name="id">
@@ -201,9 +201,9 @@ public sealed class StringedInstrumentDefinitionBuilder
     return definition;
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private void CheckBuilderReuse()
   {
@@ -213,5 +213,5 @@ public sealed class StringedInstrumentDefinitionBuilder
     }
   }
 
-#endregion
+  #endregion
 }

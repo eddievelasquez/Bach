@@ -22,19 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Instruments;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Bach.Model.Internal;
-
-namespace Bach.Model.Instruments;
+using Model.Internal;
 
 /// <summary>Represents a stringed instrument, such as guitars, basses, ukeleles, etc.</summary>
 public sealed class StringedInstrument
   : Instrument,
     IEquatable<StringedInstrument>
 {
-#region Constructors
+  #region Constructors
 
   private StringedInstrument(
     StringedInstrumentDefinition definition,
@@ -49,9 +49,9 @@ public sealed class StringedInstrument
     PositionCount = positionCount;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the stringed instruments definition.</summary>
   /// <value>The definition.</value>
@@ -65,9 +65,9 @@ public sealed class StringedInstrument
   /// <value>The tuning.</value>
   public Tuning Tuning { get; }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Creates a new StringedInstrument.</summary>
   /// <param name="definition">The stringed instruments definition.</param>
@@ -105,7 +105,8 @@ public sealed class StringedInstrument
   }
 
   /// <inheritdoc />
-  public bool Equals( StringedInstrument? other )
+  public bool Equals(
+    StringedInstrument? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -121,7 +122,8 @@ public sealed class StringedInstrument
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -166,7 +168,8 @@ public sealed class StringedInstrument
       ++octave;
     }
 
-    var notes = chord.Render( octave ).GetEnumerator();
+    var notes = chord.Render( octave )
+                     .GetEnumerator();
     notes.MoveNext();
 
     // Go through all the strings
@@ -216,7 +219,9 @@ public sealed class StringedInstrument
       --octave;
     }
 
-    var scaleEnumerator = scale.Render( octave ).SkipWhile( pitch => pitch < startPitch ).GetEnumerator();
+    var scaleEnumerator = scale.Render( octave )
+                               .SkipWhile( pitch => pitch < startPitch )
+                               .GetEnumerator();
 
     try
     {
@@ -253,9 +258,9 @@ public sealed class StringedInstrument
     }
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private Fingering GetChordFingering(
     IEnumerator<Pitch> notes,
@@ -299,5 +304,5 @@ public sealed class StringedInstrument
     return Tuning[@string] + position;
   }
 
-#endregion
+  #endregion
 }

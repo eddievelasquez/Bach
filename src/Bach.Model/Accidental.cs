@@ -22,11 +22,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics.Contracts;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>
 ///   An Accidental represents a modification to a <see cref="Accidental" />
@@ -37,7 +37,7 @@ public readonly struct Accidental
     IComparable<Accidental>,
     IComparable
 {
-#region Constants
+  #region Constants
 
   /// <summary>
   ///   Double flat (𝄫)
@@ -68,38 +68,41 @@ public readonly struct Accidental
   private static readonly string[] s_names = { "DoubleFlat", "Flat", "Natural", "Sharp", "DoubleSharp" };
   private static readonly int s_doubleFlatOffset = Math.Abs( (int) DoubleFlat );
 
-#endregion
+  #endregion
 
-#region Fields
+  #region Fields
 
   private readonly int _value;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
-  private Accidental( int value )
+  private Accidental(
+    int value )
   {
     Requires.Between( value, -2, 2 );
     _value = value;
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Adds a number of steps to a pitch class name.</summary>
   /// <param name="steps">The number of steps to add.</param>
   /// <returns>A Accidental.</returns>
   [Pure]
-  public Accidental Add( int steps )
+  public Accidental Add(
+    int steps )
   {
     var result = new Accidental( _value + steps );
     return result;
   }
 
   /// <inheritdoc />
-  public int CompareTo( object? obj )
+  public int CompareTo(
+    object? obj )
   {
     if( obj is null )
     {
@@ -107,24 +110,27 @@ public readonly struct Accidental
     }
 
     return obj is Accidental other
-             ? CompareTo( other )
-             : throw new ArgumentException( $"Object must be of type {nameof( Accidental )}" );
+      ? CompareTo( other )
+      : throw new ArgumentException( $"Object must be of type {nameof( Accidental )}" );
   }
 
   /// <inheritdoc />
-  public int CompareTo( Accidental other )
+  public int CompareTo(
+    Accidental other )
   {
     return _value.CompareTo( other._value );
   }
 
   /// <inheritdoc />
-  public bool Equals( Accidental other )
+  public bool Equals(
+    Accidental other )
   {
     return _value == other._value;
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     return obj is Accidental other && Equals( other );
   }
@@ -141,7 +147,8 @@ public readonly struct Accidental
   /// <param name="value">A string containing the accidental to convert.</param>
   /// <returns>An object that is equivalent to the accidental contained in value.</returns>
   /// <exception cref="FormatException">value does not contain a valid string representation of an accidental.</exception>
-  public static Accidental Parse( string value )
+  public static Accidental Parse(
+    string value )
   {
     if( !TryParse( value, out var accidental ) )
     {
@@ -155,7 +162,8 @@ public readonly struct Accidental
   /// <param name="steps">The number of steps to subtract.</param>
   /// <returns>A Accidental.</returns>
   [Pure]
-  public Accidental Subtract( int steps )
+  public Accidental Subtract(
+    int steps )
   {
     return Add( -steps );
   }
@@ -236,14 +244,15 @@ public readonly struct Accidental
     return accidental != Natural;
   }
 
-#endregion
+  #endregion
 
-#region Operators
+  #region Operators
 
   /// <summary>Explicit cast that converts the given Accidental to an int.</summary>
   /// <param name="accidental">The pitch class name.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator int( Accidental accidental )
+  public static explicit operator int(
+    Accidental accidental )
   {
     return accidental._value;
   }
@@ -251,7 +260,8 @@ public readonly struct Accidental
   /// <summary>Explicit cast that converts the given int to a Accidental.</summary>
   /// <param name="value">The value.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator Accidental( int value )
+  public static explicit operator Accidental(
+    int value )
   {
     return new Accidental( value );
   }
@@ -336,7 +346,8 @@ public readonly struct Accidental
   /// <summary>Increment operator.</summary>
   /// <param name="accidental">The pitch class.</param>
   /// <returns>The result of the operation.</returns>
-  public static Accidental operator ++( Accidental accidental )
+  public static Accidental operator ++(
+    Accidental accidental )
   {
     return accidental.Add( 1 );
   }
@@ -355,10 +366,11 @@ public readonly struct Accidental
   /// <summary>Decrement operator.</summary>
   /// <param name="accidental">The pitch class.</param>
   /// <returns>The result of the operation.</returns>
-  public static Accidental operator --( Accidental accidental )
+  public static Accidental operator --(
+    Accidental accidental )
   {
     return accidental.Subtract( 1 );
   }
 
-#endregion
+  #endregion
 }

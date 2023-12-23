@@ -22,24 +22,24 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>A formula is a base class for constructing a sequence of pitch classes based on a series of intervals.</summary>
 public abstract class Formula
   : INamedObject,
     IEquatable<Formula>
 {
-#region Nested Types
+  #region Nested Types
 
   private sealed class IntervalComparer: IComparer<Interval>
   {
-#region Public Methods
+    #region Public Methods
 
     public int Compare(
       Interval x,
@@ -48,12 +48,12 @@ public abstract class Formula
       return x.CompareTo( y );
     }
 
-#endregion
+    #endregion
   }
 
   private sealed class SemitoneCountIntervalComparer: IComparer<Interval>
   {
-#region Public Methods
+    #region Public Methods
 
     public int Compare(
       Interval x,
@@ -62,21 +62,21 @@ public abstract class Formula
       return x.SemitoneCount - y.SemitoneCount;
     }
 
-#endregion
+    #endregion
   }
 
-#endregion
+  #endregion
 
-#region Constants
+  #region Constants
 
   private const string NameIntervalsToStringFormat = "N: I";
 
   private static readonly IntervalComparer s_intervalComparer = new();
   private static readonly SemitoneCountIntervalComparer s_semitoneComparer = new();
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>Specialized constructor for use only by derived classes.</summary>
   /// <exception cref="ArgumentNullException">Thrown when either the id, name or interval arguments are null.</exception>
@@ -102,9 +102,9 @@ public abstract class Formula
     Intervals = new IntervalCollection( intervals );
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the intervals that compose this formula.</summary>
   /// <value>The intervals.</value>
@@ -118,9 +118,9 @@ public abstract class Formula
   /// <value>The name.</value>
   public string Name { get; }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Determines whether this instance contains the provided intervals.</summary>
   /// <param name="intervals">The intervals to evaluate.</param>
@@ -138,7 +138,8 @@ public abstract class Formula
   }
 
   /// <inheritdoc />
-  public bool Equals( Formula? other )
+  public bool Equals(
+    Formula? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -156,7 +157,8 @@ public abstract class Formula
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -169,7 +171,8 @@ public abstract class Formula
   /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
   /// <param name="root">The root pitch.</param>
   /// <returns> An enumerator for a sequence of pitches.</returns>
-  public IEnumerable<Pitch> Generate( Pitch root )
+  public IEnumerable<Pitch> Generate(
+    Pitch root )
   {
     var intervalCount = Intervals.Count;
     var index = 0;
@@ -200,7 +203,8 @@ public abstract class Formula
   /// <summary>Generates a sequence of pitch classes based on the formula's intervals.</summary>
   /// <param name="root">The root pitch class.</param>
   /// <returns> An enumerator for a sequence of pitch classes.</returns>
-  public IEnumerable<PitchClass> Generate( PitchClass root )
+  public IEnumerable<PitchClass> Generate(
+    PitchClass root )
   {
     // maxIterationCount provides a way to break out of an otherwise infinite
     // loop, as it doesn't make sense to generate more pitch classes than
@@ -264,7 +268,8 @@ public abstract class Formula
   /// <summary>Parse intervals.</summary>
   /// <param name="formula">The formula.</param>
   /// <returns>.</returns>
-  public static Interval[] ParseIntervals( string formula )
+  public static Interval[] ParseIntervals(
+    string formula )
   {
     Requires.NotNull( formula );
     return ParseIntervals( formula.AsSpan() );
@@ -274,11 +279,12 @@ public abstract class Formula
   /// <exception cref="FormatException">Thrown when the format of the formula is incorrect.</exception>
   /// <param name="formula">The formula.</param>
   /// <returns>.</returns>
-  public static Interval[] ParseIntervals( ReadOnlySpan<char> formula )
+  public static Interval[] ParseIntervals(
+    ReadOnlySpan<char> formula )
   {
     if( formula.IsEmpty )
     {
-      return [ ];
+      return [];
     }
 
     var buf = new List<Interval>();
@@ -299,7 +305,7 @@ public abstract class Formula
       buf.Add( interval );
     }
 
-    return [ .. buf ];
+    return [.. buf];
   }
 
   /// <inheritdoc />
@@ -322,7 +328,8 @@ public abstract class Formula
   ///   <para>"N": Name pattern. e.g. "Major".</para>
   ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
   /// </remarks>
-  public string ToString( string format )
+  public string ToString(
+    string format )
   {
     return ToString( format, null! );
   }
@@ -373,11 +380,12 @@ public abstract class Formula
     return buf.ToString();
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
-  internal static int[] GetRelativeSteps( IList<Interval> intervals )
+  internal static int[] GetRelativeSteps(
+    IList<Interval> intervals )
   {
     Requires.NotNullOrEmpty( intervals );
     var steps = new int[intervals.Count];
@@ -397,5 +405,5 @@ public abstract class Formula
     return steps;
   }
 
-#endregion
+  #endregion
 }

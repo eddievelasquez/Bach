@@ -22,28 +22,29 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Bach.Model.Instruments.Internal;
-using Bach.Model.Internal;
-
 namespace Bach.Model.Instruments;
+
+using System;
+using Internal;
+using Model.Internal;
 
 /// <summary>A base class for an instrument definition.</summary>
 public abstract class InstrumentDefinition
   : INamedObject,
     IEquatable<InstrumentDefinition>
 {
-#region Constructors
+  #region Constructors
 
-  internal InstrumentDefinition( InstrumentDefinitionState state )
+  internal InstrumentDefinition(
+    InstrumentDefinitionState state )
   {
     Requires.NotNull( state );
     State = state;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   internal InstrumentDefinitionState State { get; }
 
@@ -53,12 +54,13 @@ public abstract class InstrumentDefinition
   /// <inheritdoc />
   public string Name => State.Name;
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( InstrumentDefinition? other )
+  public bool Equals(
+    InstrumentDefinition? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -69,7 +71,8 @@ public abstract class InstrumentDefinition
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -85,5 +88,5 @@ public abstract class InstrumentDefinition
     return Id.GetHashCode();
   }
 
-#endregion
+  #endregion
 }

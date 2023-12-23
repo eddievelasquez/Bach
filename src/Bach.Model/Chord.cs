@@ -22,21 +22,21 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>A chord is a set of pitch classes defined by a ChordFormula .</summary>
 public class Chord
   : IEquatable<Chord>,
     IEnumerable<PitchClass>
 {
-#region Constructors
+  #region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="root">The root pitch class of the chord.</param>
@@ -79,14 +79,18 @@ public class Chord
     Formula = formula;
     Inversion = inversion;
     PitchClasses
-      = new PitchClassCollection( Formula.Generate( Root ).Skip( inversion ).Take( Formula.Intervals.Count ) );
+      = new PitchClassCollection(
+        Formula.Generate( Root )
+               .Skip( inversion )
+               .Take( Formula.Intervals.Count )
+      );
 
     Name = GenerateName( root, formula, PitchClasses[0] );
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the root pitch class for the chord.</summary>
   /// <value>The root.</value>
@@ -123,12 +127,13 @@ public class Chord
     }
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( Chord? other )
+  public bool Equals(
+    Chord? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -144,7 +149,8 @@ public class Chord
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -175,7 +181,8 @@ public class Chord
   /// <summary>Generates an inversion for the current chord.</summary>
   /// <param name="inversion">The inversion to generate.</param>
   /// <returns>A Chord.</returns>
-  public Chord GetInversion( int inversion )
+  public Chord GetInversion(
+    int inversion )
   {
     var result = new Chord( Root, Formula, inversion );
     return result;
@@ -184,7 +191,8 @@ public class Chord
   /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
   /// <param name="octave">The octave for the starting pitch.</param>
   /// <returns>An enumerator for a pitch sequence for this chord.</returns>
-  public IEnumerable<Pitch> Render( int octave )
+  public IEnumerable<Pitch> Render(
+    int octave )
   {
     if( Inversion != 0 )
     {
@@ -205,9 +213,9 @@ public class Chord
     return Name;
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static string GenerateName(
     PitchClass root,
@@ -228,5 +236,5 @@ public class Chord
     return result;
   }
 
-#endregion
+  #endregion
 }

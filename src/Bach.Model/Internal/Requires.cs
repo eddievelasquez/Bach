@@ -22,18 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using NoEnumeration = JetBrains.Annotations.NoEnumerationAttribute;
+
+namespace Bach.Model.Internal;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using NoEnumeration = JetBrains.Annotations.NoEnumerationAttribute;
-
-namespace Bach.Model.Internal;
 
 internal static class Requires
 {
-#region Public Methods
+  #region Public Methods
 
   public static void Between<T>(
     T value,
@@ -49,9 +50,11 @@ internal static class Requires
     }
 
     callerArgExpr ??= "argument";
-    throw new ArgumentOutOfRangeException( callerArgExpr,
-                                           value,
-                                           message ?? $"Value must be between {lowerBound} and {upperBound}" );
+    throw new ArgumentOutOfRangeException(
+      callerArgExpr,
+      value,
+      message ?? $"Value must be between {lowerBound} and {upperBound}"
+    );
   }
 
   public static void Condition<TException>(
@@ -130,9 +133,11 @@ internal static class Requires
     }
 
     callerArgExpr ??= "argument";
-    throw new ArgumentOutOfRangeException( callerArgExpr,
-                                           value,
-                                           message ?? $"Value must be greater than {lowerBound}" );
+    throw new ArgumentOutOfRangeException(
+      callerArgExpr,
+      value,
+      message ?? $"Value must be greater than {lowerBound}"
+    );
   }
 
   public static void LessThan<T>(
@@ -205,9 +210,9 @@ internal static class Requires
     }
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   [DoesNotReturn]
   private static void ThrowArgumentNull(
@@ -235,9 +240,11 @@ internal static class Requires
     string? callerArgExpr )
   {
     callerArgExpr ??= "argument";
-    throw new ArgumentException( callerArgExpr,
-                                 message ?? $"{callerArgExpr} must have exactly {expectedCount} elements" );
+    throw new ArgumentException(
+      callerArgExpr,
+      message ?? $"{callerArgExpr} must have exactly {expectedCount} elements"
+    );
   }
 
-#endregion
+  #endregion
 }

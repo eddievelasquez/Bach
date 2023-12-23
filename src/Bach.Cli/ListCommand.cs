@@ -22,29 +22,31 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.CommandLine;
-
 namespace Bach.Cli;
+
+using System.CommandLine;
 
 internal sealed class ListCommand: BachCommand
 {
-#region Constructors
+  #region Constructors
 
   /// <inheritdoc />
   public ListCommand()
   {
-    var command = CreateCommand( "list",
-                                 subCommands: new BachCommand[] { new ListScalesCommand(), new ListChordsCommand() } );
+    var command = CreateCommand(
+      "list",
+      subCommands: new BachCommand[] { new ListScalesCommand(), new ListChordsCommand() }
+    );
 
     Command = command;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <inheritdoc />
   public override Command Command { get; }
 
-#endregion
+  #endregion
 }

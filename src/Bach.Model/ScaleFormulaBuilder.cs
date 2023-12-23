@@ -22,19 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>Creates scale formulas.</summary>
 public sealed class ScaleFormulaBuilder
 {
-#region Fields
+  #region Fields
 
   private readonly SortedSet<Interval> _intervals = new();
   private readonly HashSet<string> _aliases = new( Comparer.NameComparer );
@@ -42,9 +42,9 @@ public sealed class ScaleFormulaBuilder
   private string? _id;
   private string? _name;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>Initializes a new instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
   public ScaleFormulaBuilder()
@@ -53,7 +53,8 @@ public sealed class ScaleFormulaBuilder
 
   /// <summary>Initializes a new named instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
   /// <param name="name">The scale formula's name.</param>
-  public ScaleFormulaBuilder( string name )
+  public ScaleFormulaBuilder(
+    string name )
   {
     SetName( name );
   }
@@ -69,15 +70,16 @@ public sealed class ScaleFormulaBuilder
     SetName( name );
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Adds one or more aliases for the scale formula; multiple aliases are separated by semi-colons.</summary>
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="alias">The alias.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddAlias( string? alias )
+  public ScaleFormulaBuilder AddAlias(
+    string? alias )
   {
     Requires.NotNullOrEmpty( alias );
 
@@ -89,7 +91,8 @@ public sealed class ScaleFormulaBuilder
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="aliases">The aliases.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddAliases( IEnumerable<string> aliases )
+  public ScaleFormulaBuilder AddAliases(
+    IEnumerable<string> aliases )
   {
     Requires.NotNull( aliases );
 
@@ -112,7 +115,8 @@ public sealed class ScaleFormulaBuilder
   /// </remarks>
   /// <param name="categories">The categories.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddCategories( IEnumerable<string> categories )
+  public ScaleFormulaBuilder AddCategories(
+    IEnumerable<string> categories )
   {
     Requires.NotNull( categories );
 
@@ -135,7 +139,8 @@ public sealed class ScaleFormulaBuilder
   /// </remarks>
   /// <param name="category">The alias.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddCategory( string category )
+  public ScaleFormulaBuilder AddCategory(
+    string category )
   {
     Requires.NotNull( category );
 
@@ -146,7 +151,8 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Appends an interval to the scale formula's list of intervals.</summary>
   /// <param name="interval">The interval to append.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AppendInterval( Interval interval )
+  public ScaleFormulaBuilder AppendInterval(
+    Interval interval )
   {
     _intervals.Add( interval );
     return this;
@@ -223,7 +229,8 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's id.</summary>
   /// <param name="id">The scale formula's identifier.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetId( string id )
+  public ScaleFormulaBuilder SetId(
+    string id )
   {
     _id = RemoveWhitespace( id );
     return this;
@@ -232,9 +239,10 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's intervals.</summary>
   /// <param name="intervals">The intervals.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals( IEnumerable<Interval> intervals )
+  public ScaleFormulaBuilder SetIntervals(
+    IEnumerable<Interval> intervals )
   {
-    Requires.NotNull(intervals);
+    Requires.NotNull( intervals );
 
     _intervals.Clear();
 
@@ -249,9 +257,10 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's intervals.</summary>
   /// <param name="intervals">The intervals.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals( string intervals )
+  public ScaleFormulaBuilder SetIntervals(
+    string intervals )
   {
-    Requires.NotNull(intervals);
+    Requires.NotNull( intervals );
     SetIntervals( Formula.ParseIntervals( intervals ) );
 
     return this;
@@ -260,17 +269,18 @@ public sealed class ScaleFormulaBuilder
   /// <summary>Sets the scale formula's name.</summary>
   /// <param name="name">The name.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetName( string name )
+  public ScaleFormulaBuilder SetName(
+    string name )
   {
-    Requires.NotNull(name);
+    Requires.NotNull( name );
     _name = name.Trim();
 
     return this;
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private bool IsDiatonic()
   {
@@ -308,7 +318,8 @@ public sealed class ScaleFormulaBuilder
   }
 
   [return: NotNullIfNotNull( nameof( value ) )]
-  private static string? RemoveWhitespace( string? value )
+  private static string? RemoveWhitespace(
+    string? value )
   {
     if( value == null )
     {
@@ -329,5 +340,5 @@ public sealed class ScaleFormulaBuilder
     return builder.ToString();
   }
 
-#endregion
+  #endregion
 }

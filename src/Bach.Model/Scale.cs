@@ -22,24 +22,24 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
 public sealed class Scale: IEquatable<Scale>
 {
-#region Constants
+  #region Constants
 
   private const string DefaultToStringFormat = "N {S}";
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="root">The root pitchClass of the scale.</param>
@@ -53,7 +53,10 @@ public sealed class Scale: IEquatable<Scale>
 
     Root = root;
     Formula = formula;
-    PitchClasses = new PitchClassCollection( Formula.Generate( Root ).Take( Formula.Intervals.Count ) );
+    PitchClasses = new PitchClassCollection(
+      Formula.Generate( Root )
+             .Take( Formula.Intervals.Count )
+    );
 
     var buf = new StringBuilder();
     buf.Append( root.NoteName );
@@ -80,9 +83,9 @@ public sealed class Scale: IEquatable<Scale>
   {
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the root pitchClass of the scale.</summary>
   /// <value>The root.</value>
@@ -111,6 +114,48 @@ public sealed class Scale: IEquatable<Scale>
   /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
   public bool Theoretical { get; }
 
+  #endregion
+
+  #region Public Methods
+
+  /// <summary>Determines if this instance contains the given pitchClasses.</summary>
+  /// <param name="notes">The pitchClasses.</param>
+  /// <returns>True if all the pitchClasses are in this scale; otherwise, false.</returns>
+  public bool Contains(
+    IEnumerable<PitchClass> notes )
+  {
+    return notes.All( note => PitchClasses.IndexOf( note ) >= 0 );
+  }
+
+  /// <inheritdoc />
+  public bool Equals(
+    Scale? other )
+  {
+    if( ReferenceEquals( other, this ) )
+    {
+      return true;
+    }
+
+    if( other is null )
+    {
+      return false;
+    }
+
+    return Root.Equals( other.Root ) && Formula.Equals( other.Formula );
+  }
+
+  /// <inheritdoc />
+  public override bool Equals(
+    object? obj )
+  {
+    if( ReferenceEquals( obj, this ) )
+    {
+      return true;
+    }
+
+    return obj is Scale other && Equals( other );
+  }
+
   /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
   /// <returns>An enumerable that iterates through the scale in ascending fashion.</returns>
   public IEnumerable<PitchClass> GetAscending()
@@ -124,7 +169,8 @@ public sealed class Scale: IEquatable<Scale>
     while( maxIterationCount-- >= 0 )
     {
       yield return PitchClasses[index];
-      index = PitchClasses.WrapIndex( index + 1);
+
+      index = PitchClasses.WrapIndex( index + 1 );
     }
   }
 
@@ -141,47 +187,9 @@ public sealed class Scale: IEquatable<Scale>
     while( maxIterationCount-- >= 0 )
     {
       yield return PitchClasses[index];
+
       index = PitchClasses.WrapIndex( index - 1 );
     }
-  }
-
-#endregion
-
-#region Public Methods
-
-  /// <summary>Determines if this instance contains the given pitchClasses.</summary>
-  /// <param name="notes">The pitchClasses.</param>
-  /// <returns>True if all the pitchClasses are in this scale; otherwise, false.</returns>
-  public bool Contains( IEnumerable<PitchClass> notes )
-  {
-    return notes.All( note => PitchClasses.IndexOf( note ) >= 0 );
-  }
-
-  /// <inheritdoc />
-  public bool Equals( Scale? other )
-  {
-    if( ReferenceEquals( other, this ) )
-    {
-      return true;
-    }
-
-    if( other is null )
-    {
-      return false;
-    }
-
-    return Root.Equals( other.Root ) && Formula.Equals( other.Formula );
-  }
-
-  /// <inheritdoc />
-  public override bool Equals( object? obj )
-  {
-    if( ReferenceEquals( obj, this ) )
-    {
-      return true;
-    }
-
-    return obj is Scale other && Equals( other );
   }
 
   /// <summary>Gets a enharmonic scale for this instance.</summary>
@@ -208,7 +216,8 @@ public sealed class Scale: IEquatable<Scale>
   /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
   /// <param name="octave">The octave for the first pitch.</param>
   /// <returns>An enumerator for a pitch sequence for this scale.</returns>
-  public IEnumerable<Pitch> Render( int octave )
+  public IEnumerable<Pitch> Render(
+    int octave )
   {
     return Formula.Generate( Pitch.Create( Root, octave ) );
   }
@@ -218,7 +227,8 @@ public sealed class Scale: IEquatable<Scale>
   /// <returns>
   ///   An enumerator to all the scales that contain the pitchClasses.
   /// </returns>
-  public static IEnumerable<Scale> ScalesContaining( IEnumerable<PitchClass> notes )
+  public static IEnumerable<Scale> ScalesContaining(
+    IEnumerable<PitchClass> notes )
   {
     return ScalesContaining( IntervalMatch.Exact, notes );
   }
@@ -234,27 +244,28 @@ public sealed class Scale: IEquatable<Scale>
     IEnumerable<PitchClass> notes )
   {
 #if BRUTE_FORCE_MATCHING
-      foreach( ScaleFormula formula in Registry.ScaleFormulas )
+    foreach( ScaleFormula formula in Registry.ScaleFormulas )
+    {
+      PitchClass root = PitchClass.C;
+
+      do
       {
-        PitchClass root = PitchClass.C;
-
-        do
+        var scale = new Scale( root, formula );
+        if( scale.Contains( pitchClasses ) )
         {
-          var scale = new Scale(root, formula);
-          if( scale.Contains(pitchClasses) )
-          {
-            yield return scale;
-          }
+          yield return scale;
+        }
 
-          ++root;
-        } while( root != PitchClass.C );
-      }
+        ++root;
+      } while( root != PitchClass.C );
+    }
 #else
     var rootNotes = new CircularArray<PitchClass>( notes );
 
     do
     {
-      var intervals = rootNotes.Intervals().ToArray();
+      var intervals = rootNotes.Intervals()
+                               .ToArray();
 
       foreach( var formula in Registry.ScaleFormulas )
       {
@@ -294,7 +305,8 @@ public sealed class Scale: IEquatable<Scale>
   ///   <para>"S": PitchClasses pattern. e.g. "C,E,G".</para>
   ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
   /// </remarks>
-  public string ToString( string format )
+  public string ToString(
+    string format )
   {
     return ToString( format, null );
   }
@@ -360,16 +372,18 @@ public sealed class Scale: IEquatable<Scale>
     return buf.ToString();
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
-  private static bool IsTheoretical( Scale scale )
+  private static bool IsTheoretical(
+    Scale scale )
   {
     // Scale is theoretical when it contains at least one double flat or sharp.
-    return scale.PitchClasses.Any( note => note.Accidental == Accidental.DoubleFlat
-                                           || note.Accidental == Accidental.DoubleSharp );
+    return scale.PitchClasses.Any(
+      note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp
+    );
   }
 
-#endregion
+  #endregion
 }

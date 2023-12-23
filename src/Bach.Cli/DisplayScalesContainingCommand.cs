@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Cli;
+
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
-using Bach.Model;
-
-namespace Bach.Cli;
+using Model;
 
 internal sealed class DisplayScalesContainingCommand: BachCommand
 {
-#region Constructors
+  #region Constructors
 
   /// <inheritdoc />
   public DisplayScalesContainingCommand()
@@ -43,18 +43,19 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
     Command = command;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <inheritdoc />
   public override Command Command { get; }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
-  private static void Execute( IEnumerable<string> notes )
+  private static void Execute(
+    IEnumerable<string> notes )
   {
     var pitchClasses = PitchClassCollection.Parse( string.Join( ",", notes ) );
 
@@ -69,5 +70,5 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
     }
   }
 
-#endregion
+  #endregion
 }

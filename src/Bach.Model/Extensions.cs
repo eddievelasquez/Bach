@@ -22,20 +22,21 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
-using Bach.Model.Internal;
-
 namespace Bach.Model;
+
+using System.Collections.Generic;
+using Internal;
 
 /// <summary>Provides common extensions.</summary>
 public static class Extensions
 {
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Returns the intervals that separate the provided pitch classes.</summary>
   /// <param name="pitchClasses">The pitch classes.</param>
   /// <returns>An intervals iterator.</returns>
-  public static IEnumerable<Interval> Intervals( this IEnumerable<PitchClass> pitchClasses )
+  public static IEnumerable<Interval> Intervals(
+    this IEnumerable<PitchClass> pitchClasses )
   {
     Requires.NotNull( pitchClasses );
 
@@ -61,5 +62,5 @@ public static class Extensions
     } while( e.MoveNext() );
   }
 
-#endregion
+  #endregion
 }

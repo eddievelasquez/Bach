@@ -22,19 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
-
 namespace Bach.Model.Serialization;
+
+using System.Collections.Generic;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class PersistentStringedInstrument
 {
-#region Properties
+  #region Properties
 
   public required string Id { get; set; }
   public required string Name { get; set; }
   public required int StringCount { get; set; }
   public required List<PersistentTuning> Tunings { get; set; }
 
-#endregion
+  #endregion
 }

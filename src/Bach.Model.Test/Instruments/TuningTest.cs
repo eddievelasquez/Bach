@@ -22,65 +22,77 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test.Instruments;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Bach.Model.Instruments;
+using Model.Instruments;
 using Xunit;
-
-namespace Bach.Model.Test.Instruments;
 
 public sealed class TuningTest
 {
-#region Constants
+  #region Constants
 
   private const string InstrumentKey = "guitar";
   private const string TuningKey = "DropD";
   private const string TuningName = "Drop D";
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void ConstructorFailsWithEmptyKeyTest()
   {
-    Assert.Throws<ArgumentException>( () =>
-                                      {
-                                        var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
+    Assert.Throws<ArgumentException>(
+      () =>
+      {
+        var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
 
-                                        var _ = new Tuning( guitar,
-                                                            "",
-                                                            TuningName,
-                                                            PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-                                      } );
+        var _ = new Tuning(
+          guitar,
+          "",
+          TuningName,
+          PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" )
+        );
+      }
+    );
   }
 
   [Fact]
   public void ConstructorFailsWithEmptyNameTest()
   {
-    Assert.Throws<ArgumentException>( () =>
-                                      {
-                                        var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
+    Assert.Throws<ArgumentException>(
+      () =>
+      {
+        var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
 
-                                        var _ = new Tuning( guitar,
-                                                            TuningKey,
-                                                            "",
-                                                            PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-                                      } );
+        var _ = new Tuning(
+          guitar,
+          TuningKey,
+          "",
+          PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" )
+        );
+      }
+    );
   }
 
   [Fact]
   public void ConstructorFailsWithInvalidNoteCollectionCountTest()
   {
-    Assert.Throws<ArgumentException>( () =>
-                                      {
-                                        var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
+    Assert.Throws<ArgumentException>(
+      () =>
+      {
+        var guitar = Registry.StringedInstrumentDefinitions[InstrumentKey];
 
-                                        var _ = new Tuning( guitar,
-                                                            TuningKey,
-                                                            TuningName,
-                                                            PitchCollection.Parse( "E4,B3,G3,D3,A2" ) );
-                                      } );
+        var _ = new Tuning(
+          guitar,
+          TuningKey,
+          TuningName,
+          PitchCollection.Parse( "E4,B3,G3,D3,A2" )
+        );
+      }
+    );
   }
 
   [Fact]
@@ -193,5 +205,5 @@ public sealed class TuningTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 }

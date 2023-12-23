@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Internal;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
-namespace Bach.Model.Internal;
 
 /// <summary>
 ///   Represents buffer that is circular.
@@ -37,20 +37,21 @@ namespace Bach.Model.Internal;
 [DebuggerDisplay( "Count = {Length}" )]
 internal sealed class CircularArray<T>: IEnumerable<T>
 {
-#region Fields
+  #region Fields
 
   private readonly IList<T> _items;
   private int _head;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>
   ///   Initializes a new instance <see cref="CircularArray{T}" /> class
   ///   that contains the provided items.
   /// </summary>
-  public CircularArray( IEnumerable<T> items )
+  public CircularArray(
+    IEnumerable<T> items )
   {
     Requires.NotNull( items );
     _items = items.ToArray();
@@ -61,16 +62,17 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   ///   Initializes a new instance <see cref="CircularArray{T}" /> class
   ///   that contains the provided items.
   /// </summary>
-  public CircularArray( IList<T> items )
+  public CircularArray(
+    IList<T> items )
   {
     Requires.NotNull( items );
     _items = items;
     _head = 0;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   public int Head
   {
@@ -88,7 +90,8 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   ///   Gets or sets the element at the specified index.
   /// </summary>
   /// <value></value>
-  public T this[ int index ]
+  public T this[
+    int index ]
   {
     get
     {
@@ -102,9 +105,9 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     }
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
   public IEnumerator<T> GetEnumerator()
@@ -122,11 +125,12 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     return GetEnumerator();
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
-  private T GetElement( int index )
+  private T GetElement(
+    int index )
   {
     var position = ( _head + index ) % Length;
     if( position < 0 )
@@ -150,5 +154,5 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     _items[position] = value;
   }
 
-#endregion
+  #endregion
 }

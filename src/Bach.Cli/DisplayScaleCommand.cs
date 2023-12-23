@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Cli;
+
 using System.Collections.Generic;
 using System.CommandLine;
-using Bach.Model;
-
-namespace Bach.Cli;
+using Model;
 
 internal sealed class DisplayScaleCommand: BachCommand
 {
-#region Constructors
+  #region Constructors
 
   /// <inheritdoc />
   public DisplayScaleCommand()
@@ -43,16 +43,16 @@ internal sealed class DisplayScaleCommand: BachCommand
     Command = command;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <inheritdoc />
   public override Command Command { get; }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static void Execute(
     string scaleName,
@@ -72,5 +72,5 @@ internal sealed class DisplayScaleCommand: BachCommand
     WriteLine();
   }
 
-#endregion
+  #endregion
 }

@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class ScaleFormulaBuilderTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void AddAliasEnumerableStringTest()
@@ -39,7 +39,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAliases( aliases );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddAliases( aliases );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -59,7 +60,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddAlias( Alias );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -78,7 +80,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddAlias( Alias );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -98,7 +101,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddAlias( Alias );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -118,7 +122,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddAlias( Alias );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddAlias( Alias );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -137,7 +142,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Categories );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddCategory( Categories );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -157,7 +163,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategories( categories );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddCategories( categories );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -177,7 +184,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Category );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddCategory( Category );
 
     var formula = builder.Build();
     Assert.NotNull( formula );
@@ -197,7 +205,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Categories );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddCategory( Categories );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -217,7 +226,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString ).AddCategory( Category );
+    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
+                                                 .AddCategory( Category );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -256,7 +266,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,M3,4,5,M6,M7";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
+    var builder = new ScaleFormulaBuilder().SetName( Name )
+                                           .SetIntervals( IntervalString );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -281,7 +292,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,M3,4,5,M6,M7";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
+    var builder = new ScaleFormulaBuilder().SetName( Name )
+                                           .SetIntervals( IntervalString );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -299,7 +311,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m3,4,5,M6,M7";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
+    var builder = new ScaleFormulaBuilder().SetName( Name )
+                                           .SetIntervals( IntervalString );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -385,7 +398,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetId( Id ).SetIntervals( IntervalString );
+    var builder = new ScaleFormulaBuilder( Name ).SetId( Id )
+                                                 .SetIntervals( IntervalString );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -402,7 +416,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder().SetName( Name ).SetIntervals( IntervalString );
+    var builder = new ScaleFormulaBuilder().SetName( Name )
+                                           .SetIntervals( IntervalString );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( Name, formula.Name );
@@ -418,7 +433,8 @@ public sealed class ScaleFormulaBuilderTest
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder().SetName( "   Name    " ).SetIntervals( IntervalString );
+    var builder = new ScaleFormulaBuilder().SetName( "   Name    " )
+                                           .SetIntervals( IntervalString );
     var formula = builder.Build();
     Assert.NotNull( formula );
     Assert.Equal( "Name", formula.Name );
@@ -428,5 +444,5 @@ public sealed class ScaleFormulaBuilderTest
     Assert.Empty( formula.Aliases );
   }
 
-#endregion
+  #endregion
 }

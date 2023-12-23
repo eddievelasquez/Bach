@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics;
-
-namespace Bach.Model;
 
 /// <summary>A mode formula.</summary>
 public sealed class ModeFormula: IEquatable<ModeFormula>
 {
-#region Constants
+  #region Constants
 
   private const int MinTonic = 1;
   private const int MaxTonic = 7;
@@ -56,9 +56,9 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   /// <summary>The Locrian (VII).</summary>
   public static readonly ModeFormula Locrian = new( "Locrian", 7 );
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   private ModeFormula(
     string name,
@@ -71,9 +71,9 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
     Tonic = tonic;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the mode formula name.</summary>
   /// <value>The name.</value>
@@ -83,12 +83,13 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   /// <value>The tonic.</value>
   public int Tonic { get; }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( ModeFormula? other )
+  public bool Equals(
+    ModeFormula? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -104,7 +105,8 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -126,5 +128,5 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
     return Name;
   }
 
-#endregion
+  #endregion
 }

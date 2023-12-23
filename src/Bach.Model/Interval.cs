@@ -22,19 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics;
 using System.Text;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>An interval.</summary>
 public readonly struct Interval
   : IEquatable<Interval>,
     IComparable<Interval>
 {
-#region Constants
+  #region Constants
 
   private const string SymbolQuantityToStringFormat = "sq";
 
@@ -187,17 +187,17 @@ public readonly struct Interval
   /// </summary>
   public static readonly Interval Octave = new( IntervalQuantity.Octave, IntervalQuality.Perfect );
 
-#endregion
+  #endregion
 
-#region Fields
+  #region Fields
 
   private readonly byte _quality;
   private readonly byte _quantity;
   private readonly byte _semitoneCount;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="quantity">The interval quantity.</param>
@@ -236,9 +236,9 @@ public readonly struct Interval
     _semitoneCount = (byte) semitoneCount;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the interval's quantity.</summary>
   /// <value>The quantity.</value>
@@ -267,12 +267,13 @@ public readonly struct Interval
   /// <value>The number of semitones.</value>
   public int SemitoneCount => _semitoneCount;
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public int CompareTo( Interval other )
+  public int CompareTo(
+    Interval other )
   {
     var result = _quantity - other._quantity;
     if( result != 0 )
@@ -285,13 +286,15 @@ public readonly struct Interval
   }
 
   /// <inheritdoc />
-  public bool Equals( Interval other )
+  public bool Equals(
+    Interval other )
   {
     return other.Quantity == Quantity && other.Quality == Quality;
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     return obj is Interval other && Equals( other );
   }
@@ -355,7 +358,8 @@ public readonly struct Interval
   /// <param name="value">A string containing the interval to convert.</param>
   /// <returns>An object that is equivalent to the interval contained in value.</returns>
   /// <exception cref="FormatException">value does not contain a valid string representation of an interval.</exception>
-  public static Interval Parse( string value )
+  public static Interval Parse(
+    string value )
   {
     if( !TryParse( value, out var interval ) )
     {
@@ -387,7 +391,8 @@ public readonly struct Interval
   ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
   ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
-  public string ToString( string format )
+  public string ToString(
+    string format )
   {
     return ToString( format, null );
   }
@@ -558,9 +563,9 @@ public readonly struct Interval
     return true;
   }
 
-#endregion
+  #endregion
 
-#region Operators
+  #region Operators
 
   /// <summary>Equality operator.</summary>
   /// <param name="lhs">The first instance to compare.</param>
@@ -628,5 +633,5 @@ public readonly struct Interval
     return lhs.CompareTo( rhs ) >= 0;
   }
 
-#endregion
+  #endregion
 }

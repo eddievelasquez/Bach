@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class ScaleTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void ContainsTest()
@@ -113,7 +113,8 @@ public sealed class ScaleTest
   public void GetAscendingEnumeratorTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    using var enumerator = scale.GetAscending().GetEnumerator();
+    using var enumerator = scale.GetAscending()
+                                .GetEnumerator();
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
     Assert.True( enumerator.MoveNext() );
@@ -136,7 +137,8 @@ public sealed class ScaleTest
   public void GetDescendingEnumeratorTest()
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    using var enumerator = scale.GetDescending().GetEnumerator();
+    using var enumerator = scale.GetDescending()
+                                .GetEnumerator();
     Assert.True( enumerator.MoveNext() );
     Assert.Equal( PitchClass.C, enumerator.Current );
     Assert.True( enumerator.MoveNext() );
@@ -404,9 +406,9 @@ public sealed class ScaleTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static void TestEnharmonic(
     PitchClass root,
@@ -424,7 +426,9 @@ public sealed class ScaleTest
     int octave,
     string expectedNotes )
   {
-    var actual = scale.Render( octave ).Take( scale.Formula.Intervals.Count ).ToArray();
+    var actual = scale.Render( octave )
+                      .Take( scale.Formula.Intervals.Count )
+                      .ToArray();
     Assert.Equal( PitchCollection.Parse( expectedNotes ), actual );
   }
 
@@ -435,7 +439,8 @@ public sealed class ScaleTest
   {
     var expected = PitchClassCollection.Parse( expectedNotes );
     var scale = new Scale( root, formulaName );
-    var actual = scale.GetAscending().Take( expected.Count );
+    var actual = scale.GetAscending()
+                      .Take( expected.Count );
     Assert.Equal( expected, actual );
   }
 
@@ -446,7 +451,8 @@ public sealed class ScaleTest
   {
     var expected = PitchClassCollection.Parse( expectedNotes );
     var scale = new Scale( root, formulaName );
-    var actual = scale.GetDescending().Take( expected.Count );
+    var actual = scale.GetDescending()
+                      .Take( expected.Count );
     Assert.Equal( expected, actual );
   }
 
@@ -459,5 +465,5 @@ public sealed class ScaleTest
     Assert.True( predicate( scale ) );
   }
 
-#endregion
+  #endregion
 }

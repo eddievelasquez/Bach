@@ -27,7 +27,7 @@ namespace Bach.Model;
 /// <summary>Standard scale categories.</summary>
 public static class ScaleCategory
 {
-#region Constants
+  #region Constants
 
   /// <summary>The diatonic scale.</summary>
   public const string Diatonic = "Diatonic";
@@ -50,5 +50,5 @@ public static class ScaleCategory
   /// <summary>The octatonic scale.</summary>
   public const string Octatonic = "Octatonic";
 
-#endregion
+  #endregion
 }

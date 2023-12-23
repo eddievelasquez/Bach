@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using Bach.Model.Instruments;
-using Xunit;
-
 namespace Bach.Model.Test.Instruments;
+
+using System;
+using Model.Instruments;
+using Xunit;
 
 public sealed class FingeringTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void CreateTest()
@@ -114,8 +114,16 @@ public sealed class FingeringTest
   public void ToStringTest()
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
-    Assert.Equal( "65", Fingering.Create( instrument, 6, 5 ).ToString() );
-    Assert.Equal( "612", Fingering.Create( instrument, 6, 12 ).ToString() );
+    Assert.Equal(
+      "65",
+      Fingering.Create( instrument, 6, 5 )
+               .ToString()
+    );
+    Assert.Equal(
+      "612",
+      Fingering.Create( instrument, 6, 12 )
+               .ToString()
+    );
   }
 
   [Fact]
@@ -152,5 +160,5 @@ public sealed class FingeringTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 }

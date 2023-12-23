@@ -22,39 +22,57 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics;
-
-namespace Bach.Model;
 
 /// <summary>A triad is a set of three pitchClasses stacked in thirds.</summary>
 public sealed class Triad: Chord
 {
-#region Constants
+  #region Constants
 
   private static readonly ChordFormula s_majorTriad
-    = new( "MajorTriad", "MajorTriad", "", Interval.Unison, Interval.MajorThird, Interval.Fifth );
+    = new(
+      "MajorTriad",
+      "MajorTriad",
+      "",
+      Interval.Unison,
+      Interval.MajorThird,
+      Interval.Fifth
+    );
 
   private static readonly ChordFormula s_minorTriad
-    = new( "MinorTriad", "MinorTriad", "m", Interval.Unison, Interval.MinorThird, Interval.Fifth );
+    = new(
+      "MinorTriad",
+      "MinorTriad",
+      "m",
+      Interval.Unison,
+      Interval.MinorThird,
+      Interval.Fifth
+    );
 
-  private static readonly ChordFormula s_diminishedTriad = new( "DiminishedTriad",
-                                                                "DiminishedTriad",
-                                                                "dim",
-                                                                Interval.Unison,
-                                                                Interval.MinorThird,
-                                                                Interval.DiminishedFifth );
+  private static readonly ChordFormula s_diminishedTriad = new(
+    "DiminishedTriad",
+    "DiminishedTriad",
+    "dim",
+    Interval.Unison,
+    Interval.MinorThird,
+    Interval.DiminishedFifth
+  );
 
-  private static readonly ChordFormula s_augmentedTriad = new( "AugmentedTriad",
-                                                               "AugmentedTriad",
-                                                               "aug",
-                                                               Interval.Unison,
-                                                               Interval.MajorThird,
-                                                               Interval.AugmentedFifth );
+  private static readonly ChordFormula s_augmentedTriad = new(
+    "AugmentedTriad",
+    "AugmentedTriad",
+    "aug",
+    Interval.Unison,
+    Interval.MajorThird,
+    Interval.AugmentedFifth
+  );
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="root">The triad's root pitch class.</param>
@@ -76,32 +94,34 @@ public sealed class Triad: Chord
     Debug.Assert( formula is not null );
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the triad's quality.</summary>
   /// <value>The quality.</value>
   public TriadQuality Quality { get; }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Generates an inversion for the current triad.</summary>
   /// <param name="inversion">The inversion to generate.</param>
   /// <returns>A Triad.</returns>
-  public new Triad GetInversion( int inversion )
+  public new Triad GetInversion(
+    int inversion )
   {
     var result = new Triad( Root, Formula, inversion );
     return result;
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
-  private static ChordFormula GetFormula( TriadQuality quality )
+  private static ChordFormula GetFormula(
+    TriadQuality quality )
   {
     switch( quality )
     {
@@ -122,5 +142,5 @@ public sealed class Triad: Chord
     }
   }
 
-#endregion
+  #endregion
 }

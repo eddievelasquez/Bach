@@ -22,21 +22,21 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>A mode is a type of scale coupled with a set of melodic behaviors.</summary>
 public sealed class Mode
   : IEquatable<Mode>,
     IEnumerable<PitchClass>
 {
-#region Constructors
+  #region Constructors
 
   /// <summary>Constructor.</summary>
   /// <param name="scale">The scale.</param>
@@ -59,12 +59,16 @@ public sealed class Mode
 
     Name = buf.ToString();
     PitchClasses
-      = new PitchClassCollection( scale.GetAscending().Skip( Formula.Tonic - 1 ).Take( scale.PitchClasses.Count ) );
+      = new PitchClassCollection(
+        scale.GetAscending()
+             .Skip( Formula.Tonic - 1 )
+             .Take( scale.PitchClasses.Count )
+      );
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the mode's pitchClasses.</summary>
   /// <value>The pitchClasses.</value>
@@ -82,12 +86,13 @@ public sealed class Mode
   /// <value>The formula.</value>
   public ModeFormula Formula { get; }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( Mode? other )
+  public bool Equals(
+    Mode? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -103,7 +108,8 @@ public sealed class Mode
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -125,6 +131,7 @@ public sealed class Mode
     while( maxIterationCount-- >= 0 )
     {
       yield return PitchClasses[index];
+
       index = PitchClasses.WrapIndex( index + 1 );
     }
   }
@@ -147,5 +154,5 @@ public sealed class Mode
     return string.Join( ",", PitchClasses );
   }
 
-#endregion
+  #endregion
 }

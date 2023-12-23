@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Bach.Model.Internal;
-
 namespace Bach.Model.Instruments.Internal;
+
+using Model.Internal;
 
 internal sealed class StringedInstrumentDefinitionState: InstrumentDefinitionState
 {
-#region Constructors
+  #region Constructors
 
   public StringedInstrumentDefinitionState(
     string id,
@@ -42,12 +42,12 @@ internal sealed class StringedInstrumentDefinitionState: InstrumentDefinitionSta
     Tunings = new TuningCollection( id );
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   public int StringCount { get; }
   public TuningCollection Tunings { get; }
 
-#endregion
+  #endregion
 }

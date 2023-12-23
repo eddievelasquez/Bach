@@ -22,12 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>
 ///   A PitchClass represents a combination of a <see cref="P:Bach.Model.NoteName" />
@@ -37,7 +37,7 @@ public readonly struct PitchClass
   : IEquatable<PitchClass>,
     IComparable<PitchClass>
 {
-#region Constants
+  #region Constants
 
   private const int SemitoneCount = 12;
 
@@ -108,18 +108,18 @@ public readonly struct PitchClass
     { -1, 32, 33, -1, 34 } // Cb, B, A##
   };
 
-#endregion
+  #endregion
 
-#region Fields
+  #region Fields
 
   private readonly sbyte _accidental;
   private readonly byte _enharmonicIndex;
   private readonly byte _noteIndex;
   private readonly byte _noteName;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   private PitchClass(
     int pitchClassIndex,
@@ -136,9 +136,9 @@ public readonly struct PitchClass
     _accidental = (sbyte) accidental;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>C pitch class.</summary>
   public static PitchClass C => s_pitchClasses[1];
@@ -199,14 +199,15 @@ public readonly struct PitchClass
   /// <value>The accidental.</value>
   public Accidental Accidental => (Accidental) _accidental;
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Adds a number of semitones to the current instance.</summary>
   /// <param name="semitoneCount">Number of semitones.</param>
   /// <returns>A PitchClass.</returns>
-  public PitchClass Add( int semitoneCount )
+  public PitchClass Add(
+    int semitoneCount )
   {
     var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex + semitoneCount );
     return LookupNote( enharmonicIndex );
@@ -215,13 +216,15 @@ public readonly struct PitchClass
   /// <summary>Adds an interval to the current instance.</summary>
   /// <param name="interval">An interval to add.</param>
   /// <returns>A PitchClass.</returns>
-  public PitchClass Add( Interval interval )
+  public PitchClass Add(
+    Interval interval )
   {
     return AddInterval( (int) interval.Quantity, interval.SemitoneCount );
   }
 
   /// <inheritdoc />
-  public int CompareTo( PitchClass other )
+  public int CompareTo(
+    PitchClass other )
   {
     return _enharmonicIndex - other._enharmonicIndex;
   }
@@ -233,7 +236,8 @@ public readonly struct PitchClass
   /// </exception>
   /// <param name="noteName">The name of the pitch class.</param>
   /// <returns>A PitchClass.</returns>
-  public static PitchClass Create( NoteName noteName )
+  public static PitchClass Create(
+    NoteName noteName )
   {
     return Create( noteName, Accidental.Natural );
   }
@@ -277,13 +281,15 @@ public readonly struct PitchClass
   }
 
   /// <inheritdoc />
-  public bool Equals( PitchClass other )
+  public bool Equals(
+    PitchClass other )
   {
     return _enharmonicIndex == other._enharmonicIndex;
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     return obj is PitchClass other && Equals( other );
   }
@@ -292,7 +298,8 @@ public readonly struct PitchClass
   /// <param name="noteName">The name of the enharmonic pitch class.</param>
   /// <returns>The enharmonic.</returns>
   [Pure]
-  public PitchClass? GetEnharmonic( NoteName noteName )
+  public PitchClass? GetEnharmonic(
+    NoteName noteName )
   {
     var accidentalOffset = Math.Abs( (int) Accidental.DoubleFlat );
     int enharmonicIndex = _enharmonicIndex;
@@ -328,7 +335,8 @@ public readonly struct PitchClass
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   /// <param name="value">The value to parse.</param>
   /// <returns>A PitchClass.</returns>
-  public static PitchClass Parse( string value )
+  public static PitchClass Parse(
+    string value )
   {
     Requires.NotNullOrEmpty( value );
 
@@ -343,7 +351,8 @@ public readonly struct PitchClass
   /// <summary>Subtracts an interval from the current instance.</summary>
   /// <param name="interval">An interval to subtract.</param>
   /// <returns>A PitchClass.</returns>
-  public PitchClass Subtract( Interval interval )
+  public PitchClass Subtract(
+    Interval interval )
   {
     return AddInterval( -(int) interval.Quantity, -interval.SemitoneCount );
   }
@@ -351,7 +360,8 @@ public readonly struct PitchClass
   /// <summary>Subtracts a number of semitones from the current instance.</summary>
   /// <param name="semitoneCount">Number of semitones.</param>
   /// <returns>A PitchClass.</returns>
-  public PitchClass Subtract( int semitoneCount )
+  public PitchClass Subtract(
+    int semitoneCount )
   {
     var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex - semitoneCount );
     return LookupNote( enharmonicIndex );
@@ -360,7 +370,8 @@ public readonly struct PitchClass
   /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
   /// <param name="pitchClass">The pitch class.</param>
   /// <returns>An interval.</returns>
-  public Interval Subtract( PitchClass pitchClass )
+  public Interval Subtract(
+    PitchClass pitchClass )
   {
     // First we determine the interval quantity
     var quantity = (IntervalQuantity) ( pitchClass.NoteName - NoteName );
@@ -409,9 +420,9 @@ public readonly struct PitchClass
     return true;
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private PitchClass AddInterval(
     int intervalQuantity,
@@ -431,7 +442,8 @@ public readonly struct PitchClass
 
   // Finds a pitch class that corresponds to the provided enharmonic index,
   // attempting to match the desired accidental mode
-  internal static PitchClass LookupNote( int enharmonicIndex )
+  internal static PitchClass LookupNote(
+    int enharmonicIndex )
   {
     // Starting from Natural all the way up to DoubleSharp, find the corresponding enharmonic
     var accidentalIndex = (int) Accidental.Natural + Math.Abs( (int) Accidental.DoubleFlat );
@@ -452,14 +464,15 @@ public readonly struct PitchClass
     return C;
   }
 
-#endregion
+  #endregion
 
-#region Operators
+  #region Operators
 
   /// <summary>Explicit cast that converts the given pitch class to an int.</summary>
   /// <param name="pitchClass">The pitch class.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator int( PitchClass pitchClass )
+  public static explicit operator int(
+    PitchClass pitchClass )
   {
     return pitchClass._noteIndex;
   }
@@ -467,7 +480,8 @@ public readonly struct PitchClass
   /// <summary>Explicit cast that converts the given int to a PitchClass.</summary>
   /// <param name="value">The value.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator PitchClass( int value )
+  public static explicit operator PitchClass(
+    int value )
   {
     return s_pitchClasses[value];
   }
@@ -552,7 +566,8 @@ public readonly struct PitchClass
   /// <summary>Increment operator.</summary>
   /// <param name="pitchClass">The pitch class.</param>
   /// <returns>The result of the operation.</returns>
-  public static PitchClass operator ++( PitchClass pitchClass )
+  public static PitchClass operator ++(
+    PitchClass pitchClass )
   {
     return pitchClass.Add( 1 );
   }
@@ -571,7 +586,8 @@ public readonly struct PitchClass
   /// <summary>Decrement operator.</summary>
   /// <param name="pitchClass">The pitch class.</param>
   /// <returns>The result of the operation.</returns>
-  public static PitchClass operator --( PitchClass pitchClass )
+  public static PitchClass operator --(
+    PitchClass pitchClass )
   {
     return pitchClass.Subtract( 1 );
   }
@@ -609,5 +625,5 @@ public readonly struct PitchClass
     return a.Subtract( b );
   }
 
-#endregion
+  #endregion
 }

@@ -22,11 +22,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Diagnostics.Contracts;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>
 ///   A NoteName represents the traditional note name
@@ -36,7 +36,7 @@ public readonly struct NoteName
   : IEquatable<NoteName>,
     IComparable<NoteName>
 {
-#region Constants
+  #region Constants
 
   private const int NoteNameCount = 7;
 
@@ -78,50 +78,55 @@ public readonly struct NoteName
   // ReSharper disable once StringLiteralTypo
   private static readonly string s_names = "CDEFGAB";
 
-#endregion
+  #endregion
 
-#region Fields
+  #region Fields
 
   private readonly int _value;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
-  private NoteName( int value )
+  private NoteName(
+    int value )
   {
     Requires.Between( value, 0, NoteNameCount - 1 );
     _value = value;
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>Adds a number of steps to a note name.</summary>
   /// <param name="steps">The number of steps to add.</param>
   /// <returns>A NoteName.</returns>
   [Pure]
-  public NoteName Add( int steps )
+  public NoteName Add(
+    int steps )
   {
     var result = (NoteName) ArrayExtensions.WrapIndex( NoteNameCount, _value + steps );
     return result;
   }
 
   /// <inheritdoc />
-  public int CompareTo( NoteName other )
+  public int CompareTo(
+    NoteName other )
   {
     return _value.CompareTo( other._value );
   }
 
   /// <inheritdoc />
-  public bool Equals( NoteName other )
+  public bool Equals(
+    NoteName other )
   {
     return _value == other._value;
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     return obj is NoteName other && Equals( other );
   }
@@ -138,7 +143,8 @@ public readonly struct NoteName
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   /// <param name="value">The value to parse.</param>
   /// <returns>A PitchClass.</returns>
-  public static NoteName Parse( string value )
+  public static NoteName Parse(
+    string value )
   {
     Requires.NotNullOrEmpty( value );
 
@@ -154,7 +160,8 @@ public readonly struct NoteName
   /// <param name="steps">The number of steps to subtract.</param>
   /// <returns>A NoteName.</returns>
   [Pure]
-  public NoteName Subtract( int steps )
+  public NoteName Subtract(
+    int steps )
   {
     return Add( -steps );
   }
@@ -163,7 +170,8 @@ public readonly struct NoteName
   /// <param name="name">The last note name.</param>
   /// <returns>A NoteName.</returns>
   [Pure]
-  public int Subtract( NoteName name )
+  public int Subtract(
+    NoteName name )
   {
     return (int) Add( -(int) name );
   }
@@ -171,7 +179,8 @@ public readonly struct NoteName
   /// <inheritdoc />
   public override string ToString()
   {
-    return s_names[_value].ToString();
+    return s_names[_value]
+      .ToString();
   }
 
   /// <summary>Attempts to parse a NoteName from the given string.</summary>
@@ -199,14 +208,15 @@ public readonly struct NoteName
     return true;
   }
 
-#endregion
+  #endregion
 
-#region Operators
+  #region Operators
 
   /// <summary>Explicit cast that converts the given NoteName to an int.</summary>
   /// <param name="noteName">The note name.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator int( NoteName noteName )
+  public static explicit operator int(
+    NoteName noteName )
   {
     return noteName._value;
   }
@@ -214,7 +224,8 @@ public readonly struct NoteName
   /// <summary>Explicit cast that converts the given int to a NoteName.</summary>
   /// <param name="value">The value.</param>
   /// <returns>The result of the operation.</returns>
-  public static explicit operator NoteName( int value )
+  public static explicit operator NoteName(
+    int value )
   {
     return new NoteName( value );
   }
@@ -310,7 +321,8 @@ public readonly struct NoteName
   /// <summary>Increment operator.</summary>
   /// <param name="noteName">The pitch class.</param>
   /// <returns>The result of the operation.</returns>
-  public static NoteName operator ++( NoteName noteName )
+  public static NoteName operator ++(
+    NoteName noteName )
   {
     return noteName.Add( 1 );
   }
@@ -329,10 +341,11 @@ public readonly struct NoteName
   /// <summary>Decrement operator.</summary>
   /// <param name="noteName">The pitch class.</param>
   /// <returns>The result of the operation.</returns>
-  public static NoteName operator --( NoteName noteName )
+  public static NoteName operator --(
+    NoteName noteName )
   {
     return noteName.Subtract( 1 );
   }
 
-#endregion
+  #endregion
 }

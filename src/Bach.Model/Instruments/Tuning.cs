@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Instruments;
+
 using System;
 using System.Linq;
-using Bach.Model.Internal;
-
-namespace Bach.Model.Instruments;
+using Model.Internal;
 
 /// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
 public sealed class Tuning: IEquatable<Tuning>
 {
-#region Constructors
+  #region Constructors
 
   internal Tuning(
     StringedInstrumentDefinition instrumentDefinition,
@@ -42,9 +42,11 @@ public sealed class Tuning: IEquatable<Tuning>
     Requires.NotNull( instrumentDefinition );
     Requires.NotNullOrEmpty( id );
     Requires.NotNullOrEmpty( name );
-    Requires.ExactCount( pitches,
-                         instrumentDefinition.StringCount,
-                         $"The number of pitches ({pitches.Count}) must match the instrument's string count ({instrumentDefinition.StringCount})" );
+    Requires.ExactCount(
+      pitches,
+      instrumentDefinition.StringCount,
+      $"The number of pitches ({pitches.Count}) must match the instrument's string count ({instrumentDefinition.StringCount})"
+    );
 
     InstrumentDefinition = instrumentDefinition;
     Id = id;
@@ -52,9 +54,9 @@ public sealed class Tuning: IEquatable<Tuning>
     Pitches = pitches;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the instruments definition.</summary>
   /// <value>The instrument definition.</value>
@@ -78,7 +80,8 @@ public sealed class Tuning: IEquatable<Tuning>
   /// </exception>
   /// <param name="stringNumber">The string number.</param>
   /// <returns>A pitch.</returns>
-  public Pitch this[ int stringNumber ]
+  public Pitch this[
+    int stringNumber ]
   {
     get
     {
@@ -87,12 +90,13 @@ public sealed class Tuning: IEquatable<Tuning>
     }
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( Tuning? other )
+  public bool Equals(
+    Tuning? other )
   {
     if( ReferenceEquals( this, other ) )
     {
@@ -111,7 +115,8 @@ public sealed class Tuning: IEquatable<Tuning>
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( this, obj ) )
     {
@@ -131,5 +136,5 @@ public sealed class Tuning: IEquatable<Tuning>
     return hash.ToHashCode();
   }
 
-#endregion
+  #endregion
 }

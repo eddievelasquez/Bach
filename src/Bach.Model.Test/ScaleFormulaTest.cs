@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using System.Linq;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class ScaleFormulaTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void CategoriesHeptatonicTest()
@@ -47,19 +47,21 @@ public sealed class ScaleFormulaTest
   [Fact]
   public void CategoriesMajorTest()
   {
-    TestFormulaCategory( "Major",
-                         false,
-                         formula => formula.Intervals.Contains( Interval.MajorThird )
-                                    && formula.Intervals.Contains( Interval.Fifth ) );
+    TestFormulaCategory(
+      "Major",
+      false,
+      formula => formula.Intervals.Contains( Interval.MajorThird ) && formula.Intervals.Contains( Interval.Fifth )
+    );
   }
 
   [Fact]
   public void CategoriesMinorTest()
   {
-    TestFormulaCategory( "Minor",
-                         false,
-                         formula => formula.Intervals.Contains( Interval.MinorThird )
-                                    && formula.Intervals.Contains( Interval.Fifth ) );
+    TestFormulaCategory(
+      "Minor",
+      false,
+      formula => formula.Intervals.Contains( Interval.MinorThird ) && formula.Intervals.Contains( Interval.Fifth )
+    );
   }
 
   [Fact]
@@ -80,7 +82,9 @@ public sealed class ScaleFormulaTest
     const string Id = "Id";
     const string Name = "Name";
     const string Formula = "R,M2,M3";
-    var actual = new ScaleFormulaBuilder( Name ).SetId( Id ).SetIntervals( Formula ).Build();
+    var actual = new ScaleFormulaBuilder( Name ).SetId( Id )
+                                                .SetIntervals( Formula )
+                                                .Build();
 
     Assert.Equal( Id, actual.Id );
     Assert.Equal( Name, actual.Name );
@@ -96,12 +100,9 @@ public sealed class ScaleFormulaTest
     const string Name = "Name";
 
     var actual = new ScaleFormulaBuilder( Name ).SetId( Id )
-                                                .SetIntervals( new[]
-                                                {
-                                                  Interval.Unison,
-                                                  Interval.MajorSecond,
-                                                  Interval.MajorThird
-                                                } )
+                                                .SetIntervals(
+                                                  new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }
+                                                )
                                                 .Build();
 
     Assert.Equal( Id, actual.Id );
@@ -114,9 +115,15 @@ public sealed class ScaleFormulaTest
   [Fact]
   public void EqualsContractTest()
   {
-    object x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    object y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    object z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    object x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                .SetIntervals( "R,M2,M3" )
+                                                .Build();
+    object y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                .SetIntervals( "R,M2,M3" )
+                                                .Build();
+    object z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                .SetIntervals( "R,M2,M3" )
+                                                .Build();
 
     // ReSharper disable once EqualExpressionComparison
     Assert.True( x.Equals( x ) ); // Reflexive
@@ -130,29 +137,38 @@ public sealed class ScaleFormulaTest
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
-    object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                     .SetIntervals( "R,M2,M3" )
+                                                     .Build();
     Assert.False( actual.Equals( int.MinValue ) );
   }
 
   [Fact]
   public void EqualsFailsWithNullTest()
   {
-    object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                     .SetIntervals( "R,M2,M3" )
+                                                     .Build();
     Assert.False( actual.Equals( null ) );
   }
 
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
-    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                  .SetIntervals( "R,M2,M3" )
+                                                  .Build();
     Assert.True( actual.Equals( actual ) );
   }
 
   [Fact]
   public void GenerateTest()
   {
-    var formula = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    using var pitches = formula.Generate( Pitch.MinValue ).GetEnumerator();
+    var formula = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                   .SetIntervals( "R,M2,M3" )
+                                                   .Build();
+    using var pitches = formula.Generate( Pitch.MinValue )
+                               .GetEnumerator();
     var count = 0;
 
     while( pitches.MoveNext() )
@@ -168,8 +184,12 @@ public sealed class ScaleFormulaTest
   [Fact]
   public void GetHashcodeTest()
   {
-    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    var expected = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                  .SetIntervals( "R,M2,M3" )
+                                                  .Build();
+    var expected = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                    .SetIntervals( "R,M2,M3" )
+                                                    .Build();
     Assert.True( expected.Equals( actual ) );
     Assert.Equal( expected.GetHashCode(), actual.GetHashCode() );
   }
@@ -177,23 +197,105 @@ public sealed class ScaleFormulaTest
   [Fact]
   public void GetStepsTest()
   {
-    TestGetSteps( "Major", 2, 2, 1, 2, 2, 2, 1 );
-    TestGetSteps( "NaturalMinor", 2, 1, 2, 2, 1, 2, 2 );
-    TestGetSteps( "MelodicMinor", 2, 1, 2, 2, 2, 2, 1 );
-    TestGetSteps( "HarmonicMinor", 2, 1, 2, 2, 1, 3, 1 );
-    TestGetSteps( "Diminished", 2, 1, 2, 1, 2, 1, 2, 1 );
-    TestGetSteps( "WholeTone", 2, 2, 2, 2, 2, 2 );
-    TestGetSteps( "MinorBlues", 3, 2, 1, 1, 3, 2 );
-    TestGetSteps( "MinorPentatonic", 3, 2, 2, 3, 2 );
-    TestGetSteps( "Pentatonic", 2, 2, 3, 2, 3 );
+    TestGetSteps(
+      "Major",
+      2,
+      2,
+      1,
+      2,
+      2,
+      2,
+      1
+    );
+    TestGetSteps(
+      "NaturalMinor",
+      2,
+      1,
+      2,
+      2,
+      1,
+      2,
+      2
+    );
+    TestGetSteps(
+      "MelodicMinor",
+      2,
+      1,
+      2,
+      2,
+      2,
+      2,
+      1
+    );
+    TestGetSteps(
+      "HarmonicMinor",
+      2,
+      1,
+      2,
+      2,
+      1,
+      3,
+      1
+    );
+    TestGetSteps(
+      "Diminished",
+      2,
+      1,
+      2,
+      1,
+      2,
+      1,
+      2,
+      1
+    );
+    TestGetSteps(
+      "WholeTone",
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    );
+    TestGetSteps(
+      "MinorBlues",
+      3,
+      2,
+      1,
+      1,
+      3,
+      2
+    );
+    TestGetSteps(
+      "MinorPentatonic",
+      3,
+      2,
+      2,
+      3,
+      2
+    );
+    TestGetSteps(
+      "Pentatonic",
+      2,
+      2,
+      3,
+      2,
+      3
+    );
   }
 
   [Fact]
   public void TypeSafeEqualsContractTest()
   {
-    var x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    var y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
-    var z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    var x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                             .SetIntervals( "R,M2,M3" )
+                                             .Build();
+    var y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                             .SetIntervals( "R,M2,M3" )
+                                             .Build();
+    var z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                             .SetIntervals( "R,M2,M3" )
+                                             .Build();
 
     Assert.True( x.Equals( x ) ); // Reflexive
     Assert.True( x.Equals( y ) ); // Symmetric
@@ -206,7 +308,9 @@ public sealed class ScaleFormulaTest
   [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
-    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                  .SetIntervals( "R,M2,M3" )
+                                                  .Build();
 
     // ReSharper disable once SuspiciousTypeConversion.Global
     Assert.False( actual.Equals( int.MinValue ) );
@@ -215,13 +319,15 @@ public sealed class ScaleFormulaTest
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
-    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" ).SetIntervals( "R,M2,M3" ).Build();
+    var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
+                                                  .SetIntervals( "R,M2,M3" )
+                                                  .Build();
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static void TestFormulaCategory(
     string category,
@@ -249,5 +355,5 @@ public sealed class ScaleFormulaTest
     Assert.Equal( expected, scale.GetRelativeSteps() );
   }
 
-#endregion
+  #endregion
 }

@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class PitchClassTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void AddTest()
@@ -275,8 +275,10 @@ public sealed class PitchClassTest
     Assert.Equal( Interval.AugmentedFourth, PitchClass.GFlat - PitchClass.C );
     Assert.Equal( Interval.DiminishedSeventh, PitchClass.DSharp - PitchClass.C );
     Assert.Equal( Interval.DiminishedThird, PitchClass.C - PitchClass.Create( NoteName.E, Accidental.DoubleFlat ) );
-    Assert.Equal( Interval.DiminishedFourth,
-                  PitchClass.Create( NoteName.D, Accidental.DoubleSharp ) - PitchClass.GSharp );
+    Assert.Equal(
+      Interval.DiminishedFourth,
+      PitchClass.Create( NoteName.D, Accidental.DoubleSharp ) - PitchClass.GSharp
+    );
   }
 
   [Fact]
@@ -365,11 +367,31 @@ public sealed class PitchClassTest
   [Fact]
   public void ToStringTest()
   {
-    Assert.Equal( "Cbb", PitchClass.Create( NoteName.C, Accidental.DoubleFlat ).ToString() );
-    Assert.Equal( "Cb", PitchClass.Create( NoteName.C, Accidental.Flat ).ToString() );
-    Assert.Equal( "C", PitchClass.Create( NoteName.C ).ToString() );
-    Assert.Equal( "C#", PitchClass.Create( NoteName.C, Accidental.Sharp ).ToString() );
-    Assert.Equal( "C##", PitchClass.Create( NoteName.C, Accidental.DoubleSharp ).ToString() );
+    Assert.Equal(
+      "Cbb",
+      PitchClass.Create( NoteName.C, Accidental.DoubleFlat )
+                .ToString()
+    );
+    Assert.Equal(
+      "Cb",
+      PitchClass.Create( NoteName.C, Accidental.Flat )
+                .ToString()
+    );
+    Assert.Equal(
+      "C",
+      PitchClass.Create( NoteName.C )
+                .ToString()
+    );
+    Assert.Equal(
+      "C#",
+      PitchClass.Create( NoteName.C, Accidental.Sharp )
+                .ToString()
+    );
+    Assert.Equal(
+      "C##",
+      PitchClass.Create( NoteName.C, Accidental.DoubleSharp )
+                .ToString()
+    );
   }
 
   [Fact]
@@ -395,9 +417,9 @@ public sealed class PitchClassTest
     TryParseTestImpl( "Bbb", PitchClass.A );
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static void NotEnharmonicTestImpl(
     PitchClass pitchClass,
@@ -483,5 +505,5 @@ public sealed class PitchClassTest
     Assert.Equal( expectedFlat ?? expectedSharp, pitchClass.Subtract( interval ) );
   }
 
-#endregion
+  #endregion
 }

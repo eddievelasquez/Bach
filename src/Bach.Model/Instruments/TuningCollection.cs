@@ -22,36 +22,37 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Instruments;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Bach.Model.Internal;
-using Comparer = Bach.Model.Internal.Comparer;
-
-namespace Bach.Model.Instruments;
+using Model.Internal;
+using Comparer = Model.Internal.Comparer;
 
 /// <summary>Collection of tunings.</summary>
 public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
 {
-#region Fields
+  #region Fields
 
   private readonly string _instrumentId;
   private readonly Dictionary<string, Tuning> _tunings = new( Comparer.IdComparer );
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
-  internal TuningCollection( string instrumentId )
+  internal TuningCollection(
+    string instrumentId )
   {
     _instrumentId = instrumentId;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the standard tuning.</summary>
   /// <exception cref="ArgumentOutOfRangeException">Thrown when the tuning collection is empty.</exception>
@@ -72,7 +73,8 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   /// <inheritdoc />
   /// <summary>Gets the tuning that has the specified language-neutral id.</summary>
   /// <returns>The tuning that has the specified id in the read-only dictionary.</returns>
-  public Tuning this[ string id ] => _tunings[id];
+  public Tuning this[
+    string id ] => _tunings[id];
 
   /// <summary>
   ///   Gets an enumerable collection that contains the keys for all the tunings in the collection.
@@ -86,9 +88,9 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   /// <value>An enumerable collection that contains the tunings.</value>
   public IEnumerable<Tuning> Values => _tunings.Values;
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>
   ///   Determines whether the collection contains a tuning that has the specified language-neutral id.
@@ -98,7 +100,8 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   ///   true if the collection contains an tuning that has the specified id; otherwise,
   ///   false.
   /// </returns>
-  public bool ContainsKey( string id )
+  public bool ContainsKey(
+    string id )
   {
     return _tunings.ContainsKey( id );
   }
@@ -131,11 +134,12 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
     return _tunings.TryGetValue( id, out value );
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
-  internal void Add( Tuning tuning )
+  internal void Add(
+    Tuning tuning )
   {
     Requires.NotNull( tuning );
 
@@ -143,5 +147,5 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
     _tunings.Add( tuning.Id, tuning );
   }
 
-#endregion
+  #endregion
 }

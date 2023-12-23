@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.CommandLine;
-
 namespace Bach.Cli;
+
+using System.CommandLine;
 
 internal sealed class BachRootCommand: RootCommand
 {
-#region Constructors
+  #region Constructors
 
   /// <inheritdoc />
   public BachRootCommand()
@@ -42,9 +42,9 @@ internal sealed class BachRootCommand: RootCommand
     Add<DisplayNotesCommand>();
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private void Add<T>()
     where T: BachCommand, new()
@@ -52,5 +52,5 @@ internal sealed class BachRootCommand: RootCommand
     Add( new T().Command );
   }
 
-#endregion
+  #endregion
 }

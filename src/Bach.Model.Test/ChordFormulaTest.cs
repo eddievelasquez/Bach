@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class ChordFormulaTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void ConstructorWithFormulaTest()
@@ -54,7 +54,14 @@ public sealed class ChordFormulaTest
     const string Id = "Id";
     const string Name = "Name";
     const string Symbol = "Symbol";
-    var actual = new ChordFormula( Id, Name, Symbol, Interval.Unison, Interval.MajorSecond, Interval.MajorThird );
+    var actual = new ChordFormula(
+      Id,
+      Name,
+      Symbol,
+      Interval.Unison,
+      Interval.MajorSecond,
+      Interval.MajorThird
+    );
 
     Assert.Equal( Id, actual.Id );
     Assert.Equal( Name, actual.Name );
@@ -105,7 +112,8 @@ public sealed class ChordFormulaTest
   public void GenerateTest()
   {
     var formula = new ChordFormula( "Id", "Test", "Symbol", "R,M2,M3" );
-    using var pitches = formula.Generate( Pitch.MinValue ).GetEnumerator();
+    using var pitches = formula.Generate( Pitch.MinValue )
+                               .GetEnumerator();
     var count = 0;
 
     while( pitches.MoveNext() )
@@ -170,5 +178,5 @@ public sealed class ChordFormulaTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 }

@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using System.Linq;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class ChordTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void ChordIsExtendedTest()
@@ -232,9 +232,9 @@ public sealed class ChordTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static void ChordTestImpl(
     string expectedNotes,
@@ -242,7 +242,10 @@ public sealed class ChordTest
     string formulaName )
   {
     var chord = new Chord( root, formulaName );
-    var actualNotes = chord.Take( PitchClassCollection.Parse( expectedNotes ).Count );
+    var actualNotes = chord.Take(
+      PitchClassCollection.Parse( expectedNotes )
+                          .Count
+    );
     Assert.Equal( PitchClassCollection.Parse( expectedNotes ), actualNotes );
   }
 
@@ -255,5 +258,5 @@ public sealed class ChordTest
     Assert.Equal( expected, chord.IsExtended );
   }
 
-#endregion
+  #endregion
 }

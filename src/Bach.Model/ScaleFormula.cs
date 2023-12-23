@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System.Collections.Generic;
 using System.Diagnostics;
-
-namespace Bach.Model;
 
 /// <summary>A scale formula defines how the pitchClasses of a scale relate to each other.</summary>
 public class ScaleFormula: Formula
 {
-#region Constructors
+  #region Constructors
 
   /// <inheritdoc />
   internal ScaleFormula(
@@ -48,9 +48,9 @@ public class ScaleFormula: Formula
     Aliases = aliases;
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <summary>Gets the optional categories for this scale formula.</summary>
   /// <value>The categories.</value>
@@ -72,5 +72,5 @@ public class ScaleFormula: Formula
   /// <value><c>true</c> if minor; otherwise, <c>false</c>.</value>
   public bool IsMinor => Categories.Contains( ScaleCategory.Minor );
 
-#endregion
+  #endregion
 }

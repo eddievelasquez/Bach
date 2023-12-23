@@ -22,12 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Internal;
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-
-namespace Bach.Model.Internal;
 
 /// <summary>Collection of key-name objects.</summary>
 /// <typeparam name="T">Type parameter for the keyed object.</typeparam>
@@ -35,14 +35,14 @@ namespace Bach.Model.Internal;
 public sealed class NamedObjectCollection<T>: Collection<T>
   where T: INamedObject
 {
-#region Fields
+  #region Fields
 
   private readonly Dictionary<string, T> _byId;
   private readonly Dictionary<string, T> _byName;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <inheritdoc />
   internal NamedObjectCollection()
@@ -52,9 +52,9 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     _byName = new Dictionary<string, T>( Comparer.NameComparer );
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   private new List<T> Items
   {
@@ -66,11 +66,12 @@ public sealed class NamedObjectCollection<T>: Collection<T>
   }
 
   /// <summary>
-  /// Gets the value associated with the specified ID or name.
+  ///   Gets the value associated with the specified ID or name.
   /// </summary>
   /// <param name="idOrName">The ID or name of the object.</param>
   /// <exception cref="KeyNotFoundException">If the object was not found.</exception>
-  public T this[ string idOrName ]
+  public T this[
+    string idOrName ]
   {
     get
     {
@@ -83,9 +84,9 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     }
   }
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <summary>
   ///   Tries to get the value associated with the specified ID or name.
@@ -117,9 +118,9 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     return false;
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   /// <inheritdoc />
   protected override void ClearItems()
@@ -144,7 +145,8 @@ public sealed class NamedObjectCollection<T>: Collection<T>
   }
 
   /// <inheritdoc />
-  protected override void RemoveItem( int index )
+  protected override void RemoveItem(
+    int index )
   {
     var item = Items[index];
     _byId.Remove( item.Id );
@@ -188,5 +190,5 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     }
   }
 
-#endregion
+  #endregion
 }

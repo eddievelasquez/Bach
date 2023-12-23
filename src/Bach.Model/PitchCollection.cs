@@ -22,34 +22,35 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Bach.Model.Internal;
-
-namespace Bach.Model;
+using Internal;
 
 /// <summary>Collection of pitches.</summary>
 public sealed class PitchCollection
   : IReadOnlyList<Pitch>,
     IEquatable<IEnumerable<Pitch>>
 {
-#region Fields
+  #region Fields
 
   private readonly Pitch[] _pitches;
 
-#endregion
+  #endregion
 
-#region Constructors
+  #region Constructors
 
   /// <summary>
   ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
   /// </summary>
   /// <param name="notes">The array of pitches.</param>
-  public PitchCollection( Pitch[] notes )
+  public PitchCollection(
+    Pitch[] notes )
   {
     Requires.NotNull( notes );
     _pitches = notes;
@@ -59,28 +60,31 @@ public sealed class PitchCollection
   ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
   /// </summary>
   /// <param name="notes">The array of pitches.</param>
-  public PitchCollection( IEnumerable<Pitch> notes )
+  public PitchCollection(
+    IEnumerable<Pitch> notes )
   {
     Requires.NotNull( notes );
     _pitches = notes.ToArray();
   }
 
-#endregion
+  #endregion
 
-#region Properties
+  #region Properties
 
   /// <inheritdoc />
   public int Count => _pitches.Length;
 
   /// <inheritdoc />
-  public Pitch this[ int index ] => _pitches[index];
+  public Pitch this[
+    int index ] => _pitches[index];
 
-#endregion
+  #endregion
 
-#region Public Methods
+  #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals( IEnumerable<Pitch>? other )
+  public bool Equals(
+    IEnumerable<Pitch>? other )
   {
     if( ReferenceEquals( other, this ) )
     {
@@ -91,7 +95,8 @@ public sealed class PitchCollection
   }
 
   /// <inheritdoc />
-  public override bool Equals( object? obj )
+  public override bool Equals(
+    object? obj )
   {
     if( ReferenceEquals( obj, this ) )
     {
@@ -131,7 +136,8 @@ public sealed class PitchCollection
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   /// <param name="value">The value to parse.</param>
   /// <returns>A PitchCollection.</returns>
-  public static PitchCollection Parse( string value )
+  public static PitchCollection Parse(
+    string value )
   {
     Requires.NotNullOrEmpty( value );
 
@@ -152,7 +158,8 @@ public sealed class PitchCollection
   /// <summary>Converts a sequence of pitches into a string representation.</summary>
   /// <exception cref="ArgumentNullException">Thrown when pitches argument is null.</exception>
   /// <returns>A string that represents the sequence of pitches.</returns>
-  public static string ToString( IEnumerable<Pitch> pitches )
+  public static string ToString(
+    IEnumerable<Pitch> pitches )
   {
     Requires.NotNull( pitches );
 
@@ -206,5 +213,5 @@ public sealed class PitchCollection
     return true;
   }
 
-#endregion
+  #endregion
 }

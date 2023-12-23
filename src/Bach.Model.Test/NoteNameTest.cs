@@ -22,14 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+namespace Bach.Model.Test;
+
 using System;
 using Xunit;
 
-namespace Bach.Model.Test;
-
 public sealed class NoteNameTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void AdditionOperatorTest()
@@ -258,7 +258,7 @@ public sealed class NoteNameTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 
 #pragma warning disable 1718
   [Fact]

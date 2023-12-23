@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Xunit;
-
 namespace Bach.Model.Test;
+
+using Xunit;
 
 public sealed class ModeTest
 {
-#region Public Methods
+  #region Public Methods
 
   [Fact]
   public void EnumeratorTest()
@@ -165,9 +165,9 @@ public sealed class ModeTest
     Assert.False( actual.Equals( null ) );
   }
 
-#endregion
+  #endregion
 
-#region Implementation
+  #region Implementation
 
   private static void TestMode(
     string expectedNotes,
@@ -180,5 +180,5 @@ public sealed class ModeTest
     Assert.Equal( expectedNotes, mode.ToString() );
   }
 
-#endregion
+  #endregion
 }
