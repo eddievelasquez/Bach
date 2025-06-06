@@ -1,4 +1,4 @@
-﻿// Module Name: PersistentStringedInstrument.cs
+// Module Name: PersistentStringedInstrument.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -26,15 +26,8 @@ namespace Bach.Model.Serialization;
 
 using System.Collections.Generic;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class PersistentStringedInstrument
-{
-  #region Properties
-
-  public required string Id { get; set; }
-  public required string Name { get; set; }
-  public required int StringCount { get; set; }
-  public required List<PersistentTuning> Tunings { get; set; }
-
-  #endregion
-}
+internal sealed record PersistentStringedInstrument(
+  string Id,
+  string Name,
+  int StringCount,
+  List<PersistentTuning> Tunings );

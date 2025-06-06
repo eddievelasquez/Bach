@@ -1,4 +1,4 @@
-﻿// Module Name: PersistentTuning.cs
+// Module Name: PersistentTuning.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,14 +24,7 @@
 
 namespace Bach.Model.Serialization;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class PersistentTuning
-{
-  #region Properties
-
-  public required string Id { get; set; }
-  public required string Name { get; set; }
-  public required string Pitches { get; set; }
-
-  #endregion
-}
+internal sealed record PersistentTuning(
+  string Id,
+  string Name,
+  string Pitches );
