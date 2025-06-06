@@ -93,7 +93,7 @@
         { "Id": "Standard", "Name": "Standard", "Pitches": "E4,B3,G3,D3,A2,E2" },
         { "Id": "DropD", "Name": "Drop D", "Pitches": "E4,B3,G3,D3,A2,D2" },
         { "Id": "OpenD", "Name": "Open D", "Pitches": "D4,A3,F#3,D3,A2,D2" },
-        { "Id": "OpenG", "Name": "Open G", "Pitches": "D4,B3,G2,D2,G2,D2" },
+        { "Id": "OpenG", "Name": "Open G", "Pitches": "D4,B3,G3,D2,G2,D2" },
         { "Id": "OpenA", "Name": "Open A", "Pitches": "E4,C#4,A3,E3,A2,E2" }
       ]
     },
