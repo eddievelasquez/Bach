@@ -1,4 +1,4 @@
-﻿// Module Name: Pitch.cs
+// Module Name: Pitch.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -52,7 +52,7 @@ public readonly struct Pitch
   internal const int IntervalsPerOctave = 12;
 
   private static readonly int[] s_semitonesBetween =
-  {
+  [
     2, // C-D
     2, // D-E
     1, // E-F
@@ -60,7 +60,7 @@ public readonly struct Pitch
     2, // G-A
     2, // A-B
     1 // B-C
-  };
+  ];
 
   // Midi supports C-1, but we only support C0 and above
   private static readonly int s_minAbsoluteValue = CalcAbsoluteValue( NoteName.C, Accidental.Natural, MinOctave );
@@ -70,13 +70,13 @@ public readonly struct Pitch
 
   private static readonly Pitch s_a4 = Create( NoteName.A, Accidental.Natural, 4 );
 
-  /// <summary>An empty pitch.</summary>
+  /// <summary>An empty <see cref="Pitch"/>.</summary>
   public static readonly Pitch Empty = new( PitchClass.B, 9, 128 );
 
-  /// <summary>The minimum possible pitch value.</summary>
+  /// <summary>The minimum possible <see cref="Pitch"/>> value.</summary>
   public static readonly Pitch MinValue = Create( PitchClass.C, MinOctave );
 
-  /// <summary>The maximum possible pitch value.</summary>
+  /// <summary>The maximum possible <see cref="Pitch"/> value.</summary>
   public static readonly Pitch MaxValue = Create( PitchClass.G, MaxOctave );
 
   #endregion
@@ -170,15 +170,15 @@ public readonly struct Pitch
   }
 
   /// <summary>Adds an Interval to a given Pitch.</summary>
-  /// <param name="pitch">The pitch.</param>
-  /// <param name="interval">A interval to add to it.</param>
+  /// <param name="pitch">The <see cref="Pitch"/>>.</param>
+  /// <param name="interval">An <see cref="Interval"/>> to add to it.</param>
   /// <returns>A Pitch.</returns>
   public static Pitch Add(
     Pitch pitch,
     Interval interval )
   {
     var absoluteValue = (byte) ( pitch._absoluteValue + interval.SemitoneCount );
-    CalcNote( absoluteValue, out var _, out var octave );
+    CalcNote( absoluteValue, out _, out var octave );
 
     var newPitchClass = pitch.PitchClass + interval;
     var result = new Pitch( newPitchClass, octave, absoluteValue );
@@ -193,7 +193,7 @@ public readonly struct Pitch
   }
 
   /// <summary>Creates a new Pitch.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0 to G9.</exception>
   /// <param name="pitchClass">The pitch class.</param>
   /// <param name="octave">The octave.</param>
   /// <returns>A Pitch.</returns>
@@ -219,7 +219,7 @@ public readonly struct Pitch
   }
 
   /// <summary>Creates a new Pitch.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0 to G9.</exception>
   /// <param name="noteName">Name of the pitch class.</param>
   /// <param name="accidental">The accidental.</param>
   /// <param name="octave">The octave.</param>
@@ -233,7 +233,7 @@ public readonly struct Pitch
   }
 
   /// <summary>Creates a pitch from a MIDI pitch value.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0..G9.</exception>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0 to G9.</exception>
   /// <param name="midi">The MIDI pitch.</param>
   /// <returns>A pitch.</returns>
   public static Pitch CreateFromMidi(
@@ -416,7 +416,7 @@ public readonly struct Pitch
     ref int index,
     out int octave )
   {
-    if( index >= value.Length || !int.TryParse( value.Substring( index, 1 ), out octave ) )
+    if( index >= value.Length || !int.TryParse( value.AsSpan().Slice( index, 1), out octave ) )
     {
       octave = -1;
       return;

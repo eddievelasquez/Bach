@@ -1,4 +1,4 @@
-﻿// Module Name: Scale.cs
+// Module Name: Scale.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -34,7 +34,7 @@ public sealed class Scale: IEquatable<Scale>
 {
   #region Constants
 
-  private const string DefaultToStringFormat = "N {S}";
+  private const string DEFAULT_TO_STRING_FORMAT = "N {S}";
 
   #endregion
 
@@ -73,7 +73,7 @@ public sealed class Scale: IEquatable<Scale>
 
   /// <summary>Constructor.</summary>
   /// <param name="root">The root pitchClass of the scale.</param>
-  /// <param name="formulaIdOrName">Id or name of the formula as defined in the Registry.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
   /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
   public Scale(
     PitchClass root,
@@ -191,7 +191,7 @@ public sealed class Scale: IEquatable<Scale>
     }
   }
 
-  /// <summary>Gets a enharmonic scale for this instance.</summary>
+  /// <summary>Gets an enharmonic scale for this instance.</summary>
   /// <returns>The enharmonic scale.</returns>
   public Scale GetEnharmonicScale()
   {
@@ -285,7 +285,7 @@ public sealed class Scale: IEquatable<Scale>
   /// <inheritdoc />
   public override string ToString()
   {
-    return ToString( DefaultToStringFormat, null );
+    return ToString( DEFAULT_TO_STRING_FORMAT, null );
   }
 
   /// <summary>
@@ -334,7 +334,7 @@ public sealed class Scale: IEquatable<Scale>
   {
     if( string.IsNullOrEmpty( format ) )
     {
-      format = DefaultToStringFormat;
+      format = DEFAULT_TO_STRING_FORMAT;
     }
 
     var buf = new StringBuilder();

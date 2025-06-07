@@ -1,4 +1,4 @@
-﻿// Module Name: NoteName.cs
+// Module Name: NoteName.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -37,7 +37,7 @@ public readonly struct NoteName
 {
   #region Constants
 
-  private const int NoteNameCount = 7;
+  private const int NOTE_NAME_COUNT = 7;
 
   /// <summary>
   ///   The C (Do) note
@@ -91,7 +91,7 @@ public readonly struct NoteName
     int value )
   {
     ArgumentOutOfRangeException.ThrowIfLessThan( value, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, NoteNameCount - 1 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, NOTE_NAME_COUNT - 1 );
     _value = value;
   }
 
@@ -106,7 +106,7 @@ public readonly struct NoteName
   public NoteName Add(
     int steps )
   {
-    var result = (NoteName) ArrayExtensions.WrapIndex( NoteNameCount, _value + steps );
+    var result = (NoteName) ArrayExtensions.WrapIndex( NOTE_NAME_COUNT, _value + steps );
     return result;
   }
 
@@ -138,7 +138,7 @@ public readonly struct NoteName
   }
 
   /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a NoteName.</exception>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a <see cref="NoteName"/>.</exception>
   /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   /// <param name="value">The value to parse.</param>

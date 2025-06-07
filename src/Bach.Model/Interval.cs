@@ -34,26 +34,26 @@ public readonly struct Interval
 {
   #region Constants
 
-  private const string SymbolQuantityToStringFormat = "sq";
+  private const string SYMBOL_QUANTITY_TO_STRING_FORMAT = "sq";
 
-  private static readonly int[,] s_steps =
-  {
+  private static readonly int[][] s_quantitySemitones =
+  [
     // Diminished, Minor, Perfect, Major, Augmented
-    { -1, -1, 0, -1, 1 }, // First
-    { 0, 1, -1, 2, 3 }, // Second
-    { 2, 3, -1, 4, 5 }, // Third
-    { 4, -1, 5, -1, 6 }, // Fourth
-    { 6, -1, 7, -1, 8 }, // Fifth
-    { 7, 8, -1, 9, 10 }, // Sixth
-    { 9, 10, -1, 11, 12 }, // Seventh
-    { 11, -1, 12, -1, 13 }, // Octave
-    { 12, 13, -1, 14, 15 }, // Ninth (Second)
-    { 14, 15, -1, 16, 17 }, // Tenth (Third)
-    { 16, -1, 17, -1, 18 }, // Eleventh (Fourth)
-    { 18, -1, 19, -1, 20 }, // Twelfth (Fifth)
-    { 19, 20, -1, 21, 22 }, // Thirteenth (Sixth)
-    { 21, 22, -1, 23, 24 } // Fourteenth (Seventh)
-  };
+    [-1, -1, 00, -1, 01], // First
+    [00, 01, -1, 02, 03], // Second
+    [02, 03, -1, 04, 05], // Third
+    [04, -1, 05, -1, 06], // Fourth
+    [06, -1, 07, -1, 08], // Fifth
+    [07, 08, -1, 09, 10], // Sixth
+    [09, 10, -1, 11, 12], // Seventh
+    [11, -1, 12, -1, 13], // Octave
+    [12, 13, -1, 14, 15], // Ninth (Second)
+    [14, 15, -1, 16, 17], // Tenth (Third)
+    [16, -1, 17, -1, 18], // Eleventh (Fourth)
+    [18, -1, 19, -1, 20], // Twelfth (Fifth)
+    [19, 20, -1, 21, 22], // Thirteenth (Sixth)
+    [21, 22, -1, 23, 24] // Fourteenth (Seventh)
+  ];
 
   /// <summary>
   ///   The Unison interval
@@ -197,13 +197,20 @@ public readonly struct Interval
 
   #region Constructors
 
-  /// <summary>Constructor.</summary>
-  /// <param name="quantity">The interval quantity.</param>
-  /// <param name="quality">The interval quality.</param>
+  /// <summary>
+  ///   Initializes a new instance of the Interval class.
+  /// </summary>
+  /// <param name="quantity">The quantity of the interval.</param>
+  /// <param name="quality">The quality of the interval.</param>
   public Interval(
     IntervalQuantity quantity,
     IntervalQuality quality )
   {
+    Debug.Assert( quantity >= IntervalQuantity.Unison );
+    Debug.Assert( quantity <= IntervalQuantity.Fourteenth );
+    Debug.Assert( quality >= IntervalQuality.Diminished );
+    Debug.Assert( quality <= IntervalQuality.Augmented );
+
     _semitoneCount = (byte) GetSemitoneCount( quantity, quality );
     _quantity = (byte) quantity;
     _quality = (byte) quality;
@@ -216,21 +223,12 @@ public readonly struct Interval
     IntervalQuantity quantity,
     int semitoneCount )
   {
-    var quality = (int) IntervalQuality.Diminished;
-    var found = false;
+    var pos = Array.IndexOf( s_quantitySemitones[(int) quantity], semitoneCount );
+    Debug.Assert( pos != -1, $"A {quantity} with {semitoneCount} is not a valid interval" );
+    Debug.Assert( pos is >= 0 and <= 24 );
 
-    for( ; quality <= (int) IntervalQuality.Augmented; ++quality )
-    {
-      if( s_steps[(int) quantity, quality] == semitoneCount )
-      {
-        found = true;
-        break;
-      }
-    }
-
-    Debug.Assert( found, $"A {quantity} with {semitoneCount} is not a valid interval" );
     _quantity = (byte) quantity;
-    _quality = (byte) quality;
+    _quality = (byte) pos;
     _semitoneCount = (byte) semitoneCount;
   }
 
@@ -320,12 +318,12 @@ public readonly struct Interval
     IntervalQuantity quantity,
     IntervalQuality quality )
   {
-    ArgumentOutOfRangeException.ThrowIfLessThan( (int)quantity, (int)IntervalQuantity.Unison );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int)quantity, (int)IntervalQuantity.Fourteenth );
+    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quantity, (int) IntervalQuantity.Unison );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quantity, (int) IntervalQuantity.Fourteenth );
     ArgumentOutOfRangeException.ThrowIfLessThan( quality, IntervalQuality.Diminished );
     ArgumentOutOfRangeException.ThrowIfGreaterThan( quality, IntervalQuality.Augmented );
 
-    var steps = s_steps[(int) quantity, (int) quality];
+    var steps = s_quantitySemitones[(int) quantity][(int) quality];
     if( steps == -1 )
     {
       throw new ArgumentException( $"{quantity}{quality} is not a valid interval" );
@@ -342,13 +340,15 @@ public readonly struct Interval
     IntervalQuantity quantity,
     IntervalQuality quality )
   {
-    // No need to check the interval quality because it doesn't allow invalid values.
-    if( quantity is < IntervalQuantity.Unison or > IntervalQuantity.Fourteenth )
+    if( quantity < IntervalQuantity.Unison
+        || quantity > IntervalQuantity.Fourteenth
+        || quality < IntervalQuality.Diminished
+        || quality > IntervalQuality.Augmented )
     {
       return false;
     }
 
-    var steps = s_steps[(int) quantity, (int) quality];
+    var steps = s_quantitySemitones[(int) quantity][(int) quality];
     return steps != -1;
   }
 
@@ -373,7 +373,7 @@ public readonly struct Interval
   /// <returns>The fully qualified type name.</returns>
   public override string ToString()
   {
-    return ToString( SymbolQuantityToStringFormat, null );
+    return ToString( SYMBOL_QUANTITY_TO_STRING_FORMAT, null );
   }
 
   /// <summary>
@@ -399,7 +399,7 @@ public readonly struct Interval
 
   /// <summary>
   ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
-  ///   provided format specifier and format provider..
+  ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. (Currently unused)</param>

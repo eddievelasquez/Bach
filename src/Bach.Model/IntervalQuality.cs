@@ -1,4 +1,4 @@
-﻿// Module Name: IntervalQuality.cs
+// Module Name: IntervalQuality.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -34,6 +34,12 @@ public readonly struct IntervalQuality
 {
   #region Constants
 
+  private const int MIN_QUANTITY = 0;
+  private const int MAX_QUANTITY = 4;
+  private static readonly string[] s_symbols = ["d", "m", "P", "M", "A"];
+  private static readonly string[] s_shortName = ["dim", "min", "Perf", "Maj", "Aug"];
+  private static readonly string[] s_longName = ["Diminished", "Minor", "Perfect", "Major", "Augmented"];
+
   /// <summary>A  constant representing a diminished interval.</summary>
   public static readonly IntervalQuality Diminished = new( 0 );
 
@@ -49,10 +55,6 @@ public readonly struct IntervalQuality
   /// <summary>A  constant representing an augmented interval.</summary>
   public static readonly IntervalQuality Augmented = new( 4 );
 
-  private static readonly string[] s_symbols = { "d", "m", "P", "M", "A" };
-  private static readonly string[] s_short = { "dim", "min", "Perf", "Maj", "Aug" };
-  private static readonly string[] s_long = { "Diminished", "Minor", "Perfect", "Major", "Augmented" };
-
   #endregion
 
   #region Fields
@@ -66,8 +68,8 @@ public readonly struct IntervalQuality
   private IntervalQuality(
     int value )
   {
-    ArgumentOutOfRangeException.ThrowIfLessThan( value, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, 4 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( value, MIN_QUANTITY );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, MAX_QUANTITY );
     _value = value;
   }
 
@@ -81,11 +83,11 @@ public readonly struct IntervalQuality
 
   /// <summary>Returns the short name for the given interval quality.</summary>
   /// <value>A string.</value>
-  public string ShortName => s_short[_value];
+  public string ShortName => s_shortName[_value];
 
   /// <summary>Returns the long name for the given interval quality.</summary>
   /// <value>A string.</value>
-  public string LongName => s_long[_value];
+  public string LongName => s_longName[_value];
 
   #endregion
 
