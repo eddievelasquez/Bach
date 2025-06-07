@@ -1,4 +1,4 @@
-﻿// Module Name: ModeFormula.cs
+// Module Name: ModeFormula.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -31,8 +31,8 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
 {
   #region Constants
 
-  private const int MinTonic = 1;
-  private const int MaxTonic = 7;
+  private const int MIN_TONIC = 1;
+  private const int MAX_TONIC = 7;
 
   /// <summary>The Ionian (I) mode.</summary>
   public static readonly ModeFormula Ionian = new( "Ionian", 1 );
@@ -64,7 +64,7 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
     int tonic )
   {
     Debug.Assert( !string.IsNullOrWhiteSpace( name ) );
-    Debug.Assert( tonic is >= MinTonic and <= MaxTonic );
+    Debug.Assert( tonic is >= MIN_TONIC and <= MAX_TONIC );
 
     Name = name;
     Tonic = tonic;

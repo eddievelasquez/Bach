@@ -31,11 +31,11 @@ public sealed class StringedInstrumentDefinitionBuilderTest
 {
   #region Constants
 
-  private const string InstrumentId = "Id";
-  private const string InstrumentName = "Name";
-  private const int InstrumentStringCount = 3;
-  private const string TuningId = "Standard";
-  private const string TuningName = "Standard";
+  private const string INSTRUMENT_ID = "Id";
+  private const string INSTRUMENT_NAME = "Name";
+  private const int INSTRUMENT_STRING_COUNT = 3;
+  private const string TUNING_ID = "Standard";
+  private const string TUNING_NAME = "Standard";
 
   #endregion
 
@@ -44,8 +44,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void AddTuningThrowsOnStringMismatchTest()
   {
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    var act = () => builder.AddTuning( TuningId, TuningName, "C4,D4,E4,F4" );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+    var act = () => builder.AddTuning( TUNING_ID, TUNING_NAME, "C4,D4,E4,F4" );
     act.Should()
        .Throw<ArgumentException>();
   }
@@ -55,24 +55,24 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    builder.AddTuning( TuningId, TuningName, pitches );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+    builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
 
     var definition = builder.Build();
     definition.Should()
               .NotBeNull();
     definition.Name.Should()
-              .Be( InstrumentName );
+              .Be( INSTRUMENT_NAME );
     definition.StringCount.Should()
-              .Be( InstrumentStringCount );
+              .Be( INSTRUMENT_STRING_COUNT );
     definition.Tunings.Should()
               .NotBeNull();
     definition.Tunings.Should()
               .ContainSingle();
     definition.Tunings.Standard.Name.Should()
-              .Be( TuningName );
+              .Be( TUNING_NAME );
     definition.Tunings.Standard.Name.Should()
-              .Be( TuningName );
+              .Be( TUNING_NAME );
     definition.Tunings.Standard.Pitches.Should()
               .BeEquivalentTo( pitches );
   }
@@ -82,8 +82,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    builder.AddTuning( TuningId, TuningName, pitches );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+    builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
     builder.Build();
 
     var act = () => builder.AddTuning( "ATuning", "A tuning", pitches );
@@ -96,9 +96,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( "", TuningName, pitches );
+    var act = () => builder.AddTuning( "", TUNING_NAME, pitches );
     act.Should()
        .Throw<ArgumentException>();
   }
@@ -108,9 +108,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( TuningId, "", pitches );
+    var act = () => builder.AddTuning( TUNING_ID, "", pitches );
     act.Should()
        .Throw<ArgumentException>();
   }
@@ -120,9 +120,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4,F4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( TuningId, TuningName, pitches );
+    var act = () => builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
     act.Should()
        .Throw<ArgumentException>();
   }
@@ -132,9 +132,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( null!, TuningName, pitches );
+    var act = () => builder.AddTuning( null!, TUNING_NAME, pitches );
     act.Should()
        .Throw<ArgumentNullException>();
   }
@@ -144,9 +144,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( TuningId, null!, pitches );
+    var act = () => builder.AddTuning( TUNING_ID, null!, pitches );
     act.Should()
        .Throw<ArgumentNullException>();
   }
@@ -155,8 +155,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void AddTuningWithNoteCollectionThrowsOnBuilderReuseTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    builder.AddTuning( TuningId, TuningName, pitches );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+    builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
     builder.Build();
 
     var act = () => builder.AddTuning( "ATuning", "A tuning", pitches );
@@ -168,9 +168,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void AddTuningWithNoteCollectionThrowsOnEmptyKeyTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( "", TuningName, pitches );
+    var act = () => builder.AddTuning( "", TUNING_NAME, pitches );
     act.Should()
        .Throw<ArgumentException>();
   }
@@ -179,9 +179,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void AddTuningWithNoteCollectionThrowsOnEmptyNameTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( TuningId, "", pitches );
+    var act = () => builder.AddTuning( TUNING_ID, "", pitches );
     act.Should()
        .Throw<ArgumentException>();
   }
@@ -190,9 +190,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void AddTuningWithNoteCollectionThrowsOnMismatchedNoteCountTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4,F4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( TuningId, TuningName, pitches );
+    var act = () => builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
     act.Should()
        .Throw<ArgumentException>();
   }
@@ -201,9 +201,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void AddTuningWithNoteCollectionThrowsOnNullKeyTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( null!, TuningName, pitches );
+    var act = () => builder.AddTuning( null!, TUNING_NAME, pitches );
     act.Should()
        .Throw<ArgumentNullException>();
   }
@@ -212,9 +212,9 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void AddTuningWithNoteCollectionThrowsOnNullNameTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
 
-    var act = () => builder.AddTuning( TuningId, null!, pitches );
+    var act = () => builder.AddTuning( TUNING_ID, null!, pitches );
     act.Should()
        .Throw<ArgumentNullException>();
   }
@@ -223,24 +223,24 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void BuildTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    builder.AddTuning( TuningId, TuningName, pitches );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+    builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
 
     var definition = builder.Build();
     definition.Should()
               .NotBeNull();
     definition.Name.Should()
-              .Be( InstrumentName );
+              .Be( INSTRUMENT_NAME );
     definition.StringCount.Should()
-              .Be( InstrumentStringCount );
+              .Be( INSTRUMENT_STRING_COUNT );
     definition.Tunings.Should()
               .NotBeNull();
     definition.Tunings.Should()
               .ContainSingle();
     definition.Tunings.Standard.Name.Should()
-              .Be( TuningName );
+              .Be( TUNING_NAME );
     definition.Tunings.Standard.Name.Should()
-              .Be( TuningName );
+              .Be( TUNING_NAME );
     definition.Tunings.Standard.Pitches.Should()
               .BeEquivalentTo( pitches );
   }
@@ -248,7 +248,7 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   [Fact]
   public void BuildThrowOnEmptyTuningsTest()
   {
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
     var act = () => builder.Build();
     act.Should()
        .Throw<InvalidOperationException>();
@@ -259,7 +259,7 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" )
                                  .ToArray();
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
     builder.AddTuning( "ATuning", "A tuning", pitches );
 
     var act = () => builder.Build();
@@ -271,8 +271,8 @@ public sealed class StringedInstrumentDefinitionBuilderTest
   public void BuildThrowsOnBuilderReuseTest()
   {
     var pitches = PitchCollection.Parse( "C4,D4,E4" );
-    var builder = new StringedInstrumentDefinitionBuilder( InstrumentId, InstrumentName, InstrumentStringCount );
-    builder.AddTuning( TuningId, TuningName, pitches );
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+    builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
     builder.Build();
 
     var act = () => builder.Build();

@@ -1,4 +1,4 @@
-﻿// Module Name: Formula.cs
+// Module Name: Formula.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -68,7 +68,7 @@ public abstract class Formula
 
   #region Constants
 
-  private const string NameIntervalsToStringFormat = "N: I";
+  private const string NAME_INTERVALS_TO_STRING_FORMAT = "N: I";
 
   private static readonly IntervalComparer s_intervalComparer = new();
   private static readonly SemitoneCountIntervalComparer s_semitoneComparer = new();
@@ -311,7 +311,7 @@ public abstract class Formula
   /// <inheritdoc />
   public override string ToString()
   {
-    return ToString( NameIntervalsToStringFormat, null );
+    return ToString( NAME_INTERVALS_TO_STRING_FORMAT, null );
   }
 
   /// <summary>
@@ -355,7 +355,7 @@ public abstract class Formula
   {
     if( string.IsNullOrEmpty( format ) )
     {
-      format = NameIntervalsToStringFormat;
+      format = NAME_INTERVALS_TO_STRING_FORMAT;
     }
 
     var buf = new StringBuilder();

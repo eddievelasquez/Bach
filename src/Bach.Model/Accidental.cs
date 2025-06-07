@@ -62,8 +62,8 @@ public readonly struct Accidental
   /// </summary>
   public static readonly Accidental DoubleSharp = new( 2 );
 
-  private static readonly string[] s_symbols = { "bb", "b", "", "#", "##" };
-  private static readonly string[] s_names = { "DoubleFlat", "Flat", "Natural", "Sharp", "DoubleSharp" };
+  private static readonly string[] s_symbols = ["bb", "b", "", "#", "##"];
+  private static readonly string[] s_names = ["DoubleFlat", "Flat", "Natural", "Sharp", "DoubleSharp"];
   private static readonly int s_doubleFlatOffset = Math.Abs( (int) DoubleFlat );
 
   #endregion
@@ -90,7 +90,7 @@ public readonly struct Accidental
 
   /// <summary>Adds a number of steps to a pitch class name.</summary>
   /// <param name="steps">The number of steps to add.</param>
-  /// <returns>A Accidental.</returns>
+  /// <returns>An <see cref="Accidental"/>.</returns>
   [Pure]
   public Accidental Add(
     int steps )

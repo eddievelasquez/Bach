@@ -1,4 +1,4 @@
-﻿// Module Name: PitchClassCollection.cs
+// Module Name: PitchClassCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -88,12 +88,7 @@ public sealed class PitchClassCollection
       return true;
     }
 
-    if( other is null )
-    {
-      return false;
-    }
-
-    return _pitchClasses.SequenceEqual( other );
+    return other is not null && _pitchClasses.SequenceEqual( other );
   }
 
   /// <inheritdoc />
@@ -185,7 +180,7 @@ public sealed class PitchClassCollection
 
     var tmp = new List<PitchClass>();
 
-    foreach( var s in value.Split( new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries ) )
+    foreach( var s in value.Split( [',', ' '], StringSplitOptions.RemoveEmptyEntries ) )
     {
       if( !PitchClass.TryParse( s, out var note ) )
       {

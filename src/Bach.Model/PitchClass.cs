@@ -1,4 +1,4 @@
-﻿// Module Name: PitchClass.cs
+// Module Name: PitchClass.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -38,10 +38,10 @@ public readonly struct PitchClass
 {
   #region Constants
 
-  private const int SemitoneCount = 12;
+  private const int SEMITONE_COUNT = 12;
 
   private static readonly PitchClass[] s_pitchClasses =
-  {
+  [
     new( 0, 0, NoteName.D, Accidental.DoubleFlat ), new( 1, 0, NoteName.C, Accidental.Natural ),
     new( 2, 0, NoteName.B, Accidental.Sharp ), new( 3, 1, NoteName.D, Accidental.Flat ),
     new( 4, 1, NoteName.C, Accidental.Sharp ), new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
@@ -60,10 +60,10 @@ public readonly struct PitchClass
     new( 30, 10, NoteName.B, Accidental.Flat ), new( 31, 10, NoteName.A, Accidental.Sharp ),
     new( 32, 11, NoteName.C, Accidental.Flat ), new( 33, 11, NoteName.B, Accidental.Natural ),
     new( 34, 11, NoteName.A, Accidental.DoubleSharp )
-  };
+  ];
 
   private static readonly int[] s_noteNameIndices =
-  {
+  [
     1, // NoteName.C
     7, // NoteName.D
     13, // NoteName.E
@@ -71,7 +71,7 @@ public readonly struct PitchClass
     22, // NoteName.G
     27, // NoteName.A
     33 // NoteName.B
-  };
+  ];
 
   // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
   private static readonly int[,] s_enharmonics =
@@ -359,7 +359,7 @@ public readonly struct PitchClass
     var quantity = (IntervalQuantity) ( pitchClass.NoteName - NoteName );
 
     // Then we determine the semitone count
-    var semitoneCount = ArrayExtensions.WrapIndex( SemitoneCount, pitchClass._enharmonicIndex - _enharmonicIndex );
+    var semitoneCount = ArrayExtensions.WrapIndex( SEMITONE_COUNT, pitchClass._enharmonicIndex - _enharmonicIndex );
     var interval = new Interval( quantity, semitoneCount );
     return interval;
   }

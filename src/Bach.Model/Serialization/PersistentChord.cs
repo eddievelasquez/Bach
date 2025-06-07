@@ -1,4 +1,4 @@
-﻿// Module Name: PersistentChord.cs
+// Module Name: PersistentChord.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,15 +24,8 @@
 
 namespace Bach.Model.Serialization;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class PersistentChord
-{
-  #region Properties
-
-  public required string Id { get; set; }
-  public required string Name { get; set; }
-  public required string Formula { get; set; }
-  public string? Symbol { get; set; }
-
-  #endregion
-}
+internal sealed record PersistentChord(
+  string Id,
+  string Name,
+  string Formula,
+  string? Symbol = null );

@@ -1,4 +1,4 @@
-﻿// Module Name: Library.cs
+// Module Name: Library.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -26,14 +26,8 @@ namespace Bach.Model.Serialization;
 
 using System.Collections.Generic;
 
-internal sealed class Library
-{
-  #region Properties
-
-  public required Version Version { get; set; }
-  public required List<PersistentScale> Scales { get; set; }
-  public required List<PersistentChord> Chords { get; set; }
-  public required List<PersistentStringedInstrument> StringedInstruments { get; set; }
-
-  #endregion
-}
+internal sealed record Library(
+  Version Version,
+  List<PersistentScale> Scales,
+  List<PersistentChord> Chords,
+  List<PersistentStringedInstrument> StringedInstruments );

@@ -1,4 +1,4 @@
-﻿// Module Name: PersistentScale.cs
+// Module Name: PersistentScale.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,16 +24,9 @@
 
 namespace Bach.Model.Serialization;
 
-// ReSharper disable once ClassNeverInstantiated.Global
-internal sealed class PersistentScale
-{
-  #region Properties
-
-  public required string Id { get; set; }
-  public required string Name { get; set; }
-  public required string Formula { get; set; }
-  public string? Alias { get; set; }
-  public string? Categories { get; set; }
-
-  #endregion
-}
+internal sealed record PersistentScale(
+  string Id,
+  string Name,
+  string Formula,
+  string? Alias = null,
+  string? Categories = null );

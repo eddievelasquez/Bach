@@ -1,4 +1,4 @@
-﻿// Module Name: ScaleFormulaBuilder.cs
+// Module Name: ScaleFormulaBuilder.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -35,7 +35,7 @@ public sealed class ScaleFormulaBuilder
 {
   #region Fields
 
-  private readonly SortedSet<Interval> _intervals = new();
+  private readonly SortedSet<Interval> _intervals = [];
   private readonly HashSet<string> _aliases = new( Comparer.NameComparer );
   private readonly HashSet<string> _categories = new( Comparer.NameComparer );
   private string? _id;
@@ -73,7 +73,7 @@ public sealed class ScaleFormulaBuilder
 
   #region Public Methods
 
-  /// <summary>Adds one or more aliases for the scale formula; multiple aliases are separated by semi-colons.</summary>
+  /// <summary>Adds one or more aliases for the scale formula; multiple aliases are separated by semicolons.</summary>
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="alias">The alias.</param>
   /// <returns>This instance.</returns>
@@ -109,7 +109,7 @@ public sealed class ScaleFormulaBuilder
 
   /// <summary>Adds one or more categories for the scale formula.</summary>
   /// <remarks>
-  ///   A category is a user defined value that assists in the classification of a scale formula. e.g Major, Diatonic,
+  ///   A category is a user defined value that assists in the classification of a scale formula. e.g. Major, Diatonic,
   ///   Pentatonic, etc.
   /// </remarks>
   /// <param name="categories">The categories.</param>
@@ -131,9 +131,9 @@ public sealed class ScaleFormulaBuilder
     return this;
   }
 
-  /// <summary>Adds one or more categories for the scale formula; multiple categories are separated by semi-colons.</summary>
+  /// <summary>Adds one or more categories for the scale formula; multiple categories are separated by semicolons.</summary>
   /// <remarks>
-  ///   A category is a user defined value that assists in the classification of a scale formula. e.g Major, Diatonic,
+  ///   A category is a user defined value that assists in the classification of a scale formula. e.g. Major, Diatonic,
   ///   Pentatonic, etc.
   /// </remarks>
   /// <param name="category">The alias.</param>

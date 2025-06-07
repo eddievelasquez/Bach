@@ -1,4 +1,4 @@
-﻿// Module Name: Registry.cs
+// Module Name: Registry.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -24,12 +24,10 @@
 
 namespace Bach.Model;
 
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Instruments;
 using Internal;
 using Serialization;
@@ -40,46 +38,9 @@ using Serialization;
 /// </summary>
 public static class Registry
 {
-  #region Nested Types
-
-  /// <summary>
-  ///   The JSON Deserializer for System.Text.Json doesn't support System.Version as
-  ///   of version 3.0...
-  /// </summary>
-  /// <seealso cref="JsonConverter{Version}" />
-  private sealed class VersionParser: JsonConverter<Version>
-  {
-    #region Public Methods
-
-    /// <inheritdoc />
-    public override Version Read(
-      ref Utf8JsonReader reader,
-      Type typeToConvert,
-      JsonSerializerOptions options )
-    {
-      Debug.Assert( typeToConvert == typeof( Version ) );
-      var value = reader.GetString();
-      return value != null ? Version.Parse( value ) : throw new FormatException( "Invalid version number" );
-    }
-
-    /// <inheritdoc />
-    public override void Write(
-      Utf8JsonWriter writer,
-      Version value,
-      JsonSerializerOptions options )
-    {
-      // Unused for now.
-      throw new NotImplementedException();
-    }
-
-    #endregion
-  }
-
-  #endregion
-
   #region Constants
 
-  private const string LibraryFileName = "Bach.Model.Library.json";
+  private const string LIBRARY_FILE_NAME = "Bach.Model.Library.json";
 
   #endregion
 
@@ -92,29 +53,19 @@ public static class Registry
   )]
   static Registry()
   {
-    // Load the library from the JSON file in the same directory as
-    // this assembly.
-    var assembly = Assembly.GetExecutingAssembly();
-    var directory = Path.GetDirectoryName( new Uri( assembly.Location ).LocalPath );
-    var path = Path.Combine( directory ?? string.Empty, LibraryFileName );
-    var s = File.ReadAllText( path );
-
-    // Deserialize
-
-    // Use custom deserializer for System.Version, which is not currently supported
-    // by .NET Core 3.0
-    var options = new JsonSerializerOptions();
-    options.Converters.Add( new VersionParser() );
-
-    var library = JsonSerializer.Deserialize<Library>( s, options );
+    var path = GetLibraryPath();
+    var library = LoadLibrary( path );
     if( library is null )
     {
       // NOTE: Throwing in a static ctor will cause the application to terminate
       throw new InvalidOperationException( $"Could not load the library from {path}" );
     }
 
-    // Load data
-    ScaleFormulas = new NamedObjectCollection<ScaleFormula>();
+    ScaleFormulas = [];
+    ChordFormulas = [];
+    StringedInstrumentDefinitions = [];
+
+    // Load scales
     foreach( var scale in library.Scales )
     {
       var builder = new ScaleFormulaBuilder( scale.Id, scale.Name ).SetIntervals( scale.Formula );
@@ -133,14 +84,13 @@ public static class Registry
       ScaleFormulas.Add( formula );
     }
 
-    ChordFormulas = new NamedObjectCollection<ChordFormula>();
+    // Load Chords
     foreach( var chord in library.Chords )
     {
       ChordFormulas.Add( new ChordFormula( chord.Id, chord.Name, chord.Symbol, chord.Formula ) );
     }
 
-    StringedInstrumentDefinitions = new NamedObjectCollection<StringedInstrumentDefinition>();
-
+    // Load Instrument definitions
     foreach( var instrument in library.StringedInstruments )
     {
       var builder = new StringedInstrumentDefinitionBuilder( instrument.Id, instrument.Name, instrument.StringCount );
@@ -170,6 +120,30 @@ public static class Registry
   /// <summary>Gets the collection of stringed instrument definitions.</summary>
   /// <value>The stringed instrument definitions.</value>
   public static NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
+
+  #endregion
+
+  #region Implementation
+
+  private static string GetLibraryPath()
+  {
+    // Load the library from the JSON file in the same directory as
+    // this assembly.
+    var assembly = Assembly.GetExecutingAssembly();
+    var directory = Path.GetDirectoryName( new Uri( assembly.Location ).LocalPath );
+    var path = Path.Combine( directory ?? string.Empty, LIBRARY_FILE_NAME );
+    return path;
+  }
+
+  private static Library? LoadLibrary(
+    string path )
+  {
+    var json = File.ReadAllText( path );
+
+    // Deserialize
+    var library = JsonSerializer.Deserialize<Library>( json );
+    return library;
+  }
 
   #endregion
 }
