@@ -147,7 +147,7 @@ public readonly struct Accidental
   /// <returns>An object that is equivalent to the accidental contained in value.</returns>
   /// <exception cref="FormatException">value does not contain a valid string representation of an accidental.</exception>
   public static Accidental Parse(
-    string value )
+    string? value )
   {
     if( !TryParse( value, out var accidental ) )
     {
@@ -199,7 +199,7 @@ public readonly struct Accidental
   ///   .
   /// </returns>
   public static bool TryParse(
-    string value,
+    string? value,
     out Accidental accidental )
   {
     accidental = Natural;
