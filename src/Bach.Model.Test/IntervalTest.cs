@@ -1,6 +1,6 @@
-// Module Name: IntervalTest.cs
-// Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Module Name: ${File.FileName}
+// Project:     ${File.ProjectName}
+// Copyright (c) 2012, ${CurrentDate.Year}  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -29,21 +29,23 @@ public sealed class IntervalTest
   #region Public Methods
 
   [Fact]
-  public void EqualityFailsWithNullTest()
+  public void EqualityOperator_ShouldReturnFalse_WhenComparedWithNull()
   {
     var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
 #pragma warning disable CS8073
+    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
     ( lhs == null ).Should()
                    .BeFalse();
 #pragma warning restore CS8073
   }
 
   [Fact]
-  public void EqualitySucceedsWithSameObjectTest()
+  public void EqualityOperator_ShouldReturnTrue_WhenComparingWithSameObject()
   {
     var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-#pragma warning disable 1718
 
+#pragma warning disable 1718
     // ReSharper disable once EqualExpressionComparison
     ( lhs == lhs ).Should()
                   .BeTrue();
@@ -51,7 +53,7 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void EqualitySucceedsWithTwoObjectsTest()
+  public void Equality_ShouldReturnTrue_WhenComparingEquivalentObjects()
   {
     var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
@@ -60,7 +62,7 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation()
   {
     object x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     object y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
@@ -88,7 +90,7 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparingObjectsOfDifferentTypes()
   {
     object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     actual.Equals( int.MinValue )
@@ -97,7 +99,7 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFall_WhenComparingWithNull()
   {
     object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     actual.Equals( null )
@@ -106,7 +108,7 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparingTheSameObject()
   {
     var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     actual.Equals( actual )
@@ -115,7 +117,7 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashcode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
   {
     var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     var expected = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
@@ -127,35 +129,22 @@ public sealed class IntervalTest
           .Be( expected.GetHashCode() );
   }
 
-  [Fact]
-  public void GetSemitoneCountTest()
+  [Theory]
+  [MemberData( nameof( InvalidIntervalCombinations ) )]
+  public void GetSemitoneCount_ShouldThrowArgumentException_WithInvalidIntervalQuantityAndQualityCombination(
+    IntervalQuantity quantity, IntervalQuality quality )
   {
-    var act = () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Diminished );
+    var act = () => Interval.GetSemitoneCount( quantity, quality );
     act.Should()
        .Throw<ArgumentException>();
-
-    var act1 = () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Minor );
-    act1.Should()
-        .Throw<ArgumentException>();
-
-    Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Perfect )
-            .Should()
-            .Be( 0 );
-    var act2 = () => Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Major );
-    act2.Should()
-        .Throw<ArgumentException>();
-
-    Interval.GetSemitoneCount( IntervalQuantity.Unison, IntervalQuality.Augmented )
-            .Should()
-            .Be( 1 );
   }
 
   [Fact]
-  public void InequalityFailsWithSameObjectTest()
+  public void InequalityOperator_ShouldReturnFalse_WhenComparingWithSameObject()
   {
     var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-#pragma warning disable 1718
 
+#pragma warning disable 1718
     // ReSharper disable once EqualExpressionComparison
     ( lhs != lhs ).Should()
                   .BeFalse();
@@ -163,7 +152,7 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void InequalitySucceedsWithTwoObjectsTest()
+  public void InequalityOperator_ShouldReturnTrue_WhenComparingDifferentIntervals()
   {
     var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Augmented );
@@ -171,61 +160,24 @@ public sealed class IntervalTest
                   .BeTrue();
   }
 
-  [Fact]
-  public void InversionTest()
+  [Theory]
+  [MemberData( nameof( InversionData ) )]
+  public void Inversion_ShouldReturnCorrectInterval( Interval interval, Interval expectedInversion )
   {
-    Interval.Unison.Inversion.Should()
-            .Be( Interval.Octave );
-    Interval.MinorSecond.Inversion.Should()
-            .Be( Interval.MajorSeventh );
-    Interval.MajorSecond.Inversion.Should()
-            .Be( Interval.MinorSeventh );
-    Interval.MinorThird.Inversion.Should()
-            .Be( Interval.MajorSixth );
-    Interval.MajorThird.Inversion.Should()
-            .Be( Interval.MinorSixth );
-    Interval.Fourth.Inversion.Should()
-            .Be( Interval.Fifth );
-    Interval.AugmentedFourth.Inversion.Should()
-            .Be( Interval.DiminishedFifth );
-    Interval.Fifth.Inversion.Should()
-            .Be( Interval.Fourth );
-    Interval.AugmentedFifth.Inversion.Should()
-            .Be( Interval.DiminishedFourth );
-    Interval.MinorSixth.Inversion.Should()
-            .Be( Interval.MajorThird );
-    Interval.MajorSixth.Inversion.Should()
-            .Be( Interval.MinorThird );
-    Interval.MinorSeventh.Inversion.Should()
-            .Be( Interval.MajorSecond );
-    Interval.MajorSeventh.Inversion.Should()
-            .Be( Interval.MinorSecond );
-    Interval.Octave.Inversion.Should()
-            .Be( Interval.Unison );
+    interval.Inversion.Should().Be( expectedInversion );
   }
 
-  [Fact]
-  public void IsValidTest()
+  [Theory]
+  [MemberData( nameof( InvalidIntervalCombinations ) )]
+  public void IsValid_ShouldReturnFalse_WhenInvalidIntervalCombinationOccurs( IntervalQuantity quantity, IntervalQuality quality )
   {
-    Interval.IsValid( IntervalQuantity.Unison, IntervalQuality.Diminished )
-            .Should()
-            .BeFalse();
-    Interval.IsValid( IntervalQuantity.Fourth, IntervalQuality.Minor )
-            .Should()
-            .BeFalse();
-    Interval.IsValid( IntervalQuantity.Fifth, IntervalQuality.Major )
-            .Should()
-            .BeFalse();
-    Interval.IsValid( (IntervalQuantity) ( -1 ), IntervalQuality.Major )
-            .Should()
-            .BeFalse();
-    Interval.IsValid( (IntervalQuantity) 14, IntervalQuality.Major )
+    Interval.IsValid( quantity, quality )
             .Should()
             .BeFalse();
   }
 
   [Fact]
-  public void LogicalOperatorsTest()
+  public void RelationalOperators_ShouldSatisfyOrdering()
   {
     ( Interval.Unison == Interval.Parse( "P1" ) ).Should()
                                                  .BeTrue();
@@ -243,172 +195,64 @@ public sealed class IntervalTest
                                                  .BeTrue();
   }
 
-  [Fact]
-  public void ParseTest()
+  [Theory]
+  [MemberData( nameof( ValidIntervalStrings ) )]
+  public void Parse_ShouldReturnCorrectInterval_WhenValidStringIsProvided( string intervalString, Interval expected )
   {
-    Interval.Parse( "P1" )
+    Interval.Parse( intervalString )
             .Should()
-            .Be( Interval.Unison );
+            .Be( expected );
+  }
+
+  [Fact]
+  public void Parse_ShouldThrowFormatException_WhenInvalidStringIsProvided()
+  {
     var act = () => Interval.Parse( "X2" );
     act.Should()
        .Throw<FormatException>();
   }
 
-  [Fact]
-  public void SemitoneCountTest()
+  [Theory]
+  [MemberData( nameof( SemitoneCountData ) )]
+  public void SemitoneCount_ShouldReturnCorrectCount( Interval interval, int expectedSemitoneCount )
   {
-    Interval.Unison.SemitoneCount.Should()
-            .Be( 0 );
-    Interval.AugmentedFirst.SemitoneCount.Should()
-            .Be( 1 );
-    Interval.DiminishedSecond.SemitoneCount.Should()
-            .Be( 0 );
-    Interval.MinorSecond.SemitoneCount.Should()
-            .Be( 1 );
-    Interval.MajorSecond.SemitoneCount.Should()
-            .Be( 2 );
-    Interval.AugmentedSecond.SemitoneCount.Should()
-            .Be( 3 );
-    Interval.DiminishedThird.SemitoneCount.Should()
-            .Be( 2 );
-    Interval.MinorThird.SemitoneCount.Should()
-            .Be( 3 );
-    Interval.MajorThird.SemitoneCount.Should()
-            .Be( 4 );
-    Interval.AugmentedThird.SemitoneCount.Should()
-            .Be( 5 );
-    Interval.DiminishedFourth.SemitoneCount.Should()
-            .Be( 4 );
-    Interval.Fourth.SemitoneCount.Should()
-            .Be( 5 );
-    Interval.AugmentedFourth.SemitoneCount.Should()
-            .Be( 6 );
-    Interval.DiminishedFifth.SemitoneCount.Should()
-            .Be( 6 );
-    Interval.Fifth.SemitoneCount.Should()
-            .Be( 7 );
-    Interval.AugmentedFifth.SemitoneCount.Should()
-            .Be( 8 );
-    Interval.DiminishedSixth.SemitoneCount.Should()
-            .Be( 7 );
-    Interval.MinorSixth.SemitoneCount.Should()
-            .Be( 8 );
-    Interval.MajorSixth.SemitoneCount.Should()
-            .Be( 9 );
-    Interval.AugmentedSixth.SemitoneCount.Should()
-            .Be( 10 );
-    Interval.DiminishedSeventh.SemitoneCount.Should()
-            .Be( 9 );
-    Interval.MinorSeventh.SemitoneCount.Should()
-            .Be( 10 );
-    Interval.MajorSeventh.SemitoneCount.Should()
-            .Be( 11 );
-    Interval.AugmentedSeventh.SemitoneCount.Should()
-            .Be( 12 );
-    Interval.DiminishedOctave.SemitoneCount.Should()
-            .Be( 11 );
-    Interval.Octave.SemitoneCount.Should()
-            .Be( 12 );
+    interval.SemitoneCount.Should().Be( expectedSemitoneCount );
   }
 
-  [Fact]
-  public void TryParseReturnsFalseBlankStringTest()
+  [Theory]
+  [MemberData( nameof( InvalidIntervalStrings ) )]
+  public void TryParse_ShouldReturnFalse_WhenInvalidStringIsProvided( string? input )
   {
-    Interval.TryParse( "", out _ )
-            .Should()
-            .BeFalse();
-    Interval.TryParse( "   ", out _ )
+    Interval.TryParse( input, out _ )
             .Should()
             .BeFalse();
   }
 
   [Fact]
-  public void TryParseReturnsFalseWithNonsensicalIntervalsTest()
-  {
-    Interval.TryParse( "M1", out _ )
-            .Should()
-            .BeFalse();
-    Interval.TryParse( "P2", out _ )
-            .Should()
-            .BeFalse();
-    Interval.TryParse( "L2", out _ )
-            .Should()
-            .BeFalse();
-    Interval.TryParse( "Px", out _ )
-            .Should()
-            .BeFalse();
-  }
-
-  [Fact]
-  public void TryParseReturnsFalseWithNullTest()
-  {
-    Interval.TryParse( null!, out _ )
-            .Should()
-            .BeFalse();
-  }
-
-  [Fact]
-  public void TryParseSkipsLeadingWhitespaceTest()
+  public void TryParse_ShouldSkipLeadingWhitespace_WhenValidStringIsProvided()
   {
     Interval.TryParse( "  P5", out var actual )
             .Should()
             .BeTrue();
+
     actual.Should()
           .Be( Interval.Fifth );
   }
 
-  [Fact]
-  public void TryParseTest()
+  [Theory]
+  [MemberData( nameof( ValidIntervalStrings ) )]
+  public void TryParse_ShouldReturnCorrectInterval_WhenValidStringIsProvided( string intervalString, Interval expected )
   {
-    Interval.TryParse( "P1", out var actual )
+    Interval.TryParse( intervalString, out var actual )
             .Should()
             .BeTrue();
-    actual.Should()
-          .Be( Interval.Unison );
-    Interval.TryParse( "R", out actual )
-            .Should()
-            .BeTrue();
-    actual.Should()
-          .Be( Interval.Unison );
-    Interval.TryParse( "1", out actual )
-            .Should()
-            .BeTrue();
-    actual.Should()
-          .Be( Interval.Unison );
 
-    Interval.TryParse( "A1", out actual )
-            .Should()
-            .BeTrue();
     actual.Should()
-          .Be( Interval.AugmentedFirst );
-
-    Interval.TryParse( "d3", out actual )
-            .Should()
-            .BeTrue();
-    actual.Should()
-          .Be( Interval.DiminishedThird );
-
-    Interval.TryParse( "m3", out actual )
-            .Should()
-            .BeTrue();
-    actual.Should()
-          .Be( Interval.MinorThird );
-
-    Interval.TryParse( "M3", out actual )
-            .Should()
-            .BeTrue();
-    actual.Should()
-          .Be( Interval.MajorThird );
-
-    Interval.TryParse( "A3", out actual )
-            .Should()
-            .BeTrue();
-    actual.Should()
-          .Be( Interval.AugmentedThird );
+          .Be( expected );
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
   {
     var x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     var y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
@@ -429,13 +273,13 @@ public sealed class IntervalTest
     x.Equals( z )
      .Should()
      .BeTrue();
-    x.Equals( null )
+    x.Equals( (Interval?) null! )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparingToObjectOfDifferentType()
   {
     var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
 
@@ -446,13 +290,121 @@ public sealed class IntervalTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparingWithNull()
   {
     var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
+
+  public static TheoryData<IntervalQuantity, IntervalQuality> InvalidIntervalCombinations =>
+    new()
+    {
+      { IntervalQuantity.Unison, IntervalQuality.Diminished },
+      { IntervalQuantity.Unison, IntervalQuality.Minor },
+      { IntervalQuantity.Unison, IntervalQuality.Major },
+      { IntervalQuantity.Second, IntervalQuality.Perfect },
+      { IntervalQuantity.Third, IntervalQuality.Perfect },
+      { IntervalQuantity.Fourth, IntervalQuality.Minor },
+      { IntervalQuantity.Fourth, IntervalQuality.Major },
+      { IntervalQuantity.Fifth, IntervalQuality.Minor },
+      { IntervalQuantity.Fifth, IntervalQuality.Major },
+      { IntervalQuantity.Sixth, IntervalQuality.Perfect },
+      { IntervalQuantity.Seventh, IntervalQuality.Perfect },
+      { IntervalQuantity.Octave, IntervalQuality.Minor },
+      { IntervalQuantity.Octave, IntervalQuality.Major },
+      { IntervalQuantity.Ninth, IntervalQuality.Perfect },
+      { IntervalQuantity.Tenth, IntervalQuality.Perfect },
+      { IntervalQuantity.Eleventh, IntervalQuality.Minor },
+      { IntervalQuantity.Eleventh, IntervalQuality.Major },
+      { IntervalQuantity.Twelfth, IntervalQuality.Minor },
+      { IntervalQuantity.Twelfth, IntervalQuality.Major },
+      { IntervalQuantity.Thirteenth, IntervalQuality.Perfect },
+      { IntervalQuantity.Fourteenth, IntervalQuality.Perfect }
+    };
+
+  public static TheoryData<Interval, Interval> InversionData => new()
+  {
+    { Interval.Unison, Interval.Octave },
+    { Interval.MinorSecond, Interval.MajorSeventh },
+    { Interval.MajorSecond, Interval.MinorSeventh },
+    { Interval.MinorThird, Interval.MajorSixth },
+    { Interval.MajorThird, Interval.MinorSixth },
+    { Interval.Fourth, Interval.Fifth },
+    { Interval.AugmentedFourth, Interval.DiminishedFifth },
+    { Interval.Fifth, Interval.Fourth },
+    { Interval.AugmentedFifth, Interval.DiminishedFourth },
+    { Interval.MinorSixth, Interval.MajorThird },
+    { Interval.MajorSixth, Interval.MinorThird },
+    { Interval.MinorSeventh, Interval.MajorSecond },
+    { Interval.MajorSeventh, Interval.MinorSecond },
+    { Interval.Octave, Interval.Unison }
+  };
+
+  public static TheoryData<string, Interval> ValidIntervalStrings => new()
+  {
+    { "P1", Interval.Unison },
+    { "R", Interval.Unison },
+    { "1", Interval.Unison },
+    { "A1", Interval.AugmentedFirst },
+    { "d2", Interval.DiminishedSecond },
+    { "m2", Interval.MinorSecond },
+    { "M2", Interval.MajorSecond },
+    { "A2", Interval.AugmentedSecond },
+    { "d3", Interval.DiminishedThird },
+    { "m3", Interval.MinorThird },
+    { "M3", Interval.MajorThird },
+    { "A3", Interval.AugmentedThird },
+    { "d4", Interval.DiminishedFourth },
+    { "P4", Interval.Fourth },
+    { "A4", Interval.AugmentedFourth },
+    { "d5", Interval.DiminishedFifth },
+    { "P5", Interval.Fifth },
+    { "A5", Interval.AugmentedFifth },
+    { "d6", Interval.DiminishedSixth },
+    { "m6", Interval.MinorSixth },
+    { "M6", Interval.MajorSixth },
+    { "A6", Interval.AugmentedSixth },
+    { "d7", Interval.DiminishedSeventh },
+    { "m7", Interval.MinorSeventh },
+    { "M7", Interval.MajorSeventh },
+    { "A7", Interval.AugmentedSeventh },
+    { "d8", Interval.DiminishedOctave },
+    { "P8", Interval.Octave }
+  };
+
+  public static TheoryData<Interval, int> SemitoneCountData => new()
+  {
+    { Interval.Unison, 0 },
+    { Interval.AugmentedFirst, 1 },
+    { Interval.DiminishedSecond, 0 },
+    { Interval.MinorSecond, 1 },
+    { Interval.MajorSecond, 2 },
+    { Interval.AugmentedSecond, 3 },
+    { Interval.DiminishedThird, 2 },
+    { Interval.MinorThird, 3 },
+    { Interval.MajorThird, 4 },
+    { Interval.AugmentedThird, 5 },
+    { Interval.DiminishedFourth, 4 },
+    { Interval.Fourth, 5 },
+    { Interval.AugmentedFourth, 6 },
+    { Interval.DiminishedFifth, 6 },
+    { Interval.Fifth, 7 },
+    { Interval.AugmentedFifth, 8 },
+    { Interval.DiminishedSixth, 7 },
+    { Interval.MinorSixth, 8 },
+    { Interval.MajorSixth, 9 },
+    { Interval.AugmentedSixth, 10 },
+    { Interval.DiminishedSeventh, 9 },
+    { Interval.MinorSeventh, 10 },
+    { Interval.MajorSeventh, 11 },
+    { Interval.AugmentedSeventh, 12 },
+    { Interval.DiminishedOctave, 11 },
+    { Interval.Octave, 12 }
+  };
+
+  public static TheoryData<string?> InvalidIntervalStrings => [(string?) null, "", "   ", "M1", "P2", "L2", "Px"];
 
   #endregion
 }

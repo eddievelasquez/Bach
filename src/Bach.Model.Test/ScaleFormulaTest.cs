@@ -1,6 +1,6 @@
-// Module Name: ScaleFormulaTest.cs
-// Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Module Name: ${File.FileName}
+// Project:     ${File.ProjectName}
+// Copyright (c) 2012, ${CurrentDate.Year}  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -30,52 +30,20 @@ public sealed class ScaleFormulaTest
 {
   #region Public Methods
 
-  [Fact]
-  public void CategoriesHeptatonicTest()
+  [Theory]
+  [MemberData( nameof( CategoryTestData ) )]
+  public void Categories_ShouldContainCategory_WhenFormulaMatchesCondition( string category, Predicate<ScaleFormula> condition )
   {
-    TestFormulaCategory( "Heptatonic", true, formula => formula.Intervals.Count == 7 );
+    var matchingFormulas = Registry.ScaleFormulas
+                                   .Where( formula => condition( formula ) );
+    foreach( var formula in matchingFormulas )
+    {
+      formula.Categories.Should().Contain( category );
+    }
   }
 
   [Fact]
-  public void CategoriesHexatonicTest()
-  {
-    TestFormulaCategory( "Hexatonic", true, formula => formula.Intervals.Count == 6 );
-  }
-
-  [Fact]
-  public void CategoriesMajorTest()
-  {
-    TestFormulaCategory(
-      "Major",
-      false,
-      formula => formula.Intervals.Contains( Interval.MajorThird ) && formula.Intervals.Contains( Interval.Fifth )
-    );
-  }
-
-  [Fact]
-  public void CategoriesMinorTest()
-  {
-    TestFormulaCategory(
-      "Minor",
-      false,
-      formula => formula.Intervals.Contains( Interval.MinorThird ) && formula.Intervals.Contains( Interval.Fifth )
-    );
-  }
-
-  [Fact]
-  public void CategoriesOctatonicTest()
-  {
-    TestFormulaCategory( "Octatonic", true, formula => formula.Intervals.Count == 8 );
-  }
-
-  [Fact]
-  public void CategoriesPentatonicTest()
-  {
-    TestFormulaCategory( "Pentatonic", true, formula => formula.Intervals.Count == 5 );
-  }
-
-  [Fact]
-  public void ConstructorWithFormulaTest()
+  public void Constructor_ShouldCreateScaleFormula_WhenGivenIntervalString()
   {
     const string Id = "Id";
     const string Name = "Name";
@@ -89,7 +57,7 @@ public sealed class ScaleFormulaTest
     actual.Name.Should()
           .Be( Name );
     actual.Intervals.Should()
-          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
+          .BeEquivalentTo( [Interval.Unison, Interval.MajorSecond, Interval.MajorThird] );
 
     actual.ToString()
           .Should()
@@ -97,14 +65,14 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void ConstructorWithIntervalsTest()
+  public void Constructor_ShouldCreateScaleFormula_WhenGivenIntervalArray()
   {
     const string Id = "Id";
     const string Name = "Name";
 
     var actual = new ScaleFormulaBuilder( Name ).SetId( Id )
                                                 .SetIntervals(
-                                                  new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird }
+                                                  [Interval.Unison, Interval.MajorSecond, Interval.MajorThird]
                                                 )
                                                 .Build();
 
@@ -113,7 +81,7 @@ public sealed class ScaleFormulaTest
     actual.Name.Should()
           .Be( Name );
     actual.Intervals.Should()
-          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
+          .BeEquivalentTo( [Interval.Unison, Interval.MajorSecond, Interval.MajorThird] );
 
     actual.ToString()
           .Should()
@@ -121,7 +89,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
     object x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                 .SetIntervals( "R,M2,M3" )
@@ -155,7 +123,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparingWithDifferentType()
   {
     object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                      .SetIntervals( "R,M2,M3" )
@@ -166,7 +134,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparingWithNull()
   {
     object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                      .SetIntervals( "R,M2,M3" )
@@ -177,7 +145,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparingWithSameObject()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                   .SetIntervals( "R,M2,M3" )
@@ -188,7 +156,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void GenerateTest()
+  public void Generate_ShouldReturnAllPitches_WhenGivenStartingPitch()
   {
     var formula = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                    .SetIntervals( "R,M2,M3" )
@@ -210,7 +178,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashCode_ShouldReturnSameValue_WhenObjectsAreEqual()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                   .SetIntervals( "R,M2,M3" )
@@ -226,98 +194,19 @@ public sealed class ScaleFormulaTest
           .Be( expected.GetHashCode() );
   }
 
-  [Fact]
-  public void GetStepsTest()
+  [Theory]
+  [MemberData( nameof( ScaleStepsData ) )]
+  public void GetRelativeSteps_ShouldReturnCorrectSteps_WhenUsingScale( string scaleName, int[] expectedSteps )
   {
-    TestGetSteps(
-      "Major",
-      2,
-      2,
-      1,
-      2,
-      2,
-      2,
-      1
-    );
-    TestGetSteps(
-      "NaturalMinor",
-      2,
-      1,
-      2,
-      2,
-      1,
-      2,
-      2
-    );
-    TestGetSteps(
-      "MelodicMinor",
-      2,
-      1,
-      2,
-      2,
-      2,
-      2,
-      1
-    );
-    TestGetSteps(
-      "HarmonicMinor",
-      2,
-      1,
-      2,
-      2,
-      1,
-      3,
-      1
-    );
-    TestGetSteps(
-      "Diminished",
-      2,
-      1,
-      2,
-      1,
-      2,
-      1,
-      2,
-      1
-    );
-    TestGetSteps(
-      "WholeTone",
-      2,
-      2,
-      2,
-      2,
-      2,
-      2
-    );
-    TestGetSteps(
-      "MinorBlues",
-      3,
-      2,
-      1,
-      1,
-      3,
-      2
-    );
-    TestGetSteps(
-      "MinorPentatonic",
-      3,
-      2,
-      2,
-      3,
-      2
-    );
-    TestGetSteps(
-      "Pentatonic",
-      2,
-      2,
-      3,
-      2,
-      3
-    );
+    var scale = Registry.ScaleFormulas[scaleName];
+
+    scale.GetRelativeSteps()
+         .Should()
+         .BeEquivalentTo( expectedSteps );
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void EqualsShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     var x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                              .SetIntervals( "R,M2,M3" )
@@ -350,7 +239,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void TypeSafeEquals_ShouldReturnFalse_WhenComparingWithDifferentType()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                   .SetIntervals( "R,M2,M3" )
@@ -363,7 +252,7 @@ public sealed class ScaleFormulaTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void TypeSafeEquals_ShouldReturnFalse_WhenComparingWithNull()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
                                                   .SetIntervals( "R,M2,M3" )
@@ -375,37 +264,31 @@ public sealed class ScaleFormulaTest
 
   #endregion
 
-  #region Implementation
+  #region Test Data
 
-  private static void TestFormulaCategory(
-    string category,
-    bool strict,
-    Predicate<ScaleFormula> predicate )
+  public static TheoryData<string, int[]> ScaleStepsData => new()
   {
-    foreach( var formula in Registry.ScaleFormulas )
-    {
-      if( predicate( formula ) )
-      {
-        formula.Categories.Should()
-               .Contain( category );
-      }
-      else if( strict )
-      {
-        formula.Categories.Should()
-               .NotContain( category );
-      }
-    }
-  }
+    { "Major", [2, 2, 1, 2, 2, 2, 1] },
+    { "NaturalMinor", [2, 1, 2, 2, 1, 2, 2] },
+    { "MelodicMinor", [2, 1, 2, 2, 2, 2, 1] },
+    { "HarmonicMinor", [2, 1, 2, 2, 1, 3, 1] },
+    { "Diminished", [2, 1, 2, 1, 2, 1, 2, 1] },
+    { "WholeTone", [2, 2, 2, 2, 2, 2] },
+    { "MinorBlues", [3, 2, 1, 1, 3, 2] },
+    { "MinorPentatonic", [3, 2, 2, 3, 2] },
+    { "Pentatonic", [2, 2, 3, 2, 3] }
+  };
 
-  private static void TestGetSteps(
-    string scaleName,
-    params int[] expected )
+  public static TheoryData<string, Predicate<ScaleFormula>> CategoryTestData => new()
   {
-    var scale = Registry.ScaleFormulas[scaleName];
-    scale.GetRelativeSteps()
-         .Should()
-         .BeEquivalentTo( expected );
-  }
+    { "Pentatonic", formula => formula.Intervals.Count == 5 },
+    { "Hexatonic", formula => formula.Intervals.Count == 6 },
+    { "Heptatonic", formula => formula.Intervals.Count == 7 },
+    { "Octatonic", formula => formula.Intervals.Count == 8 },
+    { "Major", formula => formula.Intervals.Contains(Interval.MajorThird) && formula.Intervals.Contains(Interval.Fifth) },
+    { "Minor", formula => formula.Intervals.Contains(Interval.MinorThird) && formula.Intervals.Contains(Interval.Fifth) }
+  };
 
   #endregion
+
 }

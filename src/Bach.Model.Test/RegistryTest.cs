@@ -32,7 +32,7 @@ public sealed class RegistryTest
   #region Public Methods
 
   [Fact]
-  public void ChordFormulasTest()
+  public void ChordFormulas_ShouldReturnExpectedValues_WhenAccessedById()
   {
     var chordFormulas = Registry.ChordFormulas.ToArray();
     chordFormulas.Should()
@@ -49,7 +49,7 @@ public sealed class RegistryTest
   }
 
   [Fact]
-  public void ScaleFormulasTest()
+  public void ScaleFormulas_ShouldReturnExpectedValues_WhenAccessedById()
   {
     var scaleFormulas = Registry.ScaleFormulas.ToArray();
     scaleFormulas.Should()
@@ -66,7 +66,7 @@ public sealed class RegistryTest
   }
 
   [Fact]
-  public void StringedInstrumentDefinitionsTest()
+  public void StringedInstrumentDefinitions_ShouldReturnExpectedValues_WhenAccessedById()
   {
     var instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
     instrumentDefinitions.Should()

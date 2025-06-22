@@ -29,7 +29,7 @@ public sealed class ModeFormulaTest
   #region Public Methods
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
     object x = ModeFormula.Dorian;
     object y = ModeFormula.Dorian;
@@ -57,7 +57,7 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType()
   {
     object actual = ModeFormula.Dorian;
     actual.Equals( int.MinValue )
@@ -66,7 +66,7 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithNull()
   {
     object actual = ModeFormula.Dorian;
     actual.Equals( null )
@@ -75,7 +75,7 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject()
   {
     var actual = ModeFormula.Dorian;
     actual.Equals( actual )
@@ -84,7 +84,76 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashCode_ShouldReturnEqualValue_WhenObjectsAreEqual()
+  {
+    var actual = ModeFormula.Dorian;
+    var expected = ModeFormula.Dorian;
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
+  }
+
+  [Theory]
+  [MemberData( nameof( ModeNames ) )]
+  public void ToString_ShouldReturnExpectedValue( ModeFormula formula, string expected )
+  {
+    formula.ToString()
+           .Should()
+           .Be( expected );
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithDifferentType()
+  {
+    var actual = ModeFormula.Dorian;
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull()
+  {
+    var actual = ModeFormula.Dorian;
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType_ObjectVariant()
+  {
+    object actual = ModeFormula.Dorian;
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparedWithNull_ObjectVariant()
+  {
+    object actual = ModeFormula.Dorian;
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject_TypeSafeVariant()
+  {
+    var actual = ModeFormula.Dorian;
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
+  }
+
+  [Fact]
+  public void GetHashCode_ShouldReturnEqualValue_WhenObjectsAreEqual_TypeSafeVariant()
   {
     var actual = ModeFormula.Dorian;
     var expected = ModeFormula.Dorian;
@@ -97,15 +166,7 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void ToStringTest()
-  {
-    ModeFormula.Mixolydian.ToString()
-               .Should()
-               .Be( "Mixolydian" );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     var x = ModeFormula.Dorian;
     var y = ModeFormula.Dorian;
@@ -132,7 +193,7 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithDifferentType_TypeSafeVariant()
   {
     var actual = ModeFormula.Dorian;
 
@@ -143,13 +204,25 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull_TypeSafeVariant()
   {
     var actual = ModeFormula.Dorian;
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
+
+  public static TheoryData<ModeFormula, string> ModeNames =>
+    new()
+    {
+      { ModeFormula.Ionian, "Ionian" },
+      { ModeFormula.Dorian, "Dorian" },
+      { ModeFormula.Phrygian, "Phrygian" },
+      { ModeFormula.Lydian, "Lydian" },
+      { ModeFormula.Mixolydian, "Mixolydian" },
+      { ModeFormula.Aeolian, "Aeolian" },
+      { ModeFormula.Locrian, "Locrian" }
+    };
 
   #endregion
 }

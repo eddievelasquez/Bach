@@ -29,7 +29,7 @@ public sealed class ModeTest
   #region Public Methods
 
   [Fact]
-  public void EnumeratorTest()
+  public void GetEnumerator_ShouldReturnPitchClassesInOrderAndWrap()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var mode = new Mode( scale, ModeFormula.Ionian );
@@ -77,7 +77,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     object x = new Mode( scale, ModeFormula.Dorian );
@@ -106,7 +106,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     object actual = new Mode( scale, ModeFormula.Dorian );
@@ -116,7 +116,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithNull()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     object actual = new Mode( scale, ModeFormula.Dorian );
@@ -126,7 +126,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var actual = new Mode( scale, ModeFormula.Dorian );
@@ -136,7 +136,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashCode_ShouldReturnSameValue_WhenObjectsAreEqual()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var actual = new Mode( scale, ModeFormula.Dorian );
@@ -150,7 +150,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void ModeConstructorTest()
+  public void Constructor_ShouldInitializePropertiesCorrectly()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var formula = ModeFormula.Phrygian;
@@ -158,30 +158,36 @@ public sealed class ModeTest
 
     target.Scale.Should()
           .Be( scale );
+
     target.Formula.Should()
           .Be( formula );
+
     target.Name.Should()
           .Be( "C Phrygian" );
+
     PitchClassCollection.Parse( "E,F,G,A,B,C,D" )
                         .Should()
                         .BeEquivalentTo( target.PitchClasses );
   }
 
-  [Fact]
-  public void ModesTest()
+  [Theory]
+  [MemberData( nameof( CMajorModePitchClasses ) )]
+  public void PitchClasses_ShouldReturnExpectedNotes( string expectedPitchClasses, ModeFormula formula )
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    TestMode( "C,D,E,F,G,A,B", scale, ModeFormula.Ionian );
-    TestMode( "D,E,F,G,A,B,C", scale, ModeFormula.Dorian );
-    TestMode( "E,F,G,A,B,C,D", scale, ModeFormula.Phrygian );
-    TestMode( "F,G,A,B,C,D,E", scale, ModeFormula.Lydian );
-    TestMode( "G,A,B,C,D,E,F", scale, ModeFormula.Mixolydian );
-    TestMode( "A,B,C,D,E,F,G", scale, ModeFormula.Aeolian );
-    TestMode( "B,C,D,E,F,G,A", scale, ModeFormula.Locrian );
+    var expected = PitchClassCollection.Parse( expectedPitchClasses );
+    var mode = new Mode( scale, formula );
+
+    mode.PitchClasses.Should()
+        .BeEquivalentTo( expected );
+
+    mode.ToString()
+        .Should()
+        .Be( expectedPitchClasses );
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var x = new Mode( scale, ModeFormula.Dorian );
@@ -209,7 +215,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithDifferentType()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var actual = new Mode( scale, ModeFormula.Dorian );
@@ -221,7 +227,7 @@ public sealed class ModeTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull()
   {
     var scale = new Scale( PitchClass.C, "Major" );
     var actual = new Mode( scale, ModeFormula.Dorian );
@@ -229,24 +235,18 @@ public sealed class ModeTest
           .Should()
           .BeFalse();
   }
+  public static TheoryData<string, ModeFormula> CMajorModePitchClasses =>
+    new()
+    {
+      { "C,D,E,F,G,A,B", ModeFormula.Ionian },
+      { "D,E,F,G,A,B,C", ModeFormula.Dorian },
+      { "E,F,G,A,B,C,D", ModeFormula.Phrygian },
+      { "F,G,A,B,C,D,E", ModeFormula.Lydian },
+      { "G,A,B,C,D,E,F", ModeFormula.Mixolydian },
+      { "A,B,C,D,E,F,G", ModeFormula.Aeolian },
+      { "B,C,D,E,F,G,A", ModeFormula.Locrian }
+    };
 
-  #endregion
-
-  #region Implementation
-
-  private static void TestMode(
-    string expectedNotes,
-    Scale root,
-    ModeFormula formula )
-  {
-    var expected = PitchClassCollection.Parse( expectedNotes );
-    var mode = new Mode( root, formula );
-    mode.PitchClasses.Should()
-        .BeEquivalentTo( expected );
-    mode.ToString()
-        .Should()
-        .Be( expectedNotes );
-  }
 
   #endregion
 }

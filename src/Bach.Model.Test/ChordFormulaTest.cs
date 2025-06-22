@@ -1,6 +1,6 @@
 // Module Name: ChordFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2025  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,25 +26,29 @@ namespace Bach.Model.Test;
 
 public sealed class ChordFormulaTest
 {
+  private const string CHORD_ID = "Id";
+  private const string CHORD_NAME = "Name";
+  private const string CHORD_SYMBOL = "Symbol";
+  private const string CHORD_FORMULA = "R,M2,M3";
+
   #region Public Methods
 
   [Fact]
-  public void ConstructorWithFormulaTest()
+  public void Constructor_WithFormula_ShouldSucceed()
   {
-    const string Id = "Id";
-    const string Name = "Name";
-    const string Symbol = "Symbol";
-    const string Formula = "R,M2,M3";
-    var actual = new ChordFormula( Id, Name, Symbol, Formula );
+    var actual = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
 
     actual.Id.Should()
-          .Be( Id );
+          .Be( CHORD_ID );
+
     actual.Name.Should()
-          .Be( Name );
+          .Be( CHORD_NAME );
+
     actual.Symbol.Should()
-          .Be( Symbol );
+          .Be( CHORD_SYMBOL );
+
     actual.Intervals.Should()
-          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
+          .BeEquivalentTo( [Interval.Unison, Interval.MajorSecond, Interval.MajorThird] );
 
     actual.ToString()
           .Should()
@@ -52,28 +56,28 @@ public sealed class ChordFormulaTest
   }
 
   [Fact]
-  public void ConstructorWithIntervalsTest()
+  public void Constructor_WithIntervals_ShouldSucceed()
   {
-    const string Id = "Id";
-    const string Name = "Name";
-    const string Symbol = "Symbol";
     var actual = new ChordFormula(
-      Id,
-      Name,
-      Symbol,
+      CHORD_ID,
+      CHORD_NAME,
+      CHORD_SYMBOL,
       Interval.Unison,
       Interval.MajorSecond,
       Interval.MajorThird
     );
 
     actual.Id.Should()
-          .Be( Id );
+          .Be( CHORD_ID );
+
     actual.Name.Should()
-          .Be( Name );
+          .Be( CHORD_NAME );
+
     actual.Symbol.Should()
-          .Be( Symbol );
+          .Be( CHORD_SYMBOL );
+
     actual.Intervals.Should()
-          .BeEquivalentTo( new[] { Interval.Unison, Interval.MajorSecond, Interval.MajorThird } );
+          .BeEquivalentTo( [Interval.Unison, Interval.MajorSecond, Interval.MajorThird] );
 
     actual.ToString()
           .Should()
@@ -81,64 +85,73 @@ public sealed class ChordFormulaTest
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation()
   {
-    object x = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    object y = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    object z = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    object x = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+    object y = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+    object z = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
 
     // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparingObjectOfDifferentType()
   {
-    object actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    object actual = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+
     actual.Equals( int.MinValue )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparingToNull()
   {
-    object actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    object actual = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparingTheSameObject()
   {
-    var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    var actual = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+
     actual.Equals( actual )
           .Should()
           .BeTrue();
   }
 
   [Fact]
-  public void GenerateTest()
+  public void Generate_ShouldSucceed()
   {
-    var formula = new ChordFormula( "Id", "Test", "Symbol", "R,M2,M3" );
+    var formula = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+
     using var pitches = formula.Generate( Pitch.MinValue )
                                .GetEnumerator();
     var count = 0;
@@ -156,65 +169,74 @@ public sealed class ChordFormulaTest
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashCode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
   {
-    var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    var expected = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    var actual = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+    var expected = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+
     expected.Equals( actual )
             .Should()
             .BeTrue();
+
     actual.GetHashCode()
           .Should()
           .Be( expected.GetHashCode() );
   }
 
   [Fact]
-  public void IntervalsMustBeSortedTest()
+  public void Constructor_ShouldThrowArgumentException_WhenIntervalsAreNotSorted()
   {
-    var act = () => new ChordFormula( "Id", "Name", "Symbol", "R,M3,M2" );
+    var act = () => new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, "R,M3,M2" );
+
     act.Should()
        .Throw<ArgumentException>();
   }
 
   [Fact]
-  public void IntervalsMustHaveNoDuplicatesTest()
+  public void Constructor_ShouldThrowArgumentException_WhenIntervalsHaveDuplicates()
   {
-    var act = () => new ChordFormula( "Id", "Name", "Symbol", "R,M2,M2,M3" );
+    var act = () => new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, "R,M2,M2,M3" );
+
     act.Should()
        .Throw<ArgumentException>();
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
   {
-    var x = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    var y = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
-    var z = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    var x = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+    var y = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+    var z = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
 
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void StronglyTypedEquals_ShouldReturnFalse_WhenComparingObjectOfDifferentType()
   {
-    var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    var actual = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
     actual.Equals( int.MinValue )
@@ -223,9 +245,10 @@ public sealed class ChordFormulaTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void StronglyTypedEquals_ShouldReturnFalse_WhenComparingToNull()
   {
-    var actual = new ChordFormula( "Id", "Name", "Symbol", "R,M2,M3" );
+    var actual = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );
+
     actual.Equals( null )
           .Should()
           .BeFalse();

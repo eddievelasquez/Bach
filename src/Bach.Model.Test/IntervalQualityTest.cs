@@ -28,62 +28,55 @@ public sealed class IntervalQualityTest
 {
   #region Public Methods
 
-  [Fact]
-  public void AdditionOperatorTest()
+  [Theory]
+  [MemberData( nameof( ValidAdditionData ) )]
+  public void AdditionOperator_ShouldSucceed(
+    IntervalQuality quality,
+    int increment,
+    IntervalQuality expectedQuality )
   {
-    ( IntervalQuality.Diminished + 0 ).Should()
-                                      .Be( IntervalQuality.Diminished );
-    ( IntervalQuality.Diminished + 1 ).Should()
-                                      .Be( IntervalQuality.Minor );
-    ( IntervalQuality.Minor + 1 ).Should()
-                                 .Be( IntervalQuality.Perfect );
-    ( IntervalQuality.Perfect + 1 ).Should()
-                                   .Be( IntervalQuality.Major );
-    ( IntervalQuality.Major + 1 ).Should()
-                                 .Be( IntervalQuality.Augmented );
+    ( quality + increment ).Should()
+                           .Be( expectedQuality );
   }
 
-  [Fact]
-  public void AdditionOperatorThrowsWhenOutOfRangeTest()
+  [Theory]
+  [MemberData( nameof( InvalidAdditionData ) )]
+  public void AdditionOperator_ShouldThrowArgumentOutOfRange(
+    IntervalQuality quality,
+    int increment )
   {
-    var act = () => IntervalQuality.Augmented + 1;
+    var act = () => quality + increment;
+
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Theory]
+  [MemberData( nameof( ValidAdditionData ) )]
+  public void Add_ShouldSucceed(
+    IntervalQuality quality,
+    int increment,
+    IntervalQuality expectedQuality )
+  {
+    quality.Add( increment )
+           .Should()
+           .Be( expectedQuality );
+  }
+
+  [Theory]
+  [MemberData( nameof( InvalidAdditionData ) )]
+  public void Add_ShouldThrowArgumentOutOfRange(
+    IntervalQuality quality,
+    int increment )
+  {
+    var act = () => quality.Add( increment );
+
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
-  public void AddTest()
-  {
-    IntervalQuality.Diminished.Add( 0 )
-                   .Should()
-                   .Be( IntervalQuality.Diminished );
-    IntervalQuality.Diminished.Add( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Minor );
-    IntervalQuality.Minor.Add( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Perfect );
-    IntervalQuality.Perfect.Add( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Major );
-    IntervalQuality.Major.Add( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Augmented );
-  }
-
-  [Fact]
-  public void AddThrowsWhenOutOfRangeTest()
-  {
-    var act1 = () => IntervalQuality.Diminished.Add( -1 );
-    act1.Should()
-        .Throw<ArgumentOutOfRangeException>();
-    var act2 = () => IntervalQuality.Augmented.Add( 1 );
-    act2.Should()
-        .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Fact]
-  public void CompareToContractTest()
+  public void CompareTo_ShouldSatisfyEquivalenceRelation()
   {
     object x = IntervalQuality.Diminished;
     object y = new IntervalQuality();
@@ -92,48 +85,82 @@ public sealed class IntervalQualityTest
     ( (IComparable) x ).CompareTo( x )
                        .Should()
                        .Be( 0 ); // Reflexive
+
     ( (IComparable) x ).CompareTo( y )
                        .Should()
                        .Be( 0 ); // Symmetric
+
     ( (IComparable) y ).CompareTo( x )
                        .Should()
                        .Be( 0 );
+
     ( (IComparable) y ).CompareTo( z )
                        .Should()
                        .Be( 0 ); // Transitive
+
     ( (IComparable) x ).CompareTo( z )
                        .Should()
                        .Be( 0 );
+
     ( (IComparable) x ).CompareTo( null )
                        .Should()
                        .NotBe( 0 ); // Never equal to null
   }
 
-  [Fact]
-  public void DecrementOperatorTest()
+  [Theory]
+  [MemberData( nameof( ValidDecrementData ) )]
+  public void DecrementOperator_ShouldSucceed(
+    IntervalQuality quality,
+    IntervalQuality expectedQuality )
   {
-    var quality = IntervalQuality.Augmented;
     ( --quality ).Should()
-                 .Be( IntervalQuality.Major );
-    ( --quality ).Should()
-                 .Be( IntervalQuality.Perfect );
-    ( --quality ).Should()
-                 .Be( IntervalQuality.Minor );
-    ( --quality ).Should()
-                 .Be( IntervalQuality.Diminished );
+                 .Be( expectedQuality );
   }
 
   [Fact]
-  public void DecrementOperatorThrowsWhenOutOfRangeTest()
+  public void DecrementOperator_ShouldThrowArgumentOutOfRange()
   {
     var quality = IntervalQuality.Diminished;
     var act = () => --quality;
+
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void EqualityOperator_ShouldReturnFalse_WhenComparingToNull()
+  {
+    var lhs = IntervalQuality.Diminished;
+#pragma warning disable CS8073
+    ( lhs == null! ).Should()
+                    .BeFalse();
+#pragma warning restore CS8073
+  }
+
+  [Fact]
+  public void EqualityOperator_ShouldReturnTrue_WhenComparingTheSameObject()
+  {
+    var lhs = IntervalQuality.Diminished;
+#pragma warning disable 1718
+
+    // ReSharper disable once EqualExpressionComparison
+    ( lhs == lhs ).Should()
+                  .BeTrue();
+#pragma warning restore 1718
+  }
+
+  [Fact]
+  public void EqualityOperator_ShouldReturnTrue_WhenComparingEquivalentObjects()
+  {
+    var lhs = IntervalQuality.Diminished;
+    var rhs = new IntervalQuality();
+
+    ( lhs == rhs ).Should()
+                  .BeTrue();
+  }
+
+  [Fact]
+  public void Equals_ShouldSatisfyEquivalenceRelation()
   {
     object x = IntervalQuality.Diminished;
     object y = new IntervalQuality();
@@ -143,263 +170,238 @@ public sealed class IntervalQualityTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparingObjectsOfDifferentType()
   {
     object actual = IntervalQuality.Diminished;
+
     actual.Equals( int.MinValue )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparingToNull()
   {
     object actual = IntervalQuality.Diminished;
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparingTheSameObject()
   {
     var actual = IntervalQuality.Diminished;
+
     actual.Equals( actual )
           .Should()
           .BeTrue();
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashcode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
   {
     var actual = IntervalQuality.Diminished;
     var expected = (IntervalQuality) 0;
+
     expected.Equals( actual )
             .Should()
             .BeTrue();
+
     actual.GetHashCode()
           .Should()
           .Be( expected.GetHashCode() );
   }
 
-  [Fact]
-  public void IncrementOperatorTest()
+  [Theory]
+  [MemberData( nameof( ValidIncrementData ) )]
+  public void IncrementOperator_ShouldSucceed(
+    IntervalQuality quality,
+    IntervalQuality expectedQuality )
   {
-    var quality = IntervalQuality.Diminished;
     ( ++quality ).Should()
-                 .Be( IntervalQuality.Minor );
-    ( ++quality ).Should()
-                 .Be( IntervalQuality.Perfect );
-    ( ++quality ).Should()
-                 .Be( IntervalQuality.Major );
-    ( ++quality ).Should()
-                 .Be( IntervalQuality.Augmented );
+                 .Be( expectedQuality );
   }
 
   [Fact]
-  public void IncrementOperatorThrowsWhenOutOfRangeTest()
+  public void IncrementOperator_ShouldThrowArgumentOutOfRange()
   {
     var quality = IntervalQuality.Augmented;
     var act = () => ++quality;
+
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
-  public void LogicalOperatorsTest()
+  public void RelationalOperators_ShouldSatisfyOrdering()
   {
-    ( IntervalQuality.Diminished == (IntervalQuality) 0 ).Should()
-                                                         .BeTrue();
-    ( IntervalQuality.Perfect != IntervalQuality.Major ).Should()
-                                                        .BeTrue();
-
     ( IntervalQuality.Diminished < IntervalQuality.Minor ).Should()
                                                           .BeTrue();
+
     ( IntervalQuality.Diminished <= IntervalQuality.Minor ).Should()
                                                            .BeTrue();
+
     ( IntervalQuality.Minor < IntervalQuality.Perfect ).Should()
                                                        .BeTrue();
+
     ( IntervalQuality.Minor <= IntervalQuality.Perfect ).Should()
                                                         .BeTrue();
+
     ( IntervalQuality.Perfect < IntervalQuality.Major ).Should()
                                                        .BeTrue();
+
     ( IntervalQuality.Perfect <= IntervalQuality.Major ).Should()
                                                         .BeTrue();
+
     ( IntervalQuality.Major < IntervalQuality.Augmented ).Should()
                                                          .BeTrue();
+
     ( IntervalQuality.Major <= IntervalQuality.Augmented ).Should()
                                                           .BeTrue();
 
     ( IntervalQuality.Augmented > IntervalQuality.Major ).Should()
                                                          .BeTrue();
+
     ( IntervalQuality.Augmented >= IntervalQuality.Major ).Should()
                                                           .BeTrue();
+
     ( IntervalQuality.Major > IntervalQuality.Perfect ).Should()
                                                        .BeTrue();
+
     ( IntervalQuality.Major >= IntervalQuality.Perfect ).Should()
                                                         .BeTrue();
+
     ( IntervalQuality.Perfect > IntervalQuality.Minor ).Should()
                                                        .BeTrue();
+
     ( IntervalQuality.Perfect >= IntervalQuality.Minor ).Should()
                                                         .BeTrue();
+
     ( IntervalQuality.Minor > IntervalQuality.Diminished ).Should()
                                                           .BeTrue();
+
     ( IntervalQuality.Minor >= IntervalQuality.Diminished ).Should()
                                                            .BeTrue();
   }
 
-  [Fact]
-  public void LongNameTest()
+  [Theory]
+  [MemberData( nameof( ValidQualityNames ) )]
+  public void ToString_ShouldReturnName( IntervalQuality quality, string expectedName )
   {
-    IntervalQuality.Diminished.LongName.Should()
-                   .Be( "Diminished" );
-    IntervalQuality.Minor.LongName.Should()
-                   .Be( "Minor" );
-    IntervalQuality.Perfect.LongName.Should()
-                   .Be( "Perfect" );
-    IntervalQuality.Major.LongName.Should()
-                   .Be( "Major" );
-    IntervalQuality.Augmented.LongName.Should()
-                   .Be( "Augmented" );
+    quality.ToString()
+           .Should()
+           .Be( expectedName );
+  }
+
+  [Theory]
+  [MemberData( nameof( ValidQualityStrings ) )]
+  public void Parse_ShouldSucceed_WhenValueIsValid( string input, IntervalQuality expected )
+  {
+    IntervalQuality.Parse( input )
+                   .Should()
+                   .Be( expected );
   }
 
   [Fact]
-  public void ParseTest()
-  {
-    IntervalQuality.Parse( "d" )
-                   .Should()
-                   .Be( IntervalQuality.Diminished );
-    IntervalQuality.Parse( "m" )
-                   .Should()
-                   .Be( IntervalQuality.Minor );
-    IntervalQuality.Parse( "P" )
-                   .Should()
-                   .Be( IntervalQuality.Perfect );
-    IntervalQuality.Parse( "M" )
-                   .Should()
-                   .Be( IntervalQuality.Major );
-    IntervalQuality.Parse( "A" )
-                   .Should()
-                   .Be( IntervalQuality.Augmented );
-  }
-
-  [Fact]
-  public void ParseThrowsWithInvalidValuesTest()
+  public void Parse_ShouldThrowFormatException_WhenValueIsInvalid()
   {
     var act = () => IntervalQuality.Parse( "X" );
+
     act.Should()
        .Throw<FormatException>();
   }
 
-  [Fact]
-  public void ShortNameTest()
+  [Theory]
+  [MemberData( nameof( ValidSubtractionData ) )]
+  public void SubtractionOperator_ShouldSucceed(
+    IntervalQuality quality,
+    int decrement,
+    IntervalQuality expectedQuality )
   {
-    IntervalQuality.Diminished.ShortName.Should()
-                   .Be( "dim" );
-    IntervalQuality.Minor.ShortName.Should()
-                   .Be( "min" );
-    IntervalQuality.Perfect.ShortName.Should()
-                   .Be( "Perf" );
-    IntervalQuality.Major.ShortName.Should()
-                   .Be( "Maj" );
-    IntervalQuality.Augmented.ShortName.Should()
-                   .Be( "Aug" );
+    ( quality - decrement ).Should()
+                         .Be( expectedQuality );
   }
 
   [Fact]
-  public void SubtractOperatorTest()
-  {
-    ( IntervalQuality.Augmented - 0 ).Should()
-                                     .Be( IntervalQuality.Augmented );
-    ( IntervalQuality.Augmented - 1 ).Should()
-                                     .Be( IntervalQuality.Major );
-    ( IntervalQuality.Major - 1 ).Should()
-                                 .Be( IntervalQuality.Perfect );
-    ( IntervalQuality.Perfect - 1 ).Should()
-                                   .Be( IntervalQuality.Minor );
-    ( IntervalQuality.Minor - 1 ).Should()
-                                 .Be( IntervalQuality.Diminished );
-  }
-
-  [Fact]
-  public void SubtractOperatorThrowsWhenOutOfRangeTest()
+  public void SubtractionOperator_ShouldThrowArgumentOutOfRange()
   {
     var act = () => IntervalQuality.Diminished - 1;
+
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
 
-  [Fact]
-  public void SubtractTest()
+  [Theory]
+  [MemberData( nameof( ValidSubtractionData ) )]
+  public void Subtract_ShouldSucceed(
+    IntervalQuality quality,
+    int decrement,
+    IntervalQuality expectedQuality )
   {
-    IntervalQuality.Augmented.Subtract( 0 )
-                   .Should()
-                   .Be( IntervalQuality.Augmented );
-    IntervalQuality.Augmented.Subtract( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Major );
-    IntervalQuality.Major.Subtract( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Perfect );
-    IntervalQuality.Perfect.Subtract( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Minor );
-    IntervalQuality.Minor.Subtract( 1 )
-                   .Should()
-                   .Be( IntervalQuality.Diminished );
+    quality.Subtract( decrement )
+           .Should()
+           .Be( expectedQuality );
+  }
+
+  [Theory]
+  [MemberData( nameof( InvalidSubtractionData ) )]
+  public void Subtract_ShouldThrowArgumentOutOfRange(
+    IntervalQuality quality,
+    int decrement )
+  {
+    var act = () => quality.Subtract( decrement );
+
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Theory]
+  [MemberData( nameof( LongNameData ) )]
+  public void LongName_ShouldReturnName(
+    IntervalQuality quality,
+    string expectedName )
+  {
+    quality.LongName.Should()
+           .Be( expectedName );
+  }
+
+  [Theory]
+  [MemberData( nameof( ShortNameData ) )]
+  public void ShortName_ShouldReturnName(
+    IntervalQuality quality,
+    string expectedShortName )
+  {
+    quality.ShortName.Should()
+           .Be( expectedShortName );
   }
 
   [Fact]
-  public void SubtractThrowsWhenOutOfRangeTest()
-  {
-    var act1 = () => IntervalQuality.Diminished.Subtract( 1 );
-    act1.Should()
-        .Throw<ArgumentOutOfRangeException>();
-    var act2 = () => IntervalQuality.Augmented.Subtract( -1 );
-    act2.Should()
-        .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Fact]
-  public void ToStringTest()
-  {
-    IntervalQuality.Diminished.ToString()
-                   .Should()
-                   .Be( "Diminished" );
-    IntervalQuality.Minor.ToString()
-                   .Should()
-                   .Be( "Minor" );
-    IntervalQuality.Perfect.ToString()
-                   .Should()
-                   .Be( "Perfect" );
-    IntervalQuality.Major.ToString()
-                   .Should()
-                   .Be( "Major" );
-    IntervalQuality.Augmented.ToString()
-                   .Should()
-                   .Be( "Augmented" );
-  }
-
-  [Fact]
-  public void TypeSafeCompareToContractTest()
+  public void StronglyTypedCompareTo_ShouldSatisfyEquivalenceRelation()
   {
     var x = IntervalQuality.Diminished;
     var y = new IntervalQuality();
@@ -408,25 +410,30 @@ public sealed class IntervalQualityTest
     x.CompareTo( x )
      .Should()
      .Be( 0 ); // Reflexive
+
     x.CompareTo( y )
      .Should()
      .Be( 0 ); // Symmetric
+
     y.CompareTo( x )
      .Should()
      .Be( 0 );
+
     y.CompareTo( z )
      .Should()
      .Be( 0 ); // Transitive
+
     x.CompareTo( z )
      .Should()
      .Be( 0 );
+
     x.CompareTo( null )
      .Should()
      .NotBe( 0 ); // Never equal to null
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
   {
     var x = IntervalQuality.Diminished;
     var y = new IntervalQuality();
@@ -435,25 +442,30 @@ public sealed class IntervalQualityTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void StronglyTypedEquals_ReturnsFalse_WhenComparingDifferentIntervalQualities()
   {
     var actual = IntervalQuality.Diminished;
 
@@ -464,13 +476,119 @@ public sealed class IntervalQualityTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void StronglyTypedEquals_ReturnsFalse_WhenComparingToNull()
   {
     var actual = IntervalQuality.Diminished;
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
+
+  public static TheoryData<IntervalQuality, int, IntervalQuality> ValidAdditionData { get; } = new()
+  {
+    { IntervalQuality.Diminished, 0, IntervalQuality.Diminished },
+    { IntervalQuality.Diminished, 1, IntervalQuality.Minor },
+    { IntervalQuality.Diminished, 2, IntervalQuality.Perfect },
+    { IntervalQuality.Diminished, 3, IntervalQuality.Major },
+    { IntervalQuality.Diminished, 4, IntervalQuality.Augmented },
+    { IntervalQuality.Minor, 1, IntervalQuality.Perfect },
+    { IntervalQuality.Minor, 2, IntervalQuality.Major },
+    { IntervalQuality.Minor, 3, IntervalQuality.Augmented },
+    { IntervalQuality.Perfect, 1, IntervalQuality.Major },
+    { IntervalQuality.Perfect, 2, IntervalQuality.Augmented },
+    { IntervalQuality.Major, 1, IntervalQuality.Augmented }
+  };
+
+  public static TheoryData<IntervalQuality, int> InvalidAdditionData { get; } = new()
+  {
+    { IntervalQuality.Diminished, 5 },
+    { IntervalQuality.Minor, 4 },
+    { IntervalQuality.Perfect, 3 },
+    { IntervalQuality.Major, 2 },
+    { IntervalQuality.Augmented, 1 },
+    { IntervalQuality.Diminished, -1 },
+    { IntervalQuality.Minor, -2 },
+    { IntervalQuality.Perfect, -3 },
+    { IntervalQuality.Major, -4 },
+    { IntervalQuality.Augmented, -5 },
+  };
+
+  public static TheoryData<IntervalQuality, IntervalQuality> ValidIncrementData { get; } = new()
+  {
+    { IntervalQuality.Diminished, IntervalQuality.Minor },
+    { IntervalQuality.Minor, IntervalQuality.Perfect },
+    { IntervalQuality.Perfect, IntervalQuality.Major },
+    { IntervalQuality.Major, IntervalQuality.Augmented }
+  };
+
+  public static TheoryData<IntervalQuality, IntervalQuality> ValidDecrementData { get; } = new()
+  {
+    { IntervalQuality.Augmented, IntervalQuality.Major },
+    { IntervalQuality.Major, IntervalQuality.Perfect },
+    { IntervalQuality.Perfect, IntervalQuality.Minor },
+    { IntervalQuality.Minor, IntervalQuality.Diminished }
+  };
+
+  public static TheoryData<IntervalQuality, int, IntervalQuality> ValidSubtractionData { get; } = new()
+  {
+    { IntervalQuality.Augmented, 0, IntervalQuality.Augmented },
+    { IntervalQuality.Augmented, 1, IntervalQuality.Major },
+    { IntervalQuality.Augmented, 2, IntervalQuality.Perfect },
+    { IntervalQuality.Augmented, 3, IntervalQuality.Minor },
+    { IntervalQuality.Augmented, 4, IntervalQuality.Diminished },
+    { IntervalQuality.Major, 1, IntervalQuality.Perfect },
+    { IntervalQuality.Major, 2, IntervalQuality.Minor },
+    { IntervalQuality.Major, 3, IntervalQuality.Diminished },
+    { IntervalQuality.Perfect, 1, IntervalQuality.Minor },
+    { IntervalQuality.Perfect, 2, IntervalQuality.Diminished },
+    { IntervalQuality.Minor, 1, IntervalQuality.Diminished }
+  };
+
+  public static TheoryData<IntervalQuality, int> InvalidSubtractionData { get; } = new()
+  {
+    { IntervalQuality.Augmented, 5 },
+    { IntervalQuality.Major, 4 },
+    { IntervalQuality.Perfect, 3 },
+    { IntervalQuality.Minor, 2 },
+    { IntervalQuality.Diminished, 1 },
+  };
+
+  public static TheoryData<IntervalQuality, string> LongNameData { get; } = new()
+  {
+    { IntervalQuality.Diminished, "Diminished" },
+    { IntervalQuality.Minor, "Minor" },
+    { IntervalQuality.Perfect, "Perfect" },
+    { IntervalQuality.Major, "Major" },
+    { IntervalQuality.Augmented, "Augmented" }
+  };
+
+  public static TheoryData<IntervalQuality, string> ShortNameData { get; } = new()
+  {
+    { IntervalQuality.Diminished, "dim" },
+    { IntervalQuality.Minor, "min" },
+    { IntervalQuality.Perfect, "Perf" },
+    { IntervalQuality.Major, "Maj" },
+    { IntervalQuality.Augmented, "Aug" }
+  };
+
+  public static TheoryData<IntervalQuality, string> ValidQualityNames { get; } = new()
+  {
+    { IntervalQuality.Diminished, "Diminished" },
+    { IntervalQuality.Minor, "Minor" },
+    { IntervalQuality.Perfect, "Perfect" },
+    { IntervalQuality.Major, "Major" },
+    { IntervalQuality.Augmented, "Augmented" }
+  };
+
+  public static TheoryData<string, IntervalQuality> ValidQualityStrings { get; } = new()
+  {
+    { "d", IntervalQuality.Diminished },
+    { "m", IntervalQuality.Minor },
+    { "P", IntervalQuality.Perfect },
+    { "M", IntervalQuality.Major },
+    { "A", IntervalQuality.Augmented }
+  };
 
   #endregion
 }
