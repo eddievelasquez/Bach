@@ -24,9 +24,9 @@
 
 namespace Bach.Model;
 
+using Internal;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using Internal;
 
 /// <summary>
 ///   A PitchClass represents a combination of a <see cref="P:Bach.Model.NoteName" />
@@ -375,7 +375,7 @@ public readonly struct PitchClass
   /// <param name="pitchClass">[out] The pitch class.</param>
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
-    string value,
+    string? value,
     out PitchClass pitchClass )
   {
     if( string.IsNullOrEmpty( value ) )

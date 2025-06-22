@@ -469,7 +469,7 @@ public readonly struct Interval
   ///   .
   /// </returns>
   public static bool TryParse(
-    string value,
+    string? value,
     out Interval interval )
   {
     if( !string.IsNullOrWhiteSpace( value ) )
