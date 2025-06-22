@@ -1,4 +1,4 @@
-﻿// Module Name: PitchCollection.cs
+// Module Name: PitchCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -74,7 +74,7 @@ public sealed class PitchCollection
 
   /// <inheritdoc />
   public Pitch this[
-    int index ] => _pitches[index];
+    int index] => _pitches[index];
 
   #endregion
 
@@ -186,25 +186,40 @@ public sealed class PitchCollection
   /// <param name="pitches">[out] The pitch collection.</param>
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
-    string value,
+    string? value,
     [NotNullWhen( true )] out PitchCollection? pitches )
   {
-    if( string.IsNullOrEmpty( value ) )
+    return TryParse( value.AsSpan(), out pitches );
+  }
+
+  /// <summary>Attempts to parse a pitch collection from the given span.</summary>
+  /// <param name="span">The value to parse.</param>
+  /// <param name="pitches">[out] The pitch collection.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    [NotNullWhen( true )] out PitchCollection? pitches )
+  {
+    if( span.IsEmpty )
     {
       pitches = null;
       return false;
     }
 
+    var sepCount = span.Count( ',' );
+    Span<Range> ranges = stackalloc Range[sepCount + 1];
+    var rangeCount = span.Split( ranges, ',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries );
     var tmp = new List<Pitch>();
-    foreach( var s in value.Split( ',' ) )
+
+    for( var i = 0; i < rangeCount; i++ )
     {
-      if( !Pitch.TryParse( s, out var note ) )
+      if( !Pitch.TryParse( span[ranges[i]], out var pitch ) )
       {
         pitches = null;
         return false;
       }
 
-      tmp.Add( note );
+      tmp.Add( pitch );
     }
 
     pitches = new PitchCollection( tmp );

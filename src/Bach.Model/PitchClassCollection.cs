@@ -73,7 +73,7 @@ public sealed class PitchClassCollection
 
   /// <inheritdoc />
   public PitchClass this[
-    int index ] => _pitchClasses[index];
+    int index] => _pitchClasses[index];
 
   #endregion
 
@@ -169,7 +169,7 @@ public sealed class PitchClassCollection
   /// <param name="pitchClasses">[out] The pitch class collection.</param>
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
-    string value,
+    string? value,
     [NotNullWhen( true )] out PitchClassCollection? pitchClasses )
   {
     if( string.IsNullOrEmpty( value ) )

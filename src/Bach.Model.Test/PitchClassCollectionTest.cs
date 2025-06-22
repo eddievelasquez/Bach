@@ -29,7 +29,7 @@ public sealed class PitchClassCollectionTest
   #region Public Methods
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
     object x = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     object y = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
@@ -57,7 +57,7 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType_ObjectVariant()
   {
     object actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     actual.Equals( int.MinValue )
@@ -66,7 +66,7 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithNull_ObjectVariant()
   {
     object actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     actual.Equals( null )
@@ -75,7 +75,7 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject_TypeSafeVariant()
   {
     var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     actual.Equals( actual )
@@ -84,7 +84,7 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashcode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
   {
     var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     var expected = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
@@ -97,43 +97,42 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void ParseTest()
+  public void Parse_ShouldReturnExpectedCollection_WhenInputIsValid()
   {
     PitchClassCollection.Parse( "C,Db" )
                         .Should()
-                        .BeEquivalentTo( new[] { PitchClass.C, PitchClass.DFlat } );
-    var act1 = () => PitchClassCollection.Parse( null! );
-    act1.Should()
-        .Throw<ArgumentNullException>();
-    var act2 = () => PitchClassCollection.Parse( "" );
-    act2.Should()
-        .Throw<ArgumentException>();
-    var act3 = () => PitchClassCollection.Parse( "C$" );
-    act3.Should()
-        .Throw<FormatException>();
+                        .BeEquivalentTo( [PitchClass.C, PitchClass.DFlat] );
+  }
+
+  [Theory]
+  [MemberData( nameof( ParseInvalidInputData ) )]
+  public void Parse_ShouldThrowExpectedException_WhenInputIsInvalid( string input, Type expectedExceptionType )
+  {
+    Action act = () => PitchClassCollection.Parse( input );
+    act.Should().Throw<Exception>().Where( e => e.GetType() == expectedExceptionType );
   }
 
   [Fact]
-  public void TryParseTest()
+  public void TryParse_ShouldReturnTrueAndCollectionOrFalse_WhenInputIsValidOrInvalid()
   {
     PitchClassCollection.TryParse( "C,Db", out var actual )
                         .Should()
                         .BeTrue();
     actual.Should()
-          .BeEquivalentTo( new[] { PitchClass.C, PitchClass.DFlat } );
-    PitchClassCollection.TryParse( null!, out _ )
-                        .Should()
-                        .BeFalse();
-    PitchClassCollection.TryParse( "", out _ )
-                        .Should()
-                        .BeFalse();
-    PitchClassCollection.TryParse( "C$", out _ )
+          .BeEquivalentTo( [PitchClass.C, PitchClass.DFlat] );
+  }
+
+  [Theory]
+  [MemberData( nameof( TryParseInvalidInputData ) )]
+  public void TryParse_ShouldReturnFalse_WhenInputIsInvalid( string? input )
+  {
+    PitchClassCollection.TryParse( input!, out _ )
                         .Should()
                         .BeFalse();
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     var x = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     var y = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
@@ -160,7 +159,7 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void Equals_TypeSafeShouldReturnFalse_WhenComparedWithDifferentType_TypeSafeVariant()
   {
     var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
 
@@ -171,13 +170,22 @@ public sealed class PitchClassCollectionTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void Equals_TypeSafeShouldReturnFalse_WhenComparedWithNull_TypeSafeVariant()
   {
     var actual = new PitchClassCollection( PitchClassCollection.Parse( "C,Db" ) );
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
+
+  public static TheoryData<string, Type> ParseInvalidInputData => new()
+  {
+    { null!, typeof(ArgumentNullException) },
+    { "", typeof(ArgumentException) },
+    { "C$", typeof(FormatException) }
+  };
+
+  public static TheoryData<string?> TryParseInvalidInputData => [(string?) null!, "", "C$"];
 
   #endregion
 }

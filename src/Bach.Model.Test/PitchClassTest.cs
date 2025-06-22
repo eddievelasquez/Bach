@@ -1,4 +1,4 @@
-﻿// Module Name: PitchClassTest.cs
+// Module Name: PitchClassTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -28,604 +28,588 @@ public sealed class PitchClassTest
 {
   #region Public Methods
 
-  [Fact]
-  public void AddTest()
+  [Theory]
+  [MemberData( nameof( AddIntervalFlats ) )]
+  public void Add_ShouldReturnExpectedPitchClass_WhenAddingSemitonesWithFlats( PitchClass pitchClass, int interval, PitchClass expectedFlat )
   {
-    AddTestImpl( PitchClass.C, 1, PitchClass.CSharp, PitchClass.DFlat );
-    AddTestImpl( PitchClass.C, 2, PitchClass.D );
-    AddTestImpl( PitchClass.C, 3, PitchClass.DSharp, PitchClass.EFlat );
-    AddTestImpl( PitchClass.C, 4, PitchClass.E );
-    AddTestImpl( PitchClass.C, 5, PitchClass.F );
-    AddTestImpl( PitchClass.C, 6, PitchClass.FSharp, PitchClass.GFlat );
-    AddTestImpl( PitchClass.C, 7, PitchClass.G );
-    AddTestImpl( PitchClass.C, 8, PitchClass.GSharp, PitchClass.AFlat );
-    AddTestImpl( PitchClass.C, 9, PitchClass.A );
-    AddTestImpl( PitchClass.C, 10, PitchClass.ASharp, PitchClass.BFlat );
-    AddTestImpl( PitchClass.C, 11, PitchClass.B );
-    AddTestImpl( PitchClass.C, 12, PitchClass.C );
-  }
-
-  [Fact]
-  public void ArithmeticOperatorsTest()
-  {
-    ( PitchClass.B + 1 ).Should()
-                        .Be( PitchClass.C );
-    ( PitchClass.C + 12 ).Should()
-                         .Be( PitchClass.C );
-    ( PitchClass.C - 1 ).Should()
-                        .Be( PitchClass.B );
-    ( PitchClass.C - 12 ).Should()
-                         .Be( PitchClass.C );
-
-    var pitchClass = PitchClass.B;
-    ( pitchClass++ ).Should()
-                    .Be( PitchClass.B );
-    pitchClass.Should()
-              .Be( PitchClass.C );
-    ( ++pitchClass ).Should()
-                    .Be( PitchClass.CSharp );
-
-    pitchClass = PitchClass.C;
-    ( pitchClass-- ).Should()
-                    .Be( PitchClass.C );
-    pitchClass.Should()
-              .Be( PitchClass.B );
-    ( --pitchClass ).Should()
-                    .Be( PitchClass.BFlat );
-  }
-
-  [Fact]
-  public void CompareToTest()
-  {
-    ( PitchClass.C.CompareTo( PitchClass.C ) == 0 ).Should()
-                                                   .BeTrue();
-    ( PitchClass.C.CompareTo( PitchClass.D ) < 0 ).Should()
-                                                  .BeTrue();
-    ( PitchClass.D.CompareTo( PitchClass.C ) > 0 ).Should()
-                                                  .BeTrue();
-    ( PitchClass.C.CompareTo( PitchClass.B ) < 0 ).Should()
-                                                  .BeTrue();
-    ( PitchClass.B.CompareTo( PitchClass.C ) > 0 ).Should()
-                                                  .BeTrue();
-  }
-
-  [Fact]
-  public void ConstructorTest()
-  {
-    ConstructorTestImpl( NoteName.C, Accidental.DoubleFlat );
-    ConstructorTestImpl( NoteName.C, Accidental.Flat );
-    ConstructorTestImpl( NoteName.C, Accidental.Natural );
-    ConstructorTestImpl( NoteName.C, Accidental.Sharp );
-    ConstructorTestImpl( NoteName.C, Accidental.DoubleSharp );
-
-    ConstructorTestImpl( NoteName.D, Accidental.DoubleFlat );
-    ConstructorTestImpl( NoteName.D, Accidental.Flat );
-    ConstructorTestImpl( NoteName.D, Accidental.Natural );
-    ConstructorTestImpl( NoteName.D, Accidental.Sharp );
-    ConstructorTestImpl( NoteName.D, Accidental.DoubleSharp );
-
-    ConstructorTestImpl( NoteName.E, Accidental.DoubleFlat );
-    ConstructorTestImpl( NoteName.E, Accidental.Flat );
-    ConstructorTestImpl( NoteName.E, Accidental.Natural );
-    ConstructorTestImpl( NoteName.E, Accidental.Sharp );
-    ConstructorTestImpl( NoteName.E, Accidental.DoubleSharp );
-
-    ConstructorTestImpl( NoteName.F, Accidental.DoubleFlat );
-    ConstructorTestImpl( NoteName.F, Accidental.Flat );
-    ConstructorTestImpl( NoteName.F, Accidental.Natural );
-    ConstructorTestImpl( NoteName.F, Accidental.Sharp );
-    ConstructorTestImpl( NoteName.F, Accidental.DoubleSharp );
-
-    ConstructorTestImpl( NoteName.G, Accidental.DoubleFlat );
-    ConstructorTestImpl( NoteName.G, Accidental.Flat );
-    ConstructorTestImpl( NoteName.G, Accidental.Natural );
-    ConstructorTestImpl( NoteName.G, Accidental.Sharp );
-    ConstructorTestImpl( NoteName.G, Accidental.DoubleSharp );
-
-    ConstructorTestImpl( NoteName.A, Accidental.DoubleFlat );
-    ConstructorTestImpl( NoteName.A, Accidental.Flat );
-    ConstructorTestImpl( NoteName.A, Accidental.Natural );
-    ConstructorTestImpl( NoteName.A, Accidental.Sharp );
-    ConstructorTestImpl( NoteName.A, Accidental.DoubleSharp );
-
-    ConstructorTestImpl( NoteName.B, Accidental.DoubleFlat );
-    ConstructorTestImpl( NoteName.B, Accidental.Flat );
-    ConstructorTestImpl( NoteName.B, Accidental.Natural );
-    ConstructorTestImpl( NoteName.B, Accidental.Sharp );
-    ConstructorTestImpl( NoteName.B, Accidental.DoubleSharp );
-  }
-
-  [Fact]
-  public void EqualsTest()
-  {
-    object actual = PitchClass.Create( NoteName.C );
-    PitchClass.C.Equals( actual )
+    pitchClass.Add( interval )
               .Should()
-              .BeTrue();
-    PitchClass.C.Equals( null )
-              .Should()
-              .BeFalse();
+              .Be( expectedFlat );
   }
 
-  [Fact]
-  public void GetEnharmonicTest()
+  [Theory]
+  [MemberData( nameof( AddSemitonesSharps ) )]
+  public void Add_ShouldReturnExpectedPitchClass_WhenAddingSemitonesWithSharps( PitchClass pitchClass, int interval, PitchClass expectedSharp )
   {
-    EnharmonicTestImpl( PitchClass.C, "Dbb", "B#" );
-    EnharmonicTestImpl( PitchClass.CSharp, "Db", "B##" );
-    EnharmonicTestImpl( PitchClass.D, "Ebb", "C##" );
-    EnharmonicTestImpl( PitchClass.DSharp, "Fbb", "Eb" );
-    EnharmonicTestImpl( PitchClass.E, "Fb", "D##" );
-    EnharmonicTestImpl( PitchClass.F, "Gbb", "E#" );
-    EnharmonicTestImpl( PitchClass.FSharp, "Gb", "E##" );
-    EnharmonicTestImpl( PitchClass.G, "Abb", "F##" );
-    EnharmonicTestImpl( PitchClass.GSharp, "Ab" );
-    EnharmonicTestImpl( PitchClass.A, "Bbb", "G##" );
-    EnharmonicTestImpl( PitchClass.ASharp, "Cbb", "Bb" );
-    EnharmonicTestImpl( PitchClass.B, "Cb", "A##" );
-
-    // Not enharmonic
-    NotEnharmonicTestImpl( PitchClass.C, NoteName.E, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.CSharp, NoteName.E, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.D, NoteName.F, NoteName.C );
-    NotEnharmonicTestImpl( PitchClass.DSharp, NoteName.G, NoteName.D );
-    NotEnharmonicTestImpl( PitchClass.E, NoteName.G, NoteName.D );
-    NotEnharmonicTestImpl( PitchClass.F, NoteName.A, NoteName.E );
-    NotEnharmonicTestImpl( PitchClass.FSharp, NoteName.A, NoteName.E );
-    NotEnharmonicTestImpl( PitchClass.G, NoteName.B, NoteName.F );
-    NotEnharmonicTestImpl( PitchClass.GSharp, NoteName.B, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.A, NoteName.C, NoteName.G );
-    NotEnharmonicTestImpl( PitchClass.ASharp, NoteName.D, NoteName.A );
-    NotEnharmonicTestImpl( PitchClass.B, NoteName.D, NoteName.A );
+    pitchClass.Add( interval )
+              .Should()
+              .Be( expectedSharp );
   }
 
-  [Fact]
-  public void LogicalOperatorsTest()
+  [Theory]
+  [MemberData( nameof( AddIntervals ) )]
+  public void AdditionOperator_ShouldReturnExpectedPitchClass_WhenAddingInterval(
+    PitchClass pitchClass, Interval interval, PitchClass expected )
   {
-    ( PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ) ).Should()
-                                                                         .BeTrue();
-    ( PitchClass.C != PitchClass.B ).Should()
-                                    .BeTrue();
-    ( PitchClass.C < PitchClass.B ).Should()
-                                   .BeTrue();
-    ( PitchClass.C <= PitchClass.B ).Should()
-                                    .BeTrue();
-    ( PitchClass.D > PitchClass.C ).Should()
-                                   .BeTrue();
-    ( PitchClass.D >= PitchClass.C ).Should()
-                                    .BeTrue();
+    ( pitchClass + interval ).Should().Be( expected );
   }
 
-  [Fact]
-  public void NextTest()
+  [Theory]
+  [MemberData( nameof( AddSemitonesSharps ) )]
+  public void AdditionOperator_ShouldReturnExpectedPitchClass_WhenAddingSemitones( PitchClass left, int right, PitchClass expected )
   {
-    NextTestImpl( PitchClass.C, PitchClass.CSharp, PitchClass.DFlat );
-    NextTestImpl( PitchClass.CSharp, PitchClass.D );
-    NextTestImpl( PitchClass.DFlat, PitchClass.D );
-    NextTestImpl( PitchClass.D, PitchClass.DSharp, PitchClass.EFlat );
-    NextTestImpl( PitchClass.DSharp, PitchClass.E );
-    NextTestImpl( PitchClass.EFlat, PitchClass.E );
-    NextTestImpl( PitchClass.E, PitchClass.F );
-    NextTestImpl( PitchClass.F, PitchClass.FSharp, PitchClass.GFlat );
-    NextTestImpl( PitchClass.FSharp, PitchClass.G );
-    NextTestImpl( PitchClass.GFlat, PitchClass.G );
-    NextTestImpl( PitchClass.G, PitchClass.GSharp, PitchClass.AFlat );
-    NextTestImpl( PitchClass.GSharp, PitchClass.A );
-    NextTestImpl( PitchClass.AFlat, PitchClass.A );
-    NextTestImpl( PitchClass.A, PitchClass.ASharp, PitchClass.BFlat );
-    NextTestImpl( PitchClass.ASharp, PitchClass.B );
-    NextTestImpl( PitchClass.BFlat, PitchClass.B );
-    NextTestImpl( PitchClass.B, PitchClass.C );
-
-    NextTestImpl( PitchClass.Create( NoteName.C, Accidental.DoubleSharp ), PitchClass.DSharp, PitchClass.EFlat );
-    NextTestImpl( PitchClass.Create( NoteName.E, Accidental.DoubleSharp ), PitchClass.G );
-    NextTestImpl( PitchClass.Create( NoteName.B, Accidental.DoubleSharp ), PitchClass.D );
+    ( left + right ).Should().Be( expected );
   }
 
-  [Fact]
-  public void NoteIntervalAdditionTest()
+  [Theory]
+  [MemberData( nameof( ArithmeticDecrementTestData ) )]
+  public void DecrementOperator_ShouldReturnExpectedPitchClass_WhenDecrementing( PitchClass initial, PitchClass afterPostDecrement, PitchClass afterPreDecrement )
   {
-    ( PitchClass.C + Interval.MajorThird ).Should()
-                                          .Be( PitchClass.E );
-    ( PitchClass.CSharp + Interval.MinorThird ).Should()
-                                               .Be( PitchClass.E );
-    ( PitchClass.D + Interval.MinorThird ).Should()
-                                          .Be( PitchClass.F );
-    ( PitchClass.D + Interval.Fourth ).Should()
-                                      .Be( PitchClass.G );
-    ( PitchClass.E + Interval.Fourth ).Should()
-                                      .Be( PitchClass.A );
-    ( PitchClass.EFlat + Interval.Fourth ).Should()
-                                          .Be( PitchClass.AFlat );
-    ( PitchClass.EFlat + Interval.AugmentedThird ).Should()
-                                                  .Be( PitchClass.GSharp );
-    ( PitchClass.F + Interval.MajorSixth ).Should()
-                                          .Be( PitchClass.D );
-    ( PitchClass.G + Interval.Fifth ).Should()
-                                     .Be( PitchClass.D );
-    ( PitchClass.F + Interval.Fifth ).Should()
-                                     .Be( PitchClass.C );
-    ( PitchClass.A + Interval.Fifth ).Should()
-                                     .Be( PitchClass.E );
-    ( PitchClass.AFlat + Interval.Fifth ).Should()
-                                         .Be( PitchClass.EFlat );
-    ( PitchClass.GSharp + Interval.DiminishedSixth ).Should()
-                                                    .Be( PitchClass.EFlat );
-    ( PitchClass.FSharp + Interval.AugmentedFourth ).Should()
-                                                    .Be( PitchClass.C );
-    ( PitchClass.GFlat + Interval.DiminishedFifth ).Should()
-                                                   .Be( PitchClass.C );
-    ( PitchClass.C + Interval.AugmentedSecond ).Should()
-                                               .Be( PitchClass.DSharp );
-    ( PitchClass.C + Interval.DiminishedFifth ).Should()
-                                               .Be( PitchClass.FSharp );
-    ( PitchClass.C + Interval.AugmentedFourth ).Should()
-                                               .Be( PitchClass.GFlat );
-    ( PitchClass.DSharp + Interval.DiminishedSeventh ).Should()
-                                                      .Be( PitchClass.C );
-    ( PitchClass.DSharp + Interval.DiminishedThird ).Should()
-                                                    .Be( PitchClass.F );
-    ( PitchClass.Parse( "D##" ) + Interval.DiminishedFourth ).Should()
-                                                             .Be( PitchClass.GSharp );
+    var pitchClass = initial;
+    ( pitchClass-- ).Should().Be( afterPostDecrement );
+
+    pitchClass.Should().Be( afterPreDecrement );
+    ( --pitchClass ).Should().Be( afterPreDecrement.Subtract( 1 ) );
   }
 
-  [Fact]
-  public void NoteSubtractIntervalTest()
+  [Theory]
+  [MemberData( nameof( EqualsTestData ) )]
+  public void Equals_ShouldReturnExpectedValue_WhenComparingPitchClasses(
+    PitchClass pitchClass, object? other, bool expected )
   {
-    ( PitchClass.F - Interval.AugmentedFourth ).Should()
-                                               .Be( PitchClass.Parse( "Cb" ) );
-    ( PitchClass.E - Interval.MajorThird ).Should()
-                                          .Be( PitchClass.C );
-    ( PitchClass.E - Interval.MinorThird ).Should()
-                                          .Be( PitchClass.CSharp );
-    ( PitchClass.F - Interval.MinorThird ).Should()
-                                          .Be( PitchClass.D );
-    ( PitchClass.G - Interval.Fourth ).Should()
-                                      .Be( PitchClass.D );
-    ( PitchClass.A - Interval.Fourth ).Should()
-                                      .Be( PitchClass.E );
-    ( PitchClass.AFlat - Interval.Fourth ).Should()
-                                          .Be( PitchClass.EFlat );
-    ( PitchClass.GSharp - Interval.AugmentedThird ).Should()
-                                                   .Be( PitchClass.EFlat );
-    ( PitchClass.D - Interval.MajorSixth ).Should()
-                                          .Be( PitchClass.F );
-    ( PitchClass.D - Interval.Fifth ).Should()
-                                     .Be( PitchClass.G );
-    ( PitchClass.C - Interval.Fifth ).Should()
-                                     .Be( PitchClass.F );
-    ( PitchClass.E - Interval.Fifth ).Should()
-                                     .Be( PitchClass.A );
-    ( PitchClass.EFlat - Interval.Fifth ).Should()
-                                         .Be( PitchClass.AFlat );
-    ( PitchClass.EFlat - Interval.DiminishedSixth ).Should()
-                                                   .Be( PitchClass.GSharp );
-    ( PitchClass.C - Interval.AugmentedFourth ).Should()
-                                               .Be( PitchClass.FSharp );
-    ( PitchClass.C - Interval.DiminishedFifth ).Should()
-                                               .Be( PitchClass.GFlat );
-    ( PitchClass.DSharp - Interval.AugmentedSecond ).Should()
-                                                    .Be( PitchClass.C );
-    ( PitchClass.FSharp - Interval.DiminishedFifth ).Should()
-                                                    .Be( PitchClass.C );
-    ( PitchClass.GFlat - Interval.AugmentedFourth ).Should()
-                                                   .Be( PitchClass.C );
-    ( PitchClass.C - Interval.DiminishedSeventh ).Should()
-                                                 .Be( PitchClass.DSharp );
-    ( PitchClass.F - Interval.DiminishedThird ).Should()
-                                               .Be( PitchClass.DSharp );
-    ( PitchClass.GSharp - Interval.DiminishedFourth ).Should()
-                                                     .Be( PitchClass.Parse( "D##" ) );
+    pitchClass.Equals( other ).Should().Be( expected );
   }
 
-  [Fact]
-  public void NoteSubtractionTest()
+  [Theory]
+  [MemberData( nameof( EnharmonicData ) )]
+  public void GetEnharmonic_ShouldReturnExpectedPitchClass_WhenGivenEnharmonicNoteName(
+    PitchClass pitchClass, string enharmonic )
   {
-    ( PitchClass.C - PitchClass.E ).Should()
-                                   .Be( Interval.MajorThird );
-    ( PitchClass.CSharp - PitchClass.E ).Should()
-                                        .Be( Interval.MinorThird );
-    ( PitchClass.D - PitchClass.F ).Should()
-                                   .Be( Interval.MinorThird );
-    ( PitchClass.D - PitchClass.G ).Should()
-                                   .Be( Interval.Fourth );
-    ( PitchClass.E - PitchClass.A ).Should()
-                                   .Be( Interval.Fourth );
-    ( PitchClass.EFlat - PitchClass.AFlat ).Should()
-                                           .Be( Interval.Fourth );
-    ( PitchClass.EFlat - PitchClass.GSharp ).Should()
-                                            .Be( Interval.AugmentedThird );
-    ( PitchClass.F - PitchClass.D ).Should()
-                                   .Be( Interval.MajorSixth );
-    ( PitchClass.G - PitchClass.D ).Should()
-                                   .Be( Interval.Fifth );
-    ( PitchClass.F - PitchClass.C ).Should()
-                                   .Be( Interval.Fifth );
-    ( PitchClass.A - PitchClass.E ).Should()
-                                   .Be( Interval.Fifth );
-    ( PitchClass.AFlat - PitchClass.EFlat ).Should()
-                                           .Be( Interval.Fifth );
-    ( PitchClass.GSharp - PitchClass.EFlat ).Should()
-                                            .Be( Interval.DiminishedSixth );
-    ( PitchClass.C - PitchClass.FSharp ).Should()
-                                        .Be( Interval.AugmentedFourth );
-    ( PitchClass.C - PitchClass.GFlat ).Should()
-                                       .Be( Interval.DiminishedFifth );
-    ( PitchClass.C - PitchClass.DSharp ).Should()
-                                        .Be( Interval.AugmentedSecond );
-    ( PitchClass.FSharp - PitchClass.C ).Should()
-                                        .Be( Interval.DiminishedFifth );
-    ( PitchClass.GFlat - PitchClass.C ).Should()
-                                       .Be( Interval.AugmentedFourth );
-    ( PitchClass.DSharp - PitchClass.C ).Should()
-                                        .Be( Interval.DiminishedSeventh );
-    ( PitchClass.C - PitchClass.Create( NoteName.E, Accidental.DoubleFlat ) ).Should()
-                                                                             .Be( Interval.DiminishedThird );
-
-    ( PitchClass.Create( NoteName.D, Accidental.DoubleSharp ) - PitchClass.GSharp ).Should()
-      .Be( Interval.DiminishedFourth );
+    var enharmonicPitchClass = PitchClass.Parse( enharmonic );
+    pitchClass.GetEnharmonic( enharmonicPitchClass.NoteName )
+              .Should()
+              .Be( enharmonicPitchClass );
   }
 
-  [Fact]
-  public void ParseRejectsInvalidStringsTest()
-  {
-    var act1 = () => PitchClass.Parse( null! );
-    act1.Should()
-        .Throw<ArgumentNullException>();
-    var act2 = () => PitchClass.Parse( "" );
-    act2.Should()
-        .Throw<ArgumentException>();
-    var act3 = () => PitchClass.Parse( "J" );
-    act3.Should()
-        .Throw<FormatException>();
-    var act4 = () => PitchClass.Parse( "C$" );
-    act4.Should()
-        .Throw<FormatException>();
-  }
-
-  [Fact]
-  public void ParseTest()
-  {
-    PitchClass.Parse( "Cbb" )
-              .Should()
-              .Be( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ) );
-    PitchClass.Parse( "CB" )
-              .Should()
-              .Be( PitchClass.Create( NoteName.C, Accidental.Flat ) );
-    PitchClass.Parse( "C" )
-              .Should()
-              .Be( PitchClass.C );
-    PitchClass.Parse( "c#" )
-              .Should()
-              .Be( PitchClass.CSharp );
-    PitchClass.Parse( "c##" )
-              .Should()
-              .Be( PitchClass.Create( NoteName.C, Accidental.DoubleSharp ) );
-  }
-
-  [Fact]
-  public void PredefinedNoteTest()
-  {
-    NoteMemberTestImpl( PitchClass.C, NoteName.C, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.CSharp, NoteName.C, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.DFlat, NoteName.D, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.D, NoteName.D, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.DSharp, NoteName.D, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.EFlat, NoteName.E, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.E, NoteName.E, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.F, NoteName.F, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.FSharp, NoteName.F, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.GFlat, NoteName.G, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.G, NoteName.G, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.GSharp, NoteName.G, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.AFlat, NoteName.A, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.A, NoteName.A, Accidental.Natural );
-    NoteMemberTestImpl( PitchClass.ASharp, NoteName.A, Accidental.Sharp );
-    NoteMemberTestImpl( PitchClass.BFlat, NoteName.B, Accidental.Flat );
-    NoteMemberTestImpl( PitchClass.B, NoteName.B, Accidental.Natural );
-  }
-
-  [Fact]
-  public void PreviousTest()
-  {
-    PreviousTestImpl( PitchClass.C, PitchClass.B );
-    PreviousTestImpl( PitchClass.CSharp, PitchClass.C );
-    PreviousTestImpl( PitchClass.DFlat, PitchClass.C );
-    PreviousTestImpl( PitchClass.D, PitchClass.CSharp, PitchClass.DFlat );
-    PreviousTestImpl( PitchClass.DSharp, PitchClass.D );
-    PreviousTestImpl( PitchClass.EFlat, PitchClass.D );
-    PreviousTestImpl( PitchClass.E, PitchClass.DSharp, PitchClass.EFlat );
-    PreviousTestImpl( PitchClass.F, PitchClass.E );
-    PreviousTestImpl( PitchClass.FSharp, PitchClass.F );
-    PreviousTestImpl( PitchClass.GFlat, PitchClass.F );
-    PreviousTestImpl( PitchClass.G, PitchClass.FSharp, PitchClass.GFlat );
-    PreviousTestImpl( PitchClass.GSharp, PitchClass.G );
-    PreviousTestImpl( PitchClass.AFlat, PitchClass.G );
-    PreviousTestImpl( PitchClass.A, PitchClass.GSharp, PitchClass.AFlat );
-    PreviousTestImpl( PitchClass.ASharp, PitchClass.A );
-    PreviousTestImpl( PitchClass.BFlat, PitchClass.A );
-    PreviousTestImpl( PitchClass.B, PitchClass.ASharp, PitchClass.BFlat );
-
-    PreviousTestImpl( PitchClass.Create( NoteName.B, Accidental.DoubleFlat ), PitchClass.GSharp, PitchClass.AFlat );
-    PreviousTestImpl( PitchClass.Create( NoteName.C, Accidental.DoubleFlat ), PitchClass.A );
-  }
-
-  [Fact]
-  public void SubtractTest()
-  {
-    SubtractTestImpl( PitchClass.B, 1, PitchClass.BFlat, PitchClass.ASharp );
-    SubtractTestImpl( PitchClass.B, 2, PitchClass.A );
-    SubtractTestImpl( PitchClass.B, 3, PitchClass.GSharp, PitchClass.AFlat );
-    SubtractTestImpl( PitchClass.B, 4, PitchClass.G );
-    SubtractTestImpl( PitchClass.B, 5, PitchClass.FSharp, PitchClass.GFlat );
-    SubtractTestImpl( PitchClass.B, 6, PitchClass.F );
-    SubtractTestImpl( PitchClass.B, 7, PitchClass.E );
-    SubtractTestImpl( PitchClass.B, 8, PitchClass.DSharp, PitchClass.EFlat );
-    SubtractTestImpl( PitchClass.B, 9, PitchClass.D );
-    SubtractTestImpl( PitchClass.B, 10, PitchClass.CSharp, PitchClass.DFlat );
-    SubtractTestImpl( PitchClass.B, 11, PitchClass.C );
-    SubtractTestImpl( PitchClass.B, 12, PitchClass.B );
-  }
-
-  [Fact]
-  public void ToStringTest()
-  {
-    PitchClass.Create( NoteName.C, Accidental.DoubleFlat )
-              .ToString()
-              .Should()
-              .Be( "Cbb" );
-    PitchClass.Create( NoteName.C, Accidental.Flat )
-              .ToString()
-              .Should()
-              .Be( "Cb" );
-    PitchClass.Create( NoteName.C )
-              .ToString()
-              .Should()
-              .Be( "C" );
-    PitchClass.Create( NoteName.C, Accidental.Sharp )
-              .ToString()
-              .Should()
-              .Be( "C#" );
-    PitchClass.Create( NoteName.C, Accidental.DoubleSharp )
-              .ToString()
-              .Should()
-              .Be( "C##" );
-  }
-
-  [Fact]
-  public void TryParseRejectsInvalidStringsTest()
-  {
-    PitchClass.TryParse( null!, out _ )
-              .Should()
-              .BeFalse();
-    PitchClass.TryParse( "", out _ )
-              .Should()
-              .BeFalse();
-    PitchClass.TryParse( "J", out _ )
-              .Should()
-              .BeFalse();
-    PitchClass.TryParse( "C$", out _ )
-              .Should()
-              .BeFalse();
-  }
-
-  [Fact]
-  public void TryParseTest()
-  {
-    TryParseTestImpl( "C", PitchClass.C );
-    TryParseTestImpl( "C#", PitchClass.CSharp );
-    TryParseTestImpl( "C##", PitchClass.D );
-    TryParseTestImpl( "Cb", PitchClass.B );
-    TryParseTestImpl( "Cbb", PitchClass.BFlat );
-    TryParseTestImpl( "B#", PitchClass.C );
-    TryParseTestImpl( "B##", PitchClass.CSharp );
-    TryParseTestImpl( "Bb", PitchClass.BFlat );
-    TryParseTestImpl( "Bbb", PitchClass.A );
-  }
-
-  #endregion
-
-  #region Implementation
-
-  private static void NotEnharmonicTestImpl(
-    PitchClass pitchClass,
-    NoteName startInclusive,
-    NoteName lastExclusive )
+  [Theory]
+  [MemberData( nameof( NotEnharmonicTestData ) )]
+  public void GetEnharmonic_ShouldReturnNull_WhenNoEnharmonicExists( PitchClass pitchClass, NoteName startInclusive, NoteName lastExclusive )
   {
     while( startInclusive != lastExclusive )
     {
       pitchClass.GetEnharmonic( startInclusive )
                 .Should()
                 .BeNull();
+
       ++startInclusive;
     }
   }
 
-  private static void EnharmonicTestImpl(
-    PitchClass pitchClass,
-    params string[] enharmonics )
+  [Theory]
+  [MemberData( nameof( ArithmeticIncrementTestData ) )]
+  public void IncrementOperator_ShouldReturnExpectedPitchClass_WhenIncrementing( PitchClass initial, PitchClass afterPostIncrement, PitchClass afterPreIncrement )
   {
-    foreach( var s in enharmonics )
-    {
-      var enharmonic = PitchClass.Parse( s );
-      pitchClass.GetEnharmonic( enharmonic.NoteName )
-                .Should()
-                .Be( enharmonic );
-    }
+    var pitchClass = initial;
+    ( pitchClass++ ).Should().Be( afterPostIncrement );
+
+    pitchClass.Should().Be( afterPreIncrement );
+    ( ++pitchClass ).Should().Be( afterPreIncrement.Add( 1 ) );
   }
 
-  private static void ConstructorTestImpl(
-    NoteName noteName,
-    Accidental accidental )
+  [Theory]
+  [MemberData( nameof( InvalidPitchClassStrings ) )]
+  public void Parse_ShouldThrowException_WhenGivenInvalidString(
+    string value, Type exceptionType )
   {
-    var note = PitchClass.Create( noteName, accidental );
-    NoteMemberTestImpl( note, noteName, accidental );
+    var act = () => PitchClass.Parse( value );
+    act.Should().Throw<Exception>().Where( e => e.GetType() == exceptionType );
   }
 
-  private static void NoteMemberTestImpl(
-    PitchClass pitchClass,
-    NoteName noteName,
-    Accidental accidental )
+  [Theory]
+  [MemberData( nameof( ValidPitchClassStrings ) )]
+  public void Parse_ShouldReturnExpectedPitchClass_WhenGivenValidString(
+    string value, NoteName noteName, Accidental accidental )
+  {
+    var expected = PitchClass.Create( noteName, accidental );
+    PitchClass.Parse( value ).Should().Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( NoteNamesAndAccidentals ) )]
+  public void PredefinedNotes_ShouldReturnExpectedNoteNameAndAccidental(
+    PitchClass pitchClass, NoteName noteName, Accidental accidental )
   {
     pitchClass.NoteName.Should()
               .Be( noteName );
+
     pitchClass.Accidental.Should()
               .Be( accidental );
   }
 
-  private static void TryParseTestImpl(
-    string value,
-    PitchClass expected )
+  [Theory]
+  [MemberData( nameof( RelationalOperatorsTestData ) )]
+  public void RelationalOperators_ShouldReturnTrue_WhenComparingPitchClasses(
+    bool actual )
+  {
+    actual.Should().BeTrue();
+  }
+
+  [Theory]
+  [MemberData( nameof( SubtractIntervalTestData ) )]
+  public void Subtract_ShouldReturnExpectedPitchClass_WhenSubtractingInterval(
+    PitchClass pitchClass, Interval interval, PitchClass expected )
+  {
+    ( pitchClass - interval ).Should().Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( SubtractTestData ) )]
+  public void Subtract_ShouldReturnExpectedPitchClass_WhenSubtractingSemitones(
+    PitchClass pitchClass, int interval, PitchClass expectedSharp, PitchClass? expectedFlat )
+  {
+    pitchClass.Subtract( interval )
+              .Should()
+              .Be( expectedSharp );
+
+    pitchClass.Subtract( interval )
+              .Should()
+              .Be( expectedFlat ?? expectedSharp );
+  }
+
+  [Theory]
+  [MemberData( nameof( SubtractPitchClassTestData ) )]
+  public void SubtractOperator_ShouldReturnExpectedInterval_WhenSubtractingPitchClasses(
+    PitchClass left, PitchClass right, Interval expected )
+  {
+    ( left - right ).Should().Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( ArithmeticSubtractionTestData ) )]
+  public void SubtractionOperator_ShouldReturnExpectedPitchClass_WhenSubtractingSemitones( PitchClass left, int right, PitchClass expected )
+  {
+    ( left - right ).Should().Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( CompareToTestData ) )]
+  public void CompareTo_ShouldReturnExpectedSign_WhenComparingPitchClasses(
+    PitchClass left, PitchClass right, int expectedSign )
+  {
+    Math.Sign( left.CompareTo( right ) ).Should().Be( expectedSign );
+  }
+
+  [Theory]
+  [MemberData( nameof( ConstructorTestData ) )]
+  public void Create_ShouldReturnExpectedPitchClass_WhenGivenNoteNameAndAccidental(
+    NoteName noteName, Accidental accidental )
+  {
+    var note = PitchClass.Create( noteName, accidental );
+
+    note.NoteName.Should()
+        .Be( noteName );
+
+    note.Accidental.Should()
+        .Be( accidental );
+  }
+
+  [Theory]
+  [MemberData( nameof( ToStringTestData ) )]
+  public void ToString_ShouldReturnExpectedString_WhenCalled(
+    NoteName noteName, Accidental accidental, string expected )
+  {
+    var pitchClass = PitchClass.Create( noteName, accidental );
+    pitchClass.ToString().Should().Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( TryParseInvalidStringsTestData ) )]
+  public void TryParse_ShouldReturnFalse_WhenGivenInvalidString( string value )
+  {
+    PitchClass.TryParse( value, out _ ).Should().BeFalse();
+  }
+
+  [Theory]
+  [MemberData( nameof( TryParseValidStringsTestData ) )]
+  public void TryParse_ShouldReturnExpectedPitchClass_WhenGivenValidString(
+    string value, PitchClass expected )
   {
     PitchClass.TryParse( value, out var actual )
               .Should()
               .BeTrue();
+
     actual.Should()
           .Be( expected );
   }
 
-  private static void NextTestImpl(
-    PitchClass pitchClass,
-    PitchClass expectedSharp,
-    PitchClass? expectedFlat = null )
-  {
-    AddTestImpl( pitchClass, 1, expectedSharp, expectedFlat );
-  }
+  #endregion
 
-  private static void PreviousTestImpl(
-    PitchClass pitchClass,
-    PitchClass expectedSharp,
-    PitchClass? expectedFlat = null )
-  {
-    SubtractTestImpl( pitchClass, 1, expectedSharp, expectedFlat );
-  }
+  #region TheoryData
 
-  private static void AddTestImpl(
-    PitchClass pitchClass,
-    int interval,
-    PitchClass expectedSharp,
-    PitchClass? expectedFlat = null )
-  {
-    pitchClass.Add( interval )
-              .Should()
-              .Be( expectedSharp );
-    pitchClass.Add( interval )
-              .Should()
-              .Be( expectedFlat ?? expectedSharp );
-  }
+  public static TheoryData<PitchClass, int, PitchClass, PitchClass?> AddTestData =>
+    new()
+    {
+        { PitchClass.C, 1, PitchClass.CSharp, PitchClass.DFlat },
+        { PitchClass.C, 2, PitchClass.D, null },
+        { PitchClass.C, 3, PitchClass.DSharp, PitchClass.EFlat },
+        { PitchClass.C, 4, PitchClass.E, null },
+        { PitchClass.C, 5, PitchClass.F, null },
+        { PitchClass.C, 6, PitchClass.FSharp, PitchClass.GFlat },
+        { PitchClass.C, 7, PitchClass.G, null },
+        { PitchClass.C, 8, PitchClass.GSharp, PitchClass.AFlat },
+        { PitchClass.C, 9, PitchClass.A, null },
+        { PitchClass.C, 10, PitchClass.ASharp, PitchClass.BFlat },
+        { PitchClass.C, 11, PitchClass.B, null },
+        { PitchClass.C, 12, PitchClass.C, null }
+    };
 
-  private static void SubtractTestImpl(
-    PitchClass pitchClass,
-    int interval,
-    PitchClass expectedSharp,
-    PitchClass? expectedFlat = null )
+  public static TheoryData<PitchClass, PitchClass, int> CompareToTestData =>
+    new()
+    {
+        { PitchClass.C, PitchClass.C, 0 },
+        { PitchClass.C, PitchClass.D, -1 },
+        { PitchClass.D, PitchClass.C, 1 },
+        { PitchClass.C, PitchClass.B, -1 },
+        { PitchClass.B, PitchClass.C, 1 }
+    };
+
+  public static TheoryData<NoteName, Accidental> ConstructorTestData =>
+    new()
+    {
+        { NoteName.C, Accidental.DoubleFlat },
+        { NoteName.C, Accidental.Flat },
+        { NoteName.C, Accidental.Natural },
+        { NoteName.C, Accidental.Sharp },
+        { NoteName.C, Accidental.DoubleSharp },
+        { NoteName.D, Accidental.DoubleFlat },
+        { NoteName.D, Accidental.Flat },
+        { NoteName.D, Accidental.Natural },
+        { NoteName.D, Accidental.Sharp },
+        { NoteName.D, Accidental.DoubleSharp },
+        { NoteName.E, Accidental.DoubleFlat },
+        { NoteName.E, Accidental.Flat },
+        { NoteName.E, Accidental.Natural },
+        { NoteName.E, Accidental.Sharp },
+        { NoteName.E, Accidental.DoubleSharp },
+        { NoteName.F, Accidental.DoubleFlat },
+        { NoteName.F, Accidental.Flat },
+        { NoteName.F, Accidental.Natural },
+        { NoteName.F, Accidental.Sharp },
+        { NoteName.F, Accidental.DoubleSharp },
+        { NoteName.G, Accidental.DoubleFlat },
+        { NoteName.G, Accidental.Flat },
+        { NoteName.G, Accidental.Natural },
+        { NoteName.G, Accidental.Sharp },
+        { NoteName.G, Accidental.DoubleSharp },
+        { NoteName.A, Accidental.DoubleFlat },
+        { NoteName.A, Accidental.Flat },
+        { NoteName.A, Accidental.Natural },
+        { NoteName.A, Accidental.Sharp },
+        { NoteName.A, Accidental.DoubleSharp },
+        { NoteName.B, Accidental.DoubleFlat },
+        { NoteName.B, Accidental.Flat },
+        { NoteName.B, Accidental.Natural },
+        { NoteName.B, Accidental.Sharp },
+        { NoteName.B, Accidental.DoubleSharp }
+    };
+
+  public static TheoryData<PitchClass, object?, bool> EqualsTestData =>
+    new()
+    {
+        { PitchClass.C, PitchClass.Create(NoteName.C), true },
+        { PitchClass.C, null, false }
+    };
+
+  public static TheoryData<PitchClass, string> EnharmonicData =>
+    new()
+    {
+        { PitchClass.C, "Dbb" },
+        { PitchClass.C, "B#" },
+        { PitchClass.CSharp, "Db" },
+        { PitchClass.CSharp, "B##" },
+        { PitchClass.D, "Ebb" },
+        { PitchClass.D, "C##" },
+        { PitchClass.DSharp, "Fbb" },
+        { PitchClass.DSharp, "Eb" },
+        { PitchClass.E, "Fb" },
+        { PitchClass.E, "D##" },
+        { PitchClass.F, "Gbb" },
+        { PitchClass.F, "E#" },
+        { PitchClass.FSharp, "Gb" },
+        { PitchClass.FSharp, "E##" },
+        { PitchClass.G, "Abb" },
+        { PitchClass.G, "F##" },
+        { PitchClass.GSharp, "Ab" },
+        { PitchClass.A, "Bbb" },
+        { PitchClass.A, "G##" },
+        { PitchClass.ASharp, "Cbb" },
+        { PitchClass.ASharp, "Bb" },
+        { PitchClass.B, "Cb" },
+        { PitchClass.B, "A##" }
+    };
+
+  public static TheoryData<PitchClass, NoteName, NoteName> NotEnharmonicTestData =>
+    new()
+    {
+        { PitchClass.C, NoteName.E, NoteName.G },
+        { PitchClass.CSharp, NoteName.E, NoteName.G },
+        { PitchClass.D, NoteName.F, NoteName.C },
+        { PitchClass.DSharp, NoteName.G, NoteName.D },
+        { PitchClass.E, NoteName.G, NoteName.D },
+        { PitchClass.F, NoteName.A, NoteName.E },
+        { PitchClass.FSharp, NoteName.A, NoteName.E },
+        { PitchClass.G, NoteName.B, NoteName.F },
+        { PitchClass.GSharp, NoteName.B, NoteName.G },
+        { PitchClass.A, NoteName.C, NoteName.G },
+        { PitchClass.ASharp, NoteName.D, NoteName.A },
+        { PitchClass.B, NoteName.D, NoteName.A }
+    };
+
+  public static TheoryData<bool> RelationalOperatorsTestData =>
+  [
+    PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ), PitchClass.C != PitchClass.B,
+    PitchClass.C < PitchClass.B, PitchClass.C <= PitchClass.B, PitchClass.D > PitchClass.C, PitchClass.D >= PitchClass.C
+  ];
+
+  public static TheoryData<PitchClass, PitchClass, PitchClass?> NextTestData =>
+    new()
+    {
+        { PitchClass.C, PitchClass.CSharp, PitchClass.DFlat },
+        { PitchClass.CSharp, PitchClass.D, null },
+        { PitchClass.DFlat, PitchClass.D, null },
+        { PitchClass.D, PitchClass.DSharp, PitchClass.EFlat },
+        { PitchClass.DSharp, PitchClass.E, null },
+        { PitchClass.EFlat, PitchClass.E, null },
+        { PitchClass.E, PitchClass.F, null },
+        { PitchClass.F, PitchClass.FSharp, PitchClass.GFlat },
+        { PitchClass.FSharp, PitchClass.G, null },
+        { PitchClass.GFlat, PitchClass.G, null },
+        { PitchClass.G, PitchClass.GSharp, PitchClass.AFlat },
+        { PitchClass.GSharp, PitchClass.A, null },
+        { PitchClass.AFlat, PitchClass.A, null },
+        { PitchClass.A, PitchClass.ASharp, PitchClass.BFlat },
+        { PitchClass.ASharp, PitchClass.B, null },
+        { PitchClass.BFlat, PitchClass.B, null },
+        { PitchClass.B, PitchClass.C, null },
+        { PitchClass.Create(NoteName.C, Accidental.DoubleSharp), PitchClass.DSharp, PitchClass.EFlat },
+        { PitchClass.Create(NoteName.E, Accidental.DoubleSharp), PitchClass.G, null },
+        { PitchClass.Create(NoteName.B, Accidental.DoubleSharp), PitchClass.D, null }
+    };
+
+  public static TheoryData<PitchClass, Interval, PitchClass> AddIntervals =>
+    new()
+    {
+        { PitchClass.C, Interval.MajorThird, PitchClass.E },
+        { PitchClass.CSharp, Interval.MinorThird, PitchClass.E },
+        { PitchClass.D, Interval.MinorThird, PitchClass.F },
+        { PitchClass.D, Interval.Fourth, PitchClass.G },
+        { PitchClass.E, Interval.Fourth, PitchClass.A },
+        { PitchClass.EFlat, Interval.Fourth, PitchClass.AFlat },
+        { PitchClass.EFlat, Interval.AugmentedThird, PitchClass.GSharp },
+        { PitchClass.F, Interval.MajorSixth, PitchClass.D },
+        { PitchClass.G, Interval.Fifth, PitchClass.D },
+        { PitchClass.F, Interval.Fifth, PitchClass.C },
+        { PitchClass.A, Interval.Fifth, PitchClass.E },
+        { PitchClass.AFlat, Interval.Fifth, PitchClass.EFlat },
+        { PitchClass.GSharp, Interval.DiminishedSixth, PitchClass.EFlat },
+        { PitchClass.FSharp, Interval.AugmentedFourth, PitchClass.C },
+        { PitchClass.GFlat, Interval.DiminishedFifth, PitchClass.C },
+        { PitchClass.C, Interval.AugmentedSecond, PitchClass.DSharp },
+        { PitchClass.C, Interval.DiminishedFifth, PitchClass.FSharp },
+        { PitchClass.C, Interval.AugmentedFourth, PitchClass.GFlat },
+        { PitchClass.DSharp, Interval.DiminishedSeventh, PitchClass.C },
+        { PitchClass.DSharp, Interval.DiminishedThird, PitchClass.F },
+        { PitchClass.Parse("D##"), Interval.DiminishedFourth, PitchClass.GSharp }
+    };
+
+  public static TheoryData<PitchClass, Interval, PitchClass> SubtractIntervalTestData =>
+    new()
+    {
+        { PitchClass.F, Interval.AugmentedFourth, PitchClass.Parse("Cb") },
+        { PitchClass.E, Interval.MajorThird, PitchClass.C },
+        { PitchClass.E, Interval.MinorThird, PitchClass.CSharp },
+        { PitchClass.F, Interval.MinorThird, PitchClass.D },
+        { PitchClass.G, Interval.Fourth, PitchClass.D },
+        { PitchClass.A, Interval.Fourth, PitchClass.E },
+        { PitchClass.AFlat, Interval.Fourth, PitchClass.EFlat },
+        { PitchClass.GSharp, Interval.AugmentedThird, PitchClass.EFlat },
+        { PitchClass.D, Interval.MajorSixth, PitchClass.F },
+        { PitchClass.D, Interval.Fifth, PitchClass.G },
+        { PitchClass.C, Interval.Fifth, PitchClass.F },
+        { PitchClass.E, Interval.Fifth, PitchClass.A },
+        { PitchClass.EFlat, Interval.Fifth, PitchClass.AFlat },
+        { PitchClass.EFlat, Interval.DiminishedSixth, PitchClass.GSharp },
+        { PitchClass.C, Interval.AugmentedFourth, PitchClass.FSharp },
+        { PitchClass.C, Interval.DiminishedFifth, PitchClass.GFlat },
+        { PitchClass.DSharp, Interval.AugmentedSecond, PitchClass.C },
+        { PitchClass.FSharp, Interval.DiminishedFifth, PitchClass.C },
+        { PitchClass.GFlat, Interval.AugmentedFourth, PitchClass.C },
+        { PitchClass.C, Interval.DiminishedSeventh, PitchClass.DSharp },
+        { PitchClass.F, Interval.DiminishedThird, PitchClass.DSharp },
+        { PitchClass.GSharp, Interval.DiminishedFourth, PitchClass.Parse("D##") }
+    };
+
+  public static TheoryData<PitchClass, PitchClass, Interval> SubtractPitchClassTestData =>
+    new()
+    {
+        { PitchClass.C, PitchClass.E, Interval.MajorThird },
+        { PitchClass.CSharp, PitchClass.E, Interval.MinorThird },
+        { PitchClass.D, PitchClass.F, Interval.MinorThird },
+        { PitchClass.D, PitchClass.G, Interval.Fourth },
+        { PitchClass.E, PitchClass.A, Interval.Fourth },
+        { PitchClass.EFlat, PitchClass.AFlat, Interval.Fourth },
+        { PitchClass.EFlat, PitchClass.GSharp, Interval.AugmentedThird },
+        { PitchClass.F, PitchClass.D, Interval.MajorSixth },
+        { PitchClass.G, PitchClass.D, Interval.Fifth },
+        { PitchClass.F, PitchClass.C, Interval.Fifth },
+        { PitchClass.A, PitchClass.E, Interval.Fifth },
+        { PitchClass.AFlat, PitchClass.EFlat, Interval.Fifth },
+        { PitchClass.GSharp, PitchClass.EFlat, Interval.DiminishedSixth },
+        { PitchClass.C, PitchClass.FSharp, Interval.AugmentedFourth },
+        { PitchClass.C, PitchClass.GFlat, Interval.DiminishedFifth },
+        { PitchClass.C, PitchClass.DSharp, Interval.AugmentedSecond },
+        { PitchClass.FSharp, PitchClass.C, Interval.DiminishedFifth },
+        { PitchClass.GFlat, PitchClass.C, Interval.AugmentedFourth },
+        { PitchClass.DSharp, PitchClass.C, Interval.DiminishedSeventh },
+        { PitchClass.C, PitchClass.Create(NoteName.E, Accidental.DoubleFlat), Interval.DiminishedThird },
+        { PitchClass.Create(NoteName.D, Accidental.DoubleSharp), PitchClass.GSharp, Interval.DiminishedFourth }
+    };
+
+  public static TheoryData<string, Type> InvalidPitchClassStrings =>
+    new()
+   {
+       { null!, typeof(ArgumentNullException) },
+       { "", typeof(ArgumentException) },
+       { "J", typeof(FormatException) },
+       { "C$", typeof(FormatException) }
+    };
+
+  public static TheoryData<string, NoteName, Accidental> ValidPitchClassStrings =>
+    new()
+    {
+        { "Cbb", NoteName.C, Accidental.DoubleFlat },
+        { "CB", NoteName.C, Accidental.Flat },
+        { "C", NoteName.C, Accidental.Natural },
+        { "c#", NoteName.C, Accidental.Sharp },
+        { "c##", NoteName.C, Accidental.DoubleSharp }
+    };
+
+  public static TheoryData<PitchClass, NoteName, Accidental> NoteNamesAndAccidentals =>
+    new()
+    {
+        { PitchClass.C, NoteName.C, Accidental.Natural },
+        { PitchClass.CSharp, NoteName.C, Accidental.Sharp },
+        { PitchClass.DFlat, NoteName.D, Accidental.Flat },
+        { PitchClass.D, NoteName.D, Accidental.Natural },
+        { PitchClass.DSharp, NoteName.D, Accidental.Sharp },
+        { PitchClass.EFlat, NoteName.E, Accidental.Flat },
+        { PitchClass.E, NoteName.E, Accidental.Natural },
+        { PitchClass.F, NoteName.F, Accidental.Natural },
+        { PitchClass.FSharp, NoteName.F, Accidental.Sharp },
+        { PitchClass.GFlat, NoteName.G, Accidental.Flat },
+        { PitchClass.G, NoteName.G, Accidental.Natural },
+        { PitchClass.GSharp, NoteName.G, Accidental.Sharp },
+        { PitchClass.AFlat, NoteName.A, Accidental.Flat },
+        { PitchClass.A, NoteName.A, Accidental.Natural },
+        { PitchClass.ASharp, NoteName.A, Accidental.Sharp },
+        { PitchClass.BFlat, NoteName.B, Accidental.Flat },
+        { PitchClass.B, NoteName.B, Accidental.Natural }
+    };
+
+  public static TheoryData<PitchClass, int, PitchClass, PitchClass?> SubtractTestData =>
+    new()
+    {
+        { PitchClass.B, 1, PitchClass.BFlat, PitchClass.ASharp },
+        { PitchClass.B, 2, PitchClass.A, null },
+        { PitchClass.B, 3, PitchClass.GSharp, PitchClass.AFlat },
+        { PitchClass.B, 4, PitchClass.G, null },
+        { PitchClass.B, 5, PitchClass.FSharp, PitchClass.GFlat },
+        { PitchClass.B, 6, PitchClass.F, null },
+        { PitchClass.B, 7, PitchClass.E, null },
+        { PitchClass.B, 8, PitchClass.DSharp, PitchClass.EFlat },
+        { PitchClass.B, 9, PitchClass.D, null },
+        { PitchClass.B, 10, PitchClass.CSharp, PitchClass.DFlat },
+        { PitchClass.B, 11, PitchClass.C, null },
+        { PitchClass.B, 12, PitchClass.B, null }
+    };
+
+  public static TheoryData<NoteName, Accidental, string> ToStringTestData =>
+    new()
+    {
+        { NoteName.C, Accidental.DoubleFlat, "Cbb" },
+        { NoteName.C, Accidental.Flat, "Cb" },
+        { NoteName.C, Accidental.Natural, "C" },
+        { NoteName.C, Accidental.Sharp, "C#" },
+        { NoteName.C, Accidental.DoubleSharp, "C##" }
+    };
+
+  public static TheoryData<string> TryParseInvalidStringsTestData => [(string) null!, "", "J", "C$"];
+
+  public static TheoryData<string, PitchClass> TryParseValidStringsTestData =>
+    new()
+    {
+        { "C", PitchClass.C },
+        { "C#", PitchClass.CSharp },
+        { "C##", PitchClass.D },
+        { "Cb", PitchClass.B },
+        { "Cbb", PitchClass.BFlat },
+        { "B#", PitchClass.C },
+        { "B##", PitchClass.CSharp },
+        { "Bb", PitchClass.BFlat },
+        { "Bbb", PitchClass.A }
+    };
+
+  public static TheoryData<PitchClass, int, PitchClass> AddSemitonesSharps =>
+    new()
+    {
+      { PitchClass.C, 1, PitchClass.CSharp },
+      { PitchClass.C, 2, PitchClass.D },
+      { PitchClass.C, 3, PitchClass.DSharp },
+      { PitchClass.C, 4, PitchClass.E },
+      { PitchClass.C, 5, PitchClass.F },
+      { PitchClass.C, 6, PitchClass.FSharp },
+      { PitchClass.C, 7, PitchClass.G },
+      { PitchClass.C, 8, PitchClass.GSharp },
+      { PitchClass.C, 9, PitchClass.A },
+      { PitchClass.C, 10, PitchClass.ASharp },
+      { PitchClass.C, 11, PitchClass.B },
+      { PitchClass.C, 12, PitchClass.C }
+    };
+
+  public static TheoryData<PitchClass, int, PitchClass> AddIntervalFlats =>
+    new()
+    {
+      { PitchClass.C, 1, PitchClass.DFlat },
+      { PitchClass.C, 2, PitchClass.D },
+      { PitchClass.C, 3, PitchClass.EFlat },
+      { PitchClass.C, 4, PitchClass.E },
+      { PitchClass.C, 5, PitchClass.F },
+      { PitchClass.C, 6, PitchClass.GFlat },
+      { PitchClass.C, 7, PitchClass.G },
+      { PitchClass.C, 8, PitchClass.AFlat },
+      { PitchClass.C, 9, PitchClass.A },
+      { PitchClass.C, 10, PitchClass.BFlat },
+      { PitchClass.C, 11, PitchClass.B },
+      { PitchClass.C, 12, PitchClass.C }
+    };
+
+  public static TheoryData<PitchClass, int, PitchClass> ArithmeticSubtractionTestData => new()
   {
-    pitchClass.Subtract( interval )
-              .Should()
-              .Be( expectedSharp );
-    pitchClass.Subtract( interval )
-              .Should()
-              .Be( expectedFlat ?? expectedSharp );
-  }
+    { PitchClass.C, 1, PitchClass.B },
+    { PitchClass.C, 12, PitchClass.C }
+  };
+
+  public static TheoryData<PitchClass, PitchClass, PitchClass> ArithmeticIncrementTestData => new()
+  {
+    { PitchClass.B, PitchClass.B, PitchClass.C },
+    { PitchClass.C, PitchClass.C, PitchClass.CSharp }
+  };
+
+  public static TheoryData<PitchClass, PitchClass, PitchClass> ArithmeticDecrementTestData => new()
+  {
+    { PitchClass.C, PitchClass.C, PitchClass.B },
+    { PitchClass.B, PitchClass.B, PitchClass.BFlat }
+  };
 
   #endregion
 }

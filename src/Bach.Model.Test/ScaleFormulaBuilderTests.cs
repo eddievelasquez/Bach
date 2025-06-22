@@ -29,7 +29,7 @@ public sealed class ScaleFormulaBuilderTest
   #region Public Methods
 
   [Fact]
-  public void AddAliasEnumerableStringTest()
+  public void AddAliases_ShouldAddMultipleAliases_WhenGivenEnumerableOfStrings()
   {
     const string Name = "Name";
     string[] aliases = ["Alias1", "Alias2"];
@@ -58,7 +58,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddAliasNullStringTest()
+  public void AddAlias_ShouldAddSingleAlias_WhenGivenValidString()
   {
     const string Name = "Name";
     const string Alias = "Alias";
@@ -85,7 +85,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddAliasStringMultipleTest()
+  public void AddAlias_ShouldAddMultipleAliases_WhenGivenSemicolonSeparatedString()
   {
     const string Name = "Name";
     const string Alias = "Alias1;Alias2";
@@ -114,7 +114,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddAliasStringsAreTrimmedTest()
+  public void AddAlias_ShouldAddTrimmedAliases_WhenGivenPaddedStrings()
   {
     const string Name = "Name";
     const string Alias = "   Alias1   ; Alias2  ";
@@ -143,7 +143,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddAliasStringSingleTest()
+  public void AddAlias_ShouldAddSingleAlias_WhenGivenNonSeparatedString()
   {
     const string Name = "Name";
     const string Alias = "Alias";
@@ -170,7 +170,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddCategoriesAreTrimmedTest()
+  public void AddCategory_ShouldAddTrimmedCategories_WhenGivenPaddedStrings()
   {
     const string Name = "Name";
     const string Categories = "   Category1   ;  Category2  ";
@@ -199,7 +199,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddCategoriesEnumerableStringTest()
+  public void AddCategories_ShouldAddMultipleCategories_WhenGivenEnumerableOfStrings()
   {
     const string Name = "Name";
     string[] categories = ["Category1", "Category2"];
@@ -228,7 +228,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddCategoryNullStringTest()
+  public void AddCategory_ShouldAddCategory_WhenGivenValidString()
   {
     const string Name = "Name";
     const string Category = "Category";
@@ -256,7 +256,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddCategoryStringMultipleTest()
+  public void AddCategory_ShouldAddMultipleCategories_WhenGivenSemicolonSeparatedString()
   {
     const string Name = "Name";
     const string Categories = "Category1;Category2";
@@ -285,7 +285,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AddCategoryStringSingleTest()
+  public void AddCategory_ShouldAddSingleCategory_WhenGivenNonSeparatedString()
   {
     const string Name = "Name";
     const string Category = "Category";
@@ -312,7 +312,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void AppendIntervalTest()
+  public void AppendInterval_ShouldBuildScaleWithIntervals_WhenAddingIntervalsSequentially()
   {
     const string Name = "Name";
     Interval[] intervals = [Interval.Unison, Interval.MajorSecond, Interval.MinorSixth];
@@ -339,7 +339,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void DiatonicCategoryIsAddedTest()
+  public void Build_ShouldAddDiatonicCategory_WhenScaleHasSevenNoteMajorPattern()
   {
     const string Name = "Name";
     const string IntervalString = "R,M2,M3,4,5,M6,M7";
@@ -365,7 +365,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void IntervalsAreRequiredTest()
+  public void Build_ShouldThrowInvalidOperationException_WhenIntervalsAreNotSet()
   {
     var builder = new ScaleFormulaBuilder( "Name" );
     var act = () => builder.Build();
@@ -374,7 +374,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void MajorCategoryIsAddedTest()
+  public void Build_ShouldAddMajorCategory_WhenScaleHasMajorThirdAndFifth()
   {
     const string Name = "Name";
     const string IntervalString = "R,M2,M3,4,5,M6,M7";
@@ -400,7 +400,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void MinorCategoryIsAddedTest()
+  public void Build_ShouldAddMinorCategory_WhenScaleHasMinorThirdAndFifth()
   {
     const string Name = "Name";
     const string IntervalString = "R,M2,m3,4,5,M6,M7";
@@ -426,7 +426,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void NameIsRequiredTest()
+  public void Build_ShouldThrowInvalidOperationException_WhenNameIsNotSet()
   {
     var builder = new ScaleFormulaBuilder().SetIntervals( "R,M2,m6" );
     var act = () => builder.Build();
@@ -435,7 +435,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void ParseSpanTest()
+  public void ParseIntervals_ShouldReturnSameIntervals_WhenUsingStringOrSpan()
   {
     const string IntervalString = "R,M2,m6";
     var intervalsFromString = Formula.ParseIntervals( IntervalString );
@@ -446,7 +446,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void SetIntervalEnumerableIntervalTest()
+  public void SetIntervals_ShouldBuildScaleWithIntervals_WhenGivenIntervalArray()
   {
     const string Name = "Name";
     Interval[] intervals = [Interval.Unison, Interval.MajorSecond, Interval.MinorSixth];
@@ -468,7 +468,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void SetIntervalsStringTest()
+  public void SetIntervals_ShouldBuildScaleWithIntervals_WhenGivenIntervalString()
   {
     const string Name = "Name";
     const string IntervalString = "R,M2,m6";
@@ -491,7 +491,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void SetKeyIsNameWithoutSpacesTest()
+  public void SetName_ShouldSetIdWithoutSpaces_WhenNameContainsSpaces()
   {
     const string Name = "Name With Spaces";
     const string IntervalString = "R,M2,m6";
@@ -514,7 +514,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void SetKeyTest()
+  public void SetId_ShouldUseProvidedId_WhenIdIsSet()
   {
     const string Name = "Name";
     const string Id = "Id";
@@ -539,7 +539,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void SetNameAndIntervalsStringTest()
+  public void SetName_ShouldBuildScaleWithNameAndIntervals_WhenNameAndIntervalsAreSet()
   {
     const string Name = "Name";
     const string IntervalString = "R,M2,m6";
@@ -563,7 +563,7 @@ public sealed class ScaleFormulaBuilderTest
   }
 
   [Fact]
-  public void SetNameIsTrimmedTest()
+  public void SetName_ShouldUseTrimmedName_WhenNameContainsPadding()
   {
     const string IntervalString = "R,M2,m6";
     var intervals = Formula.ParseIntervals( IntervalString );

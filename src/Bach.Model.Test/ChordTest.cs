@@ -30,237 +30,252 @@ public sealed class ChordTest
 {
   #region Public Methods
 
-  [Fact]
-  public void ChordIsExtendedTest()
+  [Theory]
+  [MemberData( nameof( ExtendedChordData ) )]
+  public void IsExtended_ShouldReturnExpectedResult(
+    PitchClass root,
+    string formulaName,
+    bool isExtended )
   {
-    ChordIsExtended( PitchClass.C, "Major", false );
-    ChordIsExtended( PitchClass.C, "Major7", false );
-    ChordIsExtended( PitchClass.C, "Major9", true );
-    ChordIsExtended( PitchClass.C, "Major11", true );
-    ChordIsExtended( PitchClass.C, "Major13", true );
-    ChordIsExtended( PitchClass.C, "Minor", false );
-    ChordIsExtended( PitchClass.C, "Minor7", false );
-    ChordIsExtended( PitchClass.C, "Minor9", true );
-    ChordIsExtended( PitchClass.C, "Minor11", true );
-    ChordIsExtended( PitchClass.C, "Minor13", true );
-    ChordIsExtended( PitchClass.C, "Dominant7", false );
-    ChordIsExtended( PitchClass.C, "Dominant9", true );
-    ChordIsExtended( PitchClass.C, "Dominant11", true );
-    ChordIsExtended( PitchClass.C, "Dominant13", true );
-    ChordIsExtended( PitchClass.C, "SixNine", true );
-    ChordIsExtended( PitchClass.C, "AddNine", true );
-    ChordIsExtended( PitchClass.C, "Diminished", false );
-    ChordIsExtended( PitchClass.C, "Diminished7", false );
-    ChordIsExtended( PitchClass.C, "HalfDiminished", false );
-    ChordIsExtended( PitchClass.C, "Augmented", false );
+    var chord = new Chord( root, formulaName );
+
+    chord.IsExtended.Should()
+         .Be( isExtended );
+  }
+
+  [Theory]
+  [MemberData( nameof( ChordData ) )]
+  public void Constructor_ShouldInitializeChordCorrectly(PitchClass root, string formulaName, string expectedNotes)
+  {
+    var chord = new Chord( root, formulaName );
+
+    var actualNotes = chord.Take(
+      PitchClassCollection.Parse( expectedNotes )
+                          .Count
+    );
+
+    actualNotes.Should()
+               .BeEquivalentTo( PitchClassCollection.Parse( expectedNotes ) );
   }
 
   [Fact]
-  public void ChordsTest()
-  {
-    ChordTestImpl( "C,E,G", PitchClass.C, "Major" );
-    ChordTestImpl( "C,E,G,B", PitchClass.C, "Major7" );
-    ChordTestImpl( "C,E,G,B,D", PitchClass.C, "Major9" );
-    ChordTestImpl( "C,E,G,B,D,F", PitchClass.C, "Major11" );
-    ChordTestImpl( "C,E,G,B,D,F,A", PitchClass.C, "Major13" );
-    ChordTestImpl( "C,Eb,G", PitchClass.C, "Minor" );
-    ChordTestImpl( "C,Eb,G,Bb", PitchClass.C, "Minor7" );
-    ChordTestImpl( "C,Eb,G,Bb,D", PitchClass.C, "Minor9" );
-    ChordTestImpl( "C,Eb,G,Bb,D,F", PitchClass.C, "Minor11" );
-    ChordTestImpl( "C,Eb,G,Bb,D,F,A", PitchClass.C, "Minor13" );
-    ChordTestImpl( "C,E,G,Bb", PitchClass.C, "Dominant7" );
-    ChordTestImpl( "C,E,G,Bb,D", PitchClass.C, "Dominant9" );
-    ChordTestImpl( "C,E,G,Bb,D,F", PitchClass.C, "Dominant11" );
-    ChordTestImpl( "C,E,G,Bb,D,F,A", PitchClass.C, "Dominant13" );
-    ChordTestImpl( "C,E,G,A,D", PitchClass.C, "SixNine" );
-    ChordTestImpl( "C,E,G,D", PitchClass.C, "AddNine" );
-    ChordTestImpl( "C,Eb,Gb", PitchClass.C, "Diminished" );
-    ChordTestImpl( "C,Eb,Gb,A", PitchClass.C, "Diminished7" );
-    ChordTestImpl( "C,Eb,Gb,Bb", PitchClass.C, "HalfDiminished" );
-    ChordTestImpl( "C,E,G#", PitchClass.C, "Augmented" );
-  }
-
-  [Fact]
-  public void EnumeratorTest()
+  public void Enumerator_ShouldEnumerateChordCorrectly()
   {
     var cMajor = new Chord( PitchClass.C, "Major" );
     using var enumerator = cMajor.GetEnumerator();
+
     enumerator.Should()
               .NotBeNull();
+
     enumerator.MoveNext()
               .Should()
               .BeTrue();
+
     enumerator.Current.Should()
               .Be( PitchClass.C );
+
     enumerator.MoveNext()
               .Should()
               .BeTrue();
+
     enumerator.Current.Should()
               .Be( PitchClass.E );
+
     enumerator.MoveNext()
               .Should()
               .BeTrue();
+
     enumerator.Current.Should()
               .Be( PitchClass.G );
+
     enumerator.MoveNext()
               .Should()
               .BeFalse();
   }
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation()
   {
     object x = new Chord( PitchClass.C, "Major" );
     object y = new Chord( PitchClass.C, "Major" );
     object z = new Chord( PitchClass.C, "Major" );
 
-    // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparingDifferentType()
   {
     object actual = new Chord( PitchClass.C, "Major" );
+
     actual.Equals( int.MinValue )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparingToNull()
   {
     object actual = new Chord( PitchClass.C, "Major" );
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparingSameObject()
   {
     var actual = new Chord( PitchClass.C, "Major" );
+
     actual.Equals( actual )
           .Should()
           .BeTrue();
   }
 
   [Fact]
-  public void FormulaConstructorTest()
+  public void Constructor_ShouldInitializeChordUsingFormula()
   {
     var formula = Registry.ChordFormulas["Minor"];
     var target = new Chord( PitchClass.C, formula );
+
     target.Root.Should()
           .Be( PitchClass.C );
+
     target.Formula.Should()
           .Be( Registry.ChordFormulas["Minor"] );
+
     target.Name.Should()
           .Be( "Cm" );
+
     target.PitchClasses.Should()
           .BeEquivalentTo( PitchClassCollection.Parse( "C,Eb,G" ) );
+
     target.ToString()
           .Should()
           .Be( target.Name );
   }
 
   [Fact]
-  public void FormulaConstructorThrowsOnNullFormulaTest()
+  public void Constructor_ShouldThrowArgumentNullException_WhenFormulaIsNull()
   {
     var act = () => new Chord( PitchClass.C, (ChordFormula) null! );
+
     act.Should()
        .Throw<ArgumentNullException>();
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashCode_ShouldReturnSameValue_ForEquivalentObjects()
   {
     var actual = new Chord( PitchClass.C, "Major" );
     var expected = new Chord( PitchClass.C, "Major" );
+
     expected.Equals( actual )
             .Should()
             .BeTrue();
+
     actual.GetHashCode()
           .Should()
           .Be( expected.GetHashCode() );
   }
 
   [Fact]
-  public void GetInversionTest()
+  public void GetInversion_ShouldReturnExpectedResult()
   {
     var cMajor = new Chord( PitchClass.C, "Major" );
     var firstInversion = cMajor.GetInversion( 1 );
+
     firstInversion.Should()
                   .NotBeNull();
+
     firstInversion.Name.Should()
                   .Be( "C/E" );
+
     firstInversion.PitchClasses.Should()
                   .BeEquivalentTo( PitchClassCollection.Parse( "E,G,C" ) );
 
     var secondInversion = cMajor.GetInversion( 2 );
+
     secondInversion.Should()
                    .NotBeNull();
+
     secondInversion.Name.Should()
                    .Be( "C/G" );
+
     secondInversion.PitchClasses.Should()
                    .BeEquivalentTo( PitchClassCollection.Parse( "G,C,E" ) );
 
     var act = () => cMajor.GetInversion( 3 );
+
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
-  public void StringConstructorTest()
+  public void Constructor_ShouldInitializeChordUsingString()
   {
     var target = new Chord( PitchClass.C, "Minor" );
+
     target.Root.Should()
           .Be( PitchClass.C );
+
     target.Formula.Should()
           .Be( Registry.ChordFormulas["Minor"] );
+
     target.Name.Should()
           .Be( "Cm" );
+
     target.PitchClasses.Should()
           .BeEquivalentTo( PitchClassCollection.Parse( "C,Eb,G" ) );
+
     target.ToString()
           .Should()
           .Be( target.Name );
   }
 
   [Fact]
-  public void StringConstructorThrowsOnEmptyFormulaNameTest()
+  public void Constructor_ShouldThrowArgumentException_WhenFormulaNameIsEmpty()
   {
     var act = () => new Chord( PitchClass.C, "" );
+
     act.Should()
        .Throw<ArgumentException>();
   }
 
   [Fact]
-  public void StringConstructorThrowsOnNullFormulaNameTest()
+  public void Constructor_ShouldThrowArgumentNullException_WhenFormulaNameIsNull()
   {
     var act = () => new Chord( PitchClass.C, (string) null! );
+
     act.Should()
        .Throw<ArgumentNullException>();
   }
 
   [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
   {
     var x = new Chord( PitchClass.C, "Major" );
     var y = new Chord( PitchClass.C, "Major" );
@@ -269,25 +284,30 @@ public sealed class ChordTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void StronglyTypedEquals_ShouldReturnFalse_WhenComparingDifferentType()
   {
     var actual = new Chord( PitchClass.C, "Major" );
 
@@ -298,9 +318,10 @@ public sealed class ChordTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void StronglyTypedEquals_ShouldReturnFalse_WhenComparingToNull()
   {
     var actual = new Chord( PitchClass.C, "Major" );
+
     actual.Equals( null )
           .Should()
           .BeFalse();
@@ -310,29 +331,53 @@ public sealed class ChordTest
 
   #region Implementation
 
-  private static void ChordTestImpl(
-    string expectedNotes,
-    PitchClass root,
-    string formulaName )
+  public static TheoryData<PitchClass, string, bool> ExtendedChordData { get; } = new()
   {
-    var chord = new Chord( root, formulaName );
-    var actualNotes = chord.Take(
-      PitchClassCollection.Parse( expectedNotes )
-                          .Count
-    );
-    actualNotes.Should()
-               .BeEquivalentTo( PitchClassCollection.Parse( expectedNotes ) );
-  }
+    { PitchClass.C, "Major", false },
+    { PitchClass.C, "Major7", false },
+    { PitchClass.C, "Major9", true },
+    { PitchClass.C, "Major11", true },
+    { PitchClass.C, "Major13", true },
+    { PitchClass.C, "Minor", false },
+    { PitchClass.C, "Minor7", false },
+    { PitchClass.C, "Minor9", true },
+    { PitchClass.C, "Minor11", true },
+    { PitchClass.C, "Minor13", true },
+    { PitchClass.C, "Dominant7", false },
+    { PitchClass.C, "Dominant9", true },
+    { PitchClass.C, "Dominant11", true },
+    { PitchClass.C, "Dominant13", true },
+    { PitchClass.C, "SixNine", true },
+    { PitchClass.C, "AddNine", true },
+    { PitchClass.C, "Diminished", false },
+    { PitchClass.C, "Diminished7", false },
+    { PitchClass.C, "HalfDiminished", false },
+    { PitchClass.C, "Augmented", false }
+  };
 
-  private static void ChordIsExtended(
-    PitchClass root,
-    string formulaName,
-    bool expected )
+  public static TheoryData<PitchClass, string, string> ChordData { get; } = new()
   {
-    var chord = new Chord( root, formulaName );
-    chord.IsExtended.Should()
-         .Be( expected );
-  }
+    { PitchClass.C, "Major", "C,E,G" },
+    { PitchClass.C, "Major7", "C,E,G,B" },
+    { PitchClass.C, "Major9", "C,E,G,B,D" },
+    { PitchClass.C, "Major11", "C,E,G,B,D,F" },
+    { PitchClass.C, "Major13", "C,E,G,B,D,F,A" },
+    { PitchClass.C, "Minor", "C,Eb,G" },
+    { PitchClass.C, "Minor7", "C,Eb,G,Bb" },
+    { PitchClass.C, "Minor9", "C,Eb,G,Bb,D" },
+    { PitchClass.C, "Minor11", "C,Eb,G,Bb,D,F" },
+    { PitchClass.C, "Minor13", "C,Eb,G,Bb,D,F,A" },
+    { PitchClass.C, "Dominant7", "C,E,G,Bb" },
+    { PitchClass.C, "Dominant9", "C,E,G,Bb,D" },
+    { PitchClass.C, "Dominant11", "C,E,G,Bb,D,F" },
+    { PitchClass.C, "Dominant13", "C,E,G,Bb,D,F,A" },
+    { PitchClass.C, "SixNine", "C,E,G,A,D" },
+    { PitchClass.C, "AddNine", "C,E,G,D" },
+    { PitchClass.C, "Diminished", "C,Eb,Gb" },
+    { PitchClass.C, "Diminished7", "C,Eb,Gb,A" },
+    { PitchClass.C, "HalfDiminished", "C,Eb,Gb,Bb" },
+    { PitchClass.C, "Augmented", "C,E,G#" }
+  };
 
   #endregion
 }

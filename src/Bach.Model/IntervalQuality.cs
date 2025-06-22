@@ -196,7 +196,7 @@ public readonly struct IntervalQuality
   ///   .
   /// </returns>
   public static bool TryParse(
-    string value,
+    string? value,
     out IntervalQuality quality )
   {
     if( !string.IsNullOrEmpty( value ) )

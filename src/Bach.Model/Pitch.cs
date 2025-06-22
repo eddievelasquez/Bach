@@ -24,8 +24,8 @@
 
 namespace Bach.Model;
 
-using System.Text;
 using Internal;
+using System.Text;
 
 /// <summary>
 ///   A Pitch represents the pitch of a sound (<see cref="PitchClass" />)
@@ -332,7 +332,7 @@ public readonly struct Pitch
   /// <param name="pitch">[out] The pitch class.</param>
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
-    string value,
+    string? value,
     out Pitch pitch )
   {
     pitch = Empty;
@@ -342,6 +342,23 @@ public readonly struct Pitch
     }
 
     return char.IsDigit( value, 0 ) ? TryParseMidi( value, ref pitch ) : TryParseNotes( value, ref pitch );
+  }
+
+  /// <summary>Attempts to parse a Pitch from the given string.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="pitch">[out] The pitch class.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    out Pitch pitch )
+  {
+    pitch = Empty;
+    if( value.IsEmpty )
+    {
+      return false;
+    }
+
+    return char.IsDigit( value[0] ) ? TryParseMidi( value, ref pitch ) : TryParseNotes( value, ref pitch );
   }
 
   #endregion
@@ -382,7 +399,7 @@ public readonly struct Pitch
   }
 
   private static void TryGetAccidental(
-    string value,
+    ReadOnlySpan<char> value,
     ref int index,
     out Accidental accidental )
   {
@@ -412,11 +429,11 @@ public readonly struct Pitch
   }
 
   private static void TryGetOctave(
-    string value,
+    ReadOnlySpan<char> value,
     ref int index,
     out int octave )
   {
-    if( index >= value.Length || !int.TryParse( value.AsSpan().Slice( index, 1), out octave ) )
+    if( index >= value.Length || !int.TryParse( value.Slice( index, 1 ), out octave ) )
     {
       octave = -1;
       return;
@@ -430,6 +447,13 @@ public readonly struct Pitch
 
   private static bool TryParseNotes(
     string value,
+    ref Pitch pitch )
+  {
+    return TryParseNotes( value.AsSpan(), ref pitch );
+  }
+
+  private static bool TryParseNotes(
+    ReadOnlySpan<char> value,
     ref Pitch pitch )
   {
     if( !NoteName.TryParse( value, out var toneName ) )
@@ -454,12 +478,19 @@ public readonly struct Pitch
     string value,
     ref Pitch pitch )
   {
+    return TryParseMidi( value.AsSpan(), ref pitch );
+  }
+
+  private static bool TryParseMidi(
+    ReadOnlySpan<char> value,
+    ref Pitch pitch )
+  {
     if( !int.TryParse( value, out var midi ) )
     {
       return false;
     }
 
-    if( midi < 0 || midi > 127 )
+    if( midi is < 0 or > 127 )
     {
       return false;
     }

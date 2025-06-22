@@ -28,76 +28,41 @@ public sealed class NoteNameTest
 {
   #region Public Methods
 
-  [Fact]
-  public void AdditionOperatorTest()
+  [Theory]
+  [MemberData( nameof( NoteSteps ) )]
+  public void AdditionOperator_ShouldReturnExpectedValue_WhenAddingSteps( NoteName start, int steps, NoteName expected )
   {
-    ( NoteName.C + 0 ).Should()
-                      .Be( NoteName.C );
-    ( NoteName.C + 1 ).Should()
-                      .Be( NoteName.D );
-    ( NoteName.C + 2 ).Should()
-                      .Be( NoteName.E );
-    ( NoteName.C + 6 ).Should()
-                      .Be( NoteName.B );
-    ( NoteName.C + 7 ).Should()
-                      .Be( NoteName.C );
-    ( NoteName.C + 8 ).Should()
-                      .Be( NoteName.D );
-    ( NoteName.B + 1 ).Should()
-                      .Be( NoteName.C );
+    ( start + steps ).Should().Be( expected );
+  }
+
+
+  [Theory]
+  [MemberData( nameof( NoteSteps ) )]
+  public void Add_ShouldReturnExpectedValue_WhenAddingSteps( NoteName start, int steps, NoteName expected )
+  {
+    start.Add( steps )
+         .Should()
+         .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( DecrementSteps ) )]
+  public void DecrementOperator_ShouldReturnExpectedValue( NoteName start, int times, NoteName expected )
+  {
+    var noteName = start;
+    for( var i = 0; i < times; i++ )
+    {
+      --noteName;
+    }
+    noteName.Should().Be( expected );
   }
 
   [Fact]
-  public void AddTest()
-  {
-    NoteName.C.Add( 0 )
-            .Should()
-            .Be( NoteName.C );
-    NoteName.C.Add( 1 )
-            .Should()
-            .Be( NoteName.D );
-    NoteName.C.Add( 2 )
-            .Should()
-            .Be( NoteName.E );
-    NoteName.C.Add( 6 )
-            .Should()
-            .Be( NoteName.B );
-    NoteName.C.Add( 7 )
-            .Should()
-            .Be( NoteName.C );
-    NoteName.C.Add( 8 )
-            .Should()
-            .Be( NoteName.D );
-  }
-
-  [Fact]
-  public void DecrementOperatorTest()
-  {
-    var noteName = NoteName.C;
-    ( --noteName ).Should()
-                  .Be( NoteName.B );
-    ( --noteName ).Should()
-                  .Be( NoteName.A );
-    ( --noteName ).Should()
-                  .Be( NoteName.G );
-    ( --noteName ).Should()
-                  .Be( NoteName.F );
-    ( --noteName ).Should()
-                  .Be( NoteName.E );
-    ( --noteName ).Should()
-                  .Be( NoteName.D );
-    ( --noteName ).Should()
-                  .Be( NoteName.C );
-    ( --noteName ).Should()
-                  .Be( NoteName.B );
-  }
-
-  [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
     object x = NoteName.C;
     object y = new NoteName();
-    object z = (NoteName) 0;
+    object z = ( NoteName ) 0;
 
     // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
@@ -121,7 +86,7 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparingWithDifferentType()
   {
     object actual = NoteName.C;
     actual.Equals( int.MinValue )
@@ -130,7 +95,7 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparingWithNull_ObjectVariant()
   {
     object actual = NoteName.C;
     actual.Equals( null )
@@ -139,7 +104,7 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparingWithSameObject()
   {
     var actual = NoteName.C;
     actual.Equals( actual )
@@ -148,7 +113,7 @@ public sealed class NoteNameTest
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashCode_ShouldReturnSameValue_WhenObjectsAreEqual()
   {
     var actual = NoteName.C;
     var expected = new NoteName();
@@ -160,206 +125,83 @@ public sealed class NoteNameTest
           .Be( expected.GetHashCode() );
   }
 
-  [Fact]
-  public void IncrementOperatorTest()
+  [Theory]
+  [MemberData( nameof( IncrementSteps ) )]
+  public void IncrementOperator_ShouldReturnExpectedValue_WhenIncrementing( NoteName start, int times, NoteName expected )
   {
-    var noteName = NoteName.C;
-    ( ++noteName ).Should()
-                  .Be( NoteName.D );
-    ( ++noteName ).Should()
-                  .Be( NoteName.E );
-    ( ++noteName ).Should()
-                  .Be( NoteName.F );
-    ( ++noteName ).Should()
-                  .Be( NoteName.G );
-    ( ++noteName ).Should()
-                  .Be( NoteName.A );
-    ( ++noteName ).Should()
-                  .Be( NoteName.B );
-    ( ++noteName ).Should()
-                  .Be( NoteName.C );
+    var noteName = start;
+    for( var i = 0; i < times; i++ )
+    {
+      ++noteName;
+    }
+    noteName.Should().Be( expected );
   }
 
-  [Fact]
-  public void IntegerSubtractionOperatorTest()
+  [Theory]
+  [MemberData( nameof( NoteSteps ) )]
+  public void IntegerSubtractionOperator_ShouldReturnExpectedValue( NoteName start, int steps, NoteName expected )
   {
-    ( NoteName.B - 0 ).Should()
-                      .Be( NoteName.B );
-    ( NoteName.B - 1 ).Should()
-                      .Be( NoteName.A );
-    ( NoteName.B - 2 ).Should()
-                      .Be( NoteName.G );
-    ( NoteName.B - 6 ).Should()
-                      .Be( NoteName.C );
-    ( NoteName.B - 7 ).Should()
-                      .Be( NoteName.B );
-    ( NoteName.B - 8 ).Should()
-                      .Be( NoteName.A );
-    ( NoteName.D - 1 ).Should()
-                      .Be( NoteName.C );
-    ( NoteName.C - 1 ).Should()
-                      .Be( NoteName.B );
+    ( start - -steps ).Should().Be( expected );
   }
 
-  [Fact]
-  public void NoteNameSubtractionOperatorTest()
+  [Theory]
+  [MemberData( nameof( NoteNameSubtractionData ) )]
+  public void NoteNameSubtractionOperator_ShouldReturnExpectedValue_WhenSubtractingNoteNames( NoteName left, NoteName right, int expected )
   {
-    ( NoteName.B - NoteName.B ).Should()
-                               .Be( 0 );
-    ( NoteName.B - NoteName.A ).Should()
-                               .Be( 1 );
-    ( NoteName.B - NoteName.D ).Should()
-                               .Be( 5 );
-    ( NoteName.B - NoteName.G ).Should()
-                               .Be( 2 );
-    ( NoteName.B - NoteName.C ).Should()
-                               .Be( 6 );
-    ( NoteName.D - NoteName.C ).Should()
-                               .Be( 1 );
-    ( NoteName.D - NoteName.B ).Should()
-                               .Be( 2 );
-    ( NoteName.C - NoteName.B ).Should()
-                               .Be( 1 );
+    ( left - right ).Should().Be( expected );
   }
 
-  [Fact]
-  public void ParseEmptyThrowsTest()
+  [Theory]
+  [MemberData( nameof( InvalidParseData ) )]
+  public void Parse_ShouldThrowArgumentException_WhenInputIsInvalid( string? input, Type expectedExceptionType )
   {
-    var act = () => NoteName.Parse( "" );
-    act.Should()
-       .Throw<ArgumentException>();
+    var act = () => PitchClassCollection.Parse( input! );
+    act.Should().Throw<Exception>().Where( e => e.GetType() == expectedExceptionType );
   }
 
-  [Fact]
-  public void ParseInvalidThrowsTest()
+  [Theory]
+  [MemberData( nameof( NoteNames ) )]
+  public void Parse_ShouldReturnExpectedValue_WhenInputIsValid( string input, NoteName expected )
   {
-    var act = () => NoteName.Parse( "Z" );
-    act.Should()
-       .Throw<FormatException>();
+    NoteName.Parse( input )
+            .Should()
+            .Be( expected );
   }
 
-  [Fact]
-  public void ParseLowercaseTest()
+  [Theory]
+  [MemberData( nameof( SubtractStepsData ) )]
+  public void Subtract_ShouldReturnExpectedValue_WhenSubtractingSteps( NoteName start, int steps, NoteName expected )
   {
-    NoteName.Parse( "c" )
-            .Should()
-            .Be( NoteName.C );
-    NoteName.Parse( "d" )
-            .Should()
-            .Be( NoteName.D );
-    NoteName.Parse( "e" )
-            .Should()
-            .Be( NoteName.E );
-    NoteName.Parse( "f" )
-            .Should()
-            .Be( NoteName.F );
-    NoteName.Parse( "g" )
-            .Should()
-            .Be( NoteName.G );
-    NoteName.Parse( "a" )
-            .Should()
-            .Be( NoteName.A );
-    NoteName.Parse( "b" )
-            .Should()
-            .Be( NoteName.B );
+    start.Subtract( steps )
+         .Should()
+         .Be( expected );
   }
 
-  [Fact]
-  public void ParseNullThrowsTest()
+  [Theory]
+  [MemberData( nameof( NoteNameSubtractionData ) )]
+  public void Subtract_ShouldReturnExpectedValue_WhenSubtractingNoteName( NoteName left, NoteName right, int expected )
   {
-    var act = () => NoteName.Parse( null! );
-    act.Should()
-       .Throw<ArgumentNullException>();
+    left.Subtract( right )
+        .Should()
+        .Be( expected );
   }
 
-  [Fact]
-  public void ParseUppercaseTest()
+  [Theory]
+  [InlineData( null )]
+  [InlineData( "" )]
+  public void TryParse_ShouldReturnFalse_WhenInputIsEmpty( string? input )
   {
-    NoteName.Parse( "C" )
-            .Should()
-            .Be( NoteName.C );
-    NoteName.Parse( "D" )
-            .Should()
-            .Be( NoteName.D );
-    NoteName.Parse( "E" )
-            .Should()
-            .Be( NoteName.E );
-    NoteName.Parse( "F" )
-            .Should()
-            .Be( NoteName.F );
-    NoteName.Parse( "G" )
-            .Should()
-            .Be( NoteName.G );
-    NoteName.Parse( "A" )
-            .Should()
-            .Be( NoteName.A );
-    NoteName.Parse( "B" )
-            .Should()
-            .Be( NoteName.B );
-  }
-
-  [Fact]
-  public void SubtractIntegerTest()
-  {
-    NoteName.B.Subtract( 0 )
-            .Should()
-            .Be( NoteName.B );
-    NoteName.B.Subtract( 1 )
-            .Should()
-            .Be( NoteName.A );
-    NoteName.B.Subtract( 2 )
-            .Should()
-            .Be( NoteName.G );
-    NoteName.B.Subtract( 6 )
-            .Should()
-            .Be( NoteName.C );
-    NoteName.B.Subtract( 7 )
-            .Should()
-            .Be( NoteName.B );
-    NoteName.B.Subtract( 8 )
-            .Should()
-            .Be( NoteName.A );
-  }
-
-  [Fact]
-  public void SubtractNoteNameTest()
-  {
-    NoteName.B.Subtract( NoteName.B )
-            .Should()
-            .Be( 0 );
-    NoteName.B.Subtract( NoteName.A )
-            .Should()
-            .Be( 1 );
-    NoteName.B.Subtract( NoteName.G )
-            .Should()
-            .Be( 2 );
-    NoteName.B.Subtract( NoteName.C )
-            .Should()
-            .Be( 6 );
-  }
-
-  [Fact]
-  public void TryParseEmptyFailsTest()
-  {
-    NoteName.TryParse( "", out _ )
+    NoteName.TryParse( input!, out _ )
             .Should()
             .BeFalse();
   }
 
   [Fact]
-  public void TryParseNullFailsTest()
-  {
-    NoteName.TryParse( null!, out _ )
-            .Should()
-            .BeFalse();
-  }
-
-  [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     var x = NoteName.C;
     var y = new NoteName();
-    var z = (NoteName) 0;
+    var z = ( NoteName ) 0;
 
     x.Equals( x )
      .Should()
@@ -376,24 +218,13 @@ public sealed class NoteNameTest
     x.Equals( z )
      .Should()
      .BeTrue();
-    x.Equals( null )
+    x.Equals( (NoteName?)null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
-  {
-    var actual = NoteName.C;
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    actual.Equals( int.MinValue )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparingWithNull_TypeSafeVariant()
   {
     var actual = NoteName.C;
     actual.Equals( null )
@@ -405,7 +236,7 @@ public sealed class NoteNameTest
 
 #pragma warning disable 1718
   [Fact]
-  public void RelationalOperatorsTest()
+  public void RelationalOperators_ShouldSatisfyOrdering()
   {
     ( NoteName.B > NoteName.C ).Should()
                                .BeTrue();
@@ -422,4 +253,181 @@ public sealed class NoteNameTest
     ( NoteName.C != NoteName.B ).Should()
                                 .BeTrue();
   }
+  public static TheoryData<NoteName, int, NoteName> NoteSteps =>
+    new()
+    {
+      { NoteName.C, 0, NoteName.C },
+      { NoteName.C, 1, NoteName.D },
+      { NoteName.C, 2, NoteName.E },
+      { NoteName.C, 3, NoteName.F },
+      { NoteName.C, 4, NoteName.G },
+      { NoteName.C, 5, NoteName.A },
+      { NoteName.C, 6, NoteName.B },
+      { NoteName.C, 7, NoteName.C },
+      { NoteName.C, 8, NoteName.D },
+      { NoteName.B, 0, NoteName.B },
+      { NoteName.B, 1, NoteName.C },
+      { NoteName.B, 2, NoteName.D },
+      { NoteName.B, 3, NoteName.E },
+      { NoteName.B, 4, NoteName.F },
+      { NoteName.B, 5, NoteName.G },
+      { NoteName.B, 6, NoteName.A },
+      { NoteName.B, 7, NoteName.B },
+      { NoteName.B, 8, NoteName.C },
+      { NoteName.D, 0, NoteName.D },
+      { NoteName.D, 1, NoteName.E },
+      { NoteName.D, 2, NoteName.F },
+      { NoteName.D, 3, NoteName.G },
+      { NoteName.D, 4, NoteName.A },
+      { NoteName.D, 5, NoteName.B },
+      { NoteName.D, 6, NoteName.C },
+      { NoteName.D, 7, NoteName.D },
+      { NoteName.D, 8, NoteName.E },
+      { NoteName.E, 0, NoteName.E },
+      { NoteName.E, 1, NoteName.F },
+      { NoteName.E, 2, NoteName.G },
+      { NoteName.E, 3, NoteName.A },
+      { NoteName.E, 4, NoteName.B },
+      { NoteName.E, 5, NoteName.C },
+      { NoteName.E, 6, NoteName.D },
+      { NoteName.E, 7, NoteName.E },
+      { NoteName.E, 8, NoteName.F },
+      { NoteName.F, 0, NoteName.F },
+      { NoteName.F, 1, NoteName.G },
+      { NoteName.F, 2, NoteName.A },
+      { NoteName.F, 3, NoteName.B },
+      { NoteName.F, 4, NoteName.C },
+      { NoteName.F, 5, NoteName.D },
+      { NoteName.F, 6, NoteName.E },
+      { NoteName.F, 7, NoteName.F },
+      { NoteName.F, 8, NoteName.G },
+      { NoteName.G, 0, NoteName.G },
+      { NoteName.G, 1, NoteName.A },
+      { NoteName.G, 2, NoteName.B },
+      { NoteName.G, 3, NoteName.C },
+      { NoteName.G, 4, NoteName.D },
+      { NoteName.G, 5, NoteName.E },
+      { NoteName.G, 6, NoteName.F },
+      { NoteName.G, 7, NoteName.G },
+      { NoteName.G, 8, NoteName.A }
+    };
+
+  public static TheoryData<NoteName, int, NoteName> DecrementSteps =>
+    new()
+    {
+      { NoteName.C, 1, NoteName.B },
+      { NoteName.C, 2, NoteName.A },
+      { NoteName.C, 3, NoteName.G },
+      { NoteName.C, 4, NoteName.F },
+      { NoteName.C, 5, NoteName.E },
+      { NoteName.C, 6, NoteName.D },
+      { NoteName.C, 7, NoteName.C },
+      { NoteName.C, 8, NoteName.B }
+    };
+
+  public static TheoryData<NoteName, int, NoteName> IncrementSteps =>
+    new()
+    {
+      { NoteName.C, 1, NoteName.D },
+      { NoteName.C, 2, NoteName.E },
+      { NoteName.C, 3, NoteName.F },
+      { NoteName.C, 4, NoteName.G },
+      { NoteName.C, 5, NoteName.A },
+      { NoteName.C, 6, NoteName.B },
+      { NoteName.C, 7, NoteName.C }
+    };
+
+  public static TheoryData<NoteName, NoteName, int> NoteNameSubtractionData =>
+    new()
+    {
+      { NoteName.B, NoteName.B, 0 },
+      { NoteName.B, NoteName.A, 1 },
+      { NoteName.B, NoteName.D, 5 },
+      { NoteName.B, NoteName.G, 2 },
+      { NoteName.B, NoteName.C, 6 },
+      { NoteName.D, NoteName.C, 1 },
+      { NoteName.D, NoteName.B, 2 },
+      { NoteName.C, NoteName.B, 1 },
+      { NoteName.C, NoteName.C, 0 },
+      { NoteName.C, NoteName.D, 6 },
+      { NoteName.C, NoteName.E, 5 },
+      { NoteName.C, NoteName.F, 4 },
+      { NoteName.C, NoteName.G, 3 },
+      { NoteName.C, NoteName.A, 2 },
+      { NoteName.D, NoteName.D, 0 },
+      { NoteName.D, NoteName.E, 6 },
+      { NoteName.D, NoteName.F, 5 },
+      { NoteName.D, NoteName.G, 4 },
+      { NoteName.D, NoteName.A, 3 },
+      { NoteName.D, NoteName.B, 2 },
+      { NoteName.E, NoteName.C, 2 },
+      { NoteName.E, NoteName.D, 1 },
+      { NoteName.E, NoteName.E, 0 },
+      { NoteName.E, NoteName.F, 6 },
+      { NoteName.E, NoteName.G, 5 },
+      { NoteName.E, NoteName.A, 4 },
+      { NoteName.E, NoteName.B, 3 },
+      { NoteName.F, NoteName.C, 3 },
+      { NoteName.F, NoteName.D, 2 },
+      { NoteName.F, NoteName.E, 1 },
+      { NoteName.F, NoteName.F, 0 },
+      { NoteName.F, NoteName.G, 6 },
+      { NoteName.F, NoteName.A, 5 },
+      { NoteName.F, NoteName.B, 4 },
+      { NoteName.G, NoteName.C, 4 },
+      { NoteName.G, NoteName.D, 3 },
+      { NoteName.G, NoteName.E, 2 },
+      { NoteName.G, NoteName.F, 1 },
+      { NoteName.G, NoteName.G, 0 },
+      { NoteName.G, NoteName.A, 6 },
+      { NoteName.G, NoteName.B, 5 },
+      { NoteName.A, NoteName.C, 5 },
+      { NoteName.A, NoteName.D, 4 },
+      { NoteName.A, NoteName.E, 3 },
+      { NoteName.A, NoteName.F, 2 },
+      { NoteName.A, NoteName.G, 1 },
+      { NoteName.A, NoteName.A, 0 },
+      { NoteName.A, NoteName.B, 6 },
+      { NoteName.B, NoteName.E, 4 },
+      { NoteName.B, NoteName.F, 3 },
+      { NoteName.B, NoteName.A, 1 }
+    };
+
+  public static TheoryData<string, NoteName> NoteNames =>
+    new()
+    {
+      { "c", NoteName.C },
+      { "d", NoteName.D },
+      { "e", NoteName.E },
+      { "f", NoteName.F },
+      { "g", NoteName.G },
+      { "a", NoteName.A },
+      { "b", NoteName.B },
+      { "C", NoteName.C },
+      { "D", NoteName.D },
+      { "E", NoteName.E },
+      { "F", NoteName.F },
+      { "G", NoteName.G },
+      { "A", NoteName.A },
+      { "B", NoteName.B }
+    };
+
+  public static TheoryData<NoteName, int, NoteName> SubtractStepsData =>
+    new()
+    {
+      { NoteName.B, 0, NoteName.B },
+      { NoteName.B, 1, NoteName.A },
+      { NoteName.B, 2, NoteName.G },
+      { NoteName.B, 6, NoteName.C },
+      { NoteName.B, 7, NoteName.B },
+      { NoteName.B, 8, NoteName.A }
+    };
+
+  public static TheoryData<string?, Type> InvalidParseData =>
+    new()
+    {
+      { null, typeof(ArgumentNullException) },
+      { "", typeof(ArgumentException) },
+      { "Z", typeof(FormatException) }
+    };
 }

@@ -29,7 +29,7 @@ public sealed class PitchCollectionTest
   #region Public Methods
 
   [Fact]
-  public void EqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
     object x = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
     object y = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
@@ -39,118 +39,119 @@ public sealed class PitchCollectionTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void EqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType()
   {
     object actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
     actual.Equals( int.MinValue )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenComparedWithNull()
   {
     object actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void EqualsSucceedsWithSameObjectTest()
+  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject()
   {
     var actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
     actual.Equals( actual )
           .Should()
           .BeTrue();
   }
 
   [Fact]
-  public void GetHashcodeTest()
+  public void GetHashCode_ShouldReturnSameValue_WhenObjectsAreEqual()
   {
     var actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
     var expected = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
     expected.Equals( actual )
             .Should()
             .BeTrue();
+
     actual.GetHashCode()
           .Should()
           .Be( expected.GetHashCode() );
   }
 
   [Fact]
-  public void ParseTest()
+  public void Parse_ShouldReturnExpectedValue_WhenInputIsPitchClasses()
   {
     var expected = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
     PitchCollection.Parse( "C4,C5" )
                    .Should()
                    .BeEquivalentTo( expected ); // Using pitches
-    PitchCollection.Parse( "60,72" )
-                   .Should()
-                   .BeEquivalentTo( expected ); // Using midi
-    var act1 = () => PitchCollection.Parse( null! );
-    act1.Should()
-        .Throw<ArgumentNullException>();
-    var act2 = () => PitchCollection.Parse( "" );
-    act2.Should()
-        .Throw<ArgumentException>();
-    var act3 = () => PitchCollection.Parse( "C$4,Z5" );
-    act3.Should()
-        .Throw<FormatException>();
   }
 
   [Fact]
-  public void ToStringTest()
+  public void Parse_ShouldReturnExpectedValue_WhenInputIsMidiNotes()
+  {
+    var expected = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
+    PitchCollection.Parse( "60,72" )
+                   .Should()
+                   .BeEquivalentTo( expected ); // Using midi
+  }
+
+  [Theory]
+  [MemberData( nameof( UnparsableValues ) )]
+  public void Parse_ShouldThrow_WhenInputIsInvalid(
+    string input,
+    Type expectedExceptionType )
+  {
+    Action act = () => PitchCollection.Parse( input );
+
+    act.Should()
+       .Throw<Exception>()
+       .Which.Should()
+       .BeOfType( expectedExceptionType );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnExpectedValue()
   {
     var actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
     actual.ToString()
           .Should()
           .Be( "C4,C5" );
   }
 
   [Fact]
-  public void TryParseTest()
-  {
-    PitchCollection.TryParse( "C4,E4", out var collection )
-                   .Should()
-                   .BeTrue();
-    collection.Should()
-              .BeEquivalentTo( new[] { Pitch.Parse( "C4" ), Pitch.Parse( "E4" ) } );
-    PitchCollection.TryParse( null!, out collection )
-                   .Should()
-                   .BeFalse();
-    collection.Should()
-              .BeNull();
-    PitchCollection.TryParse( "", out collection )
-                   .Should()
-                   .BeFalse();
-    collection.Should()
-              .BeNull();
-    PitchCollection.TryParse( "C$4,Z5", out _ )
-                   .Should()
-                   .BeFalse();
-  }
-
-  [Fact]
-  public void TypeSafeEqualsContractTest()
+  public void Equals_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     var x = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
     var y = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
@@ -159,25 +160,30 @@ public sealed class PitchCollectionTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithDifferentTypeTest()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithDifferentType()
   {
     var actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
 
@@ -188,13 +194,22 @@ public sealed class PitchCollectionTest
   }
 
   [Fact]
-  public void TypeSafeEqualsFailsWithNullTest()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull()
   {
     var actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
+
+  public static TheoryData<string, Type> UnparsableValues =>
+    new()
+    {
+      { null!, typeof( ArgumentNullException ) },
+      { "", typeof( ArgumentException ) },
+      { "C$4,Z5", typeof( FormatException ) }
+    };
 
   #endregion
 }

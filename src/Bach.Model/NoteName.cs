@@ -24,8 +24,8 @@
 
 namespace Bach.Model;
 
+using Bach.Model.Internal;
 using System.Diagnostics.Contracts;
-using Internal;
 
 /// <summary>
 ///   A NoteName represents the traditional note name
@@ -188,16 +188,27 @@ public readonly struct NoteName
   /// <param name="noteName">[out] The note name.</param>
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
-    string s,
+    string? s,
     out NoteName noteName )
   {
-    if( string.IsNullOrWhiteSpace( s ) )
+    return TryParse( s.AsSpan(), out noteName );
+  }
+
+  /// <summary>Attempts to parse a NoteName from the given span.</summary>
+  /// <param name="s">The value to parse.</param>
+  /// <param name="noteName">[out] The note name.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> s,
+    out NoteName noteName )
+  {
+    if( s.IsEmpty )
     {
       noteName = C;
       return false;
     }
 
-    var value = s_names.IndexOf( char.ToUpperInvariant( s[0] ) );
+    var value = s_names.IndexOf( char.ToUpperInvariant( s.Trim()[0] ) );
     if( value == -1 )
     {
       noteName = C;
