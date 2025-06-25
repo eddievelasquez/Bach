@@ -33,6 +33,5 @@
     <None Update="Bach.Model.ExternalAnnotations.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <InternalsVisibleTo Include="Bach.Model.Test"/>
   </ItemGroup>
 </Project>
