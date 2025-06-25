@@ -55,6 +55,19 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   /// <summary>The Locrian (VII).</summary>
   public static readonly ModeFormula Locrian = new( "Locrian", 7 );
 
+  /// <summary>All mode formulas indexed by tonic (1-based, index 0 is unused).</summary>
+  public static readonly ModeFormula[] AllModes =
+  [
+    null!, // index 0 unused
+    Ionian, // 1
+    Dorian, // 2
+    Phrygian, // 3
+    Lydian, // 4
+    Mixolydian, // 5
+    Aeolian, // 6
+    Locrian // 7
+  ];
+
   #endregion
 
   #region Constructors
@@ -85,6 +98,21 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   #endregion
 
   #region Public Methods
+
+  /// <summary>Gets the mode formula by tonic index (1-based).</summary>
+  /// <param name="tonic">The tonic index (1-7).</param>
+  /// <returns>The corresponding ModeFormula.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">If tonic is not in [1,7].</exception>
+  public static ModeFormula FromTonic(
+    int tonic )
+  {
+    if( tonic is < MIN_TONIC or > MAX_TONIC )
+    {
+      throw new ArgumentOutOfRangeException( nameof( tonic ), $"Tonic must be between {MIN_TONIC} and {MAX_TONIC}." );
+    }
+
+    return AllModes[tonic];
+  }
 
   /// <inheritdoc />
   public bool Equals(
@@ -125,6 +153,28 @@ public sealed class ModeFormula: IEquatable<ModeFormula>
   public override string ToString()
   {
     return Name;
+  }
+
+  #endregion
+
+  #region Operators
+
+  /// <summary>Explicit cast that converts the given ModeFormula to its tonic index.</summary>
+  /// <param name="mode">The mode formula.</param>
+  /// <returns>The tonic index (1-7).</returns>
+  public static explicit operator int(
+    ModeFormula mode )
+  {
+    return mode.Tonic;
+  }
+
+  /// <summary>Explicit cast that converts the given tonic index to a ModeFormula.</summary>
+  /// <param name="tonic">The tonic index (1-7).</param>
+  /// <returns>The corresponding ModeFormula.</returns>
+  public static explicit operator ModeFormula(
+    int tonic )
+  {
+    return FromTonic( tonic );
   }
 
   #endregion

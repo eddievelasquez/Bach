@@ -24,8 +24,8 @@
 
 namespace Bach.Model;
 
-using Internal;
 using System.Text;
+using Bach.Model.Internal;
 
 /// <summary>
 ///   A Pitch represents the pitch of a sound (<see cref="PitchClass" />)
@@ -502,6 +502,24 @@ public readonly struct Pitch
   #endregion
 
   #region Operators
+
+  /// <summary>Explicit cast that converts the given Accidental to an int.</summary>
+  /// <param name="pitch">The pitch class name.</param>
+  /// <returns>The result of the operation.</returns>
+  public static explicit operator int(
+    Pitch pitch )
+  {
+    return pitch._absoluteValue;
+  }
+
+  /// <summary>Explicit cast that converts the given int to a Accidental.</summary>
+  /// <param name="value">The value.</param>
+  /// <returns>The result of the operation.</returns>
+  public static explicit operator Pitch(
+    int value )
+  {
+    return new Pitch( value );
+  }
 
   /// <summary>Equality operator.</summary>
   /// <param name="lhs">The first instance to compare.</param>

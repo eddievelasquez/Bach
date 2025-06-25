@@ -325,6 +325,7 @@ dotnet_diagnostic.ca1805.severity = suggestion
 dotnet_diagnostic.ca1811.severity = warning
 dotnet_diagnostic.ca1812.severity = none
 dotnet_diagnostic.ca1823.severity = warning
+dotnet_diagnostic.xUnit1044.severity = warning
 
 # ReSharper properties for C# files
 resharper_blank_lines_after_start_comment = 1

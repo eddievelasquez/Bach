@@ -567,6 +567,26 @@ public readonly struct Interval
 
   #region Operators
 
+  /// <summary>Explicit cast that converts the given Interval to an int.</summary>
+  /// <param name="interval">The interval.</param>
+  /// <returns>The result of the operation.</returns>
+  public static explicit operator int(
+    Interval interval )
+  {
+    return ( interval._quality << 8 ) | interval._quantity;
+  }
+
+  /// <summary>Explicit cast that converts the given int to an Interval.</summary>
+  /// <param name="value">The value.</param>
+  /// <returns>The result of the operation.</returns>
+  public static explicit operator Interval(
+    int value )
+  {
+    var quantity = (IntervalQuantity) ( value & 0xFF );
+    var quality = (IntervalQuality) ( ( value >> 8 ) & 0xFF );
+    return new Interval( quantity, quality );
+  }
+
   /// <summary>Equality operator.</summary>
   /// <param name="lhs">The first instance to compare.</param>
   /// <param name="rhs">The second instance to compare.</param>

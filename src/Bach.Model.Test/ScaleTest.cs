@@ -244,10 +244,24 @@ public sealed class ScaleTest
 
   [Theory]
   [MemberData( nameof( ScaleCategoryData ) )]
-  public void Scale_ShouldBelongToCategory_WhenMatchingCriteria( string scaleName, Predicate<Scale> condition )
+  public void Scale_ShouldContainAndExcludeCategories_WhenMatchingCriteria(
+    string scaleName,
+    string[] requiredCategories,
+    string[] excludedCategories )
   {
     var scale = new Scale( PitchClass.C, scaleName );
-    condition( scale ).Should().BeTrue();
+
+    foreach( var category in requiredCategories )
+    {
+      scale.Formula.Categories.Should()
+           .Contain( category );
+    }
+
+    foreach( var category in excludedCategories )
+    {
+      scale.Formula.Categories.Should()
+           .NotContain( category );
+    }
   }
 
   [Theory]
@@ -418,41 +432,34 @@ public sealed class ScaleTest
     { PitchClass.Parse("B#"), PitchClass.C, "major" }
   };
 
-  public static TheoryData<string, Predicate<Scale>> ScaleCategoryData => new()
+  public static TheoryData<string, string[], string[]> ScaleCategoryData => new()
   {
     // Diatonic scales
-    { "Major", scale => scale.Formula.Categories.Contains("Diatonic") },
-    { "LeadingTone", scale => scale.Formula.Categories.Contains("Diatonic") },
-    { "LydianDominant", scale => scale.Formula.Categories.Contains("Diatonic") },
-    { "Hindu", scale => scale.Formula.Categories.Contains("Diatonic") },
-    { "Arabian", scale => scale.Formula.Categories.Contains("Diatonic") },
-    { "NaturalMinor", scale => scale.Formula.Categories.Contains("Diatonic") },
-    { "Javanese", scale => scale.Formula.Categories.Contains("Diatonic") },
-    { "NeapolitanMajor", scale => scale.Formula.Categories.Contains("Diatonic") },
+    { "Major", ["Diatonic", "Major"], [] },
+    { "LeadingTone", ["Diatonic"], [] },
+    { "LydianDominant", ["Diatonic"], [] },
+    { "Hindu", ["Diatonic"], [] },
+    { "Arabian", ["Diatonic"], [] },
+    { "NaturalMinor", ["Diatonic", "Minor"], [] },
+    { "Javanese", ["Diatonic", "Minor"], [] },
+    { "NeapolitanMajor", ["Diatonic", "Minor"], [] },
 
     // Major scales
-    { "Major", scale => scale.Formula.Categories.Contains("Major") },
-    { "HungarianFolk", scale => scale.Formula.Categories.Contains("Major") },
-    { "Gypsy", scale => scale.Formula.Categories.Contains("Major") },
-    { "Mongolian", scale => scale.Formula.Categories.Contains("Major") },
+    { "HungarianFolk", ["Major"], ["Diatonic"] },
+    { "Gypsy", ["Major"], ["Diatonic"] },
+    { "Mongolian", ["Major"], ["Diatonic"] },
 
     // Minor scales
-    { "NaturalMinor", scale => scale.Formula.Categories.Contains("Minor") },
-    { "GypsyMinor", scale => scale.Formula.Categories.Contains("Minor") },
-    { "Javanese", scale => scale.Formula.Categories.Contains("Minor") },
-    { "NeapolitanMinor", scale => scale.Formula.Categories.Contains("Minor") },
-    { "NeapolitanMajor", scale => scale.Formula.Categories.Contains("Minor") },
-    { "HungarianGypsy", scale => scale.Formula.Categories.Contains("Minor") },
-    { "Yo", scale => scale.Formula.Categories.Contains("Minor") },
-    { "Hirajoshi", scale => scale.Formula.Categories.Contains("Minor") },
-    { "Balinese", scale => scale.Formula.Categories.Contains("Minor") },
+    { "GypsyMinor", ["Minor"], [] },
+    { "NeapolitanMinor", ["Minor"], [] },
+    { "HungarianGypsy", ["Minor"], [] },
+    { "Yo", ["Minor"], [] },
+    { "Hirajoshi", ["Minor"], [] },
+    { "Balinese", ["Minor"], [] },
 
     // Non-diatonic scales
-    { "HungarianFolk", scale => !scale.Formula.Categories.Contains("Diatonic") },
-    { "Gypsy", scale => !scale.Formula.Categories.Contains("Diatonic") },
-    { "EnigmaticMajor", scale => !scale.Formula.Categories.Contains("Diatonic") },
-    { "Persian", scale => !scale.Formula.Categories.Contains("Diatonic") },
-    { "Mongolian", scale => !scale.Formula.Categories.Contains("Diatonic") }
+    { "EnigmaticMajor", [], ["Diatonic"] },
+    { "Persian", [], ["Diatonic"] }
   };
 
   public static TheoryData<PitchClass, bool> TheoreticalScaleData => new()

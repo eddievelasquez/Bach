@@ -31,14 +31,34 @@ public sealed class ScaleFormulaTest
   #region Public Methods
 
   [Theory]
-  [MemberData( nameof( CategoryTestData ) )]
-  public void Categories_ShouldContainCategory_WhenFormulaMatchesCondition( string category, Predicate<ScaleFormula> condition )
+  [MemberData( nameof( CategoryByIntervalCountData ) )]
+  public void Categories_ShouldContainCategory_WhenFormulaHasIntervalCount(
+    string category,
+    int intervalCount )
   {
     var matchingFormulas = Registry.ScaleFormulas
-                                   .Where( formula => condition( formula ) );
+                                   .Where( formula => formula.Intervals.Count == intervalCount );
+
     foreach( var formula in matchingFormulas )
     {
-      formula.Categories.Should().Contain( category );
+      formula.Categories.Should()
+             .Contain( category );
+    }
+  }
+
+  [Theory]
+  [MemberData( nameof( CategoryByIntervalsData ) )]
+  public void Categories_ShouldContainCategory_WhenFormulaContainsIntervals(
+    string category,
+    Interval[] requiredIntervals )
+  {
+    var matchingFormulas = Registry.ScaleFormulas
+                                   .Where( formula => requiredIntervals.All( i => formula.Intervals.Contains( i ) ) );
+
+    foreach( var formula in matchingFormulas )
+    {
+      formula.Categories.Should()
+             .Contain( category );
     }
   }
 
@@ -279,14 +299,18 @@ public sealed class ScaleFormulaTest
     { "Pentatonic", [2, 2, 3, 2, 3] }
   };
 
-  public static TheoryData<string, Predicate<ScaleFormula>> CategoryTestData => new()
+  public static TheoryData<string, int> CategoryByIntervalCountData => new()
   {
-    { "Pentatonic", formula => formula.Intervals.Count == 5 },
-    { "Hexatonic", formula => formula.Intervals.Count == 6 },
-    { "Heptatonic", formula => formula.Intervals.Count == 7 },
-    { "Octatonic", formula => formula.Intervals.Count == 8 },
-    { "Major", formula => formula.Intervals.Contains(Interval.MajorThird) && formula.Intervals.Contains(Interval.Fifth) },
-    { "Minor", formula => formula.Intervals.Contains(Interval.MinorThird) && formula.Intervals.Contains(Interval.Fifth) }
+    { "Pentatonic", 5 },
+    { "Hexatonic", 6 },
+    { "Heptatonic", 7 },
+    { "Octatonic", 8 }
+  };
+
+  public static TheoryData<string, Interval[]> CategoryByIntervalsData => new()
+  {
+    { "Major", [Interval.MajorThird, Interval.Fifth] },
+    { "Minor", [Interval.MinorThird, Interval.Fifth] }
   };
 
   #endregion

@@ -285,10 +285,12 @@ public sealed class AccidentalTest
     string? value,
     Accidental accidental,
     string name,
-    string symbol )
+    string symbol,
+    string extendedSymbol )
   {
     _ = name; // Unused parameter, but kept for clarity in the test data
     _ = symbol; // Unused parameter, but kept for clarity in the test data
+    _ = extendedSymbol; // Unused parameter, but kept for clarity in the test data
 
     Accidental.Parse( value )
               .Should()
@@ -412,10 +414,12 @@ public sealed class AccidentalTest
     string? value,
     Accidental accidental,
     string name,
-    string symbol )
+    string symbol,
+    string extendedSymbol )
   {
     _ = value; // Unused parameter, but kept for clarity in the test data
     _ = symbol; // Unused parameter, but kept for clarity in the test data
+    _ = extendedSymbol; // Unused parameter, but kept for clarity in the test data
 
     accidental.ToString()
               .Should()
@@ -428,14 +432,34 @@ public sealed class AccidentalTest
     string? value,
     Accidental accidental,
     string name,
-    string symbol )
+    string symbol,
+    string extendedSymbol )
   {
     _ = value; // Unused parameter, but kept for clarity in the test data
     _ = name; // Unused parameter, but kept for clarity in the test data
+    _ = extendedSymbol; // Unused parameter, but kept for clarity in the test data
 
     accidental.ToSymbol()
               .Should()
               .Be( symbol );
+  }
+
+  [Theory]
+  [MemberData( nameof( ValidAccidentals ) )]
+  public void ToExtendedSymbol_ShouldReturnSymbol(
+    string? value,
+    Accidental accidental,
+    string name,
+    string symbol,
+    string extendedSymbol )
+  {
+    _ = value; // Unused parameter, but kept for clarity in the test data
+    _ = name; // Unused parameter, but kept for clarity in the test data
+    _ = symbol; // Unused parameter, but kept for clarity in the test data
+
+    accidental.ToExtendedSymbol()
+              .Should()
+              .Be( extendedSymbol );
   }
 
   [Theory]
@@ -547,7 +571,7 @@ public sealed class AccidentalTest
 
       foreach( var row in ValidAccidentals )
       {
-        var (value, accidental, _, _) = row.Data;
+        var (value, accidental, _, _, _) = row.Data;
         data.Add( value, accidental, true );
       }
 
@@ -561,19 +585,23 @@ public sealed class AccidentalTest
     }
   }
 
-  public static TheoryData<string?, Accidental, string, string> ValidAccidentals
+  public static TheoryData<string?, Accidental, string, string, string> ValidAccidentals
   {
     get
     {
-      var data = new TheoryData<string?, Accidental, string, string>
+      var data = new TheoryData<string?, Accidental, string, string, string>
       {
-        { null, Accidental.Natural, "Natural", "" },
-        { "", Accidental.Natural, "Natural", "" },
-        { "♮", Accidental.Natural, "Natural", "" },
-        { "bb", Accidental.DoubleFlat, "DoubleFlat", "bb" },
-        { "b", Accidental.Flat, "Flat", "b" },
-        { "#", Accidental.Sharp, "Sharp", "#" },
-        { "##", Accidental.DoubleSharp, "DoubleSharp", "##" },
+        { null, Accidental.Natural, "Natural", "", "" },
+        { "", Accidental.Natural, "Natural", "", "" },
+        { "♮", Accidental.Natural, "Natural", "", "" },
+        { "bb", Accidental.DoubleFlat, "DoubleFlat", "bb", "𝄫" },
+        { "𝄫", Accidental.DoubleFlat, "DoubleFlat", "bb", "𝄫" },
+        { "b", Accidental.Flat, "Flat", "b", "♭" },
+        { "♭", Accidental.Flat, "Flat", "b", "♭" },
+        { "#", Accidental.Sharp, "Sharp", "#", "♯" },
+        { "♯", Accidental.Sharp, "Sharp", "#", "♯" },
+        { "##", Accidental.DoubleSharp, "DoubleSharp", "##", "𝄪" },
+        { "𝄪", Accidental.DoubleSharp, "DoubleSharp", "##", "𝄪" }
       };
 
       return data;

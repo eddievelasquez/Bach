@@ -215,11 +215,31 @@ public sealed class PitchClassTest
 
   [Theory]
   [MemberData( nameof( ToStringTestData ) )]
-  public void ToString_ShouldReturnExpectedString_WhenCalled(
-    NoteName noteName, Accidental accidental, string expected )
+  public void ToString_ShouldReturnExpectedString(
+    NoteName noteName,
+    Accidental accidental,
+    string expected )
   {
     var pitchClass = PitchClass.Create( noteName, accidental );
-    pitchClass.ToString().Should().Be( expected );
+
+    pitchClass.ToString()
+              .Should()
+              .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( ToStringWithFormatTestData ) )]
+  public void ToString_ShouldReturnExpectedString_WhenFormatProvided(
+    NoteName noteName,
+    Accidental accidental,
+    string? format,
+    string expected )
+  {
+    var pitchClass = PitchClass.Create( noteName, accidental );
+
+    pitchClass.ToString( format! )
+              .Should()
+              .Be( expected );
   }
 
   [Theory]
@@ -536,11 +556,36 @@ public sealed class PitchClassTest
   public static TheoryData<NoteName, Accidental, string> ToStringTestData =>
     new()
     {
-        { NoteName.C, Accidental.DoubleFlat, "Cbb" },
-        { NoteName.C, Accidental.Flat, "Cb" },
-        { NoteName.C, Accidental.Natural, "C" },
-        { NoteName.C, Accidental.Sharp, "C#" },
-        { NoteName.C, Accidental.DoubleSharp, "C##" }
+      { NoteName.C, Accidental.DoubleFlat, "Cbb" },
+      { NoteName.C, Accidental.Flat, "Cb" },
+      { NoteName.C, Accidental.Natural, "C" },
+      { NoteName.C, Accidental.Sharp, "C#" },
+      { NoteName.C, Accidental.DoubleSharp, "C##" }
+    };
+
+  public static TheoryData<NoteName, Accidental, string?, string> ToStringWithFormatTestData =>
+    new()
+    {
+      { NoteName.C, Accidental.DoubleFlat, null, "Cbb" },
+      { NoteName.C, Accidental.DoubleFlat, "", "Cbb" },
+      { NoteName.C, Accidental.DoubleFlat, "NS", "Cbb" },
+      { NoteName.C, Accidental.DoubleFlat, "NX", "C𝄫" },
+      { NoteName.C, Accidental.Flat, null, "Cb" },
+      { NoteName.C, Accidental.Flat, "", "Cb" },
+      { NoteName.C, Accidental.Flat, "NS", "Cb" },
+      { NoteName.C, Accidental.Flat, "NX", "C♭" },
+      { NoteName.C, Accidental.Natural, null, "C" },
+      { NoteName.C, Accidental.Natural, "", "C" },
+      { NoteName.C, Accidental.Natural, "NS", "C" },
+      { NoteName.C, Accidental.Natural, "NX", "C" },
+      { NoteName.C, Accidental.Sharp, null, "C#" },
+      { NoteName.C, Accidental.Sharp, "", "C#" },
+      { NoteName.C, Accidental.Sharp, "NS", "C#" },
+      { NoteName.C, Accidental.Sharp, "NX", "C♯" },
+      { NoteName.C, Accidental.DoubleSharp, null, "C##" },
+      { NoteName.C, Accidental.DoubleSharp, "", "C##" },
+      { NoteName.C, Accidental.DoubleSharp, "NS", "C##" },
+      { NoteName.C, Accidental.DoubleSharp, "NX", "C𝄪" }
     };
 
   public static TheoryData<string> TryParseInvalidStringsTestData => [(string) null!, "", "J", "C$"];
