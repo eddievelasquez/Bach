@@ -24,9 +24,10 @@
 
 namespace Bach.Model;
 
-using Internal;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Text;
+using Bach.Model.Internal;
 
 /// <summary>
 ///   A PitchClass represents a combination of a <see cref="P:Bach.Model.NoteName" />
@@ -39,6 +40,7 @@ public readonly struct PitchClass
   #region Constants
 
   private const int SEMITONE_COUNT = 12;
+  private const string NOTE_NAME_SYMBOL_TO_STRING_FORMAT = "NS";
 
   private static readonly PitchClass[] s_pitchClasses =
   [
@@ -368,6 +370,78 @@ public readonly struct PitchClass
   public override string ToString()
   {
     return $"{NoteName}{Accidental.ToSymbol()}";
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   provided format specifier.
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>Format specifiers:</para>
+  ///   <para>"N": Name pattern. e.g. "Major".</para>
+  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  /// </remarks>
+  public string ToString(
+    string format )
+  {
+    return ToString( format, null );
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   provided format specifier and format provider.
+  /// </summary>
+  /// <param name="format">A custom format string.</param>
+  /// <param name="provider">The format provider. (Currently unused)</param>
+  /// <returns>
+  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
+  ///   <paramref name="format" />.
+  /// </returns>
+  /// <remarks>
+  ///   <para>Format specifiers:</para>
+  ///   <para>"N": NoteName pattern. e.g. "C".</para>
+  ///   <para>"S": Symbol pattern. e.g. "#".</para>
+  ///   <para>"X": Extended symbol pattern. e.g. "♯".</para>
+  /// </remarks>
+  public string ToString(
+    string format,
+    IFormatProvider? provider )
+  {
+    if( string.IsNullOrEmpty( format ) )
+    {
+      format = NOTE_NAME_SYMBOL_TO_STRING_FORMAT;
+    }
+
+    var buf = new StringBuilder();
+
+    foreach( var f in format )
+    {
+      switch( f )
+      {
+        case 'N':
+          buf.Append( NoteName );
+          break;
+
+        case 'S':
+          buf.Append( Accidental.ToSymbol() );
+          break;
+
+        case 'X':
+          buf.Append( Accidental.ToExtendedSymbol() );
+          break;
+
+        default:
+          buf.Append( f );
+          break;
+      }
+    }
+
+    return buf.ToString();
   }
 
   /// <summary>Attempts to parse a PitchClass from the given string.</summary>

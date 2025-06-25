@@ -63,6 +63,7 @@ public readonly struct Accidental
   public static readonly Accidental DoubleSharp = new( 2 );
 
   private static readonly string[] s_symbols = ["bb", "b", "", "#", "##"];
+  private static readonly string[] s_extendedSymbols = ["𝄫", "♭", "", "♯", "𝄪"];
   private static readonly string[] s_names = ["DoubleFlat", "Flat", "Natural", "Sharp", "DoubleSharp"];
   private static readonly int s_doubleFlatOffset = Math.Abs( (int) DoubleFlat );
 
@@ -184,6 +185,16 @@ public readonly struct Accidental
   }
 
   /// <summary>
+  ///   Returns this instance's symbolic representation using an extended symbol.
+  /// </summary>
+  /// <returns>String representation of the accidental.</returns>
+  [Pure]
+  public string ToExtendedSymbol()
+  {
+    return s_extendedSymbols[_value + s_doubleFlatOffset];
+  }
+
+  /// <summary>
   ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
   ///   and returns a value that indicates whether the conversion succeeded.
   /// </summary>
@@ -202,45 +213,44 @@ public readonly struct Accidental
     string? value,
     out Accidental accidental )
   {
-    accidental = Natural;
+    // Default to Natural
     if( string.IsNullOrEmpty( value ) )
     {
+      accidental = Natural;
       return true;
     }
 
-    if( value.Length > 2 )
+    switch( value )
     {
-      return false;
+      case "♮":
+        accidental = Natural;
+        return true;
+
+      case "bb":
+      case "𝄫":
+        accidental = DoubleFlat;
+        return true;
+
+      case "b":
+      case "B":
+      case "♭":
+        accidental = Flat;
+        return true;
+
+      case "#":
+      case "♯":
+        accidental = Sharp;
+        return true;
+
+      case "##":
+      case "𝄪":
+        accidental = DoubleSharp;
+        return true;
+
+      default:
+        accidental = default;
+        return false;
     }
-
-    var accidentalValue = 0;
-    foreach( var c in value )
-    {
-      switch( c )
-      {
-        case '♮':
-          // The accidental can only be a valid natural if it's the single character
-          return value.Length == 1;
-
-        case 'b':
-        case 'B':
-        case '♭':
-          --accidentalValue;
-          break;
-
-        case '#':
-        case '♯':
-          ++accidentalValue;
-          break;
-
-        default:
-          return false;
-      }
-    }
-
-    // Cannot be natural unless the "b#" or "#b" combinations are found
-    accidental = new Accidental( accidentalValue );
-    return accidental != Natural;
   }
 
   #endregion
