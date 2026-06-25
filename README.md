@@ -43,6 +43,35 @@ The included command line application demonstrates some of the available functio
 * Infer the intervals between a set of pitches.
 * Infer the list of scales that contain a given set of pitches.
 
+## Tonal context and harmonic motion
+Bach also supports a few higher-level abstractions for tonal analysis and simple progression building:
+
+- `Key` captures a tonic, mode, key signature, and the implied scale.
+- `ScaleDegree` resolves degrees such as tonic, dominant, or subdominant within a key.
+- `ChordProgression` collects a sequence of chords for analysis or composition.
+
+These concepts work together naturally. For example, you can resolve the important scale degrees of a key and use them to build a chord progression:
+
+```csharp
+var key = new Key( PitchClass.C, ModeType.Major );
+
+var tonic = ScaleDegree.Tonic.Resolve( key );
+var subdominant = ScaleDegree.Subdominant.Resolve( key );
+var dominant = ScaleDegree.Dominant.Resolve( key );
+
+var progression = new ChordProgression(
+[
+  new Chord( tonic, "Major" ),
+  new Chord( subdominant, "Major" ),
+  new Chord( dominant, "Major" )
+] );
+
+Console.WriteLine( key );
+Console.WriteLine( progression );
+```
+
+This produces a simple tonal progression anchored in the selected key while staying consistent with the library's existing pitch and scale abstractions.
+
 ## Contribution
 * Feel free to make pull requests or fix any existing bugs.
 * Feel free to open issues if you find music theory mistakes, bugs, or unexpected behavior.

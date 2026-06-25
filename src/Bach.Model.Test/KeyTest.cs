@@ -5,14 +5,16 @@ public sealed class KeyTest
   [Fact]
   public void Constructor_ShouldInitializeCorrectly_ForMajorKey()
   {
-    var key = new Key( PitchClass.G, "Major", 1 );
+    var key = new Key( PitchClass.G, ModeType.Major );
 
     key.Tonic.Should()
        .Be( PitchClass.G );
     key.Mode.Should()
-       .Be( "Major" );
-    key.KeySignature.Should()
+       .Be( ModeType.Major );
+    key.KeySignature.AccidentalCount.Should()
        .Be( 1 );
+    key.KeySignature.Accidental.Should()
+       .Be( Accidental.Sharp );
     key.Scale.Should()
        .NotBeNull();
     key.Scale.Root.Should()
@@ -24,40 +26,24 @@ public sealed class KeyTest
   [Fact]
   public void Constructor_ShouldInitializeCorrectly_ForMinorKey()
   {
-    var key = new Key( PitchClass.E, "Minor", 4 );
+    var key = new Key( PitchClass.E, ModeType.Minor );
 
     key.Tonic.Should()
        .Be( PitchClass.E );
     key.Mode.Should()
-       .Be( "Minor" );
-    key.KeySignature.Should()
-       .Be( 4 );
+       .Be( ModeType.Minor );
+    key.KeySignature.AccidentalCount.Should()
+       .Be( 1 );
+    key.KeySignature.Accidental.Should()
+       .Be( Accidental.Sharp );
     key.Scale.Root.Should()
        .Be( PitchClass.E );
   }
 
   [Fact]
-  public void Constructor_ShouldThrowArgumentNullException_WhenModeIsNull()
-  {
-    var act = () => new Key( PitchClass.C, null!, 0 );
-
-    act.Should()
-       .Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void Constructor_ShouldThrowArgumentException_WhenModeIsEmpty()
-  {
-    var act = () => new Key( PitchClass.C, string.Empty, 0 );
-
-    act.Should()
-       .Throw<ArgumentException>();
-  }
-
-  [Fact]
   public void ToString_ShouldRenderTonicAndMode()
   {
-    var key = new Key( PitchClass.C, "Major", 0 );
+    var key = new Key( PitchClass.C, ModeType.Major );
 
     key.ToString()
        .Should()

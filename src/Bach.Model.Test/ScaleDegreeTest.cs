@@ -5,7 +5,7 @@ public sealed class ScaleDegreeTest
   [Fact]
   public void Resolve_ShouldReturnTonicPitchClass_ForMajorKey()
   {
-    var key = new Key( PitchClass.C, "Major", 0 );
+    var key = new Key( PitchClass.C, ModeType.Major );
     var degree = ScaleDegree.Tonic;
 
     degree.Resolve( key )
@@ -16,7 +16,7 @@ public sealed class ScaleDegreeTest
   [Fact]
   public void Resolve_ShouldReturnExpectedPitchClass_ForMinorKey()
   {
-    var key = new Key( PitchClass.A, "Minor", 0 );
+    var key = new Key( PitchClass.A, ModeType.Minor );
     var degree = ScaleDegree.Mediant;
 
     degree.Resolve( key )
