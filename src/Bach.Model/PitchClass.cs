@@ -1,6 +1,6 @@
 // Module Name: PitchClass.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -35,7 +35,9 @@ using Bach.Model.Internal;
 /// </summary>
 public readonly struct PitchClass
   : IEquatable<PitchClass>,
-    IComparable<PitchClass>
+    IComparable<PitchClass>,
+    IParsable<PitchClass>,
+    ISpanParsable<PitchClass>
 {
   #region Constants
 
@@ -245,6 +247,7 @@ public readonly struct PitchClass
     // pitch class name.
     var noteIndex = s_noteNameIndices[(int) noteName];
     var pitchClass = s_pitchClasses[noteIndex];
+
     if( accidental == Accidental.Natural )
     {
       return pitchClass;
@@ -292,12 +295,14 @@ public readonly struct PitchClass
     {
       var accidentalIndex = accidental + accidentalOffset;
       var noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+
       if( noteIndex == -1 )
       {
         continue;
       }
 
       var pitchClass = s_pitchClasses[noteIndex];
+
       if( pitchClass.NoteName == noteName )
       {
         return pitchClass;
@@ -322,15 +327,47 @@ public readonly struct PitchClass
   public static PitchClass Parse(
     string value )
   {
-    ArgumentException.ThrowIfNullOrEmpty( value );
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), null );
+  }
 
-    if( !TryParse( value, out var result ) )
+  /// <summary>
+  ///   Parses the provided string using the given format provider.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A PitchClass.</returns>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a PitchClass.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  public static PitchClass Parse(
+    string value,
+    IFormatProvider? provider )
+  {
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), provider );
+  }
+
+  /// <summary>
+  /// Parses the provided string using the given format provider.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A PitchClass.</returns>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a PitchClass.</exception>
+  public static PitchClass Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    if( value.IsEmpty )
     {
-      throw new FormatException( $"{value} is not a valid pitch class" );
+      throw new ArgumentException( "Value cannot be empty.", nameof( value ) );
     }
 
-    return result;
+    return TryParse( value, provider, out var result ) ? result : throw new FormatException( $"{value} is not a valid pitch class" );
   }
+
 
   /// <summary>Subtracts an interval from the current instance.</summary>
   /// <param name="interval">An interval to subtract.</param>
@@ -452,6 +489,21 @@ public readonly struct PitchClass
     string? value,
     out PitchClass pitchClass )
   {
+    return TryParse( value, null, out pitchClass );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a PitchClass from the given string.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitchClass">[out] The pitch class.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    string? value,
+    IFormatProvider? provider,
+    out PitchClass pitchClass )
+  {
     if( string.IsNullOrEmpty( value ) )
     {
       pitchClass = C;
@@ -459,6 +511,7 @@ public readonly struct PitchClass
     }
 
     value = value.Trim();
+
     if( !NoteName.TryParse( value, out var toneName ) )
     {
       pitchClass = C;
@@ -466,7 +519,53 @@ public readonly struct PitchClass
     }
 
     var accidental = Accidental.Natural;
-    if( value.Length > 1 && !Accidental.TryParse( value.Substring( 1 ), out accidental ) )
+
+    if( value.Length > 1 && !Accidental.TryParse( value[1..], out accidental ) )
+    {
+      pitchClass = C;
+      return false;
+    }
+
+    pitchClass = Create( toneName, accidental );
+    return true;
+  }
+
+  /// <summary>
+  /// Attempts to parse a PitchClass from the given string.
+  /// </summary>
+  /// <param name="value">The string representation of the pitch class.</param>
+  /// <param name="pitchClass">[out] The parsed pitch class.</param>
+  /// <returns>True if parsing was successful; otherwise, false.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    out PitchClass pitchClass )
+  {
+    return TryParse( value, null, out pitchClass );
+  }
+
+  /// <summary>
+  /// Attempts to parse a PitchClass from the given string.
+  /// </summary>
+  /// <param name="value">The string representation of the pitch class.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitchClass">[out] The parsed pitch class.</param>
+  /// <returns>True if parsing was successful; otherwise, false.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out PitchClass pitchClass )
+  {
+    value = value.TrimStart();
+
+    if( value.IsEmpty || !NoteName.TryParse( value, provider, out var toneName ) )
+    {
+      pitchClass = C;
+      return false;
+    }
+
+    var accidental = Accidental.Natural;
+
+    if( value.Length > 1 && !Accidental.TryParse( value[1..], provider, out accidental ) )
     {
       pitchClass = C;
       return false;
@@ -486,6 +585,7 @@ public readonly struct PitchClass
   {
     var calculatedNoteName = NoteName + intervalQuantity;
     var calculatedPitchClass = this + semitoneCount;
+
     if( calculatedPitchClass.NoteName == calculatedNoteName )
     {
       return calculatedPitchClass;
@@ -508,6 +608,7 @@ public readonly struct PitchClass
     while( accidentalIndex <= maxAccidentalIndex )
     {
       var noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
+
       if( noteIndex != -1 )
       {
         return s_pitchClasses[noteIndex];

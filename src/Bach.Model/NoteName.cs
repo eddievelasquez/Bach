@@ -24,6 +24,7 @@
 
 namespace Bach.Model;
 
+using System.Diagnostics.CodeAnalysis;
 using Bach.Model.Internal;
 using System.Diagnostics.Contracts;
 
@@ -33,7 +34,9 @@ using System.Diagnostics.Contracts;
 /// </summary>
 public readonly struct NoteName
   : IEquatable<NoteName>,
-    IComparable<NoteName>
+    IComparable<NoteName>,
+    IParsable<NoteName>  ,
+    ISpanParsable<NoteName>
 {
   #region Constants
 
@@ -138,22 +141,46 @@ public readonly struct NoteName
   }
 
   /// <summary>Parses the provided string.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <returns>A PitchClass.</returns>
   /// <exception cref="FormatException">Thrown when the provided string doesn't represent a <see cref="NoteName"/>.</exception>
   /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>A PitchClass.</returns>
   public static NoteName Parse(
     string value )
   {
+    return Parse( value, null );
+  }
+
+  /// <summary>
+  /// Parses the provided string.
+  /// </summary>
+  /// <param name="value">The string to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A NoteName.</returns>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a <see cref="NoteName"/>.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
+  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
+  public static NoteName Parse(
+    string value,
+    IFormatProvider? provider )
+  {
     ArgumentException.ThrowIfNullOrEmpty( value );
+    return Parse( value.AsSpan(), provider );
+  }
 
-    if( !TryParse( value, out var result ) )
-    {
-      throw new FormatException( $"{value} is not a valid note name" );
-    }
-
-    return result;
+  /// <summary>
+  /// Parses the provided string.
+  /// </summary>
+  /// <param name="value">The string to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A NoteName.</returns>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a <see cref="NoteName"/>.</exception>
+  public static NoteName Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    return TryParse( value, provider, out var result ) ? result : throw new FormatException( $"{value} is not a valid note name" );
   }
 
   /// <summary>Subtracts a number of steps from a note name.</summary>
@@ -184,31 +211,62 @@ public readonly struct NoteName
   }
 
   /// <summary>Attempts to parse a NoteName from the given string.</summary>
-  /// <param name="s">The value to parse.</param>
+  /// <param name="value">The value to parse.</param>
   /// <param name="noteName">[out] The note name.</param>
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
-    string? s,
+    string? value,
     out NoteName noteName )
   {
-    return TryParse( s.AsSpan(), out noteName );
+    return TryParse( value.AsSpan(), null, out noteName );
+  }
+
+  /// <summary>
+  /// Attempts to parse a NoteName from the given string.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="noteName">[out] The note name.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    [NotNullWhen( true )] string? value,
+    IFormatProvider? provider,
+    out NoteName noteName )
+  {
+    return TryParse( value.AsSpan(), provider, out noteName );
   }
 
   /// <summary>Attempts to parse a NoteName from the given span.</summary>
-  /// <param name="s">The value to parse.</param>
+  /// <param name="span">The span to parse.</param>
   /// <param name="noteName">[out] The note name.</param>
   /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
-    ReadOnlySpan<char> s,
+    ReadOnlySpan<char> span,
     out NoteName noteName )
   {
-    if( s.IsEmpty )
+    return TryParse( span, null, out noteName );
+  }
+
+  /// <summary>
+  /// Attempts to parse a NoteName from the given span.
+  /// </summary>
+  /// <param name="span">The span to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="noteName">[out] The note name.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    out NoteName noteName )
+  {
+    span = span.TrimStart();
+    if( span.IsEmpty )
     {
       noteName = C;
       return false;
     }
 
-    var value = s_names.IndexOf( char.ToUpperInvariant( s.Trim()[0] ) );
+    var value = s_names.IndexOf( char.ToUpperInvariant( span[0] ) );
     if( value == -1 )
     {
       noteName = C;

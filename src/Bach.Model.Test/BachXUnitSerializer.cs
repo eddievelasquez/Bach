@@ -35,7 +35,8 @@ using Xunit.Sdk;
     typeof( PitchClass ),
     typeof( Interval ),
     typeof( IntervalQuality ),
-    typeof( ModeFormula )
+    typeof( ModeFormula ),
+    typeof( ScaleDegree )
   )]
 
 namespace Bach.Model.Test;
@@ -60,6 +61,7 @@ internal class BachXUnitSerializer: IXunitSerializer
       not null when type == typeof( Interval )        => (Interval) int.Parse( serializedValue ),
       not null when type == typeof( IntervalQuality ) => (IntervalQuality) int.Parse( serializedValue ),
       not null when type == typeof( ModeFormula )     => (ModeFormula) int.Parse( serializedValue ),
+      not null when type == typeof( ScaleDegree )     => ScaleDegree.ScaleDegrees[int.Parse( serializedValue ) - 1],
       _                                               => throw new NotSupportedException( $"Type {type} is not supported." )
     };
   }
@@ -77,7 +79,8 @@ internal class BachXUnitSerializer: IXunitSerializer
            || type == typeof( PitchClass )
            || type == typeof( Interval )
            || type == typeof( IntervalQuality )
-           || type == typeof( ModeFormula );
+           || type == typeof( ModeFormula )
+           || type == typeof( ScaleDegree );
   }
 
   public string Serialize(
@@ -92,6 +95,7 @@ internal class BachXUnitSerializer: IXunitSerializer
       Interval interval               => ( (int) interval ).ToString(),
       IntervalQuality intervalQuality => ( (int) intervalQuality ).ToString(),
       ModeFormula modeFormula         => ( (int) modeFormula ).ToString(),
+      ScaleDegree scaleDegree         => ( (int) scaleDegree.Degree ).ToString(),
       _                               => throw new NotSupportedException( $"Type {value.GetType()} is not supported." )
     };
   }

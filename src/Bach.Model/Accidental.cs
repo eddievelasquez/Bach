@@ -1,6 +1,6 @@
 // Module Name: Accidental.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -33,7 +33,9 @@ using System.Diagnostics.Contracts;
 public readonly struct Accidental
   : IEquatable<Accidental>,
     IComparable<Accidental>,
-    IComparable
+    IComparable,
+    IParsable<Accidental>,
+    ISpanParsable<Accidental>
 {
   #region Constants
 
@@ -91,7 +93,7 @@ public readonly struct Accidental
 
   /// <summary>Adds a number of steps to a pitch class name.</summary>
   /// <param name="steps">The number of steps to add.</param>
-  /// <returns>An <see cref="Accidental"/>.</returns>
+  /// <returns>An <see cref="Accidental" />.</returns>
   [Pure]
   public Accidental Add(
     int steps )
@@ -150,12 +152,37 @@ public readonly struct Accidental
   public static Accidental Parse(
     string? value )
   {
-    if( !TryParse( value, out var accidental ) )
-    {
-      throw new FormatException( $"{value} is not a valid accidental" );
-    }
+    return Parse( value.AsSpan(), null );
+  }
 
-    return accidental;
+  /// <summary>
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent.
+  /// </summary>
+  /// <param name="value"></param>
+  /// <param name="provider"></param>
+  /// <returns>An object that is equivalent to the accidental contained in value.</returns>
+  /// <exception cref="FormatException">value does not contain a valid string representation of an accidental.</exception>
+  public static Accidental Parse(
+    string value,
+    IFormatProvider? provider )
+  {
+    return Parse( value.AsSpan(), provider );
+  }
+
+  /// <summary>
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent.
+  /// </summary>
+  /// <param name="value">The string representation of the accidental to convert.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <returns>An object that is equivalent to the accidental contained in value.</returns>
+  /// <exception cref="FormatException">value does not contain a valid string representation of an accidental.</exception>
+  public static Accidental Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    return TryParse( value, provider, out var accidental )
+      ? accidental
+      : throw new FormatException( $"{value} is not a valid accidental" );
   }
 
   /// <summary>Subtracts a number of steps from a pitch class name.</summary>
@@ -166,6 +193,16 @@ public readonly struct Accidental
     int steps )
   {
     return Add( -steps );
+  }
+
+  /// <summary>
+  ///   Returns this instance's symbolic representation using an extended symbol.
+  /// </summary>
+  /// <returns>String representation of the accidental.</returns>
+  [Pure]
+  public string ToExtendedSymbol()
+  {
+    return s_extendedSymbols[_value + s_doubleFlatOffset];
   }
 
   /// <inheritdoc />
@@ -185,16 +222,6 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Returns this instance's symbolic representation using an extended symbol.
-  /// </summary>
-  /// <returns>String representation of the accidental.</returns>
-  [Pure]
-  public string ToExtendedSymbol()
-  {
-    return s_extendedSymbols[_value + s_doubleFlatOffset];
-  }
-
-  /// <summary>
   ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
   ///   and returns a value that indicates whether the conversion succeeded.
   /// </summary>
@@ -206,15 +233,72 @@ public readonly struct Accidental
   ///   representation of an accidental. This parameter is passed uninitialized.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
-  ///   .
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
   /// </returns>
   public static bool TryParse(
     string? value,
     out Accidental accidental )
   {
+    return TryParse( value, null, out accidental );
+  }
+
+  /// <summary>
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  /// </summary>
+  /// <param name="value">The string representation of the accidental to convert.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <param name="accidental">
+  ///   When this method returns, contains the Accidental value equivalent to the accidental contained
+  ///   in value, if the conversion succeeded, or Natural if the conversion failed.
+  /// </param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  /// </returns>
+  public static bool TryParse(
+    string? value,
+    IFormatProvider? provider,
+    out Accidental accidental )
+  {
+    return TryParse( value.AsSpan(), provider, out accidental );
+  }
+
+  /// <summary>
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  /// </summary>
+  /// <param name="value">The string representation of the accidental to convert.</param>
+  /// <param name="accidental">
+  ///   When this method returns, contains the Accidental value equivalent to the accidental contained
+  ///   in value, if the conversion succeeded, or Natural if the conversion failed.
+  /// </param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  /// </returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    out Accidental accidental )
+  {
+    return TryParse( value, null, out accidental );
+  }
+
+  /// <summary>
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  /// </summary>
+  /// <param name="value">The string representation of the accidental to convert.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <param name="accidental">
+  ///   When this method returns, contains the Accidental value equivalent to the accidental contained
+  ///   in value, if the conversion succeeded, or Natural if the conversion failed.
+  /// </param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  /// </returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out Accidental accidental )
+  {
     // Default to Natural
-    if( string.IsNullOrEmpty( value ) )
+    if( value.IsEmpty )
     {
       accidental = Natural;
       return true;

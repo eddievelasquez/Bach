@@ -27,7 +27,7 @@ public sealed class ScaleDegreeTest
   [Fact]
   public void Resolve_ShouldThrowArgumentNullException_WhenKeyIsNull()
   {
-    var degree = ScaleDegree.Dominate;
+    var degree = ScaleDegree.Dominant;
 
     var act = () => degree.Resolve( null! );
 
@@ -42,7 +42,7 @@ public sealed class ScaleDegreeTest
                .Should()
                .Be( "I" );
 
-    ScaleDegree.Dominate.ToString()
+    ScaleDegree.Dominant.ToString()
                .Should()
                .Be( "V" );
   }
