@@ -1,6 +1,6 @@
-// Module Name: ${File.FileName}
-// Project:     ${File.ProjectName}
-// Copyright (c) 2012, ${CurrentDate.Year}  Eddie Velasquez.
+// Module Name: IntervalTest.cs
+// Project:     Bach.Model.Test
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,277 +26,7 @@ namespace Bach.Model.Test;
 
 public sealed class IntervalTest
 {
-  #region Public Methods
-
-  [Fact]
-  public void EqualityOperator_ShouldReturnFalse_WhenComparedWithNull()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-#pragma warning disable CS8073
-    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-    ( lhs == null ).Should()
-                   .BeFalse();
-#pragma warning restore CS8073
-  }
-
-  [Fact]
-  public void EqualityOperator_ShouldReturnTrue_WhenComparingWithSameObject()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-#pragma warning disable 1718
-    // ReSharper disable once EqualExpressionComparison
-    ( lhs == lhs ).Should()
-                  .BeTrue();
-#pragma warning restore 1718
-  }
-
-  [Fact]
-  public void Equality_ShouldReturnTrue_WhenComparingEquivalentObjects()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    ( lhs == rhs ).Should()
-                  .BeTrue();
-  }
-
-  [Fact]
-  public void Equals_ShouldSatisfyEquivalenceRelation()
-  {
-    object x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    object y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    object z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-    // ReSharper disable once EqualExpressionComparison
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-    x.Equals( null )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingObjectsOfDifferentTypes()
-  {
-    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    actual.Equals( int.MinValue )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFall_WhenComparingWithNull()
-  {
-    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnTrue_WhenComparingTheSameObject()
-  {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    actual.Equals( actual )
-          .Should()
-          .BeTrue();
-  }
-
-  [Fact]
-  public void GetHashcode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
-  {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var expected = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    expected.Equals( actual )
-            .Should()
-            .BeTrue();
-    actual.GetHashCode()
-          .Should()
-          .Be( expected.GetHashCode() );
-  }
-
-  [Theory]
-  [MemberData( nameof( InvalidIntervalCombinations ) )]
-  public void GetSemitoneCount_ShouldThrowArgumentException_WithInvalidIntervalQuantityAndQualityCombination(
-    IntervalQuantity quantity, IntervalQuality quality )
-  {
-    var act = () => Interval.GetSemitoneCount( quantity, quality );
-    act.Should()
-       .Throw<ArgumentException>();
-  }
-
-  [Fact]
-  public void InequalityOperator_ShouldReturnFalse_WhenComparingWithSameObject()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-#pragma warning disable 1718
-    // ReSharper disable once EqualExpressionComparison
-    ( lhs != lhs ).Should()
-                  .BeFalse();
-#pragma warning restore 1718
-  }
-
-  [Fact]
-  public void InequalityOperator_ShouldReturnTrue_WhenComparingDifferentIntervals()
-  {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Augmented );
-    ( lhs != rhs ).Should()
-                  .BeTrue();
-  }
-
-  [Theory]
-  [MemberData( nameof( InversionData ) )]
-  public void Inversion_ShouldReturnCorrectInterval( Interval interval, Interval expectedInversion )
-  {
-    interval.Inversion.Should().Be( expectedInversion );
-  }
-
-  [Theory]
-  [MemberData( nameof( InvalidIntervalCombinations ) )]
-  public void IsValid_ShouldReturnFalse_WhenInvalidIntervalCombinationOccurs( IntervalQuantity quantity, IntervalQuality quality )
-  {
-    Interval.IsValid( quantity, quality )
-            .Should()
-            .BeFalse();
-  }
-
-  [Fact]
-  public void RelationalOperators_ShouldSatisfyOrdering()
-  {
-    ( Interval.Unison == Interval.Parse( "P1" ) ).Should()
-                                                 .BeTrue();
-    ( Interval.Unison != Interval.Fourth ).Should()
-                                          .BeTrue();
-    ( Interval.Unison < Interval.Fourth ).Should()
-                                         .BeTrue();
-    ( Interval.Unison <= Interval.Fourth ).Should()
-                                          .BeTrue();
-    ( Interval.Fourth > Interval.Unison ).Should()
-                                         .BeTrue();
-    ( Interval.Fourth >= Interval.Unison ).Should()
-                                          .BeTrue();
-    ( Interval.MinorThird < Interval.MajorThird ).Should()
-                                                 .BeTrue();
-  }
-
-  [Theory]
-  [MemberData( nameof( ValidIntervalStrings ) )]
-  public void Parse_ShouldReturnCorrectInterval_WhenValidStringIsProvided( string intervalString, Interval expected )
-  {
-    Interval.Parse( intervalString )
-            .Should()
-            .Be( expected );
-  }
-
-  [Fact]
-  public void Parse_ShouldThrowFormatException_WhenInvalidStringIsProvided()
-  {
-    var act = () => Interval.Parse( "X2" );
-    act.Should()
-       .Throw<FormatException>();
-  }
-
-  [Theory]
-  [MemberData( nameof( SemitoneCountData ) )]
-  public void SemitoneCount_ShouldReturnCorrectCount( Interval interval, int expectedSemitoneCount )
-  {
-    interval.SemitoneCount.Should().Be( expectedSemitoneCount );
-  }
-
-  [Theory]
-  [MemberData( nameof( InvalidIntervalStrings ) )]
-  public void TryParse_ShouldReturnFalse_WhenInvalidStringIsProvided( string? input )
-  {
-    Interval.TryParse( input, out _ )
-            .Should()
-            .BeFalse();
-  }
-
-  [Fact]
-  public void TryParse_ShouldSkipLeadingWhitespace_WhenValidStringIsProvided()
-  {
-    Interval.TryParse( "  P5", out var actual )
-            .Should()
-            .BeTrue();
-
-    actual.Should()
-          .Be( Interval.Fifth );
-  }
-
-  [Theory]
-  [MemberData( nameof( ValidIntervalStrings ) )]
-  public void TryParse_ShouldReturnCorrectInterval_WhenValidStringIsProvided( string intervalString, Interval expected )
-  {
-    Interval.TryParse( intervalString, out var actual )
-            .Should()
-            .BeTrue();
-
-    actual.Should()
-          .Be( expected );
-  }
-
-  [Fact]
-  public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
-  {
-    var x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-    x.Equals( (Interval?) null! )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingToObjectOfDifferentType()
-  {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    actual.Equals( int.MinValue )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingWithNull()
-  {
-    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
+  #region Properties
 
   public static TheoryData<IntervalQuantity, IntervalQuality> InvalidIntervalCombinations =>
     new()
@@ -405,6 +135,364 @@ public sealed class IntervalTest
   };
 
   public static TheoryData<string?> InvalidIntervalStrings => [(string?) null, "", "   ", "M1", "P2", "L2", "Px"];
+
+  public static TheoryData<Interval, string, string> ToStringWithFormatData =>
+    new()
+    {
+      { Interval.Unison, "sq", "1" },
+      { Interval.MajorSecond, "Sq", "M2" },
+      { Interval.MajorThird, "SQ", "MThird" },
+      { Interval.Fifth, "sq", "5" },
+      { Interval.Fifth, "Sq", "P5" },
+      { Interval.MinorSeventh, "Sq", "m7" },
+      { Interval.MinorSeventh, "sq", "m7" },
+      { Interval.Octave, "q", "8" }
+    };
+
+  #endregion
+
+  #region Public Methods
+
+  [Fact]
+  public void Equality_ShouldReturnTrue_WhenComparingEquivalentObjects()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    ( lhs == rhs ).Should()
+                  .BeTrue();
+  }
+
+  [Fact]
+  public void EqualityOperator_ShouldReturnFalse_WhenComparedWithNull()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+#pragma warning disable CS8073
+
+    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+    ( lhs == null ).Should()
+                   .BeFalse();
+#pragma warning restore CS8073
+  }
+
+  [Fact]
+  public void EqualityOperator_ShouldReturnTrue_WhenComparingWithSameObject()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+#pragma warning disable 1718
+
+    // ReSharper disable once EqualExpressionComparison
+    ( lhs == lhs ).Should()
+                  .BeTrue();
+#pragma warning restore 1718
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFall_WhenComparingWithNull()
+  {
+    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparingObjectsOfDifferentTypes()
+  {
+    object actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparingToObjectOfDifferentType()
+  {
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparingWithNull()
+  {
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnTrue_WhenComparingTheSameObject()
+  {
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
+  }
+
+  [Fact]
+  public void Equals_ShouldSatisfyEquivalenceRelation()
+  {
+    object x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    object y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    object z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    // ReSharper disable once EqualExpressionComparison
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
+  }
+
+  [Fact]
+  public void GetHashcode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
+  {
+    var actual = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var expected = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
+  }
+
+  [Theory]
+  [MemberData( nameof( InvalidIntervalCombinations ) )]
+  public void GetSemitoneCount_ShouldThrowArgumentException_WithInvalidIntervalQuantityAndQualityCombination(
+    IntervalQuantity quantity,
+    IntervalQuality quality )
+  {
+    var act = () => Interval.GetSemitoneCount( quantity, quality );
+
+    act.Should()
+       .Throw<ArgumentException>();
+  }
+
+  [Fact]
+  public void InequalityOperator_ShouldReturnFalse_WhenComparingWithSameObject()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+#pragma warning disable 1718
+
+    // ReSharper disable once EqualExpressionComparison
+    ( lhs != lhs ).Should()
+                  .BeFalse();
+#pragma warning restore 1718
+  }
+
+  [Fact]
+  public void InequalityOperator_ShouldReturnTrue_WhenComparingDifferentIntervals()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Augmented );
+
+    ( lhs != rhs ).Should()
+                  .BeTrue();
+  }
+
+  [Theory]
+  [MemberData( nameof( InversionData ) )]
+  public void Inversion_ShouldReturnCorrectInterval(
+    Interval interval,
+    Interval expectedInversion )
+  {
+    interval.Inversion.Should()
+            .Be( expectedInversion );
+  }
+
+  [Theory]
+  [MemberData( nameof( InvalidIntervalCombinations ) )]
+  public void IsValid_ShouldReturnFalse_WhenInvalidIntervalCombinationOccurs(
+    IntervalQuantity quantity,
+    IntervalQuality quality )
+  {
+    Interval.IsValid( quantity, quality )
+            .Should()
+            .BeFalse();
+  }
+
+  [Theory]
+  [MemberData( nameof( ValidIntervalStrings ) )]
+  public void Parse_ShouldReturnCorrectInterval_WhenValidStringIsProvided(
+    string intervalString,
+    Interval expected )
+  {
+    Interval.Parse( intervalString )
+            .Should()
+            .Be( expected );
+  }
+
+  [Fact]
+  public void Parse_ShouldThrowFormatException_WhenInvalidStringIsProvided()
+  {
+    var act = () => Interval.Parse( "X2" );
+
+    act.Should()
+       .Throw<FormatException>();
+  }
+
+  [Fact]
+  public void RelationalOperators_ShouldSatisfyOrdering()
+  {
+    ( Interval.Unison == Interval.Parse( "P1" ) ).Should()
+                                                 .BeTrue();
+
+    ( Interval.Unison != Interval.Fourth ).Should()
+                                          .BeTrue();
+
+    ( Interval.Unison < Interval.Fourth ).Should()
+                                         .BeTrue();
+
+    ( Interval.Unison <= Interval.Fourth ).Should()
+                                          .BeTrue();
+
+    ( Interval.Fourth > Interval.Unison ).Should()
+                                         .BeTrue();
+
+    ( Interval.Fourth >= Interval.Unison ).Should()
+                                          .BeTrue();
+
+    ( Interval.MinorThird < Interval.MajorThird ).Should()
+                                                 .BeTrue();
+  }
+
+  [Theory]
+  [MemberData( nameof( SemitoneCountData ) )]
+  public void SemitoneCount_ShouldReturnCorrectCount(
+    Interval interval,
+    int expectedSemitoneCount )
+  {
+    interval.SemitoneCount.Should()
+            .Be( expectedSemitoneCount );
+  }
+
+  [Fact]
+  public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
+  {
+    var x = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var y = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var z = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+
+    x.Equals( null! )
+     .Should()
+     .BeFalse(); // Never equal to null
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnDefaultFormat_WhenFormatIsEmpty()
+  {
+    Interval.MajorThird.ToString( "" )
+            .Should()
+            .Be( "3" );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnDefaultFormat_WhenFormatIsNull()
+  {
+    Interval.MajorThird.ToString( null! )
+            .Should()
+            .Be( "3" );
+  }
+
+  [Theory]
+  [MemberData( nameof( ToStringWithFormatData ) )]
+  public void ToString_ShouldReturnFormattedString_WhenFormatIsProvided(
+    Interval interval,
+    string format,
+    string expected )
+  {
+    interval.ToString( format )
+            .Should()
+            .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( ValidIntervalStrings ) )]
+  public void TryParse_ShouldReturnCorrectInterval_WhenValidStringIsProvided(
+    string intervalString,
+    Interval expected )
+  {
+    Interval.TryParse( intervalString, out var actual )
+            .Should()
+            .BeTrue();
+
+    actual.Should()
+          .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( InvalidIntervalStrings ) )]
+  public void TryParse_ShouldReturnFalse_WhenInvalidStringIsProvided(
+    string? input )
+  {
+    Interval.TryParse( input, out _ )
+            .Should()
+            .BeFalse();
+  }
+
+  [Fact]
+  public void TryParse_ShouldSkipLeadingWhitespace_WhenValidStringIsProvided()
+  {
+    Interval.TryParse( "  P5", out var actual )
+            .Should()
+            .BeTrue();
+
+    actual.Should()
+          .Be( Interval.Fifth );
+  }
 
   #endregion
 }

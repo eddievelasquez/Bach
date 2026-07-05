@@ -1,6 +1,6 @@
-// Module Name: ${File.FileName}
-// Project:     ${File.ProjectName}
-// Copyright (c) 2012, ${CurrentDate.Year}  Eddie Velasquez.
+// Module Name: ScaleTest.cs
+// Project:     Bach.Model.Test
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -28,351 +28,7 @@ using System.Linq;
 
 public sealed class ScaleTest
 {
-  #region Public Methods
-
-  [Fact]
-  public void Contains_ShouldReturnTrue_WhenScaleContainsAllPitchClasses()
-  {
-    var scale = new Scale( PitchClass.C, "major" );
-    scale.Contains( [PitchClass.C] )
-         .Should()
-         .BeTrue();
-    scale.Contains( [PitchClass.C, PitchClass.E, PitchClass.G] )
-         .Should()
-         .BeTrue();
-
-    scale.Contains( [PitchClass.C, PitchClass.E, PitchClass.GFlat] )
-         .Should()
-         .BeFalse();
-  }
-
-  [Theory]
-  [MemberData( nameof( EnharmonicScaleData ) )]
-  public void GetEnharmonicScale_ShouldReturnEquivalentScale_WhenEnharmonicExists( PitchClass root, PitchClass enharmonicRoot, string scaleName )
-  {
-    var scale = new Scale( root, scaleName );
-    var actual = scale.GetEnharmonicScale();
-    var expected = new Scale( enharmonicRoot, scaleName );
-    actual.Should()
-          .BeEquivalentTo( expected );
-  }
-
-  [Fact]
-  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
-  {
-    object x = new Scale( PitchClass.C, "Major" );
-    object y = new Scale( PitchClass.C, "Major" );
-    object z = new Scale( PitchClass.C, "Major" );
-
-    // ReSharper disable once EqualExpressionComparison
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-    x.Equals( null )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingDifferentTypes()
-  {
-    object actual = new Scale( PitchClass.C, "Major" );
-    actual.Equals( int.MinValue )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingWithNull()
-  {
-    object actual = new Scale( PitchClass.C, "Major" );
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnTrue_WhenComparingSameObject()
-  {
-    var actual = new Scale( PitchClass.C, "Major" );
-    actual.Equals( actual )
-          .Should()
-          .BeTrue();
-  }
-
-  [Fact]
-  public void FormulaConstructor_ShouldInitializeCorrectly_WhenGivenValidFormula()
-  {
-    var formula = Registry.ScaleFormulas["Major"];
-    var actual = new Scale( PitchClass.C, formula );
-    actual.Name.Should()
-          .BeEquivalentTo( "C" );
-    actual.Root.Should()
-          .BeEquivalentTo( PitchClass.C );
-    actual.Formula.Should()
-          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
-  }
-
-  [Fact]
-  public void FormulaConstructor_ShouldThrowArgumentNullException_WhenGivenNullFormula()
-  {
-    var act = () => new Scale( PitchClass.C, (ScaleFormula) null! );
-    act.Should()
-       .Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void GetAscending_ShouldReturnCorrectNotes_WhenIteratingScale()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-    using var enumerator = scale.GetAscending()
-                                .GetEnumerator();
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.C );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.D );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.E );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.F );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.G );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.A );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.B );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue(); // Scale enumerator wraps around infinitely
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.C );
-  }
-
-  [Fact]
-  public void GetDescending_ShouldReturnCorrectNotes_WhenIteratingScale()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-    using var enumerator = scale.GetDescending()
-                                .GetEnumerator();
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.C );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.B );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.A );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.G );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.F );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.E );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue();
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.D );
-    enumerator.MoveNext()
-              .Should()
-              .BeTrue(); // Scale enumerator wraps around infinitely
-    enumerator.Current.Should()
-              .BeEquivalentTo( PitchClass.C );
-  }
-
-  [Fact]
-  public void GetHashCode_ShouldReturnSameValue_WhenScalesAreEqual()
-  {
-    var actual = new Scale( PitchClass.C, "Major" );
-    var expected = new Scale( PitchClass.C, "Major" );
-    expected.Equals( actual )
-            .Should()
-            .BeTrue();
-    actual.GetHashCode()
-          .Should()
-          .Be( expected.GetHashCode() );
-  }
-
-  [Theory]
-  [MemberData( nameof( ScaleCategoryData ) )]
-  public void Scale_ShouldContainAndExcludeCategories_WhenMatchingCriteria(
-    string scaleName,
-    string[] requiredCategories,
-    string[] excludedCategories )
-  {
-    var scale = new Scale( PitchClass.C, scaleName );
-
-    foreach( var category in requiredCategories )
-    {
-      scale.Formula.Categories.Should()
-           .Contain( category );
-    }
-
-    foreach( var category in excludedCategories )
-    {
-      scale.Formula.Categories.Should()
-           .NotContain( category );
-    }
-  }
-
-  [Theory]
-  [MemberData( nameof( TheoreticalScaleData ) )]
-  public void Theoretical_ShouldReturnExpectedValue_WhenScaleContainsComplexAccidentals( PitchClass root, bool isTheoretical )
-  {
-    new Scale( root, "major" ).Theoretical.Should().Be( isTheoretical );
-  }
-
-  [Fact]
-  public void PitchClasses_ShouldContainExpectedIntervalCount()
-  {
-    var scale = new Scale( PitchClass.C, "MinorPentatonic" );
-    scale.PitchClasses.Count.Should()
-         .Be( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count );
-  }
-
-  [Theory]
-  [MemberData( nameof( PitchClassesInScaleData ) )]
-  public void PitchClasses_ShouldContainExpectedPitchClasses_WhenGivenScale( PitchClass root, string scaleName, PitchClass[] expectedPitchClasses )
-  {
-    var scale = new Scale( root, scaleName );
-    scale.PitchClasses.Should().BeEquivalentTo( expectedPitchClasses, options => options.WithStrictOrdering() );
-  }
-
-  [Theory]
-  [MemberData( nameof( RenderTestData ) )]
-  public void Render_ShouldReturnExpectedPitches_WhenGivenScaleAndOctave( PitchClass root, string scaleName, int octave, string expectedNotes )
-  {
-    var scale = new Scale( root, scaleName );
-
-    var actual = scale.Render( octave )
-                      .Take( scale.Formula.Intervals.Count )
-                      .ToArray();
-
-    actual.Should()
-          .BeEquivalentTo( PitchCollection.Parse( expectedNotes ) );
-  }
-
-  [Theory]
-  [MemberData( nameof( RenderAccidentalTestData ) )]
-  public void Render_ShouldChooseAppropriateAccidental_WhenGivenScaleRootAndName( PitchClass root, string scaleName, string expectedNotes )
-  {
-    var expectedPitchesClasses = PitchClassCollection.Parse( expectedNotes );
-    var scale = new Scale( root, scaleName );
-    var actualPitchClasses = scale.GetAscending()
-                      .Take( expectedPitchesClasses.Count );
-
-    actualPitchClasses.Should()
-          .BeEquivalentTo( expectedPitchesClasses );
-  }
-
-  [Theory]
-  [MemberData( nameof( DescendingScaleData ) )]
-  public void GetDescending_ShouldReturnCorrectNotes_WhenIteratingSpecificScale( string expectedNotes, string formulaName )
-  {
-    var expected = PitchClassCollection.Parse( expectedNotes );
-    var scale = new Scale( PitchClass.C, formulaName );
-    var actual = scale.GetDescending()
-                      .Take( expected.Count );
-    actual.Should()
-          .BeEquivalentTo( expected );
-  }
-
-  [Theory]
-  [MemberData( nameof( ScalesContainingData ) )]
-  public void ScalesContaining_ShouldReturnExpectedScales_WhenGivenPitchClasses( string pitchClassNames, string[] expectedScaleNames )
-  {
-    var pitchClasses = PitchClassCollection.Parse( pitchClassNames );
-
-    var actualScales = Scale.ScalesContaining( pitchClasses )
-                     .Select( scale => scale.Name )
-                     .ToHashSet( StringComparer.OrdinalIgnoreCase );
-
-    var expectedScales = expectedScaleNames.ToHashSet( StringComparer.OrdinalIgnoreCase );
-
-    expectedScales.IsSubsetOf( actualScales )
-                  .Should()
-                  .BeTrue();
-  }
-
-  [Fact]
-  public void Constructor_ShouldInitialize_WhenPassingValidValues()
-  {
-    var actual = new Scale( PitchClass.C, "Major" );
-
-    actual.Name.Should()
-          .BeEquivalentTo( "C" );
-
-    actual.Root.Should()
-          .BeEquivalentTo( PitchClass.C );
-
-    actual.Formula.Should()
-          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
-  }
-
-  [Fact]
-  public void Constructor_ShouldThrowArgumentException_WhenPassingEmptyScaleName()
-  {
-    var act = () => new Scale( PitchClass.C, "" );
-    act.Should()
-       .Throw<ArgumentException>();
-  }
-
-  [Fact]
-  public void Constructor_ShouldThrowArgumentNullException_WhenPassingNullScaleName()
-  {
-    var act = () => new Scale( PitchClass.C, (string) null! );
-    act.Should()
-       .Throw<ArgumentNullException>();
-  }
+  #region Properties
 
   public static TheoryData<string, string, string> ToStringTestData => new()
   {
@@ -382,54 +38,16 @@ public sealed class ScaleTest
     { "Eb", "Major", "Eb {Eb,F,G,Ab,Bb,C,D}" }
   };
 
-  [Theory]
-  [MemberData( nameof( ToStringTestData ) )]
-  public void ToString_ShouldReturnExpectedValue_WhenGivenScale( string root, string scaleName, string expected )
-  {
-    var scale = new Scale( PitchClass.Parse( root ), scaleName );
-    scale.ToString()
-         .Should()
-         .BeEquivalentTo( expected );
-  }
-
-  [Fact]
-  public void TypeSafeEqualsContractTest()
-  {
-    var x = new Scale( PitchClass.C, "Major" );
-    var y = new Scale( PitchClass.C, "Major" );
-    var z = new Scale( PitchClass.C, "Major" );
-
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-  }
-
-  #endregion
-
-  #region Test Data
-
   public static TheoryData<PitchClass, PitchClass, string> EnharmonicScaleData => new()
   {
     { PitchClass.C, PitchClass.C, "major" },
     { PitchClass.CSharp, PitchClass.DFlat, "major" },
     { PitchClass.DSharp, PitchClass.EFlat, "major" },
-    { PitchClass.Parse("E#"), PitchClass.F, "major" },
-    { PitchClass.Parse("Fb"), PitchClass.E, "major" },
+    { PitchClass.Parse( "E#" ), PitchClass.F, "major" },
+    { PitchClass.Parse( "Fb" ), PitchClass.E, "major" },
     { PitchClass.GSharp, PitchClass.AFlat, "major" },
     { PitchClass.ASharp, PitchClass.BFlat, "major" },
-    { PitchClass.Parse("B#"), PitchClass.C, "major" }
+    { PitchClass.Parse( "B#" ), PitchClass.C, "major" }
   };
 
   public static TheoryData<string, string[], string[]> ScaleCategoryData => new()
@@ -466,11 +84,11 @@ public sealed class ScaleTest
   {
     { PitchClass.C, false },
     { PitchClass.DSharp, true },
-    { PitchClass.Parse("E#"), true },
-    { PitchClass.Parse("Fb"), true },
+    { PitchClass.Parse( "E#" ), true },
+    { PitchClass.Parse( "Fb" ), true },
     { PitchClass.GSharp, true },
     { PitchClass.ASharp, true },
-    { PitchClass.Parse("B#"), true }
+    { PitchClass.Parse( "B#" ), true }
   };
 
   public static TheoryData<string, string> DescendingScaleData => new()
@@ -490,16 +108,7 @@ public sealed class ScaleTest
 
   public static TheoryData<string, string[]> ScalesContainingData => new()
   {
-    {
-        "C,E,G",
-        ["C",
-         "C Pentatonic",
-         "E Natural Minor",
-         "E Harmonic Minor",
-         "G",
-         "G Melodic Minor",
-         "G Diminished"]
-    }
+    { "C,E,G", ["C", "C Pentatonic", "E Natural Minor", "E Harmonic Minor", "G", "G Melodic Minor", "G Diminished"] }
   };
 
   public static TheoryData<PitchClass, string, PitchClass[]> PitchClassesInScaleData => new()
@@ -525,8 +134,8 @@ public sealed class ScaleTest
     { PitchClass.DSharp, "Major", "D#,E#,F##,G#,A#,B#,C##" },
     { PitchClass.EFlat, "Major", "Eb,F,G,Ab,Bb,C,D" },
     { PitchClass.E, "Major", "E,F#,G#,A,B,C#,D#" },
-    { PitchClass.Parse("E#"), "Major", "E#,F##,G##,A#,B#,C##,D##" },
-    { PitchClass.Parse("Fb"), "Major", "Fb,Gb,Ab,Bbb,Cb,Db,Eb" },
+    { PitchClass.Parse( "E#" ), "Major", "E#,F##,G##,A#,B#,C##,D##" },
+    { PitchClass.Parse( "Fb" ), "Major", "Fb,Gb,Ab,Bbb,Cb,Db,Eb" },
     { PitchClass.F, "Major", "F,G,A,Bb,C,D,E" },
     { PitchClass.FSharp, "Major", "F#,G#,A#,B,C#,D#,E#" },
     { PitchClass.GFlat, "Major", "Gb,Ab,Bb,Cb,Db,Eb,F" },
@@ -537,8 +146,8 @@ public sealed class ScaleTest
     { PitchClass.ASharp, "Major", "A#,B#,C##,D#,E#,F##,G##" },
     { PitchClass.BFlat, "Major", "Bb,C,D,Eb,F,G,A" },
     { PitchClass.B, "Major", "B,C#,D#,E,F#,G#,A#" },
-    { PitchClass.Parse("B#"), "Major", "B#,C##,D##,E#,F##,G##,A##" },
-    { PitchClass.Parse("Cb"), "Major", "Cb,Db,Eb,Fb,Gb,Ab,Bb" },
+    { PitchClass.Parse( "B#" ), "Major", "B#,C##,D##,E#,F##,G##,A##" },
+    { PitchClass.Parse( "Cb" ), "Major", "Cb,Db,Eb,Fb,Gb,Ab,Bb" },
     { PitchClass.C, "NaturalMinor", "C,D,Eb,F,G,Ab,Bb" },
     { PitchClass.CSharp, "NaturalMinor", "C#,D#,E,F#,G#,A,B" },
     { PitchClass.DFlat, "NaturalMinor", "Db,Eb,Fb,Gb,Ab,Bbb,Cb" },
@@ -546,8 +155,8 @@ public sealed class ScaleTest
     { PitchClass.DSharp, "NaturalMinor", "D#,E#,F#,G#,A#,B,C#" },
     { PitchClass.EFlat, "NaturalMinor", "EB,F,Gb,Ab,Bb,Cb,Db" },
     { PitchClass.E, "NaturalMinor", "E,F#,G,A,B,C,D" },
-    { PitchClass.Parse("E#"), "NaturalMinor", "E#,F##,G#,A#,B#,C#,D#" },
-    { PitchClass.Parse("Fb"), "NaturalMinor", "Fb,Gb,Abb,Bbb,Cb,Dbb,Ebb" },
+    { PitchClass.Parse( "E#" ), "NaturalMinor", "E#,F##,G#,A#,B#,C#,D#" },
+    { PitchClass.Parse( "Fb" ), "NaturalMinor", "Fb,Gb,Abb,Bbb,Cb,Dbb,Ebb" },
     { PitchClass.F, "NaturalMinor", "F,G,Ab,Bb,C,Db,Eb" },
     { PitchClass.FSharp, "NaturalMinor", "F#,G#,A,B,C#,D,E" },
     { PitchClass.GFlat, "NaturalMinor", "Gb,Ab,Bbb,Cb,Db,Ebb,Fb" },
@@ -558,9 +167,525 @@ public sealed class ScaleTest
     { PitchClass.ASharp, "NaturalMinor", "A#,B#,C#,D#,E#,F#,G#" },
     { PitchClass.BFlat, "NaturalMinor", "Bb,C,Db,Eb,F,Gb,Ab" },
     { PitchClass.B, "NaturalMinor", "B,C#,D,E,F#,G,A" },
-    { PitchClass.Parse("B#"), "NaturalMinor", "B#,C##,D#,E#,F##,G#,A#" },
-    { PitchClass.Parse("Cb"), "NaturalMinor", "Cb,Db,Ebb,Fb,Gb,Abb,Bbb" }
+    { PitchClass.Parse( "B#" ), "NaturalMinor", "B#,C##,D#,E#,F##,G#,A#" },
+    { PitchClass.Parse( "Cb" ), "NaturalMinor", "Cb,Db,Ebb,Fb,Gb,Abb,Bbb" }
   };
+
+  public static TheoryData<PitchClass, string, string, string> ToStringWithFormatData =>
+    new()
+    {
+      { PitchClass.C, "Major", "R", "C" },
+      { PitchClass.C, "Major", "F", "Major" },
+      { PitchClass.C, "Major", "S", "C,D,E,F,G,A,B" },
+      { PitchClass.C, "Major", "I", "1,2,3,4,5,6,7" },
+      { PitchClass.C, "Major", "N", "C" },
+      { PitchClass.C, "Major", "R F", "C Major" },
+      { PitchClass.A, "NaturalMinor", "R F", "A Natural Minor" }
+    };
+
+  #endregion
+
+  #region Public Methods
+
+  [Fact]
+  public void Constructor_ShouldInitialize_WhenPassingValidValues()
+  {
+    var actual = new Scale( PitchClass.C, "Major" );
+
+    actual.Name.Should()
+          .BeEquivalentTo( "C" );
+
+    actual.Root.Should()
+          .BeEquivalentTo( PitchClass.C );
+
+    actual.Formula.Should()
+          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
+  }
+
+  [Fact]
+  public void Constructor_ShouldThrowArgumentException_WhenPassingEmptyScaleName()
+  {
+    var act = () => new Scale( PitchClass.C, "" );
+
+    act.Should()
+       .Throw<ArgumentException>();
+  }
+
+  [Fact]
+  public void Constructor_ShouldThrowArgumentNullException_WhenPassingNullScaleName()
+  {
+    var act = () => new Scale( PitchClass.C, (string) null! );
+
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void Contains_ShouldReturnTrue_WhenScaleContainsAllPitchClasses()
+  {
+    var scale = new Scale( PitchClass.C, "major" );
+
+    scale.Contains( [PitchClass.C] )
+         .Should()
+         .BeTrue();
+
+    scale.Contains( [PitchClass.C, PitchClass.E, PitchClass.G] )
+         .Should()
+         .BeTrue();
+
+    scale.Contains( [PitchClass.C, PitchClass.E, PitchClass.GFlat] )
+         .Should()
+         .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparingDifferentTypes()
+  {
+    object actual = new Scale( PitchClass.C, "Major" );
+
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparingWithNull()
+  {
+    object actual = new Scale( PitchClass.C, "Major" );
+
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnTrue_WhenComparingSameObject()
+  {
+    var actual = new Scale( PitchClass.C, "Major" );
+
+    actual.Equals( actual )
+          .Should()
+          .BeTrue();
+  }
+
+  [Fact]
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
+  {
+    object x = new Scale( PitchClass.C, "Major" );
+    object y = new Scale( PitchClass.C, "Major" );
+    object z = new Scale( PitchClass.C, "Major" );
+
+    // ReSharper disable once EqualExpressionComparison
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
+  }
+
+  [Fact]
+  public void FormulaConstructor_ShouldInitializeCorrectly_WhenGivenValidFormula()
+  {
+    var formula = Registry.ScaleFormulas["Major"];
+    var actual = new Scale( PitchClass.C, formula );
+
+    actual.Name.Should()
+          .BeEquivalentTo( "C" );
+
+    actual.Root.Should()
+          .BeEquivalentTo( PitchClass.C );
+
+    actual.Formula.Should()
+          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
+  }
+
+  [Fact]
+  public void FormulaConstructor_ShouldThrowArgumentNullException_WhenGivenNullFormula()
+  {
+    var act = () => new Scale( PitchClass.C, (ScaleFormula) null! );
+
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void GetAscending_ShouldReturnCorrectNotes_WhenIteratingScale()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    using var enumerator = scale.GetAscending()
+                                .GetEnumerator();
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.D );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.E );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.F );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.G );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.A );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.B );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue(); // Scale enumerator wraps around infinitely
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
+  }
+
+  [Fact]
+  public void GetDescending_ShouldReturnCorrectNotes_WhenIteratingScale()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    using var enumerator = scale.GetDescending()
+                                .GetEnumerator();
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.B );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.A );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.G );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.F );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.E );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue();
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.D );
+
+    enumerator.MoveNext()
+              .Should()
+              .BeTrue(); // Scale enumerator wraps around infinitely
+
+    enumerator.Current.Should()
+              .BeEquivalentTo( PitchClass.C );
+  }
+
+  [Theory]
+  [MemberData( nameof( DescendingScaleData ) )]
+  public void GetDescending_ShouldReturnCorrectNotes_WhenIteratingSpecificScale(
+    string expectedNotes,
+    string formulaName )
+  {
+    var expected = PitchClassCollection.Parse( expectedNotes );
+    var scale = new Scale( PitchClass.C, formulaName );
+
+    var actual = scale.GetDescending()
+                      .Take( expected.Count );
+
+    actual.Should()
+          .BeEquivalentTo( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( EnharmonicScaleData ) )]
+  public void GetEnharmonicScale_ShouldReturnEquivalentScale_WhenEnharmonicExists(
+    PitchClass root,
+    PitchClass enharmonicRoot,
+    string scaleName )
+  {
+    var scale = new Scale( root, scaleName );
+    var actual = scale.GetEnharmonicScale();
+    var expected = new Scale( enharmonicRoot, scaleName );
+
+    actual.Should()
+          .BeEquivalentTo( expected );
+  }
+
+  [Fact]
+  public void GetHashCode_ShouldReturnSameValue_WhenScalesAreEqual()
+  {
+    var actual = new Scale( PitchClass.C, "Major" );
+    var expected = new Scale( PitchClass.C, "Major" );
+
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+
+    actual.GetHashCode()
+          .Should()
+          .Be( expected.GetHashCode() );
+  }
+
+  [Fact]
+  public void PitchClasses_ShouldContainExpectedIntervalCount()
+  {
+    var scale = new Scale( PitchClass.C, "MinorPentatonic" );
+
+    scale.PitchClasses.Count.Should()
+         .Be( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count );
+  }
+
+  [Theory]
+  [MemberData( nameof( PitchClassesInScaleData ) )]
+  public void PitchClasses_ShouldContainExpectedPitchClasses_WhenGivenScale(
+    PitchClass root,
+    string scaleName,
+    PitchClass[] expectedPitchClasses )
+  {
+    var scale = new Scale( root, scaleName );
+
+    scale.PitchClasses.Should()
+         .BeEquivalentTo( expectedPitchClasses, options => options.WithStrictOrdering() );
+  }
+
+  [Theory]
+  [MemberData( nameof( RenderAccidentalTestData ) )]
+  public void Render_ShouldChooseAppropriateAccidental_WhenGivenScaleRootAndName(
+    PitchClass root,
+    string scaleName,
+    string expectedNotes )
+  {
+    var expectedPitchesClasses = PitchClassCollection.Parse( expectedNotes );
+    var scale = new Scale( root, scaleName );
+
+    var actualPitchClasses = scale.GetAscending()
+                                  .Take( expectedPitchesClasses.Count );
+
+    actualPitchClasses.Should()
+                      .BeEquivalentTo( expectedPitchesClasses );
+  }
+
+  [Theory]
+  [MemberData( nameof( RenderTestData ) )]
+  public void Render_ShouldReturnExpectedPitches_WhenGivenScaleAndOctave(
+    PitchClass root,
+    string scaleName,
+    int octave,
+    string expectedNotes )
+  {
+    var scale = new Scale( root, scaleName );
+
+    var actual = scale.Render( octave )
+                      .Take( scale.Formula.Intervals.Count )
+                      .ToArray();
+
+    actual.Should()
+          .BeEquivalentTo( PitchCollection.Parse( expectedNotes ) );
+  }
+
+  [Theory]
+  [MemberData( nameof( ScaleCategoryData ) )]
+  public void Scale_ShouldContainAndExcludeCategories_WhenMatchingCriteria(
+    string scaleName,
+    string[] requiredCategories,
+    string[] excludedCategories )
+  {
+    var scale = new Scale( PitchClass.C, scaleName );
+
+    foreach( var category in requiredCategories )
+    {
+      scale.Formula.Categories.Should()
+           .Contain( category );
+    }
+
+    foreach( var category in excludedCategories )
+    {
+      scale.Formula.Categories.Should()
+           .NotContain( category );
+    }
+  }
+
+  [Theory]
+  [MemberData( nameof( ScalesContainingData ) )]
+  public void ScalesContaining_ShouldReturnExpectedScales_WhenGivenPitchClasses(
+    string pitchClassNames,
+    string[] expectedScaleNames )
+  {
+    var pitchClasses = PitchClassCollection.Parse( pitchClassNames );
+
+    var actualScales = Scale.ScalesContaining( pitchClasses )
+                            .Select( scale => scale.Name )
+                            .ToHashSet( StringComparer.OrdinalIgnoreCase );
+
+    var expectedScales = expectedScaleNames.ToHashSet( StringComparer.OrdinalIgnoreCase );
+
+    expectedScales.IsSubsetOf( actualScales )
+                  .Should()
+                  .BeTrue();
+  }
+
+  [Theory]
+  [MemberData( nameof( TheoreticalScaleData ) )]
+  public void Theoretical_ShouldReturnExpectedValue_WhenScaleContainsComplexAccidentals(
+    PitchClass root,
+    bool isTheoretical )
+  {
+    new Scale( root, "major" ).Theoretical.Should()
+                              .Be( isTheoretical );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnDefaultFormat_WhenFormatIsEmpty()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    scale.ToString( "" )
+         .Should()
+         .Be( "C {C,D,E,F,G,A,B}" );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnDefaultFormat_WhenFormatIsNull()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    scale.ToString( null! )
+         .Should()
+         .Be( "C {C,D,E,F,G,A,B}" );
+  }
+
+  [Theory]
+  [MemberData( nameof( ToStringTestData ) )]
+  public void ToString_ShouldReturnExpectedValue_WhenGivenScale(
+    string root,
+    string scaleName,
+    string expected )
+  {
+    var scale = new Scale( PitchClass.Parse( root ), scaleName );
+
+    scale.ToString()
+         .Should()
+         .BeEquivalentTo( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( ToStringWithFormatData ) )]
+  public void ToString_ShouldReturnFormattedString_WhenFormatIsProvided(
+    PitchClass root,
+    string scaleName,
+    string format,
+    string expected )
+  {
+    var scale = new Scale( root, scaleName );
+
+    scale.ToString( format )
+         .Should()
+         .Be( expected );
+  }
+
+  [Fact]
+  public void TypeSafeEqualsContractTest()
+  {
+    var x = new Scale( PitchClass.C, "Major" );
+    var y = new Scale( PitchClass.C, "Major" );
+    var z = new Scale( PitchClass.C, "Major" );
+
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+  }
 
   #endregion
 }

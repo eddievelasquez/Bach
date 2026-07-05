@@ -1,6 +1,6 @@
 // Module Name: Pitch.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -38,7 +38,9 @@ using Bach.Model.Internal;
 /// </remarks>
 public readonly struct Pitch
   : IEquatable<Pitch>,
-    IComparable<Pitch>
+    IComparable<Pitch>,
+    ISpanParsable<Pitch>,
+    IFormattable
 {
   #region Constants
 
@@ -70,13 +72,13 @@ public readonly struct Pitch
 
   private static readonly Pitch s_a4 = Create( NoteName.A, Accidental.Natural, 4 );
 
-  /// <summary>An empty <see cref="Pitch"/>.</summary>
+  /// <summary>An empty <see cref="Pitch" />.</summary>
   public static readonly Pitch Empty = new( PitchClass.B, 9, 128 );
 
-  /// <summary>The minimum possible <see cref="Pitch"/>> value.</summary>
+  /// <summary>The minimum possible <see cref="Pitch" />> value.</summary>
   public static readonly Pitch MinValue = Create( PitchClass.C, MinOctave );
 
-  /// <summary>The maximum possible <see cref="Pitch"/> value.</summary>
+  /// <summary>The maximum possible <see cref="Pitch" /> value.</summary>
   public static readonly Pitch MaxValue = Create( PitchClass.G, MaxOctave );
 
   #endregion
@@ -170,8 +172,8 @@ public readonly struct Pitch
   }
 
   /// <summary>Adds an Interval to a given Pitch.</summary>
-  /// <param name="pitch">The <see cref="Pitch"/>>.</param>
-  /// <param name="interval">An <see cref="Interval"/>> to add to it.</param>
+  /// <param name="pitch">The <see cref="Pitch" />>.</param>
+  /// <param name="interval">An <see cref="Interval" />> to add to it.</param>
   /// <returns>A Pitch.</returns>
   public static Pitch Add(
     Pitch pitch,
@@ -205,6 +207,7 @@ public readonly struct Pitch
     ArgumentOutOfRangeException.ThrowIfGreaterThan( octave, MaxOctave );
 
     var abs = CalcAbsoluteValue( pitchClass.NoteName, pitchClass.Accidental, octave );
+
     if( abs < s_minAbsoluteValue )
     {
       throw new ArgumentOutOfRangeException( $"Must be equal to or greater than {new Pitch( s_minAbsoluteValue )}" );
@@ -243,6 +246,7 @@ public readonly struct Pitch
     ArgumentOutOfRangeException.ThrowIfGreaterThan( midi, 127 );
 
     var absoluteValue = midi - 12;
+
     if( absoluteValue < 0 )
     {
       throw new ArgumentOutOfRangeException( nameof( midi ), "midi is out of range" );
@@ -303,9 +307,33 @@ public readonly struct Pitch
   public static Pitch Parse(
     string value )
   {
-    if( !TryParse( value, out var result ) )
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), null );
+  }
+
+  /// <summary>Parses the provided string using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A Pitch.</returns>
+  public static Pitch Parse(
+    string value,
+    IFormatProvider? provider )
+  {
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), provider );
+  }
+
+  /// <summary>Parses the provided span using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A Pitch.</returns>
+  public static Pitch Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    if( !TryParse( value, provider, out var result ) )
     {
-      throw new FormatException( $"{value} is not a valid pitch" );
+      throw new FormatException( $"{value.ToString()} is not a valid pitch" );
     }
 
     return result;
@@ -327,6 +355,65 @@ public readonly struct Pitch
     return $"{PitchClass}{Octave}";
   }
 
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Pitch" /> instance according to the provided
+  ///   format.
+  /// </summary>
+  /// <param name="format">A format string.</param>
+  /// <returns>A formatted string.</returns>
+  public string ToString(
+    string format )
+  {
+    return ToString( format, null );
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Pitch" /> instance according to the provided
+  ///   format and format provider.
+  /// </summary>
+  /// <param name="format">A format string.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A formatted string.</returns>
+  public string ToString(
+    string? format,
+    IFormatProvider? provider )
+  {
+    if( string.IsNullOrEmpty( format ) )
+    {
+      return ToString();
+    }
+
+    var buf = new StringBuilder();
+
+    foreach( var f in format )
+    {
+      switch( f )
+      {
+        case 'N':
+          buf.Append( PitchClass );
+          break;
+
+        case 'O':
+          buf.Append( Octave );
+          break;
+
+        case 'M':
+          buf.Append( Midi );
+          break;
+
+        case 'F':
+          buf.Append( Frequency.ToString( provider ) );
+          break;
+
+        default:
+          buf.Append( f );
+          break;
+      }
+    }
+
+    return buf.ToString();
+  }
+
   /// <summary>Attempts to parse a Pitch from the given string.</summary>
   /// <param name="value">The value to parse.</param>
   /// <param name="pitch">[out] The pitch class.</param>
@@ -335,13 +422,21 @@ public readonly struct Pitch
     string? value,
     out Pitch pitch )
   {
-    pitch = Empty;
-    if( string.IsNullOrEmpty( value ) )
-    {
-      return false;
-    }
+    return TryParse( value, null, out pitch );
+  }
 
-    return char.IsDigit( value, 0 ) ? TryParseMidi( value, ref pitch ) : TryParseNotes( value, ref pitch );
+  /// <summary>Attempts to parse a Pitch from the given string using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitch">[out] The pitch class.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    string? value,
+    IFormatProvider? provider,
+    out Pitch pitch )
+  {
+    pitch = Empty;
+    return !string.IsNullOrEmpty( value ) && TryParse( value.AsSpan(), provider, out pitch );
   }
 
   /// <summary>Attempts to parse a Pitch from the given string.</summary>
@@ -352,13 +447,23 @@ public readonly struct Pitch
     ReadOnlySpan<char> value,
     out Pitch pitch )
   {
-    pitch = Empty;
-    if( value.IsEmpty )
-    {
-      return false;
-    }
+    return TryParse( value, null, out pitch );
+  }
 
-    return char.IsDigit( value[0] ) ? TryParseMidi( value, ref pitch ) : TryParseNotes( value, ref pitch );
+  /// <summary>Attempts to parse a Pitch from the given span using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitch">[out] The pitch class.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out Pitch pitch )
+  {
+    pitch = Empty;
+
+    return !value.IsEmpty
+           && ( char.IsDigit( value[0] ) ? TryParseMidi( value, ref pitch ) : TryParseNotes( value, ref pitch ) );
   }
 
   #endregion
@@ -389,6 +494,7 @@ public readonly struct Pitch
   {
     var semitones = 0;
     var noteName = start;
+
     while( noteName != end )
     {
       semitones += s_semitonesBetween[(int) noteName];
@@ -406,9 +512,11 @@ public readonly struct Pitch
     accidental = Accidental.Natural;
 
     var buf = new StringBuilder();
+
     for( var i = index; i < value.Length; ++i )
     {
       var ch = value[i];
+
       if( ch != '#' && ch != 'b' && ch != 'B' )
       {
         if( buf.Length > 0 )
@@ -446,13 +554,6 @@ public readonly struct Pitch
   }
 
   private static bool TryParseNotes(
-    string value,
-    ref Pitch pitch )
-  {
-    return TryParseNotes( value.AsSpan(), ref pitch );
-  }
-
-  private static bool TryParseNotes(
     ReadOnlySpan<char> value,
     ref Pitch pitch )
   {
@@ -472,13 +573,6 @@ public readonly struct Pitch
 
     pitch = Create( toneName, accidental, octave );
     return true;
-  }
-
-  private static bool TryParseMidi(
-    string value,
-    ref Pitch pitch )
-  {
-    return TryParseMidi( value.AsSpan(), ref pitch );
   }
 
   private static bool TryParseMidi(

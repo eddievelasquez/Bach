@@ -1,6 +1,6 @@
 // Module Name: Interval.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -30,7 +30,9 @@ using System.Text;
 /// <summary>An interval.</summary>
 public readonly struct Interval
   : IEquatable<Interval>,
-    IComparable<Interval>
+    IComparable<Interval>,
+    ISpanParsable<Interval>,
+    IFormattable
 {
   #region Constants
 
@@ -272,6 +274,7 @@ public readonly struct Interval
     Interval other )
   {
     var result = _quantity - other._quantity;
+
     if( result != 0 )
     {
       return result;
@@ -324,6 +327,7 @@ public readonly struct Interval
     ArgumentOutOfRangeException.ThrowIfGreaterThan( quality, IntervalQuality.Augmented );
 
     var steps = s_quantitySemitones[(int) quantity][(int) quality];
+
     if( steps == -1 )
     {
       throw new ArgumentException( $"{quantity}{quality} is not a valid interval" );
@@ -361,12 +365,41 @@ public readonly struct Interval
   public static Interval Parse(
     string value )
   {
-    if( !TryParse( value, out var interval ) )
-    {
-      throw new FormatException( value + " is not a valid interval" );
-    }
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), null );
+  }
 
-    return interval;
+  /// <summary>
+  ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent
+  ///   using the specified format provider.
+  /// </summary>
+  /// <param name="value">A string containing the interval to convert.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>An object that is equivalent to the interval contained in value.</returns>
+  /// <exception cref="FormatException">value does not contain a valid string representation of an interval.</exception>
+  public static Interval Parse(
+    string value,
+    IFormatProvider? provider )
+  {
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), provider );
+  }
+
+  /// <summary>
+  ///   Converts the specified span representation of an interval to its <see cref="Interval" /> equivalent
+  ///   using the specified format provider.
+  /// </summary>
+  /// <param name="value">A read-only character span containing the interval to convert.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>An object that is equivalent to the interval contained in value.</returns>
+  /// <exception cref="FormatException">value does not contain a valid string representation of an interval.</exception>
+  public static Interval Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    return TryParse( value, provider, out var interval )
+      ? interval
+      : throw new FormatException( $"{value} is not a valid interval" );
   }
 
   /// <summary>Returns the fully qualified type name of this instance.</summary>
@@ -414,10 +447,16 @@ public readonly struct Interval
   ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
   public string ToString(
-    string format,
+    string? format,
     IFormatProvider? provider )
   {
+    if( string.IsNullOrWhiteSpace( format ) )
+    {
+      format = SYMBOL_QUANTITY_TO_STRING_FORMAT;
+    }
+
     var buf = new StringBuilder();
+
     foreach( var f in format )
     {
       switch( f )
@@ -472,13 +511,29 @@ public readonly struct Interval
     string? value,
     out Interval interval )
   {
-    if( !string.IsNullOrWhiteSpace( value ) )
-    {
-      return TryParse( value.AsSpan(), out interval );
-    }
+    return TryParse( value.AsSpan(), null, out interval );
+  }
 
-    interval = Unison;
-    return false;
+  /// <summary>
+  ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent
+  ///   and returns a value that indicates whether the conversion succeeded.
+  /// </summary>
+  /// <param name="value">A string containing the interval quality to convert.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="interval">
+  ///   When this method returns, contains the Interval value equivalent to the interval contained in
+  ///   value.
+  /// </param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
+  ///   .
+  /// </returns>
+  public static bool TryParse(
+    string? value,
+    IFormatProvider? provider,
+    out Interval interval )
+  {
+    return TryParse( value.AsSpan(), provider, out interval );
   }
 
   /// <summary>
@@ -499,7 +554,30 @@ public readonly struct Interval
     ReadOnlySpan<char> value,
     out Interval interval )
   {
+    return TryParse( value, null, out interval );
+  }
+
+  /// <summary>
+  ///   Converts the specified character span representation of an interval to its <see cref="Interval" /> equivalent
+  ///   and returns a value that indicates whether the conversion succeeded.
+  /// </summary>
+  /// <param name="value">A read-only character span containing the interval quality to convert.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="interval">
+  ///   When this method returns, contains the Interval value equivalent to the interval contained in
+  ///   value.
+  /// </param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
+  ///   .
+  /// </returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out Interval interval )
+  {
     interval = Unison;
+    value = value.TrimStart();
 
     if( value.IsEmpty )
     {
@@ -507,13 +585,6 @@ public readonly struct Interval
     }
 
     var i = 0;
-
-    // skip whitespaces
-    while( i < value.Length && char.IsWhiteSpace( value[i] ) )
-    {
-      ++i;
-    }
-
     var quality = IntervalQuality.Perfect;
     var hasExplicitQuality = char.IsLetter( value[i] );
 
@@ -537,23 +608,25 @@ public readonly struct Interval
     var intervalSpan = value[i..];
     var intervalNumberLength = 1;
 
-    if( intervalSpan.Length > 1 && char.IsDigit( value[1] ) )
+    if( intervalSpan.Length > 1 && char.IsDigit( intervalSpan[1] ) )
     {
       ++intervalNumberLength;
     }
 
-    if( !int.TryParse( value.Slice( i, intervalNumberLength ), out var number ) )
+    if( !int.TryParse( intervalSpan[..intervalNumberLength], out var number ) )
     {
       return false;
     }
 
     if( !hasExplicitQuality )
     {
+      // If the quality is not explicitly specified, we can infer it based on the interval number.
       var temp = ( number - 1 ) % 7 + 1;
       quality = temp is 1 or 4 or 5 ? IntervalQuality.Perfect : IntervalQuality.Major;
     }
 
     var quantity = (IntervalQuantity) ( number - 1 );
+
     if( !IsValid( quantity, quality ) )
     {
       return false;

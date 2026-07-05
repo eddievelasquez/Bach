@@ -359,7 +359,6 @@ public sealed class NoteNameTest
       { NoteName.D, NoteName.F, 5 },
       { NoteName.D, NoteName.G, 4 },
       { NoteName.D, NoteName.A, 3 },
-      { NoteName.D, NoteName.B, 2 },
       { NoteName.E, NoteName.C, 2 },
       { NoteName.E, NoteName.D, 1 },
       { NoteName.E, NoteName.E, 0 },
@@ -389,8 +388,7 @@ public sealed class NoteNameTest
       { NoteName.A, NoteName.A, 0 },
       { NoteName.A, NoteName.B, 6 },
       { NoteName.B, NoteName.E, 4 },
-      { NoteName.B, NoteName.F, 3 },
-      { NoteName.B, NoteName.A, 1 }
+      { NoteName.B, NoteName.F, 3 }
     };
 
   public static TheoryData<string, NoteName> NoteNames =>

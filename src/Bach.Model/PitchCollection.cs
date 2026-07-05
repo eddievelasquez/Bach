@@ -33,7 +33,8 @@ using System.Text;
 /// <summary>Collection of pitches.</summary>
 public sealed class PitchCollection
   : IReadOnlyList<Pitch>,
-    IEquatable<IEnumerable<Pitch>>
+    IEquatable<PitchCollection>,
+    ISpanParsable<PitchCollection>
 {
   #region Fields
 
@@ -82,14 +83,14 @@ public sealed class PitchCollection
 
   /// <inheritdoc />
   public bool Equals(
-    IEnumerable<Pitch>? other )
+    PitchCollection? other )
   {
     if( ReferenceEquals( other, this ) )
     {
       return true;
     }
 
-    return other is not null && _pitches.SequenceEqual( other );
+    return other is not null && _pitches.SequenceEqual( other._pitches );
   }
 
   /// <inheritdoc />
@@ -138,13 +139,30 @@ public sealed class PitchCollection
     string value )
   {
     ArgumentException.ThrowIfNullOrEmpty( value );
+    return Parse( value.AsSpan(), null );
+  }
 
-    if( !TryParse( value, out var notes ) )
-    {
-      throw new FormatException( $"{value} contains invalid pitches" );
-    }
+  /// <summary>Parses the provided string using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A PitchCollection.</returns>
+  public static PitchCollection Parse(
+    string value,
+    IFormatProvider? provider )
+  {
+    ArgumentException.ThrowIfNullOrEmpty( value );
+    return Parse( value.AsSpan(), provider );
+  }
 
-    return notes;
+  /// <summary>Parses the provided span using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A PitchCollection.</returns>
+  public static PitchCollection Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    return TryParse( value, provider, out var notes ) ? notes : throw new FormatException( $"{value.ToString()} contains invalid pitches" );
   }
 
   /// <inheritdoc />
@@ -189,7 +207,20 @@ public sealed class PitchCollection
     string? value,
     [NotNullWhen( true )] out PitchCollection? pitches )
   {
-    return TryParse( value.AsSpan(), out pitches );
+    return TryParse( value.AsSpan(), null, out pitches );
+  }
+
+  /// <summary>Attempts to parse a pitch collection from the given string using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitches">[out] The pitch collection.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    string? value,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out PitchCollection? pitches )
+  {
+    return TryParse( value.AsSpan(), provider, out pitches );
   }
 
   /// <summary>Attempts to parse a pitch collection from the given span.</summary>
@@ -200,16 +231,32 @@ public sealed class PitchCollection
     ReadOnlySpan<char> span,
     [NotNullWhen( true )] out PitchCollection? pitches )
   {
+    return TryParse( span, null, out pitches );
+  }
+
+  /// <summary>Attempts to parse a pitch collection from the given span using the specified format provider.</summary>
+  /// <param name="span">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitches">[out] The pitch collection.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out PitchCollection? pitches )
+  {
     if( span.IsEmpty )
     {
       pitches = null;
       return false;
     }
 
+    // Count the number of commas in the span to determine how many pitches we have.
     var sepCount = span.Count( ',' );
+
+    // Allocate a stack-allocated array of ranges to hold the start and end indices of each pitch in the span.
     Span<Range> ranges = stackalloc Range[sepCount + 1];
     var rangeCount = span.Split( ranges, ',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries );
-    var tmp = new List<Pitch>();
+    var tmp = new List<Pitch>( rangeCount );
 
     for( var i = 0; i < rangeCount; i++ )
     {

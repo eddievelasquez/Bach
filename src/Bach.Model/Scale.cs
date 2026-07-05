@@ -1,6 +1,6 @@
 // Module Name: Scale.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -27,10 +27,12 @@ namespace Bach.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Internal;
+using Bach.Model.Internal;
 
 /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
-public sealed class Scale: IEquatable<Scale>
+public sealed class Scale
+  : IEquatable<Scale>,
+    IFormattable
 {
   #region Constants
 
@@ -52,6 +54,7 @@ public sealed class Scale: IEquatable<Scale>
 
     Root = root;
     Formula = formula;
+
     PitchClasses = new PitchClassCollection(
       Formula.Generate( Root )
              .Take( Formula.Intervals.Count )
@@ -193,10 +196,15 @@ public sealed class Scale: IEquatable<Scale>
 
   /// <summary>Gets an enharmonic scale for this instance.</summary>
   /// <returns>The enharmonic scale.</returns>
+  /// <remarks>
+  ///   An enharmonic scale is a scale that contains notes that are enharmonically equivalent to the notes in this scale.
+  ///   For example, a C# major scale is enharmonically equivalent to a Db major scale.
+  /// </remarks>
   public Scale GetEnharmonicScale()
   {
     var expectedPitchClass = Root.Accidental >= Accidental.Natural ? Root + 1 : Root - 1;
     var enharmonicRoot = Root.GetEnharmonic( expectedPitchClass.NoteName );
+
     if( enharmonicRoot == null || enharmonicRoot.Value == Root )
     {
       return this;
@@ -250,6 +258,7 @@ public sealed class Scale: IEquatable<Scale>
       do
       {
         var scale = new Scale( root, formula );
+
         if( scale.Contains( pitchClasses ) )
         {
           yield return scale;
@@ -329,7 +338,7 @@ public sealed class Scale: IEquatable<Scale>
   ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
   /// </remarks>
   public string ToString(
-    string format,
+    string? format,
     IFormatProvider? provider )
   {
     if( string.IsNullOrEmpty( format ) )
@@ -338,6 +347,7 @@ public sealed class Scale: IEquatable<Scale>
     }
 
     var buf = new StringBuilder();
+
     foreach( var f in format )
     {
       switch( f )
@@ -379,8 +389,8 @@ public sealed class Scale: IEquatable<Scale>
     Scale scale )
   {
     // Scale is theoretical when it contains at least one double flat or sharp.
-    return scale.PitchClasses.Any(
-      note => note.Accidental == Accidental.DoubleFlat || note.Accidental == Accidental.DoubleSharp
+    return scale.PitchClasses.Any( note => note.Accidental == Accidental.DoubleFlat
+                                           || note.Accidental == Accidental.DoubleSharp
     );
   }
 

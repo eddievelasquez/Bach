@@ -1,6 +1,6 @@
 // Module Name: RegistryTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -25,7 +25,7 @@
 namespace Bach.Model.Test;
 
 using System.Linq;
-using Model.Instruments;
+using Bach.Model.Instruments;
 
 public sealed class RegistryTest
 {
@@ -35,14 +35,17 @@ public sealed class RegistryTest
   public void ChordFormulas_ShouldReturnExpectedValues_WhenAccessedById()
   {
     var chordFormulas = Registry.ChordFormulas.ToArray();
+
     chordFormulas.Should()
                  .NotBeNull();
+
     chordFormulas.Should()
                  .NotBeEmpty();
 
     foreach( var expected in chordFormulas )
     {
       var actual = Registry.ChordFormulas[expected.Id];
+
       actual.Should()
             .Be( expected );
     }
@@ -52,14 +55,17 @@ public sealed class RegistryTest
   public void ScaleFormulas_ShouldReturnExpectedValues_WhenAccessedById()
   {
     var scaleFormulas = Registry.ScaleFormulas.ToArray();
+
     scaleFormulas.Should()
                  .NotBeNull();
+
     scaleFormulas.Should()
                  .NotBeEmpty();
 
     foreach( var expected in scaleFormulas )
     {
       var actual = Registry.ScaleFormulas[expected.Id];
+
       actual.Should()
             .Be( expected );
     }
@@ -69,17 +75,146 @@ public sealed class RegistryTest
   public void StringedInstrumentDefinitions_ShouldReturnExpectedValues_WhenAccessedById()
   {
     var instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
+
     instrumentDefinitions.Should()
                          .NotBeNull();
+
     instrumentDefinitions.Should()
                          .NotBeEmpty();
 
     foreach( var expected in instrumentDefinitions )
     {
       InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Id];
+
       actual.Should()
             .Be( expected );
     }
+  }
+
+  [Fact]
+  public void TryGetChordFormula_ShouldReturnFalse_WhenChordFormulaDoesNotExist()
+  {
+    var result = Registry.TryGetChordFormula( "NonExistentChord", out var formula );
+
+    result.Should()
+          .BeFalse();
+
+    formula.Should()
+           .BeNull();
+  }
+
+  [Fact]
+  public void TryGetChordFormula_ShouldReturnTrue_WhenChordFormulaExistsById()
+  {
+    var result = Registry.TryGetChordFormula( "Major", out var formula );
+
+    result.Should()
+          .BeTrue();
+
+    formula.Should()
+           .NotBeNull();
+
+    formula!.Id.Should()
+            .Be( "Major" );
+  }
+
+  [Fact]
+  public void TryGetChordFormula_ShouldReturnTrue_WhenChordFormulaExistsByName()
+  {
+    var result = Registry.TryGetChordFormula( "Major", out var formula );
+
+    result.Should()
+          .BeTrue();
+
+    formula.Should()
+           .NotBeNull();
+
+    formula!.Name.Should()
+            .Be( "Major" );
+  }
+
+  [Fact]
+  public void TryGetScaleFormula_ShouldReturnFalse_WhenScaleFormulaDoesNotExist()
+  {
+    var result = Registry.TryGetScaleFormula( "NonExistentScale", out var formula );
+
+    result.Should()
+          .BeFalse();
+
+    formula.Should()
+           .BeNull();
+  }
+
+  [Fact]
+  public void TryGetScaleFormula_ShouldReturnTrue_WhenScaleFormulaExistsById()
+  {
+    var result = Registry.TryGetScaleFormula( "Major", out var formula );
+
+    result.Should()
+          .BeTrue();
+
+    formula.Should()
+           .NotBeNull();
+
+    formula!.Id.Should()
+            .Be( "Major" );
+  }
+
+  [Fact]
+  public void TryGetScaleFormula_ShouldReturnTrue_WhenScaleFormulaExistsByName()
+  {
+    var result = Registry.TryGetScaleFormula( "Natural Minor", out var formula );
+
+    result.Should()
+          .BeTrue();
+
+    formula.Should()
+           .NotBeNull();
+
+    formula!.Name.Should()
+            .Be( "Natural Minor" );
+  }
+
+  [Fact]
+  public void TryGetStringedInstrumentDefinition_ShouldReturnFalse_WhenInstrumentDoesNotExist()
+  {
+    var result = Registry.TryGetStringedInstrumentDefinition( "NonExistentInstrument", out var definition );
+
+    result.Should()
+          .BeFalse();
+
+    definition.Should()
+              .BeNull();
+  }
+
+  [Fact]
+  public void TryGetStringedInstrumentDefinition_ShouldReturnTrue_WhenInstrumentExistsById()
+  {
+    var result = Registry.TryGetStringedInstrumentDefinition( "Guitar", out var definition );
+
+    result.Should()
+          .BeTrue();
+
+    definition.Should()
+              .NotBeNull();
+
+    definition!.Id.Should()
+               .Be( "Guitar" );
+  }
+
+  [Fact]
+  public void TryGetStringedInstrumentDefinition_ShouldReturnTrue_WhenInstrumentExistsByName()
+  {
+    var result = Registry.TryGetStringedInstrumentDefinition( "Guitar", out var definition );
+
+    result.Should()
+          .BeTrue();
+
+    definition.Should()
+              .NotBeNull();
+
+    definition!.Name.Should()
+               .Be( "Guitar" );
   }
 
   #endregion

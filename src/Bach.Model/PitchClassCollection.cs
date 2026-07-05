@@ -1,6 +1,6 @@
 // Module Name: PitchClassCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -32,7 +32,8 @@ using System.Linq;
 /// <summary>Collection of pitch classes.</summary>
 public sealed class PitchClassCollection
   : IReadOnlyList<PitchClass>,
-    IEquatable<IEnumerable<PitchClass>>
+    IEquatable<PitchClassCollection>,
+    ISpanParsable<PitchClassCollection>
 {
   #region Fields
 
@@ -73,7 +74,7 @@ public sealed class PitchClassCollection
 
   /// <inheritdoc />
   public PitchClass this[
-    int index] => _pitchClasses[index];
+    int index ] => _pitchClasses[index];
 
   #endregion
 
@@ -81,14 +82,14 @@ public sealed class PitchClassCollection
 
   /// <inheritdoc />
   public bool Equals(
-    IEnumerable<PitchClass>? other )
+    PitchClassCollection? other )
   {
     if( ReferenceEquals( this, other ) )
     {
       return true;
     }
 
-    return other is not null && _pitchClasses.SequenceEqual( other );
+    return other is not null && _pitchClasses.SequenceEqual( other._pitchClasses );
   }
 
   /// <inheritdoc />
@@ -119,6 +120,7 @@ public sealed class PitchClassCollection
   public override int GetHashCode()
   {
     var hash = new HashCode();
+
     foreach( var pitchClass in _pitchClasses )
     {
       hash.Add( pitchClass );
@@ -149,13 +151,32 @@ public sealed class PitchClassCollection
     string value )
   {
     ArgumentException.ThrowIfNullOrEmpty( value );
+    return Parse( value.AsSpan(), null );
+  }
 
-    if( !TryParse( value, out var notes ) )
-    {
-      throw new FormatException( $"{value} contains invalid pitchClasses" );
-    }
+  /// <summary>Parses the provided string using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A PitchClassCollection.</returns>
+  public static PitchClassCollection Parse(
+    string value,
+    IFormatProvider? provider )
+  {
+    ArgumentException.ThrowIfNullOrEmpty( value );
+    return Parse( value.AsSpan(), provider );
+  }
 
-    return notes;
+  /// <summary>Parses the provided span using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A PitchClassCollection.</returns>
+  public static PitchClassCollection Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    return TryParse( value, provider, out var notes )
+      ? notes
+      : throw new FormatException( $"{value} contains invalid pitchClasses" );
   }
 
   /// <inheritdoc />
@@ -172,17 +193,72 @@ public sealed class PitchClassCollection
     string? value,
     [NotNullWhen( true )] out PitchClassCollection? pitchClasses )
   {
-    if( string.IsNullOrEmpty( value ) )
+    return TryParse( value, null, out pitchClasses );
+  }
+
+  /// <summary>Attempts to parse a pitch class collection from the given string using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitchClasses">[out] The pitch class collection.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    string? value,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out PitchClassCollection? pitchClasses )
+  {
+    return TryParse( value.AsSpan(), provider, out pitchClasses );
+  }
+
+  /// <summary>Attempts to parse a pitch class collection from the given span using the specified format provider.</summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitchClasses">[out] The pitch class collection.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out PitchClassCollection? pitchClasses )
+  {
+    if( value.IsEmpty )
     {
       pitchClasses = null;
       return false;
     }
 
     var tmp = new List<PitchClass>();
+    var start = 0;
 
-    foreach( var s in value.Split( [',', ' '], StringSplitOptions.RemoveEmptyEntries ) )
+    for( var i = 0; i < value.Length; i++ )
     {
-      if( !PitchClass.TryParse( s, out var note ) )
+      var c = value[i];
+
+      if( c is not (',' or ' ') )
+      {
+        continue;
+      }
+
+      if( i > start )
+      {
+        var segment = value.Slice( start, i - start );
+
+        if( !PitchClass.TryParse( segment, provider, out var note ) )
+        {
+          pitchClasses = null;
+          return false;
+        }
+
+        tmp.Add( note );
+      }
+
+      start = i + 1;
+    }
+
+    // Parse the last segment
+    if( start < value.Length )
+    {
+      var segment = value[start..];
+
+      if( !PitchClass.TryParse( segment, provider, out var note ) )
       {
         pitchClasses = null;
         return false;

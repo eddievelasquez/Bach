@@ -146,12 +146,15 @@ public sealed class PitchClassTest
               .Be( accidental );
   }
 
-  [Theory]
-  [MemberData( nameof( RelationalOperatorsTestData ) )]
-  public void RelationalOperators_ShouldReturnTrue_WhenComparingPitchClasses(
-    bool actual )
+  [Fact]
+  public void RelationalOperators_ShouldReturnTrue_WhenComparingPitchClasses()
   {
-    actual.Should().BeTrue();
+    ( PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ) ).Should().BeTrue();
+    ( PitchClass.C != PitchClass.B ).Should().BeTrue();
+    ( PitchClass.C < PitchClass.B ).Should().BeTrue();
+    ( PitchClass.C <= PitchClass.B ).Should().BeTrue();
+    ( PitchClass.D > PitchClass.C ).Should().BeTrue();
+    ( PitchClass.D >= PitchClass.C ).Should().BeTrue();
   }
 
   [Theory]
@@ -384,12 +387,6 @@ public sealed class PitchClassTest
         { PitchClass.ASharp, NoteName.D, NoteName.A },
         { PitchClass.B, NoteName.D, NoteName.A }
     };
-
-  public static TheoryData<bool> RelationalOperatorsTestData =>
-  [
-    PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ), PitchClass.C != PitchClass.B,
-    PitchClass.C < PitchClass.B, PitchClass.C <= PitchClass.B, PitchClass.D > PitchClass.C, PitchClass.D >= PitchClass.C
-  ];
 
   public static TheoryData<PitchClass, PitchClass, PitchClass?> NextTestData =>
     new()

@@ -57,4 +57,4 @@ jobs:
       run: dotnet build Bach.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test Bach.sln --configuration Release --no-build --verbosity normal
+      run: dotnet test Bach.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory .artifacts/coverage

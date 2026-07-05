@@ -26,11 +26,12 @@ namespace Bach.Model;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 /// <summary>Represents a tonal key defined by a tonic, mode, and key signature.</summary>
-public sealed class Key:
-  IParsable<Key>,
-  ISpanParsable<Key>
+public sealed class Key
+  : ISpanParsable<Key>,
+    IFormattable
 {
   #region Constants
 
@@ -83,6 +84,7 @@ public sealed class Key:
     Tonic = pitchClass;
     Mode = mode;
     Scale = new Scale( Tonic, ResolveScaleFormula( mode ) );
+
     KeySignature = s_keySignatureTable.TryGetValue( ( Tonic, Mode ), out var signature )
       ? signature
       : KeySignature.Empty;
@@ -116,7 +118,7 @@ public sealed class Key:
   public static Key Parse(
     string value )
   {
-    ArgumentNullException.ThrowIfNull(value);
+    ArgumentNullException.ThrowIfNull( value );
     return Parse( value.AsSpan(), null );
   }
 
@@ -131,12 +133,12 @@ public sealed class Key:
     string value,
     IFormatProvider? provider )
   {
-    ArgumentNullException.ThrowIfNull(value);
-    return Parse( value.AsSpan(), provider);
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), provider );
   }
 
   /// <summary>
-  /// Parses a string representation of a key into a <see cref="Key" /> object.
+  ///   Parses a string representation of a key into a <see cref="Key" /> object.
   /// </summary>
   /// <param name="s">The string representation of the key.</param>
   /// <param name="provider">The format provider.</param>
@@ -149,11 +151,65 @@ public sealed class Key:
     return TryParse( s, provider, out var result ) ? result : throw new FormatException();
   }
 
-
   /// <inheritdoc />
   public override string ToString()
   {
     return $"{Tonic} {Mode}";
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Key" /> instance according to the provided
+  ///   format.
+  /// </summary>
+  /// <param name="format">A format string.</param>
+  /// <returns>A formatted string.</returns>
+  public string ToString(
+    string? format )
+  {
+    return ToString( format, null );
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the value of this <see cref="Key" /> instance according to the provided
+  ///   format and format provider.
+  /// </summary>
+  /// <param name="format">A format string.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>A formatted string.</returns>
+  public string ToString(
+    string? format,
+    IFormatProvider? provider )
+  {
+    if( string.IsNullOrEmpty( format ) )
+    {
+      return ToString();
+    }
+
+    var buf = new StringBuilder();
+
+    foreach( var f in format )
+    {
+      switch( f )
+      {
+        case 'T':
+          buf.Append( Tonic );
+          break;
+
+        case 'M':
+          buf.Append( Mode );
+          break;
+
+        case 'S':
+          buf.Append( KeySignature );
+          break;
+
+        default:
+          buf.Append( f );
+          break;
+      }
+    }
+
+    return buf.ToString();
   }
 
   /// <summary>
@@ -166,7 +222,7 @@ public sealed class Key:
     string? s,
     [MaybeNullWhen( false )] out Key result )
   {
-    return TryParse( s.AsSpan(), null, out result );
+    return TryParse( s, null, out result );
   }
 
   /// <summary>
@@ -181,13 +237,17 @@ public sealed class Key:
     IFormatProvider? provider,
     [MaybeNullWhen( false )] out Key result )
   {
+    if( s is null )
+    {
+      result = null;
+      return false;
+    }
+
     return TryParse( s.AsSpan(), provider, out result );
   }
 
-  #endregion
-
   /// <summary>
-  /// Attempts to parse a string representation of a key into a <see cref="Key" /> object.
+  ///   Attempts to parse a string representation of a key into a <see cref="Key" /> object.
   /// </summary>
   /// <param name="value">The value representing the string representation of the key.</param>
   /// <param name="provider">The format provider.</param>
@@ -196,7 +256,7 @@ public sealed class Key:
   public static bool TryParse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider,
-    [MaybeNullWhen(false)] out Key result )
+    [MaybeNullWhen( false )] out Key result )
   {
     value = value.Trim();
 
@@ -212,7 +272,7 @@ public sealed class Key:
     // Check if the last character indicates the mode (M for Major (optional), m for Minor)
     if( value.Length > 1 )
     {
-      switch (value[^1])
+      switch( value[^1] )
       {
         case 'm':
           modeType = ModeType.Minor;
@@ -235,6 +295,8 @@ public sealed class Key:
     result = new Key( pitchClass, modeType );
     return true;
   }
+
+  #endregion
 
   #region Implementation
 

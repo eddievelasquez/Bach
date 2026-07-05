@@ -36,8 +36,8 @@ using Bach.Model.Internal;
 public readonly struct PitchClass
   : IEquatable<PitchClass>,
     IComparable<PitchClass>,
-    IParsable<PitchClass>,
-    ISpanParsable<PitchClass>
+    ISpanParsable<PitchClass>,
+    IFormattable
 {
   #region Constants
 
@@ -349,7 +349,7 @@ public readonly struct PitchClass
   }
 
   /// <summary>
-  /// Parses the provided string using the given format provider.
+  ///   Parses the provided string using the given format provider.
   /// </summary>
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>
@@ -365,9 +365,10 @@ public readonly struct PitchClass
       throw new ArgumentException( "Value cannot be empty.", nameof( value ) );
     }
 
-    return TryParse( value, provider, out var result ) ? result : throw new FormatException( $"{value} is not a valid pitch class" );
+    return TryParse( value, provider, out var result )
+      ? result
+      : throw new FormatException( $"{value} is not a valid pitch class" );
   }
-
 
   /// <summary>Subtracts an interval from the current instance.</summary>
   /// <param name="interval">An interval to subtract.</param>
@@ -446,7 +447,7 @@ public readonly struct PitchClass
   ///   <para>"X": Extended symbol pattern. e.g. "♯".</para>
   /// </remarks>
   public string ToString(
-    string format,
+    string? format,
     IFormatProvider? provider )
   {
     if( string.IsNullOrEmpty( format ) )
@@ -489,7 +490,7 @@ public readonly struct PitchClass
     string? value,
     out PitchClass pitchClass )
   {
-    return TryParse( value, null, out pitchClass );
+    return TryParse( value.AsSpan(), null, out pitchClass );
   }
 
   /// <summary>
@@ -504,34 +505,11 @@ public readonly struct PitchClass
     IFormatProvider? provider,
     out PitchClass pitchClass )
   {
-    if( string.IsNullOrEmpty( value ) )
-    {
-      pitchClass = C;
-      return false;
-    }
-
-    value = value.Trim();
-
-    if( !NoteName.TryParse( value, out var toneName ) )
-    {
-      pitchClass = C;
-      return false;
-    }
-
-    var accidental = Accidental.Natural;
-
-    if( value.Length > 1 && !Accidental.TryParse( value[1..], out accidental ) )
-    {
-      pitchClass = C;
-      return false;
-    }
-
-    pitchClass = Create( toneName, accidental );
-    return true;
+    return TryParse( value.AsSpan(), provider, out pitchClass );
   }
 
   /// <summary>
-  /// Attempts to parse a PitchClass from the given string.
+  ///   Attempts to parse a PitchClass from the given string.
   /// </summary>
   /// <param name="value">The string representation of the pitch class.</param>
   /// <param name="pitchClass">[out] The parsed pitch class.</param>
@@ -544,7 +522,7 @@ public readonly struct PitchClass
   }
 
   /// <summary>
-  /// Attempts to parse a PitchClass from the given string.
+  ///   Attempts to parse a PitchClass from the given string.
   /// </summary>
   /// <param name="value">The string representation of the pitch class.</param>
   /// <param name="provider">The format provider.</param>

@@ -470,7 +470,7 @@ public sealed class KeyTest
        .Be( ModeType.Major );
   }
 
-  [Fact( Skip = "ProductionBugSuspected" )]
+  [Fact]
   public void ParseSpan_ShouldReturnMinorKey_WhenSpanEndsWithM()
   {
     // Arrange
@@ -572,7 +572,7 @@ public sealed class KeyTest
        .Be( ModeType.Major );
   }
 
-  [Fact( Skip = "ProductionBugSuspected" )]
+  [Fact]
   public void ParseWithProvider_ShouldReturnMinorKey_WhenValueEndsWithM()
   {
     // Arrange
@@ -805,7 +805,7 @@ public sealed class KeyTest
        .BeNull();
   }
 
-  [Fact( Skip = "ProductionBugSuspected" )]
+  [Fact]
   public void TryParse_ShouldReturnTrue_WhenValueEndsWithM()
   {
     // Arrange
@@ -999,7 +999,7 @@ public sealed class KeyTest
        .BeNull();
   }
 
-  [Fact( Skip = "ProductionBugSuspected" )]
+  [Fact]
   public void TryParseSpan_ShouldReturnTrue_WhenSpanEndsWithM()
   {
     // Arrange
@@ -1305,7 +1305,7 @@ public sealed class KeyTest
        .BeNull();
   }
 
-  [Fact( Skip = "ProductionBugSuspected" )]
+  [Fact]
   public void TryParseWithProvider_ShouldReturnTrue_WhenValueEndsWithM()
   {
     // Arrange

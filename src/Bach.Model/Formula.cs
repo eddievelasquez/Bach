@@ -32,7 +32,8 @@ using Internal;
 /// <summary>A formula is a base class for constructing a sequence of pitch classes based on a series of intervals.</summary>
 public abstract class Formula
   : INamedObject,
-    IEquatable<Formula>
+    IEquatable<Formula>,
+    IFormattable
 {
   #region Nested Types
 
@@ -350,7 +351,7 @@ public abstract class Formula
   ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
   /// </remarks>
   public string ToString(
-    string format,
+    string? format,
     IFormatProvider? provider )
   {
     if( string.IsNullOrEmpty( format ) )

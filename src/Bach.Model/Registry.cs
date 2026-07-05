@@ -123,6 +123,58 @@ public static class Registry
 
   #endregion
 
+  #region Public Methods
+
+  /// <summary>
+  ///   Tries to get a scale formula by ID or name.
+  /// </summary>
+  /// <param name="idOrName">The ID or name of the scale formula.</param>
+  /// <param name="result">
+  ///   When this method returns, contains the scale formula associated with the specified ID or name, if found;
+  ///   otherwise, null. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>true if the scale formula is found; otherwise, false.</returns>
+  public static bool TryGetScaleFormula(
+    string idOrName,
+    [MaybeNullWhen( false )] out ScaleFormula result )
+  {
+    return ScaleFormulas.TryGetValue( idOrName, out result );
+  }
+
+  /// <summary>
+  ///   Tries to get a chord formula by ID or name.
+  /// </summary>
+  /// <param name="idOrName">The ID or name of the chord formula.</param>
+  /// <param name="result">
+  ///   When this method returns, contains the chord formula associated with the specified ID or name, if found;
+  ///   otherwise, null. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>true if the chord formula is found; otherwise, false.</returns>
+  public static bool TryGetChordFormula(
+    string idOrName,
+    [MaybeNullWhen( false )] out ChordFormula result )
+  {
+    return ChordFormulas.TryGetValue( idOrName, out result );
+  }
+
+  /// <summary>
+  ///   Tries to get a stringed instrument definition by ID or name.
+  /// </summary>
+  /// <param name="idOrName">The ID or name of the stringed instrument definition.</param>
+  /// <param name="result">
+  ///   When this method returns, contains the stringed instrument definition associated with the specified ID or name, if found;
+  ///   otherwise, null. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>true if the stringed instrument definition is found; otherwise, false.</returns>
+  public static bool TryGetStringedInstrumentDefinition(
+    string idOrName,
+    [MaybeNullWhen( false )] out StringedInstrumentDefinition result )
+  {
+    return StringedInstrumentDefinitions.TryGetValue( idOrName, out result );
+  }
+
+  #endregion
+
   #region Implementation
 
   private static string GetLibraryPath()

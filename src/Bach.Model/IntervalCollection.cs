@@ -1,6 +1,6 @@
 // Module Name: IntervalCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -27,14 +27,14 @@ namespace Bach.Model;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Internal;
+using Bach.Model.Internal;
 
 /// <summary>
 ///   Represents a collection of intervals.
 /// </summary>
 public sealed class IntervalCollection
   : IReadOnlyList<Interval>,
-    IEquatable<IEnumerable<Interval>>
+    IEquatable<IntervalCollection>
 {
   #region Fields
 
@@ -44,18 +44,35 @@ public sealed class IntervalCollection
 
   #region Constructors
 
-  internal IntervalCollection(
-    Interval[] intervals )
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="IntervalCollection" /> class.
+  /// </summary>
+  /// <param name="intervals">The intervals to include in the collection.</param>
+  /// <exception cref="ArgumentException">Thrown when the intervals are not sorted or contain duplicates.</exception>
+  public IntervalCollection(
+    IEnumerable<Interval> intervals )
   {
     ArgumentNullException.ThrowIfNull( intervals );
-    ArgumentOutOfRangeException.ThrowIfZero( intervals.Length );
 
-    if( !intervals.IsSortedUnique() )
+    var intervalArray = intervals as Interval[] ?? intervals.ToArray();
+    ArgumentOutOfRangeException.ThrowIfZero( intervalArray.Length );
+
+    if( !intervalArray.IsSortedUnique() )
     {
-      throw new ArgumentException( "Intervals must be sorted and contain no duplicates" );
+      throw new ArgumentException( "Intervals must be sorted in ascending order and contain no duplicates" );
     }
 
-    _intervals = intervals;
+    _intervals = intervalArray;
+  }
+
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="IntervalCollection" /> class with the specified intervals.
+  /// </summary>
+  /// <param name="intervals">The intervals to include in the collection.</param>
+  public IntervalCollection(
+    params Interval[] intervals )
+    : this( (IEnumerable<Interval>) intervals )
+  {
   }
 
   #endregion
@@ -75,14 +92,14 @@ public sealed class IntervalCollection
 
   /// <inheritdoc />
   public bool Equals(
-    IEnumerable<Interval>? other )
+    IntervalCollection? other )
   {
     if( ReferenceEquals( this, other ) )
     {
       return true;
     }
 
-    return other is not null && _intervals.SequenceEqual( other );
+    return other is not null && _intervals.SequenceEqual( other._intervals );
   }
 
   /// <inheritdoc />
@@ -113,6 +130,7 @@ public sealed class IntervalCollection
   public override int GetHashCode()
   {
     var hash = new HashCode();
+
     foreach( var interval in _intervals )
     {
       hash.Add( interval );

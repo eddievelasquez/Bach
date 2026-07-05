@@ -1,4 +1,4 @@
-﻿// Module Name: NamedObjectCollection.cs
+// Module Name: NamedObjectCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -29,8 +29,15 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-/// <summary>Collection of key-name objects.</summary>
-/// <typeparam name="T">Type parameter for the keyed object.</typeparam>
+/// <summary>
+///   Represents a collection of named objects indexed by both their identifier and display name.
+/// </summary>
+/// <typeparam name="T">
+///   The type of named object stored in the collection. The type must implement <see cref="INamedObject" />.
+/// </typeparam>
+/// <remarks>
+///   The collection preserves insertion order and supports lookups by either the object identifier or its name.
+/// </remarks>
 [DebuggerDisplay( "Count = {Count}" )]
 public sealed class NamedObjectCollection<T>: Collection<T>
   where T: INamedObject
