@@ -157,7 +157,7 @@ public sealed class ModeTest
     var target = new Mode( scale, formula );
 
     target.Scale.Should()
-          .Be( scale );
+          .BeSameAs( scale );
 
     target.Formula.Should()
           .Be( formula );

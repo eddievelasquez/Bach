@@ -1,20 +1,20 @@
-﻿// Module Name: TriadTest.cs
+// Module Name: TriadTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -36,25 +36,33 @@ public sealed class TriadTests
     // ReSharper disable once StringLiteralTypo
     triad.Name.Should()
          .Be( "Caug" );
+
     triad.Quality.Should()
          .Be( TriadQuality.Augmented );
+
     triad.Root.Should()
          .Be( PitchClass.C );
+
     triad.Bass.Should()
          .Be( PitchClass.C );
+
     triad.Inversion.Should()
          .Be( 0 );
-    triad.PitchClasses.Count.Should()
+
+    triad.Count.Should()
          .Be( 3 );
-    triad.PitchClasses[0]
-         .Should()
-         .Be( PitchClass.C );
-    triad.PitchClasses[1]
-         .Should()
-         .Be( PitchClass.E );
-    triad.PitchClasses[2]
-         .Should()
-         .Be( PitchClass.GSharp );
+
+    triad[0]
+      .Should()
+      .Be( PitchClass.C );
+
+    triad[1]
+      .Should()
+      .Be( PitchClass.E );
+
+    triad[2]
+      .Should()
+      .Be( PitchClass.GSharp );
   }
 
   [Fact]
@@ -65,25 +73,33 @@ public sealed class TriadTests
     // ReSharper disable once StringLiteralTypo
     triad.Name.Should()
          .Be( "Cdim" );
+
     triad.Quality.Should()
          .Be( TriadQuality.Diminished );
+
     triad.Root.Should()
          .Be( PitchClass.C );
+
     triad.Bass.Should()
          .Be( PitchClass.C );
+
     triad.Inversion.Should()
          .Be( 0 );
-    triad.PitchClasses.Count.Should()
+
+    triad.Count.Should()
          .Be( 3 );
-    triad.PitchClasses[0]
-         .Should()
-         .Be( PitchClass.C );
-    triad.PitchClasses[1]
-         .Should()
-         .Be( PitchClass.EFlat );
-    triad.PitchClasses[2]
-         .Should()
-         .Be( PitchClass.GFlat );
+
+    triad[0]
+      .Should()
+      .Be( PitchClass.C );
+
+    triad[1]
+      .Should()
+      .Be( PitchClass.EFlat );
+
+    triad[2]
+      .Should()
+      .Be( PitchClass.GFlat );
   }
 
   [Fact]
@@ -91,27 +107,36 @@ public sealed class TriadTests
   {
     var triad = new Triad( PitchClass.G, TriadQuality.Major );
     var inversion = triad.GetInversion( 1 );
+
     inversion.Name.Should()
              .Be( "G/B" );
+
     inversion.Quality.Should()
              .Be( TriadQuality.Major );
+
     inversion.Root.Should()
              .Be( PitchClass.G );
+
     inversion.Bass.Should()
              .Be( PitchClass.B );
+
     inversion.Inversion.Should()
              .Be( 1 );
-    inversion.PitchClasses.Count.Should()
+
+    inversion.Count.Should()
              .Be( 3 );
-    inversion.PitchClasses[0]
-             .Should()
-             .Be( PitchClass.B );
-    inversion.PitchClasses[1]
-             .Should()
-             .Be( PitchClass.D );
-    inversion.PitchClasses[2]
-             .Should()
-             .Be( PitchClass.G );
+
+    inversion[0]
+      .Should()
+      .Be( PitchClass.B );
+
+    inversion[1]
+      .Should()
+      .Be( PitchClass.D );
+
+    inversion[2]
+      .Should()
+      .Be( PitchClass.G );
   }
 
   [Fact]
@@ -119,9 +144,11 @@ public sealed class TriadTests
   {
     var triad = new Triad( PitchClass.G, TriadQuality.Major );
     var act1 = () => triad.GetInversion( -1 );
+
     act1.Should()
         .Throw<ArgumentOutOfRangeException>();
     var act2 = () => triad.GetInversion( 3 );
+
     act2.Should()
         .Throw<ArgumentOutOfRangeException>();
   }
@@ -130,54 +157,72 @@ public sealed class TriadTests
   public void MajorTriadTest()
   {
     var triad = new Triad( PitchClass.C, TriadQuality.Major );
+
     triad.Name.Should()
          .Be( "C" );
+
     triad.Quality.Should()
          .Be( TriadQuality.Major );
+
     triad.Root.Should()
          .Be( PitchClass.C );
+
     triad.Bass.Should()
          .Be( PitchClass.C );
+
     triad.Inversion.Should()
          .Be( 0 );
-    triad.PitchClasses.Count.Should()
+
+    triad.Count.Should()
          .Be( 3 );
-    triad.PitchClasses[0]
-         .Should()
-         .Be( PitchClass.C );
-    triad.PitchClasses[1]
-         .Should()
-         .Be( PitchClass.E );
-    triad.PitchClasses[2]
-         .Should()
-         .Be( PitchClass.G );
+
+    triad[0]
+      .Should()
+      .Be( PitchClass.C );
+
+    triad[1]
+      .Should()
+      .Be( PitchClass.E );
+
+    triad[2]
+      .Should()
+      .Be( PitchClass.G );
   }
 
   [Fact]
   public void MinorTriadTest()
   {
     var triad = new Triad( PitchClass.C, TriadQuality.Minor );
+
     triad.Name.Should()
          .Be( "Cm" );
+
     triad.Quality.Should()
          .Be( TriadQuality.Minor );
+
     triad.Root.Should()
          .Be( PitchClass.C );
+
     triad.Bass.Should()
          .Be( PitchClass.C );
+
     triad.Inversion.Should()
          .Be( 0 );
-    triad.PitchClasses.Count.Should()
+
+    triad.Count.Should()
          .Be( 3 );
-    triad.PitchClasses[0]
-         .Should()
-         .Be( PitchClass.C );
-    triad.PitchClasses[1]
-         .Should()
-         .Be( PitchClass.EFlat );
-    triad.PitchClasses[2]
-         .Should()
-         .Be( PitchClass.G );
+
+    triad[0]
+      .Should()
+      .Be( PitchClass.C );
+
+    triad[1]
+      .Should()
+      .Be( PitchClass.EFlat );
+
+    triad[2]
+      .Should()
+      .Be( PitchClass.G );
   }
 
   [Fact]
@@ -185,27 +230,36 @@ public sealed class TriadTests
   {
     var triad = new Triad( PitchClass.G, TriadQuality.Major );
     var inversion = triad.GetInversion( 2 );
+
     inversion.Name.Should()
              .Be( "G/D" );
+
     inversion.Quality.Should()
              .Be( TriadQuality.Major );
+
     inversion.Root.Should()
              .Be( PitchClass.G );
+
     inversion.Bass.Should()
              .Be( PitchClass.D );
+
     inversion.Inversion.Should()
              .Be( 2 );
-    inversion.PitchClasses.Count.Should()
+
+    inversion.Count.Should()
              .Be( 3 );
-    inversion.PitchClasses[0]
-             .Should()
-             .Be( PitchClass.D );
-    inversion.PitchClasses[1]
-             .Should()
-             .Be( PitchClass.G );
-    inversion.PitchClasses[2]
-             .Should()
-             .Be( PitchClass.B );
+
+    inversion[0]
+      .Should()
+      .Be( PitchClass.D );
+
+    inversion[1]
+      .Should()
+      .Be( PitchClass.G );
+
+    inversion[2]
+      .Should()
+      .Be( PitchClass.B );
   }
 
   #endregion

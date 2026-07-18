@@ -1,20 +1,20 @@
-﻿// Module Name: Chord.cs
+// Module Name: Chord.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -31,9 +31,134 @@ using System.Text;
 
 /// <summary>A chord is a set of pitch classes defined by a ChordFormula .</summary>
 public class Chord
-  : IEquatable<Chord>,
+  : PitchClassCollection,
+    IEquatable<Chord>,
     IEnumerable<PitchClass>
 {
+  #region Constants
+
+  /// <summary>
+  ///   Gets a C major chord.
+  /// </summary>
+  public static readonly Chord CMajor = new( PitchClass.C, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a C# major chord.
+  /// </summary>
+  public static readonly Chord CSharpMajor = new( PitchClass.CSharp, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a D major chord.
+  /// </summary>
+  public static readonly Chord DMajor = new( PitchClass.D, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a E♭ major chord.
+  /// </summary>
+  public static readonly Chord EFlatMajor = new( PitchClass.EFlat, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a E major chord.
+  /// </summary>
+  public static readonly Chord EMajor = new( PitchClass.E, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a F major chord.
+  /// </summary>
+  public static readonly Chord FMajor = new( PitchClass.F, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a F# major chord.
+  /// </summary>
+  public static readonly Chord FSharpMajor = new( PitchClass.FSharp, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a G major chord.
+  /// </summary>
+  public static readonly Chord GMajor = new( PitchClass.G, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a A♭ major chord.
+  /// </summary>
+  public static readonly Chord AFlatMajor = new( PitchClass.AFlat, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a A major chord.
+  /// </summary>
+  public static readonly Chord AMajor = new( PitchClass.A, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a B♭ major chord.
+  /// </summary>
+  public static readonly Chord BFlatMajor = new( PitchClass.BFlat, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a B major chord.
+  /// </summary>
+  public static readonly Chord BMajor = new( PitchClass.B, ChordFormula.Major );
+
+  /// <summary>
+  ///   Gets a C minor chord.
+  /// </summary>
+  public static readonly Chord CMinor = new( PitchClass.C, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a C# minor chord.
+  /// </summary>
+  public static readonly Chord CSharpMinor = new( PitchClass.CSharp, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a D minor chord.
+  /// </summary>
+  public static readonly Chord DMinor = new( PitchClass.D, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a E♭ minor chord.
+  /// </summary>
+  public static readonly Chord EFlatMinor = new( PitchClass.EFlat, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a E minor chord.
+  /// </summary>
+  public static readonly Chord EMinor = new( PitchClass.E, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a F minor chord.
+  /// </summary>
+  public static readonly Chord FMinor = new( PitchClass.F, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a F# minor chord.
+  /// </summary>
+  public static readonly Chord FSharpMinor = new( PitchClass.FSharp, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a G minor chord.
+  /// </summary>
+  public static readonly Chord GMinor = new( PitchClass.G, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a A♭ minor chord.
+  /// </summary>
+  public static readonly Chord AFlatMinor = new( PitchClass.AFlat, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a A minor chord.
+  /// </summary>
+  public static readonly Chord AMinor = new( PitchClass.A, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a B♭ minor chord.
+  /// </summary>
+  public static readonly Chord BFlatMinor = new( PitchClass.BFlat, ChordFormula.Minor );
+
+  /// <summary>
+  ///   Gets a B minor chord.
+  /// </summary>
+  public static readonly Chord BMinor = new( PitchClass.B, ChordFormula.Minor );
+
+  #endregion
+
   #region Constructors
 
   /// <summary>Constructor.</summary>
@@ -48,7 +173,7 @@ public class Chord
 
   /// <summary>Constructor.</summary>
   /// <param name="root">The root pitch class of the chord.</param>
-  /// <param name="formulaIdOrName">Id or name of the formula as defined in the Registry.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
   public Chord(
     PitchClass root,
     string formulaIdOrName )
@@ -69,22 +194,34 @@ public class Chord
     PitchClass root,
     ChordFormula formula,
     int inversion )
+    : this( root, formula, inversion, CreatePitchClasses( root, formula, inversion ) )
+  {
+  }
+
+  /// <summary>
+  /// Constructor.
+  /// </summary>
+  /// <param name="root">The root pitch class of the chord.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="inversion">The inversion.</param>
+  /// <param name="pitchClasses">The collection of pitch classes.</param>
+  private Chord(
+    PitchClass root,
+    ChordFormula formula,
+    int inversion,
+    PitchClass[] pitchClasses )
+    : base( pitchClasses )
   {
     ArgumentNullException.ThrowIfNull( formula );
+    ArgumentNullException.ThrowIfNull( pitchClasses );
     ArgumentOutOfRangeException.ThrowIfLessThan( inversion, 0 );
     ArgumentOutOfRangeException.ThrowIfGreaterThan( inversion, formula.Intervals.Count - 1 );
 
     Root = root;
     Formula = formula;
     Inversion = inversion;
-    PitchClasses
-      = new PitchClassCollection(
-        Formula.Generate( Root )
-               .Skip( inversion )
-               .Take( Formula.Intervals.Count )
-      );
 
-    Name = GenerateName( root, formula, PitchClasses[0] );
+    Name = GenerateName( root, formula, this[0] );
   }
 
   #endregion
@@ -97,7 +234,7 @@ public class Chord
 
   /// <summary>Gets the bass pitch class for the chord. The Bass pitch class is differs from the root for chord inversions.</summary>
   /// <value>The bass.</value>
-  public PitchClass Bass => PitchClasses[0];
+  public PitchClass Bass => this[0];
 
   /// <summary>Gets the inversion number of the current instance.</summary>
   /// <value>The inversion.</value>
@@ -110,10 +247,6 @@ public class Chord
   /// <summary>Gets the chord's formula.</summary>
   /// <value>The formula.</value>
   public ChordFormula Formula { get; }
-
-  /// <summary>Gets the pitch classes that compose the current chord.</summary>
-  /// <value>The pitchClasses.</value>
-  public PitchClassCollection PitchClasses { get; }
 
   /// <summary>An extended chord uses intervals whose quantity extends beyond the octave.</summary>
   /// <value>True if this instance is an extended chord, false if not.</value>
@@ -144,7 +277,7 @@ public class Chord
       return false;
     }
 
-    return Root.Equals( other.Root ) && Formula.Equals( other.Formula );
+    return Root.Equals( other.Root ) && Formula.Equals( other.Formula ) && Inversion == other.Inversion;
   }
 
   /// <inheritdoc />
@@ -160,9 +293,9 @@ public class Chord
   }
 
   /// <inheritdoc />
-  public IEnumerator<PitchClass> GetEnumerator()
+  public new IEnumerator<PitchClass> GetEnumerator()
   {
-    return PitchClasses.GetEnumerator();
+    return base.GetEnumerator();
   }
 
   /// <inheritdoc />
@@ -174,7 +307,7 @@ public class Chord
   /// <inheritdoc />
   public override int GetHashCode()
   {
-    return HashCode.Combine( Root, Formula );
+    return HashCode.Combine( Root, Formula, Inversion );
   }
 
   /// <summary>Generates an inversion for the current chord.</summary>
@@ -190,19 +323,17 @@ public class Chord
   /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
   /// <param name="octave">The octave for the starting pitch.</param>
   /// <returns>An enumerator for a pitch sequence for this chord.</returns>
-  public IEnumerable<Pitch> Render(
+  public override IEnumerable<Pitch> Render(
     int octave )
   {
     if( Inversion != 0 )
     {
-      var bass = Pitch.Create( Bass, octave );
-      yield return bass;
+      yield return Pitch.Create( Bass, octave );
     }
 
-    var root = Pitch.Create( Root, octave );
-    foreach( var note in Formula.Generate( root ) )
+    foreach( var pitch in Formula.Generate( Pitch.Create( Root, octave ) ) )
     {
-      yield return note;
+      yield return pitch;
     }
   }
 
@@ -215,6 +346,19 @@ public class Chord
   #endregion
 
   #region Implementation
+
+  private static PitchClass[] CreatePitchClasses(
+    PitchClass root,
+    ChordFormula formula,
+    int inversion )
+  {
+    ArgumentNullException.ThrowIfNull( formula );
+
+    return formula.Generate( root )
+                  .Skip( inversion )
+                  .Take( formula.Intervals.Count )
+                  .ToArray();
+  }
 
   private static string GenerateName(
     PitchClass root,

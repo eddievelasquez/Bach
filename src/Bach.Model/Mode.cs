@@ -1,4 +1,4 @@
-﻿// Module Name: Mode.cs
+// Module Name: Mode.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -61,7 +61,7 @@ public sealed class Mode
       = new PitchClassCollection(
         scale.GetAscending()
              .Skip( Formula.Tonic - 1 )
-             .Take( scale.PitchClasses.Count )
+             .Take( scale.Count )
       );
   }
 

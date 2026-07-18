@@ -1,20 +1,20 @@
 // Module Name: Scale.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -31,7 +31,8 @@ using Bach.Model.Internal;
 
 /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
 public sealed class Scale
-  : IEquatable<Scale>,
+  : PitchClassCollection,
+    IEquatable<Scale>,
     IFormattable
 {
   #region Constants
@@ -49,16 +50,38 @@ public sealed class Scale
   public Scale(
     PitchClass root,
     ScaleFormula formula )
+    : this( root, formula, CreatePitchClasses( root, formula ) )
+  {
+  }
+
+  /// <summary>Constructor.</summary>
+  /// <param name="root">The root pitchClass of the scale.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
+  /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
+  public Scale(
+    PitchClass root,
+    string formulaIdOrName )
+    : this( root, Registry.ScaleFormulas[formulaIdOrName] )
+  {
+  }
+
+  /// <summary>
+  /// Constructor.
+  /// </summary>
+  /// <param name="root">The root pitchClass of the scale.</param>
+  /// <param name="formula">The formula used to generate the scale.</param>
+  /// <param name="pitchClasses">The collection of pitch classes.</param>
+  private Scale(
+    PitchClass root,
+    ScaleFormula formula,
+    PitchClass[] pitchClasses )
+    : base( pitchClasses )
   {
     ArgumentNullException.ThrowIfNull( formula );
+    ArgumentNullException.ThrowIfNull( pitchClasses );
 
     Root = root;
     Formula = formula;
-
-    PitchClasses = new PitchClassCollection(
-      Formula.Generate( Root )
-             .Take( Formula.Intervals.Count )
-    );
 
     var buf = new StringBuilder();
     buf.Append( root.NoteName );
@@ -74,22 +97,11 @@ public sealed class Scale
     Theoretical = IsTheoretical( this );
   }
 
-  /// <summary>Constructor.</summary>
-  /// <param name="root">The root pitchClass of the scale.</param>
-  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
-  public Scale(
-    PitchClass root,
-    string formulaIdOrName )
-    : this( root, Registry.ScaleFormulas[formulaIdOrName] )
-  {
-  }
-
   #endregion
 
   #region Properties
 
-  /// <summary>Gets the root pitchClass of the scale.</summary>
+  /// <summary>Gets the root <see cref="PitchClass"/> of the scale.</summary>
   /// <value>The root.</value>
   public PitchClass Root { get; }
 
@@ -98,20 +110,15 @@ public sealed class Scale
   public string Name { get; }
 
   /// <summary>Gets the formula for the scale.</summary>
-  /// <value>The formula.</value>
+  /// <value>The <see cref="ScaleFormula"/>.</value>
   public ScaleFormula Formula { get; }
-
-  /// <summary>Gets the pitchClasses that form this scale.</summary>
-  /// <value>A collection of pitchClasses.</value>
-  public PitchClassCollection PitchClasses { get; }
 
   /// <summary>Determines if this scale is theoretical.</summary>
   /// <remarks>
-  ///   A theoretical scale is one that contains at least one double flat or double sharp accidental. These
-  ///   scales exist in the musical theory realm but are not used in practice due to their complexity. There's always
-  ///   another
-  ///   practical scale that contains exactly the same enharmonic pitches in the same order. See
-  ///   <see cref="GetEnharmonicScale" /> for a way to obtain said scale.
+  ///   A theoretical scale is one that contains at least one double flat or double sharp accidental.
+  ///   These scales exist in the musical theory realm but are not used in practice due to their complexity.
+  ///   There's always another practical scale that contains exactly the same enharmonic pitches in the same order.
+  ///   See <see cref="GetEnharmonicScale" /> for a way to obtain said scale.
   /// </remarks>
   /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
   public bool Theoretical { get; }
@@ -126,7 +133,7 @@ public sealed class Scale
   public bool Contains(
     IEnumerable<PitchClass> notes )
   {
-    return notes.All( note => PitchClasses.IndexOf( note ) >= 0 );
+    return notes.All( note => IndexOf( note ) >= 0 );
   }
 
   /// <inheritdoc />
@@ -170,9 +177,9 @@ public sealed class Scale
 
     while( maxIterationCount-- >= 0 )
     {
-      yield return PitchClasses[index];
+      yield return this[index];
 
-      index = PitchClasses.WrapIndex( index + 1 );
+      index = this.WrapIndex( index + 1 );
     }
   }
 
@@ -188,9 +195,9 @@ public sealed class Scale
 
     while( maxIterationCount-- >= 0 )
     {
-      yield return PitchClasses[index];
+      yield return this[index];
 
-      index = PitchClasses.WrapIndex( index - 1 );
+      index = this.WrapIndex( index - 1 );
     }
   }
 
@@ -223,7 +230,7 @@ public sealed class Scale
   /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
   /// <param name="octave">The octave for the first pitch.</param>
   /// <returns>An enumerator for a pitch sequence for this scale.</returns>
-  public IEnumerable<Pitch> Render(
+  public override IEnumerable<Pitch> Render(
     int octave )
   {
     return Formula.Generate( Pitch.Create( Root, octave ) );
@@ -369,7 +376,7 @@ public sealed class Scale
           break;
 
         case 'S':
-          buf.Append( PitchClasses );
+          buf.Append( base.ToString() );
           break;
 
         default:
@@ -385,12 +392,23 @@ public sealed class Scale
 
   #region Implementation
 
+  private static PitchClass[] CreatePitchClasses(
+    PitchClass root,
+    ScaleFormula formula )
+  {
+    ArgumentNullException.ThrowIfNull( formula );
+
+    return formula.Generate( root )
+                  .Take( formula.Intervals.Count )
+                  .ToArray();
+  }
+
   private static bool IsTheoretical(
     Scale scale )
   {
     // Scale is theoretical when it contains at least one double flat or sharp.
-    return scale.PitchClasses.Any( note => note.Accidental == Accidental.DoubleFlat
-                                           || note.Accidental == Accidental.DoubleSharp
+    return scale.Any( note => note.Accidental == Accidental.DoubleFlat
+                              || note.Accidental == Accidental.DoubleSharp
     );
   }
 

@@ -1,4 +1,4 @@
-﻿// Module Name: ChordFormula.cs
+// Module Name: ChordFormula.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -27,6 +27,20 @@ namespace Bach.Model;
 /// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
 public sealed class ChordFormula: Formula
 {
+  // Use Lazy<T> to avoid circular dependency issues when initializing the chord formulas in the registry.
+  private static readonly Lazy<ChordFormula> s_major = new( () => Registry.ChordFormulas[nameof(Major)] );
+  private static readonly Lazy<ChordFormula> s_minor = new( () => Registry.ChordFormulas[nameof(Minor)] );
+
+  /// <summary>
+  /// Gets the chord formula for a major chord.
+  /// </summary>
+  public static ChordFormula Major => s_major.Value;
+
+  /// <summary>
+  /// Gets the chord formula for a minor chord.
+  /// </summary>
+  public static ChordFormula Minor => s_minor.Value;
+
   #region Constructors
 
   /// <summary>Constructor.</summary>

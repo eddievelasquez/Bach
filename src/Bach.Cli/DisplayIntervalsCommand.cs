@@ -1,4 +1,4 @@
-﻿// Module Name: DisplayIntervalsCommand.cs
+// Module Name: DisplayIntervalsCommand.cs
 // Project:     Bach.Cli
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -37,7 +37,7 @@ internal sealed class DisplayIntervalsCommand: BachCommand
   public DisplayIntervalsCommand()
   {
     var notesArg = CreateMultiArgument<string>( "notes", "The notes" );
-    var command = CreateCommand( "intervals", arguments: new Argument[] { notesArg } );
+    var command = CreateCommand( "intervals", arguments: [notesArg] );
     command.SetHandler( Execute, notesArg );
     Command = command;
   }

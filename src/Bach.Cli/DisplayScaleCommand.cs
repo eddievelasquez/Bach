@@ -1,4 +1,4 @@
-﻿// Module Name: DisplayScaleCommand.cs
+// Module Name: DisplayScaleCommand.cs
 // Project:     Bach.Cli
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -66,7 +66,7 @@ internal sealed class DisplayScaleCommand: BachCommand
     {
       var root = PitchClass.Parse( rootValue );
       var scale = new Scale( root, formula );
-      WriteList( $"  {root} {formula.Name}: ", scale.PitchClasses );
+      WriteList( $"  {root} {formula.Name}: ", scale );
     }
 
     WriteLine();

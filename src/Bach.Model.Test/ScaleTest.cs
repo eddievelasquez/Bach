@@ -203,6 +203,15 @@ public sealed class ScaleTest
   }
 
   [Fact]
+  public void GetPitchClasses_ShouldExposeScalePitchClasses()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    scale.Should()
+         .Equal( PitchClass.C, PitchClass.D, PitchClass.E, PitchClass.F, PitchClass.G, PitchClass.A, PitchClass.B );
+  }
+
+  [Fact]
   public void Constructor_ShouldThrowArgumentException_WhenPassingEmptyScaleName()
   {
     var act = () => new Scale( PitchClass.C, "" );
@@ -507,7 +516,7 @@ public sealed class ScaleTest
   {
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
 
-    scale.PitchClasses.Count.Should()
+    scale.Count.Should()
          .Be( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count );
   }
 
@@ -520,7 +529,7 @@ public sealed class ScaleTest
   {
     var scale = new Scale( root, scaleName );
 
-    scale.PitchClasses.Should()
+    scale.Should()
          .BeEquivalentTo( expectedPitchClasses, options => options.WithStrictOrdering() );
   }
 

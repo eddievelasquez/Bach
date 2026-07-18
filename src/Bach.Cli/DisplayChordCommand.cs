@@ -1,4 +1,4 @@
-﻿// Module Name: DisplayChordCommand.cs
+// Module Name: DisplayChordCommand.cs
 // Project:     Bach.Cli
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -67,7 +67,7 @@ internal sealed class DisplayChordCommand: BachCommand
       var root = PitchClass.Parse( rootValue );
       var chord = new Chord( root, formula );
 
-      WriteList( $"  {chord} {formula.Name}: ", chord.PitchClasses );
+      WriteList( $"  {chord} {formula.Name}: ", chord );
     }
 
     WriteLine();

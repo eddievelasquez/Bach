@@ -126,6 +126,21 @@ public sealed class ChordTest
   }
 
   [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparingDifferentInversions()
+  {
+    var rootPosition = new Chord( PitchClass.C, "Major" );
+    var firstInversion = rootPosition.GetInversion( 1 );
+
+    rootPosition.Equals( firstInversion )
+                .Should()
+                .BeFalse();
+
+    firstInversion.GetHashCode()
+                  .Should()
+                  .NotBe( rootPosition.GetHashCode() );
+  }
+
+  [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingDifferentType()
   {
     object actual = new Chord( PitchClass.C, "Major" );
@@ -170,7 +185,7 @@ public sealed class ChordTest
     target.Name.Should()
           .Be( "Cm" );
 
-    target.PitchClasses.Should()
+    target.Should()
           .BeEquivalentTo( PitchClassCollection.Parse( "C,Eb,G" ) );
 
     target.ToString()
@@ -214,7 +229,7 @@ public sealed class ChordTest
     firstInversion.Name.Should()
                   .Be( "C/E" );
 
-    firstInversion.PitchClasses.Should()
+    firstInversion.Should()
                   .BeEquivalentTo( PitchClassCollection.Parse( "E,G,C" ) );
 
     var secondInversion = cMajor.GetInversion( 2 );
@@ -225,7 +240,7 @@ public sealed class ChordTest
     secondInversion.Name.Should()
                    .Be( "C/G" );
 
-    secondInversion.PitchClasses.Should()
+    secondInversion.Should()
                    .BeEquivalentTo( PitchClassCollection.Parse( "G,C,E" ) );
 
     var act = () => cMajor.GetInversion( 3 );
@@ -248,7 +263,7 @@ public sealed class ChordTest
     target.Name.Should()
           .Be( "Cm" );
 
-    target.PitchClasses.Should()
+    target.Should()
           .BeEquivalentTo( PitchClassCollection.Parse( "C,Eb,G" ) );
 
     target.ToString()

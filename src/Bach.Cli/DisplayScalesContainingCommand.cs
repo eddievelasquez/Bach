@@ -1,4 +1,4 @@
-﻿// Module Name: DisplayScalesContainingCommand.cs
+// Module Name: DisplayScalesContainingCommand.cs
 // Project:     Bach.Cli
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -64,7 +64,7 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
 
     foreach( var scale in Scale.ScalesContaining( pitchClasses ) )
     {
-      WriteList( $"  {scale.Name}: ", scale.PitchClasses );
+      WriteList( $"  {scale.Name}: ", scale );
       WriteList( "    => ", scale.Formula.Intervals.Select( interval => interval.ToString( "Sq" ) ) );
       WriteLine();
     }

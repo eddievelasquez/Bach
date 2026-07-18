@@ -1,4 +1,4 @@
-﻿// Module Name: Comparer.cs
+// Module Name: Comparer.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -28,7 +28,7 @@ internal static class Comparer
 {
   #region Constants
 
-  public static readonly StringComparer IdComparer = StringComparer.InvariantCultureIgnoreCase;
+  public static readonly StringComparer IdComparer = StringComparer.OrdinalIgnoreCase;
   public static readonly StringComparer NameComparer = StringComparer.CurrentCultureIgnoreCase;
 
   #endregion

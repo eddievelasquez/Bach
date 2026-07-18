@@ -1,20 +1,20 @@
 // Module Name: PitchClassCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -29,8 +29,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-/// <summary>Collection of pitch classes.</summary>
-public sealed class PitchClassCollection
+/// <summary>Collection of <see cref="PitchClass" />.</summary>
+public class PitchClassCollection
   : IReadOnlyList<PitchClass>,
     IEquatable<PitchClassCollection>,
     ISpanParsable<PitchClassCollection>
@@ -52,17 +52,6 @@ public sealed class PitchClassCollection
   {
     ArgumentNullException.ThrowIfNull( pitchClasses );
     _pitchClasses = pitchClasses.ToArray();
-  }
-
-  /// <summary>
-  ///   Initializes a new instance of the <see cref="PitchClassCollection" /> class.
-  /// </summary>
-  /// <param name="pitchClasses">The collection of pitch classes.</param>
-  public PitchClassCollection(
-    PitchClass[] pitchClasses )
-  {
-    ArgumentNullException.ThrowIfNull( pitchClasses );
-    _pitchClasses = pitchClasses;
   }
 
   #endregion
@@ -179,6 +168,15 @@ public sealed class PitchClassCollection
       : throw new FormatException( $"{value} contains invalid pitchClasses" );
   }
 
+  /// <summary>Renders the collection as <see cref="Pitch"/> instances for the provided octave.</summary>
+  /// <param name="octave">The octave to render from.</param>
+  /// <returns>The rendered pitches.</returns>
+  public virtual IEnumerable<Pitch> Render(
+    int octave )
+  {
+    throw new NotImplementedException();
+  }
+
   /// <inheritdoc />
   public override string ToString()
   {
@@ -267,7 +265,7 @@ public sealed class PitchClassCollection
       tmp.Add( note );
     }
 
-    pitchClasses = new PitchClassCollection( tmp.ToArray() );
+    pitchClasses = new PitchClassCollection( tmp );
     return true;
   }
 
