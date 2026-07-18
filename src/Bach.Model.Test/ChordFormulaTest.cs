@@ -85,6 +85,33 @@ public sealed class ChordFormulaTest
   }
 
   [Fact]
+  public void Constructor_WithNullSymbol_ShouldUseEmptyString()
+  {
+    var actual = new ChordFormula( CHORD_ID, CHORD_NAME, null, CHORD_FORMULA );
+
+    actual.Symbol.Should()
+          .BeEmpty();
+  }
+
+  [Fact]
+  public void Constructor_WithFewerThanTwoIntervals_ShouldThrowArgumentOutOfRangeException()
+  {
+    var act = () => new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, Interval.Unison );
+
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Fact]
+  public void StaticProperties_ShouldResolveRegisteredFormulas()
+  {
+    ChordFormula.Major.Should()
+                .BeSameAs( Registry.ChordFormulas["Major"] );
+    ChordFormula.Minor.Should()
+                .BeSameAs( Registry.ChordFormulas["Minor"] );
+  }
+
+  [Fact]
   public void Equals_ShouldSatisfyEquivalenceRelation()
   {
     object x = new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, CHORD_FORMULA );

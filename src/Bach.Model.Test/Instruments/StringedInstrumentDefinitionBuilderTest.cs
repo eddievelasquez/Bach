@@ -274,11 +274,34 @@ public sealed class StringedInstrumentDefinitionBuilderTest
     var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
     builder.AddTuning( TUNING_ID, TUNING_NAME, pitches );
     builder.Build();
-
+ 
     var act = () => builder.Build();
     act.Should()
        .Throw<InvalidOperationException>();
   }
 
+  [Fact]
+  public void AddTuningWithStringPitches_ShouldBuildDefinitionUsingParsedPitches()
+  {
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+ 
+    builder.AddTuning( TUNING_ID, TUNING_NAME, "C4,D4,E4" );
+ 
+    var definition = builder.Build();
+    definition.Tunings.Standard.Pitches.Should()
+              .BeEquivalentTo( PitchCollection.Parse( "C4,D4,E4" ) );
+  }
+
+  [Fact]
+  public void AddTuning_ShouldThrowArgumentException_WhenAddingDuplicateTuningId()
+  {
+    var builder = new StringedInstrumentDefinitionBuilder( INSTRUMENT_ID, INSTRUMENT_NAME, INSTRUMENT_STRING_COUNT );
+    builder.AddTuning( TUNING_ID, TUNING_NAME, "C4,D4,E4" );
+ 
+    var act = () => builder.AddTuning( TUNING_ID, "Another tuning", "C4,D4,E4" );
+    act.Should()
+       .Throw<ArgumentException>();
+  }
+ 
   #endregion
 }

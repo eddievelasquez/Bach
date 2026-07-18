@@ -102,6 +102,15 @@ public sealed class InstrumentTest
   }
 
   [Fact]
+  public void Constructor_ShouldThrowArgumentNullException_WhenDefinitionIsNull()
+  {
+    var act = () => new TestInstrument( null! );
+
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
   public void GetHashcodeTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
@@ -176,4 +185,12 @@ public sealed class InstrumentTest
   }
 
   #endregion
+
+  private sealed class TestInstrument: Instrument
+  {
+    public TestInstrument( InstrumentDefinition? definition )
+      : base( definition! )
+    {
+    }
+  }
 }
