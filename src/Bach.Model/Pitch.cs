@@ -40,7 +40,8 @@ public readonly struct Pitch
   : IEquatable<Pitch>,
     IComparable<Pitch>,
     ISpanParsable<Pitch>,
-    IFormattable
+    IFormattable,
+    IPartEvent
 {
   #region Constants
 

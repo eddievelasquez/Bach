@@ -31,7 +31,7 @@ using System.Linq;
 using System.Text;
 
 /// <summary>Collection of pitches.</summary>
-public sealed class PitchCollection
+public class PitchCollection
   : IReadOnlyList<Pitch>,
     IEquatable<PitchCollection>,
     ISpanParsable<PitchCollection>
@@ -43,17 +43,6 @@ public sealed class PitchCollection
   #endregion
 
   #region Constructors
-
-  /// <summary>
-  ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
-  /// </summary>
-  /// <param name="notes">The array of pitches.</param>
-  public PitchCollection(
-    Pitch[] notes )
-  {
-    ArgumentNullException.ThrowIfNull( notes );
-    _pitches = notes;
-  }
 
   /// <summary>
   ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
