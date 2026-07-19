@@ -165,6 +165,30 @@ public sealed class PitchTest
   #region Public Methods
 
   [Fact]
+  public void Pitch_ShouldImplementIPitchClassContract()
+  {
+    IPitchClass<Pitch> pitch = Pitch.Create( NoteName.C, Accidental.Natural, 4 );
+
+    pitch.NoteName.Should().Be( NoteName.C );
+    pitch.Accidental.Should().Be( Accidental.Natural );
+    pitch.Add( 1 ).Should().Be( Pitch.Create( NoteName.C, Accidental.Sharp, 4 ) );
+    pitch.Subtract( 1 ).Should().Be( Pitch.Create( NoteName.B, Accidental.Natural, 3 ) );
+  }
+
+  [Fact]
+  public void GetEnharmonic_ShouldReturnExpectedPitch_WhenGivenEnharmonicNoteName()
+  {
+    var pitch = Pitch.Create( NoteName.C, Accidental.Sharp, 4 );
+
+    var enharmonic = pitch.GetEnharmonic( NoteName.D );
+
+    enharmonic.Should().NotBeNull();
+    var enharmonicPitch = enharmonic.GetValueOrDefault();
+    enharmonicPitch.PitchClass.Should().Be( PitchClass.DFlat );
+    enharmonicPitch.Octave.Should().Be( pitch.Octave );
+  }
+
+  [Fact]
   public void AdditionOperator_ShouldReturnExpectedValue_WhenAddingPitchAndInt()
   {
     var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );

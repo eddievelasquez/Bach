@@ -32,6 +32,41 @@ public sealed class PitchChordTest
   }
 
   [Fact]
+  public void ImplementsGenericInterface_ShouldExposeSharedContract()
+  {
+    IChord<PitchChord, Pitch> chord = new PitchChord( Pitch.Create( PitchClass.C, 4 ), "Major" );
+
+    chord.Root.Should()
+         .Be( Pitch.Create( PitchClass.C, 4 ) );
+
+    chord.Bass.Should()
+         .Be( Pitch.Create( PitchClass.C, 4 ) );
+
+    chord.Inversion.Should()
+         .Be( 0 );
+
+    chord.Formula.Should()
+         .Be( Registry.ChordFormulas["Major"] );
+
+    chord.Name.Should()
+         .Be( "C" );
+
+    var inversion = chord.GetInversion( 1 );
+
+    inversion.Should()
+             .NotBeNull();
+
+    inversion.Inversion.Should()
+             .Be( 1 );
+
+    inversion.Root.Should()
+             .Be( Pitch.Create( PitchClass.C, 4 ) );
+
+    inversion.Bass.Should()
+             .Be( Pitch.Create( PitchClass.E, 4 ) );
+  }
+
+  [Fact]
   public void Constructor_WithRootAndFormula_ShouldInitializeWithProvidedValues()
   {
     var root = Pitch.Create( PitchClass.D, 3 );

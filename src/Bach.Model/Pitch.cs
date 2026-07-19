@@ -37,10 +37,7 @@ using Bach.Model.Internal;
 ///   to 127 (B9).
 /// </remarks>
 public readonly struct Pitch
-  : IEquatable<Pitch>,
-    IComparable<Pitch>,
-    ISpanParsable<Pitch>,
-    IFormattable,
+  : IPitchClass<Pitch>,
     IPartEvent
 {
   #region Constants
@@ -138,6 +135,14 @@ public readonly struct Pitch
   /// <value>The pitch class.</value>
   public PitchClass PitchClass => (PitchClass) _note;
 
+  /// <summary>Gets the note name of the pitch.</summary>
+  /// <value>The note name.</value>
+  public NoteName NoteName => PitchClass.NoteName;
+
+  /// <summary>Gets the accidental of the pitch.</summary>
+  /// <value>The accidental.</value>
+  public Accidental Accidental => PitchClass.Accidental;
+
   /// <summary>Gets the pitch's frequency.</summary>
   /// <value>The frequency.</value>
   public double Frequency
@@ -186,6 +191,52 @@ public readonly struct Pitch
     var newPitchClass = pitch.PitchClass + interval;
     var result = new Pitch( newPitchClass, octave, absoluteValue );
     return result;
+  }
+
+  /// <summary>Adds an interval to the current instance.</summary>
+  /// <param name="interval">An interval to add.</param>
+  /// <returns>A Pitch.</returns>
+  public Pitch Add(
+    Interval interval )
+  {
+    return Add( this, interval );
+  }
+
+  /// <summary>Subtracts an interval from the current instance.</summary>
+  /// <param name="interval">An interval to subtract.</param>
+  /// <returns>A Pitch.</returns>
+  public Pitch Subtract(
+    Interval interval )
+  {
+    var absoluteValue = (byte) ( _absoluteValue - interval.SemitoneCount );
+    CalcNote( absoluteValue, out _, out var octave );
+
+    var newPitchClass = PitchClass.Subtract( interval );
+    var result = new Pitch( newPitchClass, octave, absoluteValue );
+    return result;
+  }
+
+  /// <summary>Gets an enharmonic pitch with the given note name.</summary>
+  /// <param name="noteName">The target note name.</param>
+  /// <returns>The enharmonic pitch, or null if none exists or the result would fall outside the supported range.</returns>
+  public Pitch? GetEnharmonic(
+    NoteName noteName )
+  {
+    var enharmonicPitchClass = PitchClass.GetEnharmonic( noteName );
+
+    if( enharmonicPitchClass is null )
+    {
+      return null;
+    }
+
+    try
+    {
+      return Create( enharmonicPitchClass.Value, Octave );
+    }
+    catch( ArgumentOutOfRangeException )
+    {
+      return null;
+    }
   }
 
   /// <inheritdoc />
@@ -346,8 +397,7 @@ public readonly struct Pitch
   public Pitch Subtract(
     int semitoneCount )
   {
-    var result = new Pitch( _absoluteValue - semitoneCount );
-    return result;
+    return Add( -semitoneCount );
   }
 
   /// <inheritdoc />

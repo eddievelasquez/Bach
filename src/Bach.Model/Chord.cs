@@ -33,6 +33,7 @@ using System.Text;
 public class Chord
   : PitchClassCollection,
     IEquatable<Chord>,
+    IChord<Chord, PitchClass>,
     IEnumerable<PitchClass>
 {
   #region Constants
@@ -199,7 +200,7 @@ public class Chord
   }
 
   /// <summary>
-  /// Constructor.
+  ///   Constructor.
   /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>

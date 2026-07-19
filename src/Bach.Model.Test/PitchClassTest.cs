@@ -28,6 +28,17 @@ public sealed class PitchClassTest
 {
   #region Public Methods
 
+  [Fact]
+  public void PitchClass_ShouldImplementIPitchClassContract()
+  {
+    IPitchClass<PitchClass> pitchClass = PitchClass.C;
+
+    pitchClass.NoteName.Should().Be( NoteName.C );
+    pitchClass.Accidental.Should().Be( Accidental.Natural );
+    pitchClass.Add( 1 ).Should().Be( PitchClass.CSharp );
+    pitchClass.Subtract( 1 ).Should().Be( PitchClass.B );
+  }
+
   [Theory]
   [MemberData( nameof( AddIntervalFlats ) )]
   public void Add_ShouldReturnExpectedPitchClass_WhenAddingSemitonesWithFlats( PitchClass pitchClass, int interval, PitchClass expectedFlat )

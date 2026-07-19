@@ -171,6 +171,41 @@ public sealed class ChordTest
   }
 
   [Fact]
+  public void ImplementsGenericInterface_ShouldExposeSharedContract()
+  {
+    IChord<Chord, PitchClass> chord = new Chord( PitchClass.C, "Major" );
+
+    chord.Root.Should()
+         .Be( PitchClass.C );
+
+    chord.Bass.Should()
+         .Be( PitchClass.C );
+
+    chord.Inversion.Should()
+         .Be( 0 );
+
+    chord.Formula.Should()
+         .Be( Registry.ChordFormulas["Major"] );
+
+    chord.Name.Should()
+         .Be( "C" );
+
+    var inversion = chord.GetInversion( 1 );
+
+    inversion.Should()
+             .NotBeNull();
+
+    inversion.Inversion.Should()
+             .Be( 1 );
+
+    inversion.Root.Should()
+             .Be( PitchClass.C );
+
+    inversion.Bass.Should()
+             .Be( PitchClass.E );
+  }
+
+  [Fact]
   public void Constructor_ShouldInitializeChordUsingFormula()
   {
     var formula = Registry.ChordFormulas["Minor"];
