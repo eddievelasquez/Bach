@@ -35,7 +35,6 @@ using System.Diagnostics.Contracts;
 public readonly struct NoteName
   : IEquatable<NoteName>,
     IComparable<NoteName>,
-    IParsable<NoteName>  ,
     ISpanParsable<NoteName>
 {
   #region Constants

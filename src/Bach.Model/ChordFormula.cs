@@ -29,7 +29,12 @@ public sealed class ChordFormula: Formula
 {
   // Use Lazy<T> to avoid circular dependency issues when initializing the chord formulas in the registry.
   private static readonly Lazy<ChordFormula> s_major = new( () => Registry.ChordFormulas[nameof(Major)] );
+  private static readonly Lazy<ChordFormula> s_major7 = new( () => Registry.ChordFormulas[nameof( Major7 )] );
   private static readonly Lazy<ChordFormula> s_minor = new( () => Registry.ChordFormulas[nameof(Minor)] );
+  private static readonly Lazy<ChordFormula> s_minor7 = new( () => Registry.ChordFormulas[nameof(Minor7)] );
+  private static readonly Lazy<ChordFormula> s_dominant7 = new( () => Registry.ChordFormulas[nameof(Dominant7)] );
+  private static readonly Lazy<ChordFormula> s_diminished = new( () => Registry.ChordFormulas[nameof(Diminished)] );
+  private static readonly Lazy<ChordFormula> s_halfDiminished7 = new( () => Registry.ChordFormulas[nameof(HalfDiminished7)] );
 
   /// <summary>
   /// Gets the chord formula for a major chord.
@@ -37,9 +42,34 @@ public sealed class ChordFormula: Formula
   public static ChordFormula Major => s_major.Value;
 
   /// <summary>
+  /// Gets the chord formula for a major seventh chord.
+  /// </summary>
+  public static ChordFormula Major7 => s_major7.Value;
+
+  /// <summary>
   /// Gets the chord formula for a minor chord.
   /// </summary>
   public static ChordFormula Minor => s_minor.Value;
+
+  /// <summary>
+  /// Gets the chord formula for a minor seventh chord.
+  /// </summary>
+  public static ChordFormula Minor7 => s_minor7.Value;
+
+  /// <summary>
+  /// Gets the chord formula for a dominant seventh chord.
+  /// </summary>
+  public static ChordFormula Dominant7 => s_dominant7.Value;
+
+  /// <summary>
+  /// Gets the chord formula for a diminished chord.
+  /// </summary>
+  public static ChordFormula Diminished => s_diminished.Value;
+
+  /// <summary>
+  /// Gets the chord formula for a half-diminished seventh chord.
+  /// </summary>
+  public static ChordFormula HalfDiminished7 => s_halfDiminished7.Value;
 
   #region Constructors
 

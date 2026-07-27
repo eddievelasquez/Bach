@@ -83,7 +83,11 @@ public sealed class Part
     int index ]
   {
     get => _events[index];
-    set => throw new NotImplementedException();
+    set
+    {
+      ArgumentNullException.ThrowIfNull( value );
+      _events[index] = value;
+    }
   }
 
   #endregion

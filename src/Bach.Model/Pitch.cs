@@ -1,20 +1,20 @@
 // Module Name: Pitch.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -159,6 +159,11 @@ public readonly struct Pitch
   /// <value>The MIDI value.</value>
   public int Midi => _absoluteValue + 12;
 
+  /// <summary>
+  ///   Gets the pitch classes contained in the event.
+  /// </summary>
+  public PitchClass[] PitchClasses => [PitchClass];
+
   /// <summary>Gets the pitch's octave.</summary>
   /// <value>The octave.</value>
   public int Octave => _octave;
@@ -200,43 +205,6 @@ public readonly struct Pitch
     Interval interval )
   {
     return Add( this, interval );
-  }
-
-  /// <summary>Subtracts an interval from the current instance.</summary>
-  /// <param name="interval">An interval to subtract.</param>
-  /// <returns>A Pitch.</returns>
-  public Pitch Subtract(
-    Interval interval )
-  {
-    var absoluteValue = (byte) ( _absoluteValue - interval.SemitoneCount );
-    CalcNote( absoluteValue, out _, out var octave );
-
-    var newPitchClass = PitchClass.Subtract( interval );
-    var result = new Pitch( newPitchClass, octave, absoluteValue );
-    return result;
-  }
-
-  /// <summary>Gets an enharmonic pitch with the given note name.</summary>
-  /// <param name="noteName">The target note name.</param>
-  /// <returns>The enharmonic pitch, or null if none exists or the result would fall outside the supported range.</returns>
-  public Pitch? GetEnharmonic(
-    NoteName noteName )
-  {
-    var enharmonicPitchClass = PitchClass.GetEnharmonic( noteName );
-
-    if( enharmonicPitchClass is null )
-    {
-      return null;
-    }
-
-    try
-    {
-      return Create( enharmonicPitchClass.Value, Octave );
-    }
-    catch( ArgumentOutOfRangeException )
-    {
-      return null;
-    }
   }
 
   /// <inheritdoc />
@@ -322,6 +290,29 @@ public readonly struct Pitch
     return obj is Pitch other && Equals( other );
   }
 
+  /// <summary>Gets an enharmonic pitch with the given note name.</summary>
+  /// <param name="noteName">The target note name.</param>
+  /// <returns>The enharmonic pitch, or null if none exists or the result would fall outside the supported range.</returns>
+  public Pitch? GetEnharmonic(
+    NoteName noteName )
+  {
+    var enharmonicPitchClass = PitchClass.GetEnharmonic( noteName );
+
+    if( enharmonicPitchClass is null )
+    {
+      return null;
+    }
+
+    try
+    {
+      return Create( enharmonicPitchClass.Value, Octave );
+    }
+    catch( ArgumentOutOfRangeException )
+    {
+      return null;
+    }
+  }
+
   /// <inheritdoc />
   public override int GetHashCode()
   {
@@ -388,6 +379,20 @@ public readonly struct Pitch
       throw new FormatException( $"{value.ToString()} is not a valid pitch" );
     }
 
+    return result;
+  }
+
+  /// <summary>Subtracts an interval from the current instance.</summary>
+  /// <param name="interval">An interval to subtract.</param>
+  /// <returns>A Pitch.</returns>
+  public Pitch Subtract(
+    Interval interval )
+  {
+    var absoluteValue = (byte) ( _absoluteValue - interval.SemitoneCount );
+    CalcNote( absoluteValue, out _, out var octave );
+
+    var newPitchClass = PitchClass.Subtract( interval );
+    var result = new Pitch( newPitchClass, octave, absoluteValue );
     return result;
   }
 

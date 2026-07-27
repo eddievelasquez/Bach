@@ -1,20 +1,20 @@
 // Module Name: PitchClass.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -44,23 +44,40 @@ public readonly struct PitchClass
 
   private static readonly PitchClass[] s_pitchClasses =
   [
-    new( 0, 0, NoteName.D, Accidental.DoubleFlat ), new( 1, 0, NoteName.C, Accidental.Natural ),
-    new( 2, 0, NoteName.B, Accidental.Sharp ), new( 3, 1, NoteName.D, Accidental.Flat ),
-    new( 4, 1, NoteName.C, Accidental.Sharp ), new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
-    new( 6, 2, NoteName.E, Accidental.DoubleFlat ), new( 7, 2, NoteName.D, Accidental.Natural ),
-    new( 8, 2, NoteName.C, Accidental.DoubleSharp ), new( 9, 3, NoteName.F, Accidental.DoubleFlat ),
-    new( 10, 3, NoteName.E, Accidental.Flat ), new( 11, 3, NoteName.D, Accidental.Sharp ),
-    new( 12, 4, NoteName.F, Accidental.Flat ), new( 13, 4, NoteName.E, Accidental.Natural ),
-    new( 14, 4, NoteName.D, Accidental.DoubleSharp ), new( 15, 5, NoteName.G, Accidental.DoubleFlat ),
-    new( 16, 5, NoteName.F, Accidental.Natural ), new( 17, 5, NoteName.E, Accidental.Sharp ),
-    new( 18, 6, NoteName.G, Accidental.Flat ), new( 19, 6, NoteName.F, Accidental.Sharp ),
-    new( 20, 6, NoteName.E, Accidental.DoubleSharp ), new( 21, 7, NoteName.A, Accidental.DoubleFlat ),
-    new( 22, 7, NoteName.G, Accidental.Natural ), new( 23, 7, NoteName.F, Accidental.DoubleSharp ),
-    new( 24, 8, NoteName.A, Accidental.Flat ), new( 25, 8, NoteName.G, Accidental.Sharp ),
-    new( 26, 9, NoteName.B, Accidental.DoubleFlat ), new( 27, 9, NoteName.A, Accidental.Natural ),
-    new( 28, 9, NoteName.G, Accidental.DoubleSharp ), new( 29, 10, NoteName.C, Accidental.DoubleFlat ),
-    new( 30, 10, NoteName.B, Accidental.Flat ), new( 31, 10, NoteName.A, Accidental.Sharp ),
-    new( 32, 11, NoteName.C, Accidental.Flat ), new( 33, 11, NoteName.B, Accidental.Natural ),
+    new( 0, 0, NoteName.D, Accidental.DoubleFlat ),
+    new( 1, 0, NoteName.C, Accidental.Natural ),
+    new( 2, 0, NoteName.B, Accidental.Sharp ),
+    new( 3, 1, NoteName.D, Accidental.Flat ),
+    new( 4, 1, NoteName.C, Accidental.Sharp ),
+    new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
+    new( 6, 2, NoteName.E, Accidental.DoubleFlat ),
+    new( 7, 2, NoteName.D, Accidental.Natural ),
+    new( 8, 2, NoteName.C, Accidental.DoubleSharp ),
+    new( 9, 3, NoteName.F, Accidental.DoubleFlat ),
+    new( 10, 3, NoteName.E, Accidental.Flat ),
+    new( 11, 3, NoteName.D, Accidental.Sharp ),
+    new( 12, 4, NoteName.F, Accidental.Flat ),
+    new( 13, 4, NoteName.E, Accidental.Natural ),
+    new( 14, 4, NoteName.D, Accidental.DoubleSharp ),
+    new( 15, 5, NoteName.G, Accidental.DoubleFlat ),
+    new( 16, 5, NoteName.F, Accidental.Natural ),
+    new( 17, 5, NoteName.E, Accidental.Sharp ),
+    new( 18, 6, NoteName.G, Accidental.Flat ),
+    new( 19, 6, NoteName.F, Accidental.Sharp ),
+    new( 20, 6, NoteName.E, Accidental.DoubleSharp ),
+    new( 21, 7, NoteName.A, Accidental.DoubleFlat ),
+    new( 22, 7, NoteName.G, Accidental.Natural ),
+    new( 23, 7, NoteName.F, Accidental.DoubleSharp ),
+    new( 24, 8, NoteName.A, Accidental.Flat ),
+    new( 25, 8, NoteName.G, Accidental.Sharp ),
+    new( 26, 9, NoteName.B, Accidental.DoubleFlat ),
+    new( 27, 9, NoteName.A, Accidental.Natural ),
+    new( 28, 9, NoteName.G, Accidental.DoubleSharp ),
+    new( 29, 10, NoteName.C, Accidental.DoubleFlat ),
+    new( 30, 10, NoteName.B, Accidental.Flat ),
+    new( 31, 10, NoteName.A, Accidental.Sharp ),
+    new( 32, 11, NoteName.C, Accidental.Flat ),
+    new( 33, 11, NoteName.B, Accidental.Natural ),
     new( 34, 11, NoteName.A, Accidental.DoubleSharp )
   ];
 

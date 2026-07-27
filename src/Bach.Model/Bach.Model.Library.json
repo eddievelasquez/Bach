@@ -1,4 +1,4 @@
-﻿{
+{
   "Version": "0.3",
   "Scales":
   [
@@ -66,6 +66,8 @@
     { "Id": "Dominant11", "Name": "Dominant Eleventh", "Symbol": "11", "Formula": "R,3,5,m7,9,11" },
     { "Id": "Dominant13", "Name": "Dominant Thirteenth", "Symbol": "13", "Formula": "R,3,5,m7,9,11,13" },
     { "Id": "Dominant7", "Name": "Dominant Seventh", "Symbol": "7", "Formula": "R,3,5,m7" },
+    { "Id": "Dominant7Sharp9", "Name": "Dominant Seventh Sharp Ninth", "Symbol": "7#9", "Formula": "R,3,5,m7,A9" },
+    { "Id": "Dominant7Flat9", "Name": "Dominant Seventh Flat Ninth", "Symbol": "7b9", "Formula": "R,3,5,m7,m9" },
     { "Id": "Dominant9", "Name": "Dominant Ninth", "Symbol": "9", "Formula": "R,3,5,m7,9" },
     { "Id": "HalfDiminished", "Name": "Half Diminished", "Symbol": "7dim5", "Formula": "R,m3,d5,m7" },
     { "Id": "Major", "Name": "Major", "Symbol": "", "Formula": "R,3,5" },

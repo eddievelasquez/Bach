@@ -113,9 +113,30 @@ public class PitchChord
   /// </summary>
   public string Name { get; }
 
+  /// <summary>
+  ///   Gets the pitch classes of the chord.
+  /// </summary>
+  public PitchClass[] PitchClasses => this.Select( p => p.PitchClass )
+                                          .ToArray();
+
   #endregion
 
   #region Public Methods
+
+  /// <summary>
+  ///   Creates a new <see cref="PitchChord" /> instance from the specified root pitch class, octave, and chord formula.
+  /// </summary>
+  /// <param name="root">The root pitch class of the chord.</param>
+  /// <param name="octave">The octave of the root pitch.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <returns>A new <see cref="PitchChord" /> instance.</returns>
+  public static PitchChord Create(
+    PitchClass root,
+    int octave,
+    ChordFormula formula )
+  {
+    return new PitchChord( Pitch.Create( root, octave ), formula );
+  }
 
   /// <inheritdoc />
   public bool Equals(
@@ -149,7 +170,7 @@ public class PitchChord
   ///   Creates an inversion of the current chord.
   /// </summary>
   /// <param name="inversion">The inversion number.</param>
-  /// <returns>A new <see cref="PitchChord"/> representing the specified inversion.</returns>
+  /// <returns>A new <see cref="PitchChord" /> representing the specified inversion.</returns>
   public PitchChord GetInversion(
     int inversion )
   {
