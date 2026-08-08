@@ -204,10 +204,10 @@ public readonly struct PitchClass
 
   #region Public Methods
 
-  /// <summary>Adds a number of semitones to the current instance.</summary>
-  /// <param name="semitoneCount">Number of semitones.</param>
+  /// <summary>Transposes the current instance by a number of semitones.</summary>
+  /// <param name="semitoneCount">Number of semitones. Negative values transpose downward.</param>
   /// <returns>A PitchClass.</returns>
-  public PitchClass Add(
+  public PitchClass Transpose(
     int semitoneCount )
   {
     var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex + semitoneCount );
@@ -217,12 +217,36 @@ public readonly struct PitchClass
   /// <summary>Adds an interval to the current instance.</summary>
   /// <param name="interval">An interval to add.</param>
   /// <returns>A PitchClass.</returns>
-  public PitchClass Add(
+  public PitchClass Transpose(
     Interval interval )
   {
-    return AddInterval( (int) interval.Quantity, interval.SemitoneCount );
+    var calculatedNoteName = NoteName + ( (int) interval.Quantity * ( interval.IsAscending ? 1 : -1 ) );
+    var calculatedPitchClass = this + interval.SemitoneCount;
+
+    if( calculatedPitchClass.NoteName == calculatedNoteName )
+    {
+      return calculatedPitchClass;
+    }
+
+    // Deal with enharmonics
+    var enharmonic = calculatedPitchClass.GetEnharmonic( calculatedNoteName );
+    return enharmonic ?? calculatedPitchClass;
   }
 
+  /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
+  /// <param name="pitchClass">The pitch class.</param>
+  /// <returns>An interval.</returns>
+  public Interval Subtract(
+    PitchClass pitchClass )
+  {
+    // First we determine the interval quantity
+    var quantity = (IntervalQuantity) ( pitchClass.NoteName - NoteName );
+
+    // Then we determine the semitone count
+    var semitoneCount = ArrayExtensions.WrapIndex( SEMITONE_COUNT, pitchClass._enharmonicIndex - _enharmonicIndex );
+    var interval = new Interval( quantity, semitoneCount );
+    return interval;
+  }
   /// <inheritdoc />
   public int CompareTo(
     PitchClass other )
@@ -385,40 +409,6 @@ public readonly struct PitchClass
       : throw new FormatException( $"{value} is not a valid pitch class" );
   }
 
-  /// <summary>Subtracts an interval from the current instance.</summary>
-  /// <param name="interval">An interval to subtract.</param>
-  /// <returns>A PitchClass.</returns>
-  public PitchClass Subtract(
-    Interval interval )
-  {
-    return AddInterval( -(int) interval.Quantity, -interval.SemitoneCount );
-  }
-
-  /// <summary>Subtracts a number of semitones from the current instance.</summary>
-  /// <param name="semitoneCount">Number of semitones.</param>
-  /// <returns>A PitchClass.</returns>
-  public PitchClass Subtract(
-    int semitoneCount )
-  {
-    var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex - semitoneCount );
-    return LookupNote( enharmonicIndex );
-  }
-
-  /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
-  /// <param name="pitchClass">The pitch class.</param>
-  /// <returns>An interval.</returns>
-  public Interval Subtract(
-    PitchClass pitchClass )
-  {
-    // First we determine the interval quantity
-    var quantity = (IntervalQuantity) ( pitchClass.NoteName - NoteName );
-
-    // Then we determine the semitone count
-    var semitoneCount = ArrayExtensions.WrapIndex( SEMITONE_COUNT, pitchClass._enharmonicIndex - _enharmonicIndex );
-    var interval = new Interval( quantity, semitoneCount );
-    return interval;
-  }
-
   /// <inheritdoc />
   public override string ToString()
   {
@@ -572,23 +562,6 @@ public readonly struct PitchClass
 
   #region Implementation
 
-  private PitchClass AddInterval(
-    int intervalQuantity,
-    int semitoneCount )
-  {
-    var calculatedNoteName = NoteName + intervalQuantity;
-    var calculatedPitchClass = this + semitoneCount;
-
-    if( calculatedPitchClass.NoteName == calculatedNoteName )
-    {
-      return calculatedPitchClass;
-    }
-
-    // Deal with enharmonics
-    var enharmonic = calculatedPitchClass.GetEnharmonic( calculatedNoteName );
-    return enharmonic ?? calculatedPitchClass;
-  }
-
   // Finds a pitch class that corresponds to the provided enharmonic index,
   // attempting to match the desired accidental mode
   internal static PitchClass LookupNote(
@@ -710,7 +683,7 @@ public readonly struct PitchClass
     PitchClass pitchClass,
     int semitoneCount )
   {
-    return pitchClass.Add( semitoneCount );
+    return pitchClass.Transpose( semitoneCount );
   }
 
   /// <summary>Increment operator.</summary>
@@ -719,7 +692,7 @@ public readonly struct PitchClass
   public static PitchClass operator ++(
     PitchClass pitchClass )
   {
-    return pitchClass.Add( 1 );
+    return pitchClass.Transpose( 1 );
   }
 
   /// <summary>Subtraction operator.</summary>
@@ -730,7 +703,7 @@ public readonly struct PitchClass
     PitchClass pitchClass,
     int semitoneCount )
   {
-    return pitchClass.Subtract( semitoneCount );
+    return pitchClass.Transpose( -semitoneCount );
   }
 
   /// <summary>Decrement operator.</summary>
@@ -739,7 +712,7 @@ public readonly struct PitchClass
   public static PitchClass operator --(
     PitchClass pitchClass )
   {
-    return pitchClass.Subtract( 1 );
+    return pitchClass.Transpose( -1 );
   }
 
   /// <summary>Addition operator.</summary>
@@ -750,7 +723,7 @@ public readonly struct PitchClass
     PitchClass pitchClass,
     Interval interval )
   {
-    return pitchClass.Add( interval );
+    return pitchClass.Transpose( interval );
   }
 
   /// <summary>Addition operator.</summary>
@@ -761,7 +734,7 @@ public readonly struct PitchClass
     PitchClass pitchClass,
     Interval interval )
   {
-    return pitchClass.Subtract( interval );
+    return pitchClass.Transpose( -interval );
   }
 
   /// <summary>Subtraction operator.</summary>

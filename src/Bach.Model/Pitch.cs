@@ -1,20 +1,20 @@
 // Module Name: Pitch.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -175,7 +175,7 @@ public readonly struct Pitch
   /// <summary>Adds number of semitones to the current instance.</summary>
   /// <param name="semitoneCount">Number of semitones.</param>
   /// <returns>A Pitch.</returns>
-  public Pitch Add(
+  public Pitch Transpose(
     int semitoneCount )
   {
     var result = new Pitch( _absoluteValue + semitoneCount );
@@ -201,7 +201,7 @@ public readonly struct Pitch
   /// <summary>Adds an interval to the current instance.</summary>
   /// <param name="interval">An interval to add.</param>
   /// <returns>A Pitch.</returns>
-  public Pitch Add(
+  public Pitch Transpose(
     Interval interval )
   {
     return Add( this, interval );
@@ -380,29 +380,6 @@ public readonly struct Pitch
     }
 
     return result;
-  }
-
-  /// <summary>Subtracts an interval from the current instance.</summary>
-  /// <param name="interval">An interval to subtract.</param>
-  /// <returns>A Pitch.</returns>
-  public Pitch Subtract(
-    Interval interval )
-  {
-    var absoluteValue = (byte) ( _absoluteValue - interval.SemitoneCount );
-    CalcNote( absoluteValue, out _, out var octave );
-
-    var newPitchClass = PitchClass.Subtract( interval );
-    var result = new Pitch( newPitchClass, octave, absoluteValue );
-    return result;
-  }
-
-  /// <summary>Subtracts a number of semitones to the current instance.</summary>
-  /// <param name="semitoneCount">Number of semitones.</param>
-  /// <returns>A Pitch.</returns>
-  public Pitch Subtract(
-    int semitoneCount )
-  {
-    return Add( -semitoneCount );
   }
 
   /// <inheritdoc />
@@ -745,7 +722,7 @@ public readonly struct Pitch
     Pitch pitch,
     int semitoneCount )
   {
-    return pitch.Add( semitoneCount );
+    return pitch.Transpose( semitoneCount );
   }
 
   /// <summary>Addition operator.</summary>
@@ -765,7 +742,7 @@ public readonly struct Pitch
   public static Pitch operator ++(
     Pitch pitch )
   {
-    return pitch.Add( 1 );
+    return pitch.Transpose( 1 );
   }
 
   /// <summary>Subtraction operator.</summary>
@@ -776,7 +753,7 @@ public readonly struct Pitch
     Pitch pitch,
     int semitoneCount )
   {
-    return pitch.Subtract( semitoneCount );
+    return pitch.Transpose( -semitoneCount );
   }
 
   /// <summary>Decrement operator.</summary>
@@ -785,7 +762,7 @@ public readonly struct Pitch
   public static Pitch operator --(
     Pitch pitch )
   {
-    return pitch.Subtract( 1 );
+    return pitch.Transpose( -1 );
   }
 
   /// <summary>Subtraction operator.</summary>

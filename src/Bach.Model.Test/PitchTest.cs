@@ -171,8 +171,8 @@ public sealed class PitchTest
 
     pitch.NoteName.Should().Be( NoteName.C );
     pitch.Accidental.Should().Be( Accidental.Natural );
-    pitch.Add( 1 ).Should().Be( Pitch.Create( NoteName.C, Accidental.Sharp, 4 ) );
-    pitch.Subtract( 1 ).Should().Be( Pitch.Create( NoteName.B, Accidental.Natural, 3 ) );
+    pitch.Transpose( 1 ).Should().Be( Pitch.Create( NoteName.C, Accidental.Sharp, 4 ) );
+    pitch.Transpose( -1 ).Should().Be( Pitch.Create( NoteName.B, Accidental.Natural, 3 ) );
   }
 
   [Fact]

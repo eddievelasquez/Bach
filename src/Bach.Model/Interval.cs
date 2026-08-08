@@ -194,6 +194,7 @@ public readonly struct Interval
   private readonly byte _quality;
   private readonly byte _quantity;
   private readonly byte _semitoneCount;
+  private readonly bool _isDescending;
 
   #endregion
 
@@ -204,9 +205,11 @@ public readonly struct Interval
   /// </summary>
   /// <param name="quantity">The quantity of the interval.</param>
   /// <param name="quality">The quality of the interval.</param>
+  /// <param name="descending">Whether the interval is descending.</param>
   public Interval(
     IntervalQuantity quantity,
-    IntervalQuality quality )
+    IntervalQuality quality,
+    bool descending = false )
   {
     Debug.Assert( quantity >= IntervalQuantity.Unison );
     Debug.Assert( quantity <= IntervalQuantity.Fourteenth );
@@ -216,14 +219,17 @@ public readonly struct Interval
     _semitoneCount = (byte) GetSemitoneCount( quantity, quality );
     _quantity = (byte) quantity;
     _quality = (byte) quality;
+    _isDescending = ( quantity != IntervalQuantity.Unison || _semitoneCount != 0 ) && descending;
   }
 
   /// <summary>Constructor.</summary>
   /// <param name="quantity">The interval quantity.</param>
   /// <param name="semitoneCount">The number of semitones in the interval.</param>
+  /// <param name="descending">Whether the interval is descending.</param>
   internal Interval(
     IntervalQuantity quantity,
-    int semitoneCount )
+    int semitoneCount,
+    bool descending = false)
   {
     var pos = Array.IndexOf( s_quantitySemitones[(int) quantity], semitoneCount );
     Debug.Assert( pos != -1, $"A {quantity} with {semitoneCount} is not a valid interval" );
@@ -232,6 +238,7 @@ public readonly struct Interval
     _quantity = (byte) quantity;
     _quality = (byte) pos;
     _semitoneCount = (byte) semitoneCount;
+    _isDescending = ( quantity != IntervalQuantity.Unison || semitoneCount != 0 ) && descending;
   }
 
   #endregion
@@ -246,6 +253,14 @@ public readonly struct Interval
   /// <value>The quality.</value>
   public IntervalQuality Quality => (IntervalQuality) _quality;
 
+  /// <summary>Gets a value indicating whether the interval is ascending.</summary>
+  /// <value>True if ascending, false if descending.</value>
+  public bool IsAscending => !_isDescending;
+
+  /// <summary>Gets a value indicating whether the interval is descending.</summary>
+  /// <value>True if descending, false if ascending.</value>
+  public bool IsDescending => _isDescending;
+
   /// <summary>
   ///   Gets the interval's inversion. An interval and its inversion always add up to an octave.
   /// </summary>
@@ -257,13 +272,13 @@ public readonly struct Interval
       var newQuality = IntervalQuality.Augmented - (int) Quality;
 
       var result = new Interval( newQuantity, newQuality );
-      return result;
+      return _isDescending ? -result : result;
     }
   }
 
   /// <summary>Gets the number of semitones in the interval.</summary>
   /// <value>The number of semitones.</value>
-  public int SemitoneCount => _semitoneCount;
+  public int SemitoneCount => _isDescending ? -_semitoneCount : _semitoneCount;
 
   #endregion
 
@@ -273,22 +288,28 @@ public readonly struct Interval
   public int CompareTo(
     Interval other )
   {
-    var result = _quantity - other._quantity;
-
+    var result = SemitoneCount - other.SemitoneCount;
     if( result != 0 )
     {
       return result;
     }
 
-    result = _quality - other._quality;
-    return result;
+    result = ( _isDescending ? -_quantity : _quantity ) - ( other._isDescending ? -other._quantity : other._quantity );
+    if( result != 0 )
+    {
+      return result;
+    }
+
+    return ( _isDescending ? -_quality : _quality ) - ( other._isDescending ? -other._quality : other._quality );
   }
 
   /// <inheritdoc />
   public bool Equals(
     Interval other )
   {
-    return other.Quantity == Quantity && other.Quality == Quality;
+    return other._quantity == _quantity
+           && other._quality == _quality
+           && other._isDescending == _isDescending;
   }
 
   /// <inheritdoc />
@@ -301,8 +322,7 @@ public readonly struct Interval
   /// <inheritdoc />
   public override int GetHashCode()
   {
-    var hashCode = ( _quality << 8 ) | _quantity;
-    return hashCode;
+    return HashCode.Combine( _quality, _quantity, _isDescending );
   }
 
   /// <summary>Gets semitone count of the interval.</summary>
@@ -316,10 +336,12 @@ public readonly struct Interval
   /// </exception>
   /// <param name="quantity">The interval quantity.</param>
   /// <param name="quality">The interval quality.</param>
+  /// <param name="descending">True if it is a descending interval; otherwise false.</param>
   /// <returns>The semitone count.</returns>
   public static int GetSemitoneCount(
     IntervalQuantity quantity,
-    IntervalQuality quality )
+    IntervalQuality quality,
+    bool descending = false )
   {
     ArgumentOutOfRangeException.ThrowIfLessThan( (int) quantity, (int) IntervalQuantity.Unison );
     ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quantity, (int) IntervalQuantity.Fourteenth );
@@ -333,7 +355,7 @@ public readonly struct Interval
       throw new ArgumentException( $"{quantity}{quality} is not a valid interval" );
     }
 
-    return steps;
+    return descending ? -steps : steps;
   }
 
   /// <summary>Determine if the interval quantity and quality refer to a valid interval.</summary>
@@ -456,6 +478,11 @@ public readonly struct Interval
     }
 
     var buf = new StringBuilder();
+
+    if( _isDescending )
+    {
+      buf.Append( '-' );
+    }
 
     foreach( var f in format )
     {
@@ -584,6 +611,23 @@ public readonly struct Interval
       return false;
     }
 
+    var isDescending = false;
+
+    if( value[0] == '-' )
+    {
+      isDescending = true;
+      value = value[1..];
+    }
+    else if( value[0] == '+' )
+    {
+      value = value[1..];
+    }
+
+    if( value.IsEmpty )
+    {
+      return false;
+    }
+
     var i = 0;
     var quality = IntervalQuality.Perfect;
     var hasExplicitQuality = char.IsLetter( value[i] );
@@ -592,7 +636,7 @@ public readonly struct Interval
     {
       if( value[i] == 'R' )
       {
-        interval = Unison;
+        interval = !isDescending ? Unison : -Unison;
         return true;
       }
 
@@ -606,14 +650,14 @@ public readonly struct Interval
 
     // Check if we have a double-digit compound interval and adjust the length accordingly
     var intervalSpan = value[i..];
-    var intervalNumberLength = 1;
+    var intervalNumberLength = 0;
 
-    if( intervalSpan.Length > 1 && char.IsDigit( intervalSpan[1] ) )
+    while( intervalNumberLength < intervalSpan.Length && char.IsDigit( intervalSpan[intervalNumberLength] ) )
     {
       ++intervalNumberLength;
     }
 
-    if( !int.TryParse( intervalSpan[..intervalNumberLength], out var number ) )
+    if( intervalNumberLength == 0 || !int.TryParse( intervalSpan[..intervalNumberLength], out var number ) )
     {
       return false;
     }
@@ -632,7 +676,7 @@ public readonly struct Interval
       return false;
     }
 
-    interval = new Interval( quantity, quality );
+    interval = new Interval( quantity, (byte) GetSemitoneCount( quantity, quality ), isDescending );
     return true;
   }
 
@@ -646,7 +690,8 @@ public readonly struct Interval
   public static explicit operator int(
     Interval interval )
   {
-    return ( interval._quality << 8 ) | interval._quantity;
+    var value = ( interval._quality << 8 ) | interval._quantity;
+    return !interval._isDescending ? value : -value;
   }
 
   /// <summary>Explicit cast that converts the given int to an Interval.</summary>
@@ -655,10 +700,24 @@ public readonly struct Interval
   public static explicit operator Interval(
     int value )
   {
-    var quantity = (IntervalQuantity) ( value & 0xFF );
-    var quality = (IntervalQuality) ( ( value >> 8 ) & 0xFF );
-    return new Interval( quantity, quality );
+    var isDescending = value < 0;
+    var absValue = Math.Abs( value );
+    var quantity = (IntervalQuantity) ( absValue & 0xFF );
+    var quality = (IntervalQuality) ( ( absValue >> 8 ) & 0xFF );
+    return new Interval( quantity, (byte) GetSemitoneCount( quantity, quality ), isDescending );
   }
+
+  /// <summary>
+  /// Negates the interval, effectively reversing its direction (ascending to descending or vice versa).
+  /// </summary>
+  /// <param name="interval">The interval to negate.</param>
+  /// <returns>The negated interval.</returns>
+  public static Interval operator -(
+    Interval interval )
+  {
+    return new Interval( interval.Quantity, interval._semitoneCount, !interval._isDescending );
+  }
+
 
   /// <summary>Equality operator.</summary>
   /// <param name="lhs">The first instance to compare.</param>

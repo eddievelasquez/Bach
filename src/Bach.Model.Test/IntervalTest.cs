@@ -101,7 +101,9 @@ public sealed class IntervalTest
     { "M7", Interval.MajorSeventh },
     { "A7", Interval.AugmentedSeventh },
     { "d8", Interval.DiminishedOctave },
-    { "P8", Interval.Octave }
+    { "P8", Interval.Octave },
+    { "-P1", -Interval.Unison },
+    { "-M3", -Interval.MajorThird }
   };
 
   public static TheoryData<Interval, int> SemitoneCountData => new()
@@ -146,21 +148,41 @@ public sealed class IntervalTest
       { Interval.Fifth, "Sq", "P5" },
       { Interval.MinorSeventh, "Sq", "m7" },
       { Interval.MinorSeventh, "sq", "m7" },
-      { Interval.Octave, "q", "8" }
+      { Interval.Octave, "q", "8" },
+      { -Interval.MajorThird, "Sq", "-M3" },
+      { -Interval.MajorThird, "q", "-3" },
+      { -Interval.MajorThird, "Q", "-Third" },
+      { -Interval.Unison, "Sq", "P1" },
+      { -Interval.Unison, "q", "1" },
+      { -Interval.Unison, "Q", "Unison" }
     };
+
+  public static TheoryData<IntervalQuantity, IntervalQuality, bool, int> GetSemitoneCountDataWithDirection => new()
+  {
+    { IntervalQuantity.Third, IntervalQuality.Major, false, 4 },
+    { IntervalQuantity.Third, IntervalQuality.Major, true, -4 },
+    { IntervalQuantity.Fifth, IntervalQuality.Perfect, false, 7 },
+    { IntervalQuantity.Fifth, IntervalQuality.Perfect, true, -7 },
+    { IntervalQuantity.Unison, IntervalQuality.Perfect, false, 0 },
+    { IntervalQuantity.Unison, IntervalQuality.Perfect, true, 0 },
+    { IntervalQuantity.Unison, IntervalQuality.Augmented, false, 1 },
+    { IntervalQuantity.Unison, IntervalQuality.Augmented, true, -1 },
+    { IntervalQuantity.Second, IntervalQuality.Diminished, false, 0 },
+    { IntervalQuantity.Second, IntervalQuality.Diminished, true, 0 }
+  };
 
   #endregion
 
   #region Public Methods
 
   [Fact]
-  public void Equality_ShouldReturnTrue_WhenComparingEquivalentObjects()
+  public void DefaultInterval_ShouldBeAscending()
   {
-    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
-    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    default( Interval ).IsAscending.Should()
+                       .BeTrue();
 
-    ( lhs == rhs ).Should()
-                  .BeTrue();
+    default( Interval ).IsDescending.Should()
+                       .BeFalse();
   }
 
   [Fact]
@@ -187,6 +209,16 @@ public sealed class IntervalTest
     ( lhs == lhs ).Should()
                   .BeTrue();
 #pragma warning restore 1718
+  }
+
+  [Fact]
+  public void Equality_ShouldReturnTrue_WhenComparingEquivalentObjects()
+  {
+    var lhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+    var rhs = new Interval( IntervalQuantity.Fifth, IntervalQuality.Perfect );
+
+    ( lhs == rhs ).Should()
+                  .BeTrue();
   }
 
   [Fact]
@@ -289,6 +321,19 @@ public sealed class IntervalTest
   }
 
   [Theory]
+  [MemberData( nameof( GetSemitoneCountDataWithDirection ) )]
+  public void GetSemitoneCount_ShouldReturnCorrectCount_WithDirection(
+    IntervalQuantity quantity,
+    IntervalQuality quality,
+    bool descending,
+    int expected )
+  {
+    Interval.GetSemitoneCount( quantity, quality, descending )
+            .Should()
+            .Be( expected );
+  }
+
+  [Theory]
   [MemberData( nameof( InvalidIntervalCombinations ) )]
   public void GetSemitoneCount_ShouldThrowArgumentException_WithInvalidIntervalQuantityAndQualityCombination(
     IntervalQuantity quantity,
@@ -331,6 +376,32 @@ public sealed class IntervalTest
   {
     interval.Inversion.Should()
             .Be( expectedInversion );
+
+    if( interval != Interval.Unison )
+    {
+      ( -interval ).Inversion.Should()
+                   .Be( -expectedInversion );
+    }
+  }
+
+  [Fact]
+  public void IsAscending_ShouldReturnCorrectValue()
+  {
+    Interval.MajorThird.IsAscending.Should()
+            .BeTrue();
+
+    ( -Interval.MajorThird ).IsAscending.Should()
+                            .BeFalse();
+  }
+
+  [Fact]
+  public void IsDescending_ShouldReturnCorrectValue()
+  {
+    Interval.MajorThird.IsDescending.Should()
+            .BeFalse();
+
+    ( -Interval.MajorThird ).IsDescending.Should()
+                            .BeTrue();
   }
 
   [Theory]
@@ -387,6 +458,24 @@ public sealed class IntervalTest
 
     ( Interval.MinorThird < Interval.MajorThird ).Should()
                                                  .BeTrue();
+
+    ( -Interval.Unison == Interval.Unison ).Should()
+                                           .BeTrue();
+
+    ( -Interval.MajorThird < -Interval.MinorThird ).Should()
+                                                   .BeTrue();
+
+    ( -Interval.MajorThird < Interval.Unison ).Should()
+                                              .BeTrue();
+
+    ( -Interval.DiminishedSecond < Interval.Unison ).Should()
+                                                    .BeTrue();
+
+    ( -Interval.DiminishedSecond < Interval.DiminishedSecond ).Should()
+                                                              .BeTrue();
+
+    ( Interval.Unison < Interval.DiminishedSecond ).Should()
+                                                   .BeTrue();
   }
 
   [Theory]
