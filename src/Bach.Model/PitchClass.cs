@@ -39,6 +39,7 @@ public readonly struct PitchClass
 {
   #region Constants
 
+  private const int ENHARMONIC_COUNT = 5; // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
   private const int SEMITONE_COUNT = 12;
   private const string NOTE_NAME_SYMBOL_TO_STRING_FORMAT = "NS";
 
@@ -211,7 +212,7 @@ public readonly struct PitchClass
     int semitoneCount )
   {
     var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex + semitoneCount );
-    return LookupNote( enharmonicIndex );
+    return LookupPitchClass( enharmonicIndex );
   }
 
   /// <summary>Adds an interval to the current instance.</summary>
@@ -220,33 +221,51 @@ public readonly struct PitchClass
   public PitchClass Transpose(
     Interval interval )
   {
-    var calculatedNoteName = NoteName + ( (int) interval.Quantity * ( interval.IsAscending ? 1 : -1 ) );
-    var calculatedPitchClass = this + interval.SemitoneCount;
+    // First we calculate the new note name from the interval quantity, wrapping around the 7 note names
+    var noteIndex = (int) NoteName + ( (int) interval.Quantity * ( interval.IsAscending ? 1 : -1 ) );
+    var expectedNoteName = (NoteName) noteIndex.Wrap( NoteName.TotalCount );
 
-    if( calculatedPitchClass.NoteName == calculatedNoteName )
+    // Next we calculate the new enharmonic index, wrapping around the 12 semitones
+    var semitoneCount = ( _enharmonicIndex + interval.SemitoneCount ).Wrap( SEMITONE_COUNT );
+
+    // Now we look for a pitch class that matches the calculated note name and the enharmonic index
+    for( var i = 0; i < ENHARMONIC_COUNT; i++ )
     {
-      return calculatedPitchClass;
+      var enharmonicIndex = s_enharmonics[semitoneCount, i];
+
+      // If the enharmonic index is -1, it means that there is no pitch class for this combination of enharmonic index and accidental
+      if( enharmonicIndex == -1 )
+      {
+        continue;
+      }
+
+      var pitchClass = s_pitchClasses[enharmonicIndex];
+
+      // If the pitch class has the same note name as the calculated note name, we return it
+      if( pitchClass.NoteName == expectedNoteName )
+      {
+        return pitchClass;
+      }
     }
 
-    // Deal with enharmonics
-    var enharmonic = calculatedPitchClass.GetEnharmonic( calculatedNoteName );
-    return enharmonic ?? calculatedPitchClass;
+    throw new InvalidOperationException( "No pitch class found for the calculated note name and enharmonic index." );
   }
 
   /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
   /// <param name="pitchClass">The pitch class.</param>
   /// <returns>An interval.</returns>
-  public Interval Subtract(
+  public Interval GetIntervalTo(
     PitchClass pitchClass )
   {
     // First we determine the interval quantity
-    var quantity = (IntervalQuantity) ( pitchClass.NoteName - NoteName );
+    var quantity = (IntervalQuantity) (pitchClass.NoteName - NoteName).Wrap( NoteName.TotalCount );
 
     // Then we determine the semitone count
-    var semitoneCount = ArrayExtensions.WrapIndex( SEMITONE_COUNT, pitchClass._enharmonicIndex - _enharmonicIndex );
+    var semitoneCount = (pitchClass._enharmonicIndex - _enharmonicIndex).Wrap( SEMITONE_COUNT );
     var interval = new Interval( quantity, semitoneCount );
     return interval;
   }
+
   /// <inheritdoc />
   public int CompareTo(
     PitchClass other )
@@ -564,14 +583,13 @@ public readonly struct PitchClass
 
   // Finds a pitch class that corresponds to the provided enharmonic index,
   // attempting to match the desired accidental mode
-  internal static PitchClass LookupNote(
+  internal static PitchClass LookupPitchClass(
     int enharmonicIndex )
   {
-    // Starting from Natural all the way up to DoubleSharp, find the corresponding enharmonic
-    var accidentalIndex = (int) Accidental.Natural + Math.Abs( (int) Accidental.DoubleFlat );
-    var maxAccidentalIndex = (int) Accidental.DoubleSharp + Math.Abs( (int) Accidental.DoubleFlat );
+    // Preferred order: Natural, then Sharp, then Flat, then DoubleSharp, then DoubleFlat
+    int[] preferred = [2, 3, 1, 4, 0];
 
-    while( accidentalIndex <= maxAccidentalIndex )
+    foreach( var accidentalIndex in preferred )
     {
       var noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
 
@@ -579,8 +597,6 @@ public readonly struct PitchClass
       {
         return s_pitchClasses[noteIndex];
       }
-
-      ++accidentalIndex;
     }
 
     Trace.Assert( false, "Internal error! Must always find a pitch class" );
@@ -735,17 +751,6 @@ public readonly struct PitchClass
     Interval interval )
   {
     return pitchClass.Transpose( -interval );
-  }
-
-  /// <summary>Subtraction operator.</summary>
-  /// <param name="a">The first value.</param>
-  /// <param name="b">A value to subtract from it.</param>
-  /// <returns>The result of the operation.</returns>
-  public static Interval operator -(
-    PitchClass a,
-    PitchClass b )
-  {
-    return a.Subtract( b );
   }
 
   #endregion

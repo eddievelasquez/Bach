@@ -518,7 +518,7 @@ public readonly struct Pitch
     out byte octave )
   {
     octave = (byte) Math.DivRem( absoluteValue, IntervalsPerOctave, out var remainder );
-    pitchClass = PitchClass.LookupNote( remainder );
+    pitchClass = PitchClass.LookupPitchClass( remainder );
   }
 
   private static int SemitonesBetween(

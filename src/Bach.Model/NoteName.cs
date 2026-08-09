@@ -39,7 +39,10 @@ public readonly struct NoteName
 {
   #region Constants
 
-  private const int NOTE_NAME_COUNT = 7;
+  /// <summary>
+  /// The total number of note names. C, D, E, F, G, A, B
+  /// </summary>
+  public const int TotalCount = 7;
 
   /// <summary>
   ///   The C (Do) note
@@ -93,7 +96,7 @@ public readonly struct NoteName
     int value )
   {
     ArgumentOutOfRangeException.ThrowIfLessThan( value, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, NOTE_NAME_COUNT - 1 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, TotalCount - 1 );
     _value = value;
   }
 
@@ -108,7 +111,7 @@ public readonly struct NoteName
   public NoteName Add(
     int steps )
   {
-    var result = (NoteName) ArrayExtensions.WrapIndex( NOTE_NAME_COUNT, _value + steps );
+    var result = (NoteName) (_value + steps).Wrap( TotalCount );
     return result;
   }
 

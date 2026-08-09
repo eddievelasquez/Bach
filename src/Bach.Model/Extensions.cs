@@ -1,4 +1,4 @@
-﻿// Module Name: Extensions.cs
+// Module Name: Extensions.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -33,7 +33,7 @@ public static class Extensions
 
   /// <summary>Returns the intervals that separate the provided pitch classes.</summary>
   /// <param name="pitchClasses">The pitch classes.</param>
-  /// <returns>An intervals iterator.</returns>
+  /// <returns>An interval iterator.</returns>
   public static IEnumerable<Interval> Intervals(
     this IEnumerable<PitchClass> pitchClasses )
   {
@@ -56,7 +56,7 @@ public static class Extensions
     do
     {
       var pitchClass = e.Current;
-      var interval = root - pitchClass;
+      var interval = root.GetIntervalTo( pitchClass );
       yield return interval;
     } while( e.MoveNext() );
   }

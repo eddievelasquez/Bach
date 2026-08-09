@@ -237,7 +237,7 @@ public sealed class PitchClassTest
       { PitchClass.GSharp, Interval.DiminishedFourth, PitchClass.Parse( "D##" ) }
     };
 
-  public static TheoryData<PitchClass, PitchClass, Interval> SubtractPitchClassTestData =>
+  public static TheoryData<PitchClass, PitchClass, Interval> GetIntervalToPitchClassTestData =>
     new()
     {
       { PitchClass.C, PitchClass.E, Interval.MajorThird },
@@ -606,14 +606,15 @@ public sealed class PitchClassTest
   }
 
   [Theory]
-  [MemberData( nameof( SubtractPitchClassTestData ) )]
-  public void SubtractOperator_ShouldReturnExpectedInterval_WhenSubtractingPitchClasses(
+  [MemberData( nameof( GetIntervalToPitchClassTestData ) )]
+  public void GetIntervalTo_ShouldReturnExpectedInterval_WhenGettingIntervalToPitchClasses(
     PitchClass left,
     PitchClass right,
     Interval expected )
   {
-    ( left - right ).Should()
-                    .Be( expected );
+    left.GetIntervalTo( right )
+        .Should()
+        .Be( expected );
   }
 
   [Theory]
