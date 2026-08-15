@@ -614,10 +614,10 @@ public sealed class AccidentalTest
     {
       var data = new TheoryData<string?, Accidental>
       {
-        { "b#", Accidental.Natural },
-        { "#b", Accidental.Natural },
-        { "bbb", Accidental.Natural },
-        { "###", Accidental.Natural },
+        { "b#", Accidental.Flat },
+        { "#b", Accidental.Sharp },
+        { "bbb", Accidental.DoubleFlat },
+        { "###", Accidental.DoubleSharp },
         { "$", Accidental.Natural }
       };
 

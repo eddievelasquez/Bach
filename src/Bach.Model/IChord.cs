@@ -1,20 +1,20 @@
 // Module Name: IChord.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -24,26 +24,29 @@
 
 namespace Bach.Model;
 
+using Bach.Model.Internal;
+
 /// <summary>
 /// Represents a chord with a specific root element type.
 /// </summary>
-/// <typeparam name="TSelf">The type of the chord itself.</typeparam>
-/// <typeparam name="T">The type of the chord's root and bass elements.</typeparam>
-public interface IChord<out TSelf, out T>
-  where TSelf: IChord<TSelf, T>
-  where T: IPitchClass<T>
+/// <typeparam name="TChord">The type of the chord itself.</typeparam>
+/// <typeparam name="TPitch">The type of the chord's root and bass elements.</typeparam>
+public interface IChord<TChord, out TPitch>
+: ISpanConsumingParsable<TChord>
+  where TChord: IChord<TChord, TPitch>
+  where TPitch: IPitch<TPitch>
 {
   #region Properties
 
   /// <summary>
   ///   Gets the root of the chord.
   /// </summary>
-  T Root { get; }
+  TPitch Root { get; }
 
   /// <summary>
   ///   Gets the bass of the chord.
   /// </summary>
-  T Bass { get; }
+  TPitch Bass { get; }
 
   /// <summary>
   ///   Gets the inversion number of the chord.
@@ -69,7 +72,7 @@ public interface IChord<out TSelf, out T>
   /// </summary>
   /// <param name="inversion">The inversion to create.</param>
   /// <returns>An inverted chord.</returns>
-  TSelf GetInversion(
+  TChord GetInversion(
     int inversion );
 
   #endregion

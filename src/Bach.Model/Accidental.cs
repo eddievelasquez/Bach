@@ -25,6 +25,8 @@
 namespace Bach.Model;
 
 using System.Diagnostics.Contracts;
+using System.Windows.Markup;
+using Bach.Model.Internal;
 
 /// <summary>
 ///   An Accidental represents a modification to a <see cref="Accidental" />
@@ -34,8 +36,7 @@ public readonly struct Accidental
   : IEquatable<Accidental>,
     IComparable<Accidental>,
     IComparable,
-    IParsable<Accidental>,
-    ISpanParsable<Accidental>
+    ISpanConsumingParsable<Accidental>
 {
   #region Constants
 
@@ -297,44 +298,123 @@ public readonly struct Accidental
     IFormatProvider? provider,
     out Accidental accidental )
   {
-    // Default to Natural
+    // We want to ensure that the entire string is consumed, so we check if the tail is empty after parsing.
+    return TryParse( value, provider, out accidental, out var tail ) && tail.IsEmpty;
+  }
+
+  /// <summary>
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  /// </summary>
+  /// <param name="value">The string representation of the accidental to convert.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <param name="accidental">
+  ///   When this method returns, contains the Accidental value equivalent to the accidental contained
+  ///   in value, if the conversion succeeded, or Natural if the conversion failed.
+  /// </param>
+  /// <param name="tail">When this method returns, contains the portion of the input string that was not converted.</param>
+  /// <returns>
+  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  /// </returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out Accidental accidental,
+    out ReadOnlySpan<char> tail )
+  {
+    // Natural if accidental is empty
     if( value.IsEmpty )
     {
       accidental = Natural;
+      tail = ReadOnlySpan<char>.Empty;
       return true;
     }
 
-    switch( value )
+    switch( value[0] )
     {
-      case "♮":
+      case '♮':
         accidental = Natural;
+        tail = value[1..];
         return true;
 
-      case "bb":
-      case "𝄫":
-        accidental = DoubleFlat;
-        return true;
+      case 'b':
+      case 'B':
+      case '♭':
 
-      case "b":
-      case "B":
-      case "♭":
+        // Do we have a potential double flat?
+        if( value.Length > 1 )
+        {
+          switch( value[1] )
+          {
+            case 'b':
+            case 'B':
+            case '♭':
+              accidental = DoubleFlat;
+              tail = value[2..];
+              return true;
+          }
+
+          // Partial flat match, so return false and let the caller handle the tail.
+          accidental = Flat;
+          tail = value[1..];
+          return false;
+        }
+
+        // Flat
         accidental = Flat;
+        tail = value[1..];
         return true;
 
-      case "#":
-      case "♯":
+      case '#':
+      case '♯':
+
+        // Do we have a potential double sharp?
+        if( value.Length > 1 )
+        {
+          switch( value[1] )
+          {
+            case '#':
+            case '♯':
+              accidental = DoubleSharp;
+              tail = value[2..];
+              return true;
+          }
+
+          // Partial sharp match, so return false and let the caller handle the tail.
+          accidental = Sharp;
+          tail = value[1..];
+          return false;
+        }
+
+        // Found a sharp
         accidental = Sharp;
+        tail = value[1..];
         return true;
 
-      case "##":
-      case "𝄪":
-        accidental = DoubleSharp;
-        return true;
+      case '\uD834': // Double flat (𝄫) or double sharp(𝄪) UTF-16 surrogate pairs
+        if (value.Length > 1)
+        {
+          switch( value[1] )
+          {
+            case '\uDD2b':
+              accidental = DoubleFlat;
+              tail = value[2..];
+              return true;
 
-      default:
-        accidental = default;
-        return false;
+            case '\uDD2A':
+              accidental = DoubleSharp;
+              tail = value[2..];
+              return true;
+          }
+        }
+
+        // We have no match whatsoever
+        break;
     }
+
+    // Not even a partial match, so return false and let the caller handle the tail.
+    accidental = Natural;
+    tail = value;
+    return false;
   }
 
   #endregion

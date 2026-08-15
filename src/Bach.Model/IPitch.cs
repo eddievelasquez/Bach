@@ -1,4 +1,4 @@
-// Module Name: IPitchClass.cs
+// Module Name: IPitch.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -24,16 +24,18 @@
 
 namespace Bach.Model;
 
+using Bach.Model.Internal;
+
 /// <summary>
 ///   Defines the shared contract for pitch-like values.
 /// </summary>
-/// <typeparam name="TSelf">The concrete pitch-like type.</typeparam>
-public interface IPitchClass<TSelf>
-  : IEquatable<TSelf>,
-    IComparable<TSelf>,
-    ISpanParsable<TSelf>,
+/// <typeparam name="TPitch">The concrete pitch-like type.</typeparam>
+public interface IPitch<TPitch>
+  : IEquatable<TPitch>,
+    IComparable<TPitch>,
+    ISpanConsumingParsable<TPitch>,
     IFormattable
-  where TSelf: IPitchClass<TSelf>
+  where TPitch: IPitch<TPitch>
 {
   #region Properties
 
@@ -56,7 +58,7 @@ public interface IPitchClass<TSelf>
   /// </summary>
   /// <param name="semitoneCount">The number of semitones to transpose by.</param>
   /// <returns>The resulting pitch-like value after transposing by the semitones.</returns>
-  TSelf Transpose(
+  TPitch Transpose(
     int semitoneCount );
 
   /// <summary>
@@ -64,7 +66,7 @@ public interface IPitchClass<TSelf>
   /// </summary>
   /// <param name="interval">The interval to transpose by.</param>
   /// <returns>The resulting pitch-like value after transposing by the interval.</returns>
-  TSelf Transpose(
+  TPitch Transpose(
     Interval interval );
 
   #endregion

@@ -37,7 +37,7 @@ using Bach.Model.Internal;
 ///   to 127 (B9).
 /// </remarks>
 public readonly struct Pitch
-  : IPitchClass<Pitch>,
+  : IPitch<Pitch>,
     IPartEvent
 {
   #region Constants
@@ -493,10 +493,34 @@ public readonly struct Pitch
     IFormatProvider? provider,
     out Pitch pitch )
   {
-    pitch = Empty;
+    // We only want to return true if the entire string was consumed,
+    // so we check that the tail is empty.
+    return TryParse( value, provider, out pitch, out var tail ) && tail.IsEmpty;
+  }
 
-    return !value.IsEmpty
-           && ( char.IsDigit( value[0] ) ? TryParseMidi( value, ref pitch ) : TryParseNotes( value, ref pitch ) );
+  /// <inheritdoc />
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out Pitch pitch,
+    out ReadOnlySpan<char> tail )
+  {
+    value = value.TrimStart();
+
+    if( value.IsEmpty )
+    {
+      pitch = default;
+      tail = ReadOnlySpan<char>.Empty;
+      return false;
+    }
+
+    if( char.IsDigit( value[0] ) )
+    {
+      return TryParseMidi(value, provider, out pitch, out tail);
+    }
+
+    return TryParseNotes( value, provider, out pitch, out tail );
+
   }
 
   #endregion
@@ -537,92 +561,69 @@ public readonly struct Pitch
     return semitones;
   }
 
-  private static void TryGetAccidental(
-    ReadOnlySpan<char> value,
-    ref int index,
-    out Accidental accidental )
-  {
-    accidental = Accidental.Natural;
-
-    var buf = new StringBuilder();
-
-    for( var i = index; i < value.Length; ++i )
-    {
-      var ch = value[i];
-
-      if( ch != '#' && ch != 'b' && ch != 'B' )
-      {
-        if( buf.Length > 0 )
-        {
-          break;
-        }
-
-        return;
-      }
-
-      buf.Append( ch );
-    }
-
-    if( Accidental.TryParse( buf.ToString(), out accidental ) )
-    {
-      index += buf.Length;
-    }
-  }
-
-  private static void TryGetOctave(
-    ReadOnlySpan<char> value,
-    ref int index,
-    out int octave )
-  {
-    if( index >= value.Length || !int.TryParse( value.Slice( index, 1 ), out octave ) )
-    {
-      octave = -1;
-      return;
-    }
-
-    if( octave is >= MinOctave and <= MaxOctave )
-    {
-      ++index;
-    }
-  }
-
   private static bool TryParseNotes(
     ReadOnlySpan<char> value,
-    ref Pitch pitch )
+    IFormatProvider? provider,
+    out Pitch pitch,
+    out ReadOnlySpan<char> tail )
   {
-    if( !NoteName.TryParse( value, out var toneName ) )
+    value = value.TrimStart();
+
+    if( !PitchClass.TryParse( value, provider, out var pitchClass, out tail ) )
     {
+      pitch = default;
       return false;
     }
 
-    var index = 1;
-    TryGetAccidental( value, ref index, out var accidental );
-    TryGetOctave( value, ref index, out var octave );
-
-    if( index < value.Length || octave < MinOctave || octave > MaxOctave )
+    // If available, the next character must be a digit (indicating an octave).
+    if( !tail.IsEmpty && !char.IsDigit( tail[0] ) )
     {
+      pitch = default;
       return false;
     }
 
-    pitch = Create( toneName, accidental, octave );
+    // Must have an octave
+    if( !int.TryParse( tail, provider, out var octave ) || octave < MinOctave || octave > MaxOctave )
+    {
+      pitch = default;
+      return false;
+    }
+
+    tail = tail[1..];
+
+    pitch = Create( pitchClass, octave );
     return true;
   }
 
   private static bool TryParseMidi(
     ReadOnlySpan<char> value,
-    ref Pitch pitch )
+    IFormatProvider? provider,
+    out Pitch pitch,
+    out ReadOnlySpan<char> tail )
   {
-    if( !int.TryParse( value, out var midi ) )
+    if( !int.TryParse( value, provider, out var midi ) )
     {
+      pitch = default;
+      tail = value;
       return false;
     }
 
     if( midi is < 0 or > 127 )
     {
+      pitch = default;
+      tail = value;
       return false;
     }
 
     pitch = CreateFromMidi( midi );
+
+    tail = midi switch
+    {
+      < 10  => value[1..],
+      < 100 => value[2..],
+      _     => value[3..]
+    };
+
     return true;
   }
 

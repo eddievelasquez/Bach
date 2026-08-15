@@ -29,21 +29,25 @@ using System.Linq;
 
 public sealed class ExtensionsTest
 {
-  [Fact]
-  public void Intervals_ShouldThrowArgumentNullException_WhenPitchClassesIsNull()
-  {
-    var act = () => ((IEnumerable<PitchClass>) null!).Intervals().ToArray();
+  #region Public Methods
 
-    act.Should()
-       .Throw<ArgumentNullException>();
+  [Fact]
+  public void Intervals_ShouldReturnExpectedIntervals_ForMultiplePitchClasses()
+  {
+    var actual = "C,E,G".ParsePitchClasses()
+                        .Intervals()
+                        .ToArray();
+
+    actual.Should()
+          .Equal( Interval.Unison, Interval.MajorThird, Interval.Fifth );
   }
 
   [Fact]
   public void Intervals_ShouldReturnUnison_ForSinglePitchClass()
   {
-    var actual = PitchClassCollection.Parse( "C" )
-                                    .Intervals()
-                                    .ToArray();
+    var actual = "C".ParsePitchClasses()
+                    .Intervals()
+                    .ToArray();
 
     actual.Should()
           .ContainSingle()
@@ -52,13 +56,14 @@ public sealed class ExtensionsTest
   }
 
   [Fact]
-  public void Intervals_ShouldReturnExpectedIntervals_ForMultiplePitchClasses()
+  public void Intervals_ShouldThrowArgumentNullException_WhenPitchClassesIsNull()
   {
-    var actual = PitchClassCollection.Parse( "C,E,G" )
-                                    .Intervals()
-                                    .ToArray();
+    var act = () => ( (IEnumerable<PitchClass>) null! ).Intervals()
+                                                       .ToArray();
 
-    actual.Should()
-          .Equal( Interval.Unison, Interval.MajorThird, Interval.Fifth );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
+
+  #endregion
 }

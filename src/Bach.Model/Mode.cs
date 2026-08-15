@@ -1,6 +1,6 @@
 // Module Name: Mode.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -28,7 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Internal;
+using Bach.Model.Internal;
 
 /// <summary>A mode is a type of scale coupled with a set of melodic behaviors.</summary>
 public sealed class Mode
@@ -50,19 +50,8 @@ public sealed class Mode
 
     Scale = scale;
     Formula = formula;
-
-    var buf = new StringBuilder();
-    buf.Append( scale.Name );
-    buf.Append( ' ' );
-    buf.Append( formula.Name );
-
-    Name = buf.ToString();
-    PitchClasses
-      = new PitchClassCollection(
-        scale.GetAscending()
-             .Skip( Formula.Tonic - 1 )
-             .Take( scale.Count )
-      );
+    Name = GenerateName( scale, formula );
+    PitchClasses = CreatePitchClasses( scale, formula );
   }
 
   #endregion
@@ -71,7 +60,7 @@ public sealed class Mode
 
   /// <summary>Gets the mode's pitchClasses.</summary>
   /// <value>The pitchClasses.</value>
-  public PitchClassCollection PitchClasses { get; }
+  public IReadOnlyList<PitchClass> PitchClasses { get; }
 
   /// <summary>Gets the mode's scale.</summary>
   /// <value>The scale.</value>
@@ -151,6 +140,32 @@ public sealed class Mode
   public override string ToString()
   {
     return string.Join( ",", PitchClasses );
+  }
+
+  #endregion
+
+  #region Implementation
+
+  private static PitchClass[] CreatePitchClasses(
+    Scale scale,
+    ModeFormula formula )
+  {
+    return scale.GetAscending()
+                .Skip( formula.Tonic - 1 )
+                .Take( scale.Count )
+                .ToArray();
+  }
+
+  private static string GenerateName(
+    Scale scale,
+    ModeFormula formula )
+  {
+    var buf = new StringBuilder();
+    buf.Append( scale.Name );
+    buf.Append( ' ' );
+    buf.Append( formula.Name );
+
+    return buf.ToString();
   }
 
   #endregion

@@ -165,9 +165,9 @@ public sealed class ModeTest
     target.Name.Should()
           .Be( "C Phrygian" );
 
-    PitchClassCollection.Parse( "E,F,G,A,B,C,D" )
-                        .Should()
-                        .BeEquivalentTo( target.PitchClasses );
+    "E,F,G,A,B,C,D".ParsePitchClasses()
+                   .Should()
+                   .BeEquivalentTo( target.PitchClasses );
   }
 
   [Theory]
@@ -175,7 +175,7 @@ public sealed class ModeTest
   public void PitchClasses_ShouldReturnExpectedNotes( string expectedPitchClasses, ModeFormula formula )
   {
     var scale = new Scale( PitchClass.C, "Major" );
-    var expected = PitchClassCollection.Parse( expectedPitchClasses );
+    var expected = expectedPitchClasses.ParsePitchClasses();
     var mode = new Mode( scale, formula );
 
     mode.PitchClasses.Should()

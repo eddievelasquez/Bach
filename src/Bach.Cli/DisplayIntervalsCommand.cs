@@ -1,6 +1,6 @@
 // Module Name: DisplayIntervalsCommand.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -27,7 +27,7 @@ namespace Bach.Cli;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
-using Model;
+using Bach.Model;
 
 internal sealed class DisplayIntervalsCommand: BachCommand
 {
@@ -56,11 +56,10 @@ internal sealed class DisplayIntervalsCommand: BachCommand
   private static void Execute(
     IEnumerable<string> notes )
   {
-    var pitchClasses = PitchClassCollection.Parse( string.Join( ",", notes ) );
-    var intervals = pitchClasses.Intervals()
-                                .ToArray();
+    var values = notes.ToArray();
+    var intervals = values.Intervals();
 
-    WriteList( "Notes:     ", pitchClasses );
+    WriteList( "Notes:     ", string.Join( ",", values ) );
     WriteList( "Intervals: ", intervals.Select( interval => interval.ToString( "Sq" ) ) );
     WriteLine();
   }

@@ -1,6 +1,6 @@
 // Module Name: DisplayScalesContainingCommand.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -27,7 +27,7 @@ namespace Bach.Cli;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
-using Model;
+using Bach.Model;
 
 internal sealed class DisplayScalesContainingCommand: BachCommand
 {
@@ -57,9 +57,10 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
   private static void Execute(
     IEnumerable<string> notes )
   {
-    var pitchClasses = PitchClassCollection.Parse( string.Join( ",", notes ) );
+    var pitchClasses = notes.Select( PitchClass.Parse )
+                            .ToArray();
 
-    WriteList( "Scales containing: ", pitchClasses );
+    WriteList( "Scales containing: ", string.Join( ",", pitchClasses ) );
     WriteLine();
 
     foreach( var scale in Scale.ScalesContaining( pitchClasses ) )

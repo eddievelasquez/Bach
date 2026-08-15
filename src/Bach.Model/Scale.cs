@@ -1,20 +1,20 @@
 // Module Name: Scale.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -66,7 +66,7 @@ public sealed class Scale
   }
 
   /// <summary>
-  /// Constructor.
+  ///   Constructor.
   /// </summary>
   /// <param name="root">The root pitchClass of the scale.</param>
   /// <param name="formula">The formula used to generate the scale.</param>
@@ -82,18 +82,7 @@ public sealed class Scale
 
     Root = root;
     Formula = formula;
-
-    var buf = new StringBuilder();
-    buf.Append( root.NoteName );
-    buf.Append( root.Accidental.ToSymbol() );
-
-    if( !Comparer.NameComparer.Equals( formula.Name, "Major" ) )
-    {
-      buf.Append( ' ' );
-      buf.Append( formula.Name );
-    }
-
-    Name = buf.ToString();
+    Name = GenerateName( root, formula );
     Theoretical = IsTheoretical( this );
   }
 
@@ -101,7 +90,7 @@ public sealed class Scale
 
   #region Properties
 
-  /// <summary>Gets the root <see cref="PitchClass"/> of the scale.</summary>
+  /// <summary>Gets the root <see cref="PitchClass" /> of the scale.</summary>
   /// <value>The root.</value>
   public PitchClass Root { get; }
 
@@ -110,7 +99,7 @@ public sealed class Scale
   public string Name { get; }
 
   /// <summary>Gets the formula for the scale.</summary>
-  /// <value>The <see cref="ScaleFormula"/>.</value>
+  /// <value>The <see cref="ScaleFormula" />.</value>
   public ScaleFormula Formula { get; }
 
   /// <summary>Determines if this scale is theoretical.</summary>
@@ -376,7 +365,7 @@ public sealed class Scale
           break;
 
         case 'S':
-          buf.Append( base.ToString() );
+          buf.Append( string.Join( ",", this ) );
           break;
 
         default:
@@ -401,6 +390,25 @@ public sealed class Scale
     return formula.Generate( root )
                   .Take( formula.Intervals.Count )
                   .ToArray();
+  }
+
+  private static string GenerateName(
+    PitchClass root,
+    ScaleFormula formula )
+  {
+    var buf = new StringBuilder();
+    buf.Append( root.NoteName );
+    buf.Append( root.Accidental.ToSymbol() );
+
+    if( Comparer.NameComparer.Equals( formula.Name, "Major" ) )
+    {
+      return buf.ToString();
+    }
+
+    buf.Append( ' ' );
+    buf.Append( formula.Name );
+
+    return buf.ToString();
   }
 
   private static bool IsTheoretical(

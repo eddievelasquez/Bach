@@ -35,7 +35,7 @@ using Bach.Model.Internal;
 ///   the <see href="https://en.wikipedia.org/wiki/Scientific_pitch_notation">Scientific Pitch Notation</see>.
 /// </summary>
 public readonly struct PitchClass
-  : IPitchClass<PitchClass>
+  : IPitch<PitchClass>
 {
   #region Constants
 
@@ -557,23 +557,43 @@ public readonly struct PitchClass
     IFormatProvider? provider,
     out PitchClass pitchClass )
   {
+    // We want to ensure that the entire string is consumed during parsing,
+    // so we call the overload that provides the tail of the string after parsing.
+    return TryParse( value, provider, out pitchClass, out var tail ) && tail.IsEmpty;
+  }
+
+  /// <inheritdoc />
+  public static bool TryParse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out PitchClass pitchClass,
+    out ReadOnlySpan<char> tail )
+  {
     value = value.TrimStart();
 
-    if( value.IsEmpty || !NoteName.TryParse( value, provider, out var toneName ) )
+    if( value.IsEmpty )
+    {
+      pitchClass = C;
+      tail = ReadOnlySpan<char>.Empty;
+      return false;
+    }
+
+    // Must have at least one character for the note name
+    if( !NoteName.TryParse( value, provider, out var noteName, out tail ) )
     {
       pitchClass = C;
       return false;
     }
 
     var accidental = Accidental.Natural;
-
-    if( value.Length > 1 && !Accidental.TryParse( value[1..], provider, out accidental ) )
+    if( value.Length > 1 )
     {
-      pitchClass = C;
-      return false;
+      // Could be an accidental or some other character; use any partial match and
+      // leave the tail to be processed by the caller
+      Accidental.TryParse( tail, provider, out accidental, out tail );
     }
 
-    pitchClass = Create( toneName, accidental );
+    pitchClass = Create( noteName, accidental );
     return true;
   }
 

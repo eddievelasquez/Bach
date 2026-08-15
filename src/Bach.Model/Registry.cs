@@ -1,6 +1,6 @@
 // Module Name: Registry.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -24,13 +24,17 @@
 
 namespace Bach.Model;
 
+using System.Collections.Frozen;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Instruments;
-using Internal;
-using Serialization;
+using Bach.Model.Instruments;
+using Bach.Model.Internal;
+using Bach.Model.Serialization;
 
 /// <summary>
 ///   The registry provides access to all the predefined formulas and definitions that can be found in the
@@ -41,6 +45,8 @@ public static class Registry
   #region Constants
 
   private const string LIBRARY_FILE_NAME = "Bach.Model.Library.json";
+
+  private static readonly FrozenDictionary<string, ChordFormula> s_chordFormulaBySymbol;
 
   #endregion
 
@@ -55,6 +61,7 @@ public static class Registry
   {
     var path = GetLibraryPath();
     var library = LoadLibrary( path );
+
     if( library is null )
     {
       // NOTE: Throwing in a static ctor will cause the application to terminate
@@ -85,10 +92,18 @@ public static class Registry
     }
 
     // Load Chords
+    Dictionary<string, ChordFormula> chordFormulaBySymbol = new( StringComparer.OrdinalIgnoreCase );
+
     foreach( var chord in library.Chords )
     {
-      ChordFormulas.Add( new ChordFormula( chord.Id, chord.Name, chord.Symbol, chord.Formula ) );
+      var formula = new ChordFormula( chord.Id, chord.Name, chord.Symbol, chord.Formula );
+      ChordFormulas.Add( formula );
+
+      var added = chordFormulaBySymbol.TryAdd( formula.Symbol, formula );
+      Debug.Assert( added, "Found duplicate chord formula symbol" );
     }
+
+    s_chordFormulaBySymbol = chordFormulaBySymbol.ToFrozenDictionary( StringComparer.OrdinalIgnoreCase );
 
     // Load Instrument definitions
     foreach( var instrument in library.StringedInstruments )
@@ -126,22 +141,6 @@ public static class Registry
   #region Public Methods
 
   /// <summary>
-  ///   Tries to get a scale formula by ID or name.
-  /// </summary>
-  /// <param name="idOrName">The ID or name of the scale formula.</param>
-  /// <param name="result">
-  ///   When this method returns, contains the scale formula associated with the specified ID or name, if found;
-  ///   otherwise, null. This parameter is passed uninitialized.
-  /// </param>
-  /// <returns>true if the scale formula is found; otherwise, false.</returns>
-  public static bool TryGetScaleFormula(
-    string idOrName,
-    [MaybeNullWhen( false )] out ScaleFormula result )
-  {
-    return ScaleFormulas.TryGetValue( idOrName, out result );
-  }
-
-  /// <summary>
   ///   Tries to get a chord formula by ID or name.
   /// </summary>
   /// <param name="idOrName">The ID or name of the chord formula.</param>
@@ -158,11 +157,44 @@ public static class Registry
   }
 
   /// <summary>
+  /// Tries to get a chord formula by symbol.
+  /// </summary>
+  /// <param name="symbol">The symbol of the chord formula.</param>
+  /// <param name="result">
+  ///   When this method returns, contains the chord formula associated with the specified symbol, if found;
+  ///   otherwise, null. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>true if the chord formula is found; otherwise, false.</returns>
+  public static bool TryGetChordFormulaBySymbol(
+    string symbol,
+    [MaybeNullWhen( false )] out ChordFormula result )
+  {
+    return s_chordFormulaBySymbol.TryGetValue( symbol, out result );
+  }
+
+  /// <summary>
+  ///   Tries to get a scale formula by ID or name.
+  /// </summary>
+  /// <param name="idOrName">The ID or name of the scale formula.</param>
+  /// <param name="result">
+  ///   When this method returns, contains the scale formula associated with the specified ID or name, if found;
+  ///   otherwise, null. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>true if the scale formula is found; otherwise, false.</returns>
+  public static bool TryGetScaleFormula(
+    string idOrName,
+    [MaybeNullWhen( false )] out ScaleFormula result )
+  {
+    return ScaleFormulas.TryGetValue( idOrName, out result );
+  }
+
+  /// <summary>
   ///   Tries to get a stringed instrument definition by ID or name.
   /// </summary>
   /// <param name="idOrName">The ID or name of the stringed instrument definition.</param>
   /// <param name="result">
-  ///   When this method returns, contains the stringed instrument definition associated with the specified ID or name, if found;
+  ///   When this method returns, contains the stringed instrument definition associated with the specified ID or name, if
+  ///   found;
   ///   otherwise, null. This parameter is passed uninitialized.
   /// </param>
   /// <returns>true if the stringed instrument definition is found; otherwise, false.</returns>

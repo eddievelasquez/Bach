@@ -552,7 +552,7 @@ public sealed class PitchClassTest
   [Fact]
   public void PitchClass_ShouldImplementIPitchClassContract()
   {
-    IPitchClass<PitchClass> pitchClass = PitchClass.C;
+    IPitch<PitchClass> pitchClass = PitchClass.C;
 
     pitchClass.NoteName.Should()
               .Be( NoteName.C );

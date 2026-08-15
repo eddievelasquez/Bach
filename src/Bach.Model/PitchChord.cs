@@ -1,20 +1,20 @@
 // Module Name: PitchChord.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -24,16 +24,18 @@
 
 namespace Bach.Model;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Bach.Model.Internal;
 
 /// <summary>
 ///   A chord expressed as a collection of actual pitches rather than pitch classes.
 /// </summary>
 public class PitchChord
   : PitchCollection,
-    IEquatable<PitchChord>,
     IChord<PitchChord, Pitch>,
+    IEquatable<PitchChord>,
     IPartEvent
 {
   #region Constructors
@@ -74,10 +76,6 @@ public class PitchChord
     int inversion )
     : base( CreatePitches( root, formula, inversion ) )
   {
-    ArgumentNullException.ThrowIfNull( formula );
-    ArgumentOutOfRangeException.ThrowIfLessThan( inversion, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( inversion, formula.Intervals.Count - 1 );
-
     Root = root;
     Formula = formula;
     Inversion = inversion;
@@ -177,10 +175,218 @@ public class PitchChord
     return new PitchChord( Root, Formula, inversion );
   }
 
+  /// <summary>
+  ///   Parses a <see cref="PitchChord" /> from the specified string.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <returns>The parsed chord.</returns>
+  public new static PitchChord Parse(
+    string value )
+  {
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), null );
+  }
+
+  /// <summary>
+  ///   Parses a <see cref="PitchChord" /> from the specified string using the provided format provider.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>The parsed chord.</returns>
+  public new static PitchChord Parse(
+    string value,
+    IFormatProvider? provider )
+  {
+    ArgumentNullException.ThrowIfNull( value );
+    return Parse( value.AsSpan(), provider );
+  }
+
+  /// <summary>
+  ///   Parses a <see cref="PitchChord" /> from the specified span using the provided format provider.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <returns>The parsed chord.</returns>
+  public new static PitchChord Parse(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider )
+  {
+    if( value.IsEmpty )
+    {
+      throw new ArgumentException( "Value cannot be empty.", nameof( value ) );
+    }
+
+    return TryParse( value, provider, out var chord )
+      ? chord
+      : throw new FormatException( $"{value} is not a valid pitch chord" );
+  }
+
   /// <inheritdoc />
   public override string ToString()
   {
     return Name;
+  }
+
+  /// <summary>
+  ///   Attempts to parse a <see cref="PitchChord" /> from the specified string.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="chord">The parsed chord when parsing succeeds.</param>
+  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
+  public static bool TryParse(
+    string? value,
+    [NotNullWhen( true )] out PitchChord? chord )
+  {
+    return TryParse( value.AsSpan(), null, out chord );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a <see cref="PitchChord" /> from the specified string using the provided format provider.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="chord">The parsed chord when parsing succeeds.</param>
+  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
+  public static bool TryParse(
+    string? value,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out PitchChord? chord )
+  {
+    return TryParse( value.AsSpan(), provider, out chord );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a <see cref="PitchChord" /> from the specified span.
+  /// </summary>
+  /// <param name="span">The value to parse.</param>
+  /// <param name="chord">The parsed chord when parsing succeeds.</param>
+  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    [NotNullWhen( true )] out PitchChord? chord )
+  {
+    return TryParse( span, null, out chord );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a <see cref="PitchChord" /> from the specified span using the provided format provider.
+  /// </summary>
+  /// <param name="span">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="chord">The parsed chord when parsing succeeds.</param>
+  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out PitchChord? chord )
+  {
+    return TryParse(span, provider, out chord, out var tail ) && tail.IsEmpty;
+  }
+
+  /// <inheritdoc />
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    [NotNullWhen(true)] out PitchChord? chord,
+    out ReadOnlySpan<char> tail )
+  {
+    span = span.TrimStart();
+
+    // If the span is empty, we cannot parse a chord.
+    if( span.IsEmpty)
+    {
+      chord = null;
+      tail = ReadOnlySpan<char>.Empty;
+      return false;
+    }
+
+    // Try to parse the root pitch from the span.
+    if( !PitchClass.TryParse(span, provider, out var rootPitchClass, out tail))
+    {
+      chord = null;
+      return false;
+    }
+
+    // If the tail is empty after parsing the root, we cannot parse a chord formula.
+    var nonSymbolPos = tail.IndexOfNonChordSymbol();
+    var formulaSymbolSpan = nonSymbolPos != -1 ? tail[..nonSymbolPos] : tail;
+    if( !Registry.TryGetChordFormulaBySymbol( formulaSymbolSpan.ToString(), out var chordFormula ) )
+    {
+      chord = null;
+      return false;
+    }
+
+    // If we have a chord formula, we can consume the characters corresponding to the formula's symbol from the tail.                                    5
+    tail = tail[chordFormula.Symbol.Length..];
+
+    // Do we have a bass note?
+    var bassSeparatorPos = tail.IndexOf( '/' );
+
+    if( bassSeparatorPos == -1 )
+    {
+      chord = new PitchChord( Pitch.Create( rootPitchClass, 4 ), chordFormula );
+      return true;
+    }
+
+    // If we have a bass note, we need to parse it as a pitch.
+    if( !TryParseBassPitch( tail[( bassSeparatorPos + 1 )..], provider, out var bassPitch, out tail ) )
+    {
+      chord = null;
+      return false;
+    }
+
+    // Determine the inversion before creating the chord. If the bass pitch is not part of the chord, return false.
+    var rootPosition = new Chord( rootPitchClass, chordFormula );
+    var inversion = FindInversion( rootPosition, bassPitch.PitchClass );
+
+    // If the bass pitch is not part of the chord, return false.
+    if( inversion < 0 )
+    {
+      chord = null;
+      return false;
+    }
+
+    chord = new PitchChord( Pitch.Create( rootPitchClass, bassPitch.Octave ), chordFormula, inversion );
+    return true;
+
+    static bool TryParseBassPitch(
+      ReadOnlySpan<char> span,
+      IFormatProvider? provider,
+      out Pitch pitch,
+      out ReadOnlySpan<char> tail)
+    {
+      if( Pitch.TryParse( span, provider, out pitch, out var tmpTail ) )
+      {
+        tail = tmpTail;
+        return true;
+      }
+
+      if( PitchClass.TryParse( span, provider, out var pitchClass, out tmpTail ) )
+      {
+        pitch = Pitch.Create( pitchClass, 4 );
+        tail = tmpTail;
+        return true;
+      }
+
+      tail = tmpTail;
+      return false;
+    }
+
+    static int FindInversion(
+      Chord chord,
+      PitchClass bassPitchClass )
+    {
+      for( var i = 0; i < chord.Count; i++ )
+      {
+        if( chord[i] == bassPitchClass )
+        {
+          return i;
+        }
+      }
+
+      return -1;
+    }
+
   }
 
   #endregion
@@ -192,6 +398,10 @@ public class PitchChord
     ChordFormula formula,
     int inversion )
   {
+    ArgumentNullException.ThrowIfNull( formula );
+    ArgumentOutOfRangeException.ThrowIfLessThan( inversion, 0 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( inversion, formula.Intervals.Count - 1 );
+
     return formula.Generate( root )
                   .Skip( inversion )
                   .Take( formula.Intervals.Count )
@@ -209,6 +419,12 @@ public class PitchChord
     if( !string.IsNullOrEmpty( formula.Symbol ) )
     {
       buf.Append( formula.Symbol );
+    }
+    else if( !string.IsNullOrEmpty( formula.Name )
+             && !Comparer.NameComparer.Equals( formula.Name, "Major" ) )
+    {
+      buf.Append( ' ' );
+      buf.Append( formula.Name );
     }
 
     if( root.PitchClass != bass.PitchClass )

@@ -203,15 +203,6 @@ public sealed class ScaleTest
   }
 
   [Fact]
-  public void GetPitchClasses_ShouldExposeScalePitchClasses()
-  {
-    var scale = new Scale( PitchClass.C, "Major" );
-
-    scale.Should()
-         .Equal( PitchClass.C, PitchClass.D, PitchClass.E, PitchClass.F, PitchClass.G, PitchClass.A, PitchClass.B );
-  }
-
-  [Fact]
   public void Constructor_ShouldThrowArgumentException_WhenPassingEmptyScaleName()
   {
     var act = () => new Scale( PitchClass.C, "" );
@@ -471,7 +462,7 @@ public sealed class ScaleTest
     string expectedNotes,
     string formulaName )
   {
-    var expected = PitchClassCollection.Parse( expectedNotes );
+    var expected = expectedNotes.ParsePitchClasses();
     var scale = new Scale( PitchClass.C, formulaName );
 
     var actual = scale.GetDescending()
@@ -512,6 +503,23 @@ public sealed class ScaleTest
   }
 
   [Fact]
+  public void GetPitchClasses_ShouldExposeScalePitchClasses()
+  {
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    scale.Should()
+         .Equal(
+           PitchClass.C,
+           PitchClass.D,
+           PitchClass.E,
+           PitchClass.F,
+           PitchClass.G,
+           PitchClass.A,
+           PitchClass.B
+         );
+  }
+
+  [Fact]
   public void PitchClasses_ShouldContainExpectedIntervalCount()
   {
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
@@ -540,7 +548,7 @@ public sealed class ScaleTest
     string scaleName,
     string expectedNotes )
   {
-    var expectedPitchesClasses = PitchClassCollection.Parse( expectedNotes );
+    var expectedPitchesClasses = expectedNotes.ParsePitchClasses();
     var scale = new Scale( root, scaleName );
 
     var actualPitchClasses = scale.GetAscending()
@@ -596,7 +604,7 @@ public sealed class ScaleTest
     string pitchClassNames,
     string[] expectedScaleNames )
   {
-    var pitchClasses = PitchClassCollection.Parse( pitchClassNames );
+    var pitchClasses = pitchClassNames.ParsePitchClasses();
 
     var actualScales = Scale.ScalesContaining( pitchClasses )
                             .Select( scale => scale.Name )

@@ -35,7 +35,7 @@ using System.Diagnostics.Contracts;
 public readonly struct NoteName
   : IEquatable<NoteName>,
     IComparable<NoteName>,
-    ISpanParsable<NoteName>
+    ISpanConsumingParsable<NoteName>
 {
   #region Constants
 
@@ -261,10 +261,30 @@ public readonly struct NoteName
     IFormatProvider? provider,
     out NoteName noteName )
   {
+    // We want to make sure that the entire span is consumed, so we call the
+    // overload that returns the tail and check if it's empty.
+    return TryParse(span, provider, out noteName, out var tail ) && tail.IsEmpty;
+  }
+
+  /// <summary>
+  /// Attempts to parse a NoteName from the given span.
+  /// </summary>
+  /// <param name="span">The span to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="noteName">[out] The note name.</param>
+  /// <param name="tail">[out] The remaining span after parsing the note name.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    out NoteName noteName,
+    out ReadOnlySpan<char> tail )
+  {
     span = span.TrimStart();
     if( span.IsEmpty )
     {
       noteName = C;
+      tail = ReadOnlySpan<char>.Empty;
       return false;
     }
 
@@ -272,10 +292,12 @@ public readonly struct NoteName
     if( value == -1 )
     {
       noteName = C;
+      tail = span;
       return false;
     }
 
     noteName = new NoteName( value );
+    tail = span[1..];
     return true;
   }
 

@@ -167,7 +167,7 @@ public sealed class PitchTest
   [Fact]
   public void Pitch_ShouldImplementIPitchClassContract()
   {
-    IPitchClass<Pitch> pitch = Pitch.Create( NoteName.C, Accidental.Natural, 4 );
+    IPitch<Pitch> pitch = Pitch.Create( NoteName.C, Accidental.Natural, 4 );
 
     pitch.NoteName.Should().Be( NoteName.C );
     pitch.Accidental.Should().Be( Accidental.Natural );

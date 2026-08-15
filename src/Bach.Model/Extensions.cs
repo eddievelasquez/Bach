@@ -25,11 +25,23 @@
 namespace Bach.Model;
 
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>Provides common extensions.</summary>
 public static class Extensions
 {
   #region Public Methods
+
+  /// <summary>
+  /// Returns the intervals that separate the provided notes.
+  /// </summary>
+  /// <param name="notes">The notes to parse.</param>
+  /// <returns>An interval iterator.</returns>
+  public static IEnumerable<Interval> Intervals(this IEnumerable<string> notes)
+  {
+    var list = notes.Select( PitchClass.Parse );
+    return list.Intervals();
+  }
 
   /// <summary>Returns the intervals that separate the provided pitch classes.</summary>
   /// <param name="pitchClasses">The pitch classes.</param>
