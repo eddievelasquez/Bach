@@ -85,12 +85,12 @@ public sealed class ChordFormulaTest
   }
 
   [Fact]
-  public void Constructor_WithNullSymbol_ShouldUseEmptyString()
+  public void Constructor_WithNullSymbol_ShouldChordName()
   {
     var actual = new ChordFormula( CHORD_ID, CHORD_NAME, null, CHORD_FORMULA );
 
     actual.Symbol.Should()
-          .BeEmpty();
+          .Be(CHORD_NAME);
   }
 
   [Fact]

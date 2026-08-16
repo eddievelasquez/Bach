@@ -27,16 +27,15 @@ namespace Bach.Model;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Bach.Model.Internal;
 
 /// <summary>
 ///   A chord expressed as a collection of actual pitches rather than pitch classes.
 /// </summary>
 public class PitchChord
-  : PitchCollection<Pitch>,
-    IChord<PitchChord, Pitch>,
-    IEquatable<PitchChord>,
+  : Chord<PitchChord, Pitch>,
+    IChordFactory<PitchChord, Pitch>,
+    IChordParser<PitchChord>,
     IPartEvent
 {
   #region Constructors
@@ -46,71 +45,18 @@ public class PitchChord
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
-  public PitchChord(
-    Pitch root,
-    ChordFormula formula )
-    : this( root, formula, 0 )
-  {
-  }
-
-  /// <summary>
-  ///   Initializes a new instance of the <see cref="PitchChord" /> class.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  public PitchChord(
-    Pitch root,
-    string formulaIdOrName )
-    : this( root, Registry.ChordFormulas[formulaIdOrName], 0 )
-  {
-  }
-
-  /// <summary>
-  ///   Initializes a new instance of the <see cref="PitchChord" /> class.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formula">The formula used to generate the chord.</param>
   /// <param name="inversion">The inversion.</param>
-  public PitchChord(
+  private PitchChord(
     Pitch root,
     ChordFormula formula,
     int inversion )
-    : base( CreatePitches( root, formula, inversion ) )
+    : base( root, formula, inversion )
   {
-    Root = root;
-    Formula = formula;
-    Inversion = inversion;
-    Name = GenerateName( root, formula, this[0] );
   }
 
   #endregion
 
   #region Properties
-
-  /// <summary>
-  ///   Gets the root pitch of the chord.
-  /// </summary>
-  public Pitch Root { get; }
-
-  /// <summary>
-  ///   Gets the bass pitch of the chord.
-  /// </summary>
-  public Pitch Bass => this[0];
-
-  /// <summary>
-  ///   Gets the inversion number for the chord.
-  /// </summary>
-  public int Inversion { get; }
-
-  /// <summary>
-  ///   Gets the chord formula.
-  /// </summary>
-  public ChordFormula Formula { get; }
-
-  /// <summary>
-  ///   Gets the chord's display name.
-  /// </summary>
-  public string Name { get; }
 
   /// <summary>
   ///   Gets the pitch classes of the chord.
@@ -123,46 +69,67 @@ public class PitchChord
   #region Public Methods
 
   /// <summary>
-  ///   Creates a new <see cref="PitchChord" /> instance from the specified root pitch class, octave, and chord formula.
+  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula, and inversion.
   /// </summary>
-  /// <param name="root">The root pitch class of the chord.</param>
-  /// <param name="octave">The octave of the root pitch.</param>
+  /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
-  /// <returns>A new <see cref="PitchChord" /> instance.</returns>
+  /// <param name="inversion">The inversion.</param>
+  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
+  public static PitchChord Create(
+    Pitch root,
+    ChordFormula formula,
+    int inversion = 0 )
+  {
+    return new PitchChord( root, formula, inversion );
+  }
+
+  /// <summary>
+  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula ID or name, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
+  /// <param name="octave">The octave of the root pitch.</param>
+  /// <param name="inversion">The inversion.</param>
+  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
   public static PitchChord Create(
     PitchClass root,
-    int octave,
-    ChordFormula formula )
+    string formulaIdOrName,
+    int octave = 4,
+    int inversion = 0 )
   {
-    return new PitchChord( Pitch.Create( root, octave ), formula );
+    return Create( Pitch.Create( root, octave ), Registry.ChordFormulas[formulaIdOrName], inversion );
   }
 
-  /// <inheritdoc />
-  public bool Equals(
-    PitchChord? other )
+  /// <summary>
+  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="octave">The octave of the root pitch.</param>
+  /// <param name="inversion">The inversion.</param>
+  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
+  public static PitchChord Create(
+    PitchClass root,
+    ChordFormula formula,
+    int octave = 4,
+    int inversion = 0 )
   {
-    if( ReferenceEquals( this, other ) )
-    {
-      return true;
-    }
-
-    return other is not null
-           && Root.Equals( other.Root )
-           && Formula.Equals( other.Formula )
-           && Inversion == other.Inversion;
+    return Create( Pitch.Create( root, octave ), formula, inversion );
   }
 
-  /// <inheritdoc />
-  public override bool Equals(
-    object? obj )
+  /// <summary>
+  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula ID or name, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
+  /// <param name="inversion">The inversion.</param>
+  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
+  public static PitchChord Create(
+    Pitch root,
+    string formulaIdOrName,
+    int inversion = 0 )
   {
-    return ReferenceEquals( this, obj ) || ( obj is PitchChord other && Equals( other ) );
-  }
-
-  /// <inheritdoc />
-  public override int GetHashCode()
-  {
-    return HashCode.Combine( Root, Formula, Inversion );
+    return new PitchChord( root, Registry.ChordFormulas[formulaIdOrName], inversion );
   }
 
   /// <summary>
@@ -170,128 +137,20 @@ public class PitchChord
   /// </summary>
   /// <param name="inversion">The inversion number.</param>
   /// <returns>A new <see cref="PitchChord" /> representing the specified inversion.</returns>
-  public PitchChord GetInversion(
+  public new PitchChord GetInversion(
     int inversion )
   {
     return new PitchChord( Root, Formula, inversion );
   }
 
   /// <summary>
-  ///   Parses a <see cref="PitchChord" /> from the specified string.
+  ///   Tries to parse a <see cref="PitchChord" /> from the provided span.
   /// </summary>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>The parsed chord.</returns>
-  public static PitchChord Parse(
-    string value )
-  {
-    ArgumentNullException.ThrowIfNull( value );
-    return Parse( value.AsSpan(), null );
-  }
-
-  /// <summary>
-  ///   Parses a <see cref="PitchChord" /> from the specified string using the provided format provider.
-  /// </summary>
-  /// <param name="value">The value to parse.</param>
+  /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed chord.</returns>
-  public static PitchChord Parse(
-    string value,
-    IFormatProvider? provider )
-  {
-    ArgumentNullException.ThrowIfNull( value );
-    return Parse( value.AsSpan(), provider );
-  }
-
-  /// <summary>
-  ///   Parses a <see cref="PitchChord" /> from the specified span using the provided format provider.
-  /// </summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed chord.</returns>
-  public static PitchChord Parse(
-    ReadOnlySpan<char> value,
-    IFormatProvider? provider )
-  {
-    if( value.IsEmpty )
-    {
-      throw new ArgumentException( "Value cannot be empty.", nameof( value ) );
-    }
-
-    return TryParse( value, provider, out var chord )
-      ? chord
-      : throw new FormatException( $"{value} is not a valid pitch chord" );
-  }
-
-  /// <inheritdoc />
-  public override IEnumerable<Pitch> Render(
-    int octave )
-  {
-    return this.Select( pitch => Pitch.Create( pitch.PitchClass, octave ) );
-  }
-
-  /// <inheritdoc />
-  public override string ToString()
-  {
-    return Name;
-  }
-
-  /// <summary>
-  ///   Attempts to parse a <see cref="PitchChord" /> from the specified string.
-  /// </summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="chord">The parsed chord when parsing succeeds.</param>
-  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
-  public static bool TryParse(
-    string? value,
-    [NotNullWhen( true )] out PitchChord? chord )
-  {
-    return TryParse( value.AsSpan(), null, out chord );
-  }
-
-  /// <summary>
-  ///   Attempts to parse a <see cref="PitchChord" /> from the specified string using the provided format provider.
-  /// </summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <param name="chord">The parsed chord when parsing succeeds.</param>
-  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
-  public static bool TryParse(
-    string? value,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out PitchChord? chord )
-  {
-    return TryParse( value.AsSpan(), provider, out chord );
-  }
-
-  /// <summary>
-  ///   Attempts to parse a <see cref="PitchChord" /> from the specified span.
-  /// </summary>
-  /// <param name="span">The value to parse.</param>
-  /// <param name="chord">The parsed chord when parsing succeeds.</param>
-  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
-  public static bool TryParse(
-    ReadOnlySpan<char> span,
-    [NotNullWhen( true )] out PitchChord? chord )
-  {
-    return TryParse( span, null, out chord );
-  }
-
-  /// <summary>
-  ///   Attempts to parse a <see cref="PitchChord" /> from the specified span using the provided format provider.
-  /// </summary>
-  /// <param name="span">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <param name="chord">The parsed chord when parsing succeeds.</param>
-  /// <returns><see langword="true" /> when parsing succeeds; otherwise, <see langword="false" />.</returns>
-  public static bool TryParse(
-    ReadOnlySpan<char> span,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out PitchChord? chord )
-  {
-    return TryParse( span, provider, out chord, out var tail ) && tail.IsEmpty;
-  }
-
-  /// <inheritdoc />
+  /// <param name="chord">The parsed chord, if successful.</param>
+  /// <param name="tail">The remaining characters after parsing.</param>
+  /// <returns>True if the chord was parsed successfully; otherwise, false.</returns>
   public static bool TryParse(
     ReadOnlySpan<char> span,
     IFormatProvider? provider,
@@ -333,7 +192,7 @@ public class PitchChord
 
     if( bassSeparatorPos == -1 )
     {
-      chord = new PitchChord( Pitch.Create( rootPitchClass, 4 ), chordFormula );
+      chord = Create( Pitch.Create( rootPitchClass, 4 ), chordFormula );
       return true;
     }
 
@@ -345,8 +204,8 @@ public class PitchChord
     }
 
     // Determine the inversion before creating the chord. If the bass pitch is not part of the chord, return false.
-    var rootPosition = new Chord( rootPitchClass, chordFormula );
-    var inversion = FindInversion( rootPosition, bassPitch.PitchClass );
+    var rootPosition = Chord.Create( rootPitchClass, chordFormula );
+    var inversion = rootPosition.IndexOf( bassPitch.PitchClass );
 
     // If the bass pitch is not part of the chord, return false.
     if( inversion < 0 )
@@ -355,7 +214,7 @@ public class PitchChord
       return false;
     }
 
-    chord = new PitchChord( Pitch.Create( rootPitchClass, bassPitch.Octave ), chordFormula, inversion );
+    chord = Create( rootPitchClass, chordFormula, bassPitch.Octave, inversion );
     return true;
 
     static bool TryParseBassPitch(
@@ -364,12 +223,14 @@ public class PitchChord
       out Pitch pitch,
       out ReadOnlySpan<char> tail )
     {
+      // Try to parse the bass pitch as a full pitch first.
       if( Pitch.TryParse( span, provider, out pitch, out var tmpTail ) )
       {
         tail = tmpTail;
         return true;
       }
 
+      // If that fails, try to parse it as a pitch class and assume octave 4.
       if( PitchClass.TryParse( span, provider, out var pitchClass, out tmpTail ) )
       {
         pitch = Pitch.Create( pitchClass, 4 );
@@ -380,68 +241,6 @@ public class PitchChord
       tail = tmpTail;
       return false;
     }
-
-    static int FindInversion(
-      Chord chord,
-      PitchClass bassPitchClass )
-    {
-      for( var i = 0; i < chord.Count; i++ )
-      {
-        if( chord[i] == bassPitchClass )
-        {
-          return i;
-        }
-      }
-
-      return -1;
-    }
-  }
-
-  #endregion
-
-  #region Implementation
-
-  private static Pitch[] CreatePitches(
-    Pitch root,
-    ChordFormula formula,
-    int inversion )
-  {
-    ArgumentNullException.ThrowIfNull( formula );
-    ArgumentOutOfRangeException.ThrowIfLessThan( inversion, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( inversion, formula.Intervals.Count - 1 );
-
-    return formula.Generate( root )
-                  .Skip( inversion )
-                  .Take( formula.Intervals.Count )
-                  .ToArray();
-  }
-
-  private static string GenerateName(
-    Pitch root,
-    ChordFormula formula,
-    Pitch bass )
-  {
-    var buf = new StringBuilder();
-    buf.Append( root.PitchClass );
-
-    if( !string.IsNullOrEmpty( formula.Symbol ) )
-    {
-      buf.Append( formula.Symbol );
-    }
-    else if( !string.IsNullOrEmpty( formula.Name )
-             && !Comparer.NameComparer.Equals( formula.Name, "Major" ) )
-    {
-      buf.Append( ' ' );
-      buf.Append( formula.Name );
-    }
-
-    if( root.PitchClass != bass.PitchClass )
-    {
-      buf.Append( '/' );
-      buf.Append( bass.PitchClass );
-    }
-
-    return buf.ToString();
   }
 
   #endregion

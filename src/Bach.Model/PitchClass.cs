@@ -193,6 +193,11 @@ public readonly struct PitchClass
   /// <summary>B pitch class.</summary>
   public static PitchClass B => s_pitchClasses[33];
 
+  /// <summary>
+  /// Gets the pitch class of the pitch-like value.
+  /// </summary>
+  PitchClass IPitch<PitchClass>.PitchClass => this;
+
   /// <summary>Gets the name of the pitch class.</summary>
   /// <value>The name of the pitch class.</value>
   public NoteName NoteName => (NoteName) _noteName;

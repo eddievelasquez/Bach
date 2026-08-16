@@ -169,6 +169,25 @@ public abstract class Formula
     return obj is Formula other && Equals( other );
   }
 
+  /// <summary>
+  /// Generates a sequence of pitches based on the formula's intervals, starting from the provided root pitch.
+  /// </summary>
+  /// <typeparam name="TPitch">The type of pitch to generate.</typeparam>
+  /// <param name="root">The root pitch.</param>
+  /// <returns>An enumerator for a sequence of pitches.</returns>
+  /// <exception cref="ArgumentException">Thrown when the root pitch is not supported.</exception>
+  public IEnumerable<TPitch> Generate<TPitch>(
+    TPitch root )
+    where TPitch: IPitch<TPitch>
+  {
+    return root switch
+    {
+      Pitch pitch           => (IEnumerable<TPitch>) Generate( pitch ),
+      PitchClass pitchClass => (IEnumerable<TPitch>) Generate( pitchClass ),
+      _                     => throw new ArgumentException( "Unsupported pitch type.", nameof( root ) )
+    };
+  }
+
   /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
   /// <param name="root">The root pitch.</param>
   /// <returns> An enumerator for a sequence of pitches.</returns>

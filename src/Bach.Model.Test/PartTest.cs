@@ -11,7 +11,7 @@ public sealed class PartTest
   {
     var part = new Part();
     var pitch = Pitch.Create( PitchClass.C, 4 );
-    var chord = new PitchChord( pitch, ChordFormula.Major );
+    var chord = PitchChord.Create( pitch, ChordFormula.Major );
 
     part.Add( pitch );
     part.Add( chord );

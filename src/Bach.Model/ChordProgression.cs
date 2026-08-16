@@ -179,7 +179,7 @@ public sealed class ChordProgression: IFormattable, IParsable<ChordProgression>
       throw new FormatException( $"The value '{s}' is not a valid chord progression." );
     }
 
-    return progression!;
+    return progression;
   }
 
   /// <summary>Attempts to parse a chord progression from the specified string.</summary>

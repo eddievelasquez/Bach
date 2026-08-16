@@ -1,4 +1,4 @@
-﻿// Module Name: Triad.cs
+// Module Name: Triad.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -122,23 +122,14 @@ public sealed class Triad: Chord
   private static ChordFormula GetFormula(
     TriadQuality quality )
   {
-    switch( quality )
+    return quality switch
     {
-      case TriadQuality.Major:
-        return s_majorTriad;
-
-      case TriadQuality.Minor:
-        return s_minorTriad;
-
-      case TriadQuality.Diminished:
-        return s_diminishedTriad;
-
-      case TriadQuality.Augmented:
-        return s_augmentedTriad;
-
-      default:
-        throw new ArgumentOutOfRangeException( nameof( quality ), quality, null );
-    }
+      TriadQuality.Major      => s_majorTriad,
+      TriadQuality.Minor      => s_minorTriad,
+      TriadQuality.Diminished => s_diminishedTriad,
+      TriadQuality.Augmented  => s_augmentedTriad,
+      _                       => throw new ArgumentOutOfRangeException( nameof( quality ), quality, null )
+    };
   }
 
   #endregion

@@ -92,11 +92,5 @@ public abstract class PitchCollection<TPitch>: IReadOnlyList<TPitch>
     return Array.IndexOf( _pitches, pitch );
   }
 
-  /// <summary>Renders the collection as <see cref="Pitch" /> instances for the provided octave.</summary>
-  /// <param name="octave">The octave to render from.</param>
-  /// <returns>The rendered pitches.</returns>
-  public abstract IEnumerable<Pitch> Render(
-    int octave );
-
   #endregion
 }

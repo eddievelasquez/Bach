@@ -219,7 +219,7 @@ public sealed class Scale
   /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
   /// <param name="octave">The octave for the first pitch.</param>
   /// <returns>An enumerator for a pitch sequence for this scale.</returns>
-  public override IEnumerable<Pitch> Render(
+  public IEnumerable<Pitch> Render(
     int octave )
   {
     return Formula.Generate( Pitch.Create( Root, octave ) );

@@ -65,7 +65,7 @@ internal sealed class DisplayChordCommand: BachCommand
     foreach( var rootValue in roots )
     {
       var root = PitchClass.Parse( rootValue );
-      var chord = new Chord( root, formula );
+      var chord = Chord.Create( root, formula );
 
       WriteList( $"  {chord} {formula.Name}: ", chord );
     }

@@ -1,4 +1,4 @@
-// Module Name: IChord.cs
+// Module Name: IChordFactory.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -24,64 +24,40 @@
 
 namespace Bach.Model;
 
-using System.Collections.Generic;
-
 /// <summary>
-///   Represents a chord with a specific root element type.
+///   Represents a factory for creating chords with a specific root element type.
 /// </summary>
 /// <typeparam name="TChord">The type of the chord itself.</typeparam>
 /// <typeparam name="TPitch">The type of the chord's root and bass elements.</typeparam>
-public interface IChord<TChord, out TPitch>
-  : ISpanParsable<TChord>
+public interface IChordFactory<out TChord, in TPitch>
   where TChord: PitchCollection<TPitch>, IChord<TChord, TPitch>, IChordFactory<TChord, TPitch>
   where TPitch: IPitch<TPitch>
 {
-  #region Properties
-
-  /// <summary>
-  ///   Gets the root of the chord.
-  /// </summary>
-  TPitch Root { get; }
-
-  /// <summary>
-  ///   Gets the bass of the chord.
-  /// </summary>
-  TPitch Bass { get; }
-
-  /// <summary>
-  ///   Gets the inversion number of the chord.
-  /// </summary>
-  int Inversion { get; }
-
-  /// <summary>
-  ///   Gets the chord formula.
-  /// </summary>
-  ChordFormula Formula { get; }
-
-  /// <summary>
-  ///   Gets the display name of the chord.
-  /// </summary>
-  string Name { get; }
-
-  #endregion
-
   #region Public Methods
 
   /// <summary>
-  ///   Creates an inversion of the current chord.
+  ///   Creates a new chord with the specified root, formula, and inversion.
   /// </summary>
-  /// <param name="inversion">The inversion to create.</param>
-  /// <returns>An inverted chord.</returns>
-  TChord GetInversion(
-    int inversion );
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="inversion">The inversion of the chord. Defaults to zero.</param>
+  /// <returns>The created chord.</returns>
+  static abstract TChord Create(
+    TPitch root,
+    ChordFormula formula,
+    int inversion = 0 );
 
   /// <summary>
-  /// Renders the chord at the specified octave.
+  ///   Creates a new chord with the specified root, formula ID or name, and inversion.
   /// </summary>
-  /// <param name="octave">The octave to render at.</param>
-  /// <returns>The rendered pitches.</returns>
-  IEnumerable<Pitch> Render(
-    int octave );
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
+  /// <param name="inversion">The inversion of the chord. Defaults to zero.</param>
+  /// <returns>The created chord.</returns>
+  static abstract TChord Create(
+    TPitch root,
+    string formulaIdOrName,
+    int inversion = 0 );
 
   #endregion
 }

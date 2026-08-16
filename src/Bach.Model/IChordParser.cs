@@ -1,4 +1,4 @@
-// Module Name: IPitch.cs
+// Module Name: IChordParser.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -24,55 +24,25 @@
 
 namespace Bach.Model;
 
-using Bach.Model.Internal;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
-///   Defines the shared contract for pitch-like values.
+/// Represents a parser for a chord of type <typeparamref name="TChord" />.
 /// </summary>
-/// <typeparam name="TPitch">The concrete pitch-like type.</typeparam>
-public interface IPitch<TPitch>
-  : IEquatable<TPitch>,
-    IComparable<TPitch>,
-    ISpanConsumingParsable<TPitch>,
-    IFormattable
-  where TPitch: IPitch<TPitch>
+/// <typeparam name="TChord">The type of the chord to parse.</typeparam>
+public interface IChordParser<TChord>
 {
-  #region Properties
-
   /// <summary>
-  /// Gets the pitch class of the pitch-like value.
+  /// Tries to parse a chord from the given span of characters.
   /// </summary>
-  PitchClass PitchClass { get; }
-
-  /// <summary>
-  ///   Gets the note name of the pitch-like value.
-  /// </summary>
-  NoteName NoteName { get; }
-
-  /// <summary>
-  ///   Gets the accidental of the pitch-like value.
-  /// </summary>
-  Accidental Accidental { get; }
-
-  #endregion
-
-  #region Public Methods
-
-  /// <summary>
-  ///   Adds a number of semitones to the current instance.
-  /// </summary>
-  /// <param name="semitoneCount">The number of semitones to transpose by.</param>
-  /// <returns>The resulting pitch-like value after transposing by the semitones.</returns>
-  TPitch Transpose(
-    int semitoneCount );
-
-  /// <summary>
-  ///   Adds an interval to the current instance.
-  /// </summary>
-  /// <param name="interval">The interval to transpose by.</param>
-  /// <returns>The resulting pitch-like value after transposing by the interval.</returns>
-  TPitch Transpose(
-    Interval interval );
-
-  #endregion
+  /// <param name="span">The span of characters to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="chord">The parsed chord, if successful.</param>
+  /// <param name="tail">The remaining characters after parsing.</param>
+  /// <returns>True if the chord was parsed successfully; otherwise, false.</returns>
+  static abstract bool TryParse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out TChord? chord,
+    out ReadOnlySpan<char> tail );
 }

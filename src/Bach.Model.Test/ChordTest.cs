@@ -89,7 +89,7 @@ public sealed class ChordTest
     string formulaName,
     string expectedNotes )
   {
-    var chord = new Chord( root, formulaName );
+    var chord = Chord.Create( root, formulaName );
 
     var actualNotes = chord.Take(
       expectedNotes.ParsePitchClasses()
@@ -104,7 +104,7 @@ public sealed class ChordTest
   public void Constructor_ShouldInitializeChordUsingFormula()
   {
     var formula = Registry.ChordFormulas["Minor"];
-    var target = new Chord( PitchClass.C, formula );
+    var target = Chord.Create( PitchClass.C, formula );
 
     target.Root.Should()
           .Be( PitchClass.C );
@@ -126,7 +126,7 @@ public sealed class ChordTest
   [Fact]
   public void Constructor_ShouldInitializeChordUsingString()
   {
-    var target = new Chord( PitchClass.C, "Minor" );
+    var target = Chord.Create( PitchClass.C, "Minor" );
 
     target.Root.Should()
           .Be( PitchClass.C );
@@ -148,7 +148,7 @@ public sealed class ChordTest
   [Fact]
   public void Constructor_ShouldThrowArgumentException_WhenFormulaNameIsEmpty()
   {
-    var act = () => new Chord( PitchClass.C, "" );
+    var act = () => Chord.Create( PitchClass.C, "" );
 
     act.Should()
        .Throw<ArgumentException>();
@@ -157,7 +157,7 @@ public sealed class ChordTest
   [Fact]
   public void Constructor_ShouldThrowArgumentNullException_WhenFormulaIsNull()
   {
-    var act = () => new Chord( PitchClass.C, (ChordFormula) null! );
+    var act = () => Chord.Create( PitchClass.C, (ChordFormula) null! );
 
     act.Should()
        .Throw<ArgumentNullException>();
@@ -166,7 +166,7 @@ public sealed class ChordTest
   [Fact]
   public void Constructor_ShouldThrowArgumentNullException_WhenFormulaNameIsNull()
   {
-    var act = () => new Chord( PitchClass.C, (string) null! );
+    var act = () => Chord.Create( PitchClass.C, (string) null! );
 
     act.Should()
        .Throw<ArgumentNullException>();
@@ -175,7 +175,7 @@ public sealed class ChordTest
   [Fact]
   public void Enumerator_ShouldEnumerateChordCorrectly()
   {
-    var cMajor = new Chord( PitchClass.C, "Major" );
+    var cMajor = Chord.Create( PitchClass.C, "Major" );
     using var enumerator = cMajor.GetEnumerator();
 
     enumerator.Should()
@@ -210,7 +210,7 @@ public sealed class ChordTest
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingDifferentInversions()
   {
-    var rootPosition = new Chord( PitchClass.C, "Major" );
+    var rootPosition = Chord.Create( PitchClass.C, "Major" );
     var firstInversion = rootPosition.GetInversion( 1 );
 
     rootPosition.Equals( firstInversion )
@@ -225,7 +225,7 @@ public sealed class ChordTest
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingDifferentType()
   {
-    object actual = new Chord( PitchClass.C, "Major" );
+    object actual = Chord.Create( PitchClass.C, "Major" );
 
     actual.Equals( int.MinValue )
           .Should()
@@ -235,7 +235,7 @@ public sealed class ChordTest
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingToNull()
   {
-    object actual = new Chord( PitchClass.C, "Major" );
+    object actual = Chord.Create( PitchClass.C, "Major" );
 
     actual.Equals( null )
           .Should()
@@ -245,7 +245,7 @@ public sealed class ChordTest
   [Fact]
   public void Equals_ShouldReturnTrue_WhenComparingSameObject()
   {
-    var actual = new Chord( PitchClass.C, "Major" );
+    var actual = Chord.Create( PitchClass.C, "Major" );
 
     actual.Equals( actual )
           .Should()
@@ -255,9 +255,9 @@ public sealed class ChordTest
   [Fact]
   public void Equals_ShouldSatisfyEquivalenceRelation()
   {
-    object x = new Chord( PitchClass.C, "Major" );
-    object y = new Chord( PitchClass.C, "Major" );
-    object z = new Chord( PitchClass.C, "Major" );
+    object x = Chord.Create( PitchClass.C, "Major" );
+    object y = Chord.Create( PitchClass.C, "Major" );
+    object z = Chord.Create( PitchClass.C, "Major" );
 
     x.Equals( x )
      .Should()
@@ -287,8 +287,8 @@ public sealed class ChordTest
   [Fact]
   public void GetHashCode_ShouldReturnSameValue_ForEquivalentObjects()
   {
-    var actual = new Chord( PitchClass.C, "Major" );
-    var expected = new Chord( PitchClass.C, "Major" );
+    var actual = Chord.Create( PitchClass.C, "Major" );
+    var expected = Chord.Create( PitchClass.C, "Major" );
 
     expected.Equals( actual )
             .Should()
@@ -302,7 +302,7 @@ public sealed class ChordTest
   [Fact]
   public void GetInversion_ShouldReturnExpectedResult()
   {
-    var cMajor = new Chord( PitchClass.C, "Major" );
+    var cMajor = Chord.Create( PitchClass.C, "Major" );
     var firstInversion = cMajor.GetInversion( 1 );
 
     firstInversion.Should()
@@ -334,7 +334,7 @@ public sealed class ChordTest
   [Fact]
   public void ImplementsGenericInterface_ShouldExposeSharedContract()
   {
-    IChord<Chord, PitchClass> chord = new Chord( PitchClass.C, "Major" );
+    var chord = Chord.Create( PitchClass.C, "Major" );
 
     chord.Root.Should()
          .Be( PitchClass.C );
@@ -373,7 +373,7 @@ public sealed class ChordTest
     string formulaName,
     bool isExtended )
   {
-    var chord = new Chord( root, formulaName );
+    var chord = Chord.Create( root, formulaName );
 
     chord.IsExtended.Should()
          .Be( isExtended );
@@ -406,7 +406,7 @@ public sealed class ChordTest
   [Fact]
   public void StronglyTypedEquals_ShouldReturnFalse_WhenComparingDifferentType()
   {
-    var actual = new Chord( PitchClass.C, "Major" );
+    var actual = Chord.Create( PitchClass.C, "Major" );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
     actual.Equals( int.MinValue )
@@ -417,7 +417,7 @@ public sealed class ChordTest
   [Fact]
   public void StronglyTypedEquals_ShouldReturnFalse_WhenComparingToNull()
   {
-    var actual = new Chord( PitchClass.C, "Major" );
+    var actual = Chord.Create( PitchClass.C, "Major" );
 
     actual.Equals( null )
           .Should()
@@ -427,9 +427,9 @@ public sealed class ChordTest
   [Fact]
   public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
   {
-    var x = new Chord( PitchClass.C, "Major" );
-    var y = new Chord( PitchClass.C, "Major" );
-    var z = new Chord( PitchClass.C, "Major" );
+    var x = Chord.Create( PitchClass.C, "Major" );
+    var y = Chord.Create( PitchClass.C, "Major" );
+    var z = Chord.Create( PitchClass.C, "Major" );
 
     x.Equals( x )
      .Should()

@@ -172,16 +172,6 @@ public readonly struct Pitch
 
   #region Public Methods
 
-  /// <summary>Adds number of semitones to the current instance.</summary>
-  /// <param name="semitoneCount">Number of semitones.</param>
-  /// <returns>A Pitch.</returns>
-  public Pitch Transpose(
-    int semitoneCount )
-  {
-    var result = new Pitch( _absoluteValue + semitoneCount );
-    return result;
-  }
-
   /// <summary>Adds an Interval to a given Pitch.</summary>
   /// <param name="pitch">The <see cref="Pitch" />>.</param>
   /// <param name="interval">An <see cref="Interval" />> to add to it.</param>
@@ -196,15 +186,6 @@ public readonly struct Pitch
     var newPitchClass = pitch.PitchClass + interval;
     var result = new Pitch( newPitchClass, octave, absoluteValue );
     return result;
-  }
-
-  /// <summary>Adds an interval to the current instance.</summary>
-  /// <param name="interval">An interval to add.</param>
-  /// <returns>A Pitch.</returns>
-  public Pitch Transpose(
-    Interval interval )
-  {
-    return Add( this, interval );
   }
 
   /// <inheritdoc />
@@ -447,6 +428,25 @@ public readonly struct Pitch
     return buf.ToString();
   }
 
+  /// <summary>Adds number of semitones to the current instance.</summary>
+  /// <param name="semitoneCount">Number of semitones.</param>
+  /// <returns>A Pitch.</returns>
+  public Pitch Transpose(
+    int semitoneCount )
+  {
+    var result = new Pitch( _absoluteValue + semitoneCount );
+    return result;
+  }
+
+  /// <summary>Adds an interval to the current instance.</summary>
+  /// <param name="interval">An interval to add.</param>
+  /// <returns>A Pitch.</returns>
+  public Pitch Transpose(
+    Interval interval )
+  {
+    return Add( this, interval );
+  }
+
   /// <summary>Attempts to parse a Pitch from the given string.</summary>
   /// <param name="value">The value to parse.</param>
   /// <param name="pitch">[out] The pitch class.</param>
@@ -468,8 +468,7 @@ public readonly struct Pitch
     IFormatProvider? provider,
     out Pitch pitch )
   {
-    pitch = Empty;
-    return !string.IsNullOrEmpty( value ) && TryParse( value.AsSpan(), provider, out pitch );
+    return TryParse( value.AsSpan(), provider, out pitch );
   }
 
   /// <summary>Attempts to parse a Pitch from the given string.</summary>
@@ -495,10 +494,23 @@ public readonly struct Pitch
   {
     // We only want to return true if the entire string was consumed,
     // so we check that the tail is empty.
-    return TryParse( value, provider, out pitch, out var tail ) && tail.IsEmpty;
+    if( TryParse( value, provider, out pitch, out var tail ) && tail.IsEmpty )
+    {
+      return true;
+    }
+
+    pitch = Empty;
+    return false;
   }
 
-  /// <inheritdoc />
+  /// <summary>
+  /// Attempts to parse a Pitch from the given span using the specified format provider.
+  /// </summary>
+  /// <param name="value">The value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitch">[out] The pitch class.</param>
+  /// <param name="tail">[out] The remaining portion of the string.</param>
+  /// <returns>True if it succeeds, false if it fails.</returns>
   public static bool TryParse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider,
@@ -516,11 +528,10 @@ public readonly struct Pitch
 
     if( char.IsDigit( value[0] ) )
     {
-      return TryParseMidi(value, provider, out pitch, out tail);
+      return TryParseMidi( value, provider, out pitch, out tail );
     }
 
     return TryParseNotes( value, provider, out pitch, out tail );
-
   }
 
   #endregion
@@ -575,21 +586,26 @@ public readonly struct Pitch
       return false;
     }
 
-    // If available, the next character must be a digit (indicating an octave).
-    if( !tail.IsEmpty && !char.IsDigit( tail[0] ) )
-    {
-      pitch = default;
-      return false;
-    }
+    var octave = 4;
 
-    // Must have an octave
-    if( !int.TryParse( tail, provider, out var octave ) || octave < MinOctave || octave > MaxOctave )
+    // If the tail is not empty, we expect it to be a single digit representing the octave.
+    if( !tail.IsEmpty )
     {
-      pitch = default;
-      return false;
-    }
+      if( !char.IsDigit( tail[0] ) )
+      {
+        pitch = Create( pitchClass, octave );
+        return true;
+      }
 
-    tail = tail[1..];
+      // If the tail is a digit, we parse it as the octave.
+      if( !int.TryParse( tail, provider, out octave ) || octave < MinOctave || octave > MaxOctave )
+      {
+        pitch = default;
+        return false;
+      }
+
+      tail = tail[1..];
+    }
 
     pitch = Create( pitchClass, octave );
     return true;

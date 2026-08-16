@@ -90,7 +90,7 @@ public sealed class ChordFormula: Formula
   {
     // A chord is composed by two or more pitch classes...
     ArgumentOutOfRangeException.ThrowIfLessThan( intervals.Length, 2 );
-    Symbol = symbol ?? string.Empty;
+    Symbol = symbol ?? name;
   }
 
   /// <summary>Constructor.</summary>
