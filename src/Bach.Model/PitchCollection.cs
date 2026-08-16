@@ -1,6 +1,6 @@
 // Module Name: PitchCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -27,27 +27,31 @@ namespace Bach.Model;
 using System.Collections;
 using System.Collections.Generic;
 
-/// <summary>Collection of pitches.</summary>
-public abstract class PitchCollection
-  : IReadOnlyList<Pitch>
+/// <summary>
+///   Represents a collection of pitches of type <typeparamref name="TPitch" />.
+/// </summary>
+/// <typeparam name="TPitch">The type of pitch to store.</typeparam>
+public abstract class PitchCollection<TPitch>: IReadOnlyList<TPitch>
+  where TPitch: IPitch<TPitch>
 {
   #region Fields
 
-  private readonly Pitch[] _pitches;
+  private readonly TPitch[] _pitches;
 
   #endregion
 
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
+  ///   Initializes a new instance of the <see cref="PitchCollection{TPitch}" /> class with the specified collection of
+  ///   pitches.
   /// </summary>
-  /// <param name="notes">The array of pitches.</param>
+  /// <param name="pitches">The collection of pitches.</param>
   protected PitchCollection(
-    IEnumerable<Pitch> notes )
+    IEnumerable<TPitch> pitches )
   {
-    ArgumentNullException.ThrowIfNull( notes );
-    _pitches = [.. notes];
+    ArgumentNullException.ThrowIfNull( pitches );
+    _pitches = [.. pitches];
   }
 
   #endregion
@@ -58,17 +62,17 @@ public abstract class PitchCollection
   public int Count => _pitches.Length;
 
   /// <inheritdoc />
-  public Pitch this[
-    int index] => _pitches[index];
+  public TPitch this[
+    int index ] => _pitches[index];
 
   #endregion
 
   #region Public Methods
 
   /// <inheritdoc />
-  public IEnumerator<Pitch> GetEnumerator()
+  public IEnumerator<TPitch> GetEnumerator()
   {
-    return ( (IEnumerable<Pitch>) _pitches ).GetEnumerator();
+    return ( (IEnumerable<TPitch>) _pitches ).GetEnumerator();
   }
 
   /// <inheritdoc />
@@ -76,6 +80,23 @@ public abstract class PitchCollection
   {
     return GetEnumerator();
   }
+
+  /// <summary>
+  ///   Returns the index of the specified pitch in the collection.
+  /// </summary>
+  /// <param name="pitch">The pitch to search for.</param>
+  /// <returns>The index of the pitch, or -1 if not found.</returns>
+  public int IndexOf(
+    TPitch pitch )
+  {
+    return Array.IndexOf( _pitches, pitch );
+  }
+
+  /// <summary>Renders the collection as <see cref="Pitch" /> instances for the provided octave.</summary>
+  /// <param name="octave">The octave to render from.</param>
+  /// <returns>The rendered pitches.</returns>
+  public abstract IEnumerable<Pitch> Render(
+    int octave );
 
   #endregion
 }

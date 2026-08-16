@@ -31,7 +31,7 @@ using Bach.Model.Internal;
 
 /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
 public sealed class Scale
-  : PitchClassCollection,
+  : PitchCollection<PitchClass>,
     IEquatable<Scale>,
     IFormattable
 {

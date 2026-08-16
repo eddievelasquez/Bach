@@ -24,6 +24,7 @@
 
 namespace Bach.Model;
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,7 @@ using Bach.Model.Internal;
 ///   A chord expressed as a collection of actual pitches rather than pitch classes.
 /// </summary>
 public class PitchChord
-  : PitchCollection,
+  : PitchCollection<Pitch>,
     IChord<PitchChord, Pitch>,
     IEquatable<PitchChord>,
     IPartEvent
@@ -222,6 +223,13 @@ public class PitchChord
   }
 
   /// <inheritdoc />
+  public override IEnumerable<Pitch> Render(
+    int octave )
+  {
+    return this.Select( pitch => Pitch.Create( pitch.PitchClass, octave ) );
+  }
+
+  /// <inheritdoc />
   public override string ToString()
   {
     return Name;
@@ -280,20 +288,20 @@ public class PitchChord
     IFormatProvider? provider,
     [NotNullWhen( true )] out PitchChord? chord )
   {
-    return TryParse(span, provider, out chord, out var tail ) && tail.IsEmpty;
+    return TryParse( span, provider, out chord, out var tail ) && tail.IsEmpty;
   }
 
   /// <inheritdoc />
   public static bool TryParse(
     ReadOnlySpan<char> span,
     IFormatProvider? provider,
-    [NotNullWhen(true)] out PitchChord? chord,
+    [NotNullWhen( true )] out PitchChord? chord,
     out ReadOnlySpan<char> tail )
   {
     span = span.TrimStart();
 
     // If the span is empty, we cannot parse a chord.
-    if( span.IsEmpty)
+    if( span.IsEmpty )
     {
       chord = null;
       tail = ReadOnlySpan<char>.Empty;
@@ -301,7 +309,7 @@ public class PitchChord
     }
 
     // Try to parse the root pitch from the span.
-    if( !PitchClass.TryParse(span, provider, out var rootPitchClass, out tail))
+    if( !PitchClass.TryParse( span, provider, out var rootPitchClass, out tail ) )
     {
       chord = null;
       return false;
@@ -310,6 +318,7 @@ public class PitchChord
     // If the tail is empty after parsing the root, we cannot parse a chord formula.
     var nonSymbolPos = tail.IndexOfNonChordSymbol();
     var formulaSymbolSpan = nonSymbolPos != -1 ? tail[..nonSymbolPos] : tail;
+
     if( !Registry.TryGetChordFormulaBySymbol( formulaSymbolSpan.ToString(), out var chordFormula ) )
     {
       chord = null;
@@ -353,7 +362,7 @@ public class PitchChord
       ReadOnlySpan<char> span,
       IFormatProvider? provider,
       out Pitch pitch,
-      out ReadOnlySpan<char> tail)
+      out ReadOnlySpan<char> tail )
     {
       if( Pitch.TryParse( span, provider, out pitch, out var tmpTail ) )
       {
@@ -386,7 +395,6 @@ public class PitchChord
 
       return -1;
     }
-
   }
 
   #endregion

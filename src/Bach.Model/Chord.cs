@@ -33,7 +33,7 @@ using Bach.Model.Internal;
 
 /// <summary>A chord is a set of pitch classes defined by a ChordFormula .</summary>
 public class Chord
-  : PitchClassCollection,
+  : PitchCollection<PitchClass>,
     IChord<Chord, PitchClass>,
     IEquatable<Chord>,
     IEnumerable<PitchClass>
