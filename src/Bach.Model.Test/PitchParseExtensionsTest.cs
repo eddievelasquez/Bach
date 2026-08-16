@@ -90,7 +90,7 @@ public sealed class PitchParseExtensionsTest
   [Fact]
   public void ParsePitches_ShouldReturnExpectedValue_WhenInputIsMidiNotes()
   {
-    var expected = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+    Pitch[] expected = [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )];
 
     "60,72".ParsePitches()
            .Should()
@@ -100,7 +100,7 @@ public sealed class PitchParseExtensionsTest
   [Fact]
   public void ParsePitches_ShouldReturnExpectedValue_WhenInputIsPitchClasses()
   {
-    var expected = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
+    Pitch[] expected = [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )];
 
     "C4,C5".ParsePitches()
            .Should()

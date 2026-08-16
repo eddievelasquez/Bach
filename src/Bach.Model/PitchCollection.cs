@@ -26,13 +26,10 @@ namespace Bach.Model;
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 /// <summary>Collection of pitches.</summary>
-public class PitchCollection
-  : IReadOnlyList<Pitch>,
-    IEquatable<PitchCollection>
+public abstract class PitchCollection
+  : IReadOnlyList<Pitch>
 {
   #region Fields
 
@@ -46,7 +43,7 @@ public class PitchCollection
   ///   Initializes a new instance of the <see cref="PitchCollection" /> class.
   /// </summary>
   /// <param name="notes">The array of pitches.</param>
-  public PitchCollection(
+  protected PitchCollection(
     IEnumerable<Pitch> notes )
   {
     ArgumentNullException.ThrowIfNull( notes );
@@ -69,30 +66,6 @@ public class PitchCollection
   #region Public Methods
 
   /// <inheritdoc />
-  public bool Equals(
-    PitchCollection? other )
-  {
-    if( ReferenceEquals( other, this ) )
-    {
-      return true;
-    }
-
-    return other is not null && _pitches.SequenceEqual( other._pitches );
-  }
-
-  /// <inheritdoc />
-  public override bool Equals(
-    object? obj )
-  {
-    if( ReferenceEquals( obj, this ) )
-    {
-      return true;
-    }
-
-    return obj is PitchCollection other && Equals( other );
-  }
-
-  /// <inheritdoc />
   public IEnumerator<Pitch> GetEnumerator()
   {
     return ( (IEnumerable<Pitch>) _pitches ).GetEnumerator();
@@ -102,52 +75,6 @@ public class PitchCollection
   IEnumerator IEnumerable.GetEnumerator()
   {
     return GetEnumerator();
-  }
-
-  /// <inheritdoc />
-  public override int GetHashCode()
-  {
-    var hash = new HashCode();
-    foreach( var pitch in _pitches )
-    {
-      hash.Add( pitch );
-    }
-
-    return hash.ToHashCode();
-  }
-
-  /// <inheritdoc />
-  public override string ToString()
-  {
-    return ToString( this );
-  }
-
-  /// <summary>Converts a sequence of pitches into a string representation.</summary>
-  /// <exception cref="ArgumentNullException">Thrown when pitches argument is null.</exception>
-  /// <returns>A string that represents the sequence of pitches.</returns>
-  public static string ToString(
-    IEnumerable<Pitch> pitches )
-  {
-    ArgumentNullException.ThrowIfNull( pitches );
-
-    var buf = new StringBuilder();
-    var needsComma = false;
-
-    foreach( var note in pitches )
-    {
-      if( needsComma )
-      {
-        buf.Append( ',' );
-      }
-      else
-      {
-        needsComma = true;
-      }
-
-      buf.Append( note );
-    }
-
-    return buf.ToString();
   }
 
   #endregion

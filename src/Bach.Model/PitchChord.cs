@@ -180,7 +180,7 @@ public class PitchChord
   /// </summary>
   /// <param name="value">The value to parse.</param>
   /// <returns>The parsed chord.</returns>
-  public new static PitchChord Parse(
+  public static PitchChord Parse(
     string value )
   {
     ArgumentNullException.ThrowIfNull( value );
