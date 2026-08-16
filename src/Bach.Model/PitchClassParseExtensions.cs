@@ -33,113 +33,132 @@ using System.Diagnostics.CodeAnalysis;
 /// </summary>
 internal static class PitchClassParseExtensions
 {
-  #region Public Methods
+  #region Implementation
 
-  /// <summary>Parses the provided string using the specified format provider.</summary>
   /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <returns>A PitchClassCollection.</returns>
-  public static List<PitchClass> ParsePitchClasses(
-    this string value,
-    IFormatProvider? provider = null )
+  extension(
+    string value )
   {
-    ArgumentException.ThrowIfNullOrEmpty( value );
+    #region Public Methods
 
-    return value.AsSpan()
-                .ParsePitchClasses( provider );
-  }
-
-  /// <summary>Parses the provided span using the specified format provider.</summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <returns>A PitchClassCollection.</returns>
-  public static List<PitchClass> ParsePitchClasses(
-    this ReadOnlySpan<char> value,
-    IFormatProvider? provider = null )
-  {
-    return value.TryParse( provider, out var notes )
-      ? notes
-      : throw new FormatException( $"{value} contains invalid pitchClasses" );
-  }
-
-  /// <summary>Attempts to parse a pitch class collection from the given span using the specified format provider.</summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <param name="result">[out] The pitch class collection.</param>
-  /// <returns>True if it succeeds, false if it fails.</returns>
-  public static bool TryParse(
-    this ReadOnlySpan<char> value,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out List<PitchClass>? result )
-  {
-    // We want to ensure that the entire string is consumed, so we check if the tail is empty after parsing.
-    return value.TryParse( provider, out result, out var tail ) && tail.IsEmpty;
-  }
-
-  /// <summary>
-  ///   Attempts to parse a pitch class collection from the given span using the specified format provider, returning any
-  ///   unparsed tail.
-  /// </summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <param name="pitchClasses">[out] The pitch class collection.</param>
-  /// <param name="tail">[out] The unparsed tail.</param>
-  /// <returns>True if it succeeds, false if it fails.</returns>
-  public static bool TryParse(
-    this ReadOnlySpan<char> value,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out List<PitchClass>? pitchClasses,
-    out ReadOnlySpan<char> tail )
-  {
-    // An empty span is not valid
-    if( value.IsEmpty )
+    /// <summary>Parses the provided string using the specified format provider.</summary>
+    /// <param name="provider">The format provider.</param>
+    /// <returns>A PitchClassCollection.</returns>
+    public List<PitchClass> ParsePitchClasses(
+      IFormatProvider? provider = null )
     {
-      pitchClasses = null;
-      tail = ReadOnlySpan<char>.Empty;
-      return false;
+      ArgumentException.ThrowIfNullOrEmpty( value );
+
+      return value.AsSpan()
+                  .ParsePitchClasses( provider );
     }
 
-    // Start
-    tail = value.TrimStart();
-    var tmp = new List<PitchClass>();
+    #endregion
+  }
 
-    // While there are more pitch classes
-    while( !tail.IsEmpty )
+  /// <param name="span">The span to parse.</param>
+  extension(
+    ReadOnlySpan<char> span )
+  {
+    #region Public Methods
+
+    /// <summary>Parses the provided span using the specified format provider.</summary>
+    /// <param name="provider">The format provider.</param>
+    /// <returns>The list of parsed pitch classes.</returns>
+    public List<PitchClass> ParsePitchClasses(
+      IFormatProvider? provider = null )
     {
-      // Try to parse the next pitch class
-      if( !PitchClass.TryParse( tail, provider, out var note, out tail ) )
+      return span.TryParse( provider, out var notes )
+        ? notes
+        : throw new FormatException( $"{span} contains invalid pitchClasses" );
+    }
+
+    #endregion
+  }
+
+  /// <param name="span">The span to parse.</param>
+  extension(
+    ReadOnlySpan<char> span )
+  {
+    #region Public Methods
+
+    /// <summary>Attempts to parse a pitch class collection from the given span using the specified format provider.</summary>
+    /// <param name="provider">The format provider.</param>
+    /// <param name="result">[out] The list of parsed pitch classes.</param>
+    /// <returns><c>true</c> if it succeeds, <c>false</c> if it fails.</returns>
+    public bool TryParse(
+      IFormatProvider? provider,
+      [NotNullWhen( true )] out List<PitchClass>? result )
+    {
+      // We want to ensure that the entire string is consumed, so we check if the tail is empty after parsing.
+      return span.TryParse( provider, out result, out var tail ) && tail.IsEmpty;
+    }
+
+    /// <summary>
+    ///   Attempts to parse a pitch class collection from the given span using the specified format provider, returning any
+    ///   unparsed tail.
+    /// </summary>
+    /// <param name="provider">The format provider.</param>
+    /// <param name="pitchClasses">[out] The list of parsed pitch classes.</param>
+    /// <param name="tail">[out] The unparsed tail.</param>
+    /// <returns><c>true</c> if it succeeds, <c>false</c> if it fails.</returns>
+    public bool TryParse(
+      IFormatProvider? provider,
+      [NotNullWhen( true )] out List<PitchClass>? pitchClasses,
+      out ReadOnlySpan<char> tail )
+    {
+      // An empty span is not valid
+      if( span.IsEmpty )
       {
         pitchClasses = null;
+        tail = ReadOnlySpan<char>.Empty;
         return false;
       }
 
-      tmp.Add( note );
+      // Start
+      tail = span.TrimStart();
+      var tmp = new List<PitchClass>();
 
-      var separatorIndex = tail.IndexOf( ',' );
-
-      if( separatorIndex < 0 )
+      // While there are more pitch classes
+      while( !tail.IsEmpty )
       {
-        // No more separators, so we should be at the end of the string. If not, it's an error.
-        if( !tail.IsEmpty )
+        // Try to parse the next pitch class
+        if( !PitchClass.TryParse( tail, provider, out var note, out tail ) )
         {
           pitchClasses = null;
-          tail = ReadOnlySpan<char>.Empty;
           return false;
         }
 
-        break;
+        tmp.Add( note );
+
+        var separatorIndex = tail.IndexOf( ',' );
+
+        if( separatorIndex < 0 )
+        {
+          // No more separators, so we should be at the end of the string. If not, it's an error.
+          if( !tail.IsEmpty )
+          {
+            pitchClasses = null;
+            tail = ReadOnlySpan<char>.Empty;
+            return false;
+          }
+
+          break;
+        }
+
+        // Move past the separator and trim any leading whitespace
+        tail = tail[( separatorIndex + 1 )..]
+          .TrimStart();
       }
 
-      // Move past the separator and trim any leading whitespace
-      tail = tail[( separatorIndex + 1 )..]
-        .TrimStart();
+      // Ensure that we have at least one pitch class
+      Debug.Assert( tmp.Count > 0 );
+
+      pitchClasses = tmp;
+      return true;
     }
 
-    // Ensure that we have at least one pitch class
-    Debug.Assert( tmp.Count > 0 );
-
-    pitchClasses = tmp;
-    return true;
+    #endregion
   }
 
   #endregion

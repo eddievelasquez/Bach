@@ -1,4 +1,4 @@
-// Module Name: Extensions.cs
+// Module Name: IntervalExtensions.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -28,49 +28,54 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>Provides common extensions.</summary>
-public static class Extensions
+public static class IntervalExtensions
 {
   #region Public Methods
 
-  /// <summary>
-  /// Returns the intervals that separate the provided notes.
-  /// </summary>
   /// <param name="notes">The notes to parse.</param>
-  /// <returns>An interval iterator.</returns>
-  public static IEnumerable<Interval> Intervals(this IEnumerable<string> notes)
+  extension(IEnumerable<string> notes)
   {
-    var list = notes.Select( PitchClass.Parse );
-    return list.Intervals();
+    /// <summary>
+    /// Returns the intervals that separate the provided notes.
+    /// </summary>
+    /// <returns>An interval iterator.</returns>
+    public IEnumerable<Interval> Intervals()
+    {
+      var list = notes.Select( PitchClass.Parse );
+      return list.Intervals();
+    }
   }
 
-  /// <summary>Returns the intervals that separate the provided pitch classes.</summary>
   /// <param name="pitchClasses">The pitch classes.</param>
-  /// <returns>An interval iterator.</returns>
-  public static IEnumerable<Interval> Intervals(
-    this IEnumerable<PitchClass> pitchClasses )
+  extension(IEnumerable<PitchClass> pitchClasses)
   {
-    ArgumentNullException.ThrowIfNull( pitchClasses );
-
-    using var e = pitchClasses.GetEnumerator();
-    yield return Interval.Unison;
-
-    if( !e.MoveNext() )
+    /// <summary>Returns the intervals that separate the provided pitch classes.</summary>
+    /// <returns>An interval iterator.</returns>
+    public IEnumerable<Interval> Intervals()
     {
-      yield break;
+      ArgumentNullException.ThrowIfNull( pitchClasses );
+
+      using var e = pitchClasses.GetEnumerator();
+      yield return Interval.Unison;
+
+      if( !e.MoveNext() )
+      {
+        yield break;
+      }
+
+      var root = e.Current;
+      if( !e.MoveNext() )
+      {
+        yield break;
+      }
+
+      do
+      {
+        var pitchClass = e.Current;
+        var interval = root.GetIntervalTo( pitchClass );
+        yield return interval;
+      } while( e.MoveNext() );
     }
-
-    var root = e.Current;
-    if( !e.MoveNext() )
-    {
-      yield break;
-    }
-
-    do
-    {
-      var pitchClass = e.Current;
-      var interval = root.GetIntervalTo( pitchClass );
-      yield return interval;
-    } while( e.MoveNext() );
   }
 
   #endregion

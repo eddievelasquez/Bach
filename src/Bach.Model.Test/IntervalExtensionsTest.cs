@@ -1,4 +1,4 @@
-// Module Name: ExtensionsTest.cs
+// Module Name: IntervalExtensionsTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -27,7 +27,7 @@ namespace Bach.Model.Test;
 using System.Collections.Generic;
 using System.Linq;
 
-public sealed class ExtensionsTest
+public sealed class IntervalExtensionsTest
 {
   #region Public Methods
 

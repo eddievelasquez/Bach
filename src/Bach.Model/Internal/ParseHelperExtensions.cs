@@ -28,60 +28,74 @@ internal static class ParseHelperExtensions
 {
   #region Implementation
 
-  /// <summary>
-  ///   Determines whether the specified character is a valid chord symbol character.
-  /// </summary>
   /// <param name="c">The character to check.</param>
-  /// <returns>true if the character is a valid chord symbol character; otherwise, false.</returns>
-  public static bool IsChordSymbolChar(
-    this char c )
+  extension(
+    char c )
   {
-    // Digits
-    if( (uint) ( c - '0' ) <= 9 )
-    {
-      return true;
-    }
+    #region Public Methods
 
-    // ASCII letters
-    if( (uint) ( ( c | 0x20 ) - 'a' ) <= 25 )
+    /// <summary>
+    ///   Determines whether the specified character is a valid chord symbol character.
+    /// </summary>
+    /// <returns>true if the character is a valid chord symbol character; otherwise, false.</returns>
+    public bool IsChordSymbolChar()
     {
-      return true;
-    }
-
-    // Common ASCII symbols
-    return c switch
-    {
-      '+' or '#' or 'b' or '(' or ')' => true,
-
-      // Unicode accidentals + half-diminished
-      _ => c switch
+      // Digits
+      if( (uint) ( c - '0' ) <= 9 )
       {
-        '♯' => true,
-        '♭' => true,
-        'ø' => true,
-        _   => false
+        return true;
       }
-    };
+
+      // ASCII letters
+      if( (uint) ( ( c | 0x20 ) - 'a' ) <= 25 )
+      {
+        return true;
+      }
+
+      // Common ASCII symbols
+      return c switch
+      {
+        '+' or '#' or 'b' or '(' or ')' => true,
+
+        // Unicode accidentals + half-diminished
+        _ => c switch
+        {
+          '♯' => true,
+          '♭' => true,
+          'ø' => true,
+          _   => false
+        }
+      };
+    }
+
+    #endregion
   }
 
-  /// <summary>
-  ///   Finds the index of the first character in the span that is not a valid chord symbol character.
-  /// </summary>
   /// <param name="span">The span to search.</param>
-  /// <returns>The index of the first non-chord symbol character, or -1 if none is found.</returns>
-  public static int IndexOfNonChordSymbol(
-    this ReadOnlySpan<char> span )
+  extension(
+    ReadOnlySpan<char> span )
   {
-    for( var i = 0; i < span.Length; i++ )
+    #region Public Methods
+
+    /// <summary>
+    ///   Finds the index of the first character in the span that is not a valid chord symbol character.
+    /// </summary>
+    /// <returns>The index of the first non-chord symbol character, or -1 if none is found.</returns>
+    public int IndexOfNonChordSymbol()
     {
-      if( !span[i]
-           .IsChordSymbolChar() )
+      for( var i = 0; i < span.Length; i++ )
       {
-        return i;
+        if( !span[i]
+             .IsChordSymbolChar() )
+        {
+          return i;
+        }
       }
+
+      return -1;
     }
 
-    return -1;
+    #endregion
   }
 
   #endregion
