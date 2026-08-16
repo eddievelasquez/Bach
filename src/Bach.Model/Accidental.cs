@@ -25,7 +25,6 @@
 namespace Bach.Model;
 
 using System.Diagnostics.Contracts;
-using System.Windows.Markup;
 using Bach.Model.Internal;
 
 /// <summary>

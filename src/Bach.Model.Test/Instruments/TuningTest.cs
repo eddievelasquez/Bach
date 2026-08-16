@@ -50,7 +50,7 @@ public sealed class TuningTest
           guitar,
           "",
           TUNING_NAME,
-          PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" )
+          "E4,B3,G3,D3,A2,D2".ParsePitches()
         );
       };
 
@@ -69,7 +69,7 @@ public sealed class TuningTest
           guitar,
           TUNING_KEY,
           "",
-          PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" )
+          "E4,B3,G3,D3,A2,D2".ParsePitches()
         );
       }
       ;
@@ -89,7 +89,7 @@ public sealed class TuningTest
         guitar,
         TUNING_KEY,
         TUNING_NAME,
-        PitchCollection.Parse( "E4,B3,G3,D3,A2" )
+        "E4,B3,G3,D3,A2".ParsePitches()
       );
     };
 
@@ -101,9 +101,9 @@ public sealed class TuningTest
   public void EqualsContractTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    object x = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    object y = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    object z = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    object x = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
+    object y = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
+    object z = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
 
     // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
@@ -130,7 +130,7 @@ public sealed class TuningTest
   public void EqualsFailsWithDifferentTypeTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    object a = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    object a = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
     object b = guitar;
 
     a.Equals( b )
@@ -151,7 +151,7 @@ public sealed class TuningTest
   public void EqualsFailsWithNullTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    object actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    object actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
 
     actual.Equals( null )
           .Should()
@@ -162,7 +162,7 @@ public sealed class TuningTest
   public void EqualsSucceedsWithSameObjectTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
 
     actual.Equals( actual )
           .Should()
@@ -173,8 +173,8 @@ public sealed class TuningTest
   public void GetHashcodeTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    var expected = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
+    var expected = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
 
     expected.Equals( actual )
             .Should()
@@ -188,7 +188,7 @@ public sealed class TuningTest
   public void TestConstructor()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
 
     actual.InstrumentDefinition.Should()
           .Be( guitar );
@@ -204,9 +204,9 @@ public sealed class TuningTest
   public void TypeSafeEqualsContractTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    var x = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    var y = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
-    var z = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var x = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
+    var y = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
+    var z = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
 
     x.Equals( x )
      .Should()
@@ -233,7 +233,7 @@ public sealed class TuningTest
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    var a = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var a = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
     var b = guitar;
 
     a.Equals( b )
@@ -254,7 +254,7 @@ public sealed class TuningTest
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var guitar = Registry.StringedInstrumentDefinitions[INSTRUMENT_KEY];
-    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, PitchCollection.Parse( "E4,B3,G3,D3,A2,D2" ) );
+    var actual = new Tuning( guitar, TUNING_KEY, TUNING_NAME, "E4,B3,G3,D3,A2,D2".ParsePitches() );
 
     actual.Equals( null )
           .Should()

@@ -193,7 +193,7 @@ public class PitchChord
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>
   /// <returns>The parsed chord.</returns>
-  public new static PitchChord Parse(
+  public static PitchChord Parse(
     string value,
     IFormatProvider? provider )
   {
@@ -207,7 +207,7 @@ public class PitchChord
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>
   /// <returns>The parsed chord.</returns>
-  public new static PitchChord Parse(
+  public static PitchChord Parse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider )
   {

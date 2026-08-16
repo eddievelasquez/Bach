@@ -1,20 +1,20 @@
-﻿// Module Name: StringedInstrumentDefinitionBuilder.cs
+// Module Name: StringedInstrumentDefinitionBuilder.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -25,8 +25,8 @@
 namespace Bach.Model.Instruments;
 
 using System.Collections.Generic;
-using Internal;
-using Model.Internal;
+using Bach.Model.Instruments.Internal;
+using Bach.Model.Internal;
 
 /// <summary>Creates stringed instrument definitions.</summary>
 public sealed class StringedInstrumentDefinitionBuilder
@@ -36,7 +36,7 @@ public sealed class StringedInstrumentDefinitionBuilder
   private sealed record TuningInfo(
     string Id,
     string Name,
-    PitchCollection Pitches );
+    IReadOnlyList<Pitch> Pitches );
 
   #endregion
 
@@ -77,20 +77,6 @@ public sealed class StringedInstrumentDefinitionBuilder
   #region Public Methods
 
   /// <summary>Adds a tuning to the instrument to build.</summary>
-  /// <param name="id">
-  ///   The language-neutral identifier for the tuning. The id will be used to
-  ///   create the tunings name.
-  /// </param>
-  /// <param name="pitches">A string that represents the pitches.</param>
-  /// <returns>This instance.</returns>
-  public StringedInstrumentDefinitionBuilder AddTuning(
-    string id,
-    string pitches )
-  {
-    return AddTuning( id, id, PitchCollection.Parse( pitches ) );
-  }
-
-  /// <summary>Adds a tuning to the instrument to build.</summary>
   /// <param name="id">The language-neutral identifier for the tuning.</param>
   /// <param name="name">The localizable name of the tuning.</param>
   /// <param name="pitches">A string that represents the pitches.</param>
@@ -100,7 +86,7 @@ public sealed class StringedInstrumentDefinitionBuilder
     string name,
     string pitches )
   {
-    return AddTuning( id, name, PitchCollection.Parse( pitches ) );
+    return AddTuning( id, name, pitches.ParsePitches() );
   }
 
   /// <summary>Adds a tuning to the instrument to build.</summary>
@@ -113,33 +99,6 @@ public sealed class StringedInstrumentDefinitionBuilder
   public StringedInstrumentDefinitionBuilder AddTuning(
     string id,
     params Pitch[] pitches )
-  {
-    return AddTuning( id, id, new PitchCollection( pitches ) );
-  }
-
-  /// <summary>Adds a tuning to the instrument to build.</summary>
-  /// <param name="id">The language-neutral identifier for the tuning.</param>
-  /// <param name="name">The localizable name of the tuning.</param>
-  /// <param name="pitches">An array with the tunings pitches.</param>
-  /// <returns>This instance.</returns>
-  public StringedInstrumentDefinitionBuilder AddTuning(
-    string id,
-    string name,
-    params Pitch[] pitches )
-  {
-    return AddTuning( id, name, new PitchCollection( pitches ) );
-  }
-
-  /// <summary>Adds a tuning to the instrument to build.</summary>
-  /// <param name="id">
-  ///   The language-neutral identifier for the tuning. The identifier will be used to create the
-  ///   name of the tuning.
-  /// </param>
-  /// <param name="pitches">A pitch collection.</param>
-  /// <returns>This instance.</returns>
-  public StringedInstrumentDefinitionBuilder AddTuning(
-    string id,
-    PitchCollection pitches )
   {
     return AddTuning( id, id, pitches );
   }
@@ -157,14 +116,14 @@ public sealed class StringedInstrumentDefinitionBuilder
   public StringedInstrumentDefinitionBuilder AddTuning(
     string id,
     string name,
-    PitchCollection pitches )
+    ICollection<Pitch> pitches )
   {
     ArgumentException.ThrowIfNullOrEmpty( id );
     ArgumentException.ThrowIfNullOrEmpty( name );
     ArgumentOutOfRangeException.ThrowIfNotEqual( pitches.Count, _state.StringCount );
     CheckBuilderReuse();
 
-    var info = new TuningInfo( id, name, pitches );
+    var info = new TuningInfo( id, name, [.. pitches] );
     _tuningInfo.Add( id, info );
 
     return this;
@@ -191,6 +150,7 @@ public sealed class StringedInstrumentDefinitionBuilder
     }
 
     var definition = new StringedInstrumentDefinition( _state );
+
     foreach( var info in _tuningInfo )
     {
       _state.Tunings.Add( new Tuning( definition, info.Value.Id, info.Value.Name, info.Value.Pitches ) );

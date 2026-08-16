@@ -26,15 +26,13 @@ namespace Bach.Model;
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
 /// <summary>Collection of pitches.</summary>
 public class PitchCollection
   : IReadOnlyList<Pitch>,
-    IEquatable<PitchCollection>,
-    ISpanParsable<PitchCollection>
+    IEquatable<PitchCollection>
 {
   #region Fields
 
@@ -52,7 +50,7 @@ public class PitchCollection
     IEnumerable<Pitch> notes )
   {
     ArgumentNullException.ThrowIfNull( notes );
-    _pitches = notes.ToArray();
+    _pitches = [.. notes];
   }
 
   #endregion
@@ -118,42 +116,6 @@ public class PitchCollection
     return hash.ToHashCode();
   }
 
-  /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a pitch collection.</exception>
-  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
-  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>A PitchCollection.</returns>
-  public static PitchCollection Parse(
-    string value )
-  {
-    ArgumentException.ThrowIfNullOrEmpty( value );
-    return Parse( value.AsSpan(), null );
-  }
-
-  /// <summary>Parses the provided string using the specified format provider.</summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <returns>A PitchCollection.</returns>
-  public static PitchCollection Parse(
-    string value,
-    IFormatProvider? provider )
-  {
-    ArgumentException.ThrowIfNullOrEmpty( value );
-    return Parse( value.AsSpan(), provider );
-  }
-
-  /// <summary>Parses the provided span using the specified format provider.</summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <returns>A PitchCollection.</returns>
-  public static PitchCollection Parse(
-    ReadOnlySpan<char> value,
-    IFormatProvider? provider )
-  {
-    return TryParse( value, provider, out var notes ) ? notes : throw new FormatException( $"{value.ToString()} contains invalid pitches" );
-  }
-
   /// <inheritdoc />
   public override string ToString()
   {
@@ -186,80 +148,6 @@ public class PitchCollection
     }
 
     return buf.ToString();
-  }
-
-  /// <summary>Attempts to parse a pitch collection from the given string.</summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="pitches">[out] The pitch collection.</param>
-  /// <returns>True if it succeeds, false if it fails.</returns>
-  public static bool TryParse(
-    string? value,
-    [NotNullWhen( true )] out PitchCollection? pitches )
-  {
-    return TryParse( value.AsSpan(), null, out pitches );
-  }
-
-  /// <summary>Attempts to parse a pitch collection from the given string using the specified format provider.</summary>
-  /// <param name="value">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <param name="pitches">[out] The pitch collection.</param>
-  /// <returns>True if it succeeds, false if it fails.</returns>
-  public static bool TryParse(
-    string? value,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out PitchCollection? pitches )
-  {
-    return TryParse( value.AsSpan(), provider, out pitches );
-  }
-
-  /// <summary>Attempts to parse a pitch collection from the given span.</summary>
-  /// <param name="span">The value to parse.</param>
-  /// <param name="pitches">[out] The pitch collection.</param>
-  /// <returns>True if it succeeds, false if it fails.</returns>
-  public static bool TryParse(
-    ReadOnlySpan<char> span,
-    [NotNullWhen( true )] out PitchCollection? pitches )
-  {
-    return TryParse( span, null, out pitches );
-  }
-
-  /// <summary>Attempts to parse a pitch collection from the given span using the specified format provider.</summary>
-  /// <param name="span">The value to parse.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <param name="pitches">[out] The pitch collection.</param>
-  /// <returns>True if it succeeds, false if it fails.</returns>
-  public static bool TryParse(
-    ReadOnlySpan<char> span,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out PitchCollection? pitches )
-  {
-    if( span.IsEmpty )
-    {
-      pitches = null;
-      return false;
-    }
-
-    // Count the number of commas in the span to determine how many pitches we have.
-    var sepCount = span.Count( ',' );
-
-    // Allocate a stack-allocated array of ranges to hold the start and end indices of each pitch in the span.
-    Span<Range> ranges = stackalloc Range[sepCount + 1];
-    var rangeCount = span.Split( ranges, ',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries );
-    var tmp = new List<Pitch>( rangeCount );
-
-    for( var i = 0; i < rangeCount; i++ )
-    {
-      if( !Pitch.TryParse( span[ranges[i]], out var pitch ) )
-      {
-        pitches = null;
-        return false;
-      }
-
-      tmp.Add( pitch );
-    }
-
-    pitches = new PitchCollection( tmp );
-    return true;
   }
 
   #endregion

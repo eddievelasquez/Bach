@@ -24,6 +24,7 @@
 
 namespace Bach.Model.Instruments;
 
+using System.Collections.Generic;
 using System.Linq;
 using Model.Internal;
 
@@ -36,7 +37,7 @@ public sealed class Tuning: IEquatable<Tuning>
     StringedInstrumentDefinition instrumentDefinition,
     string id,
     string name,
-    PitchCollection pitches )
+    IReadOnlyList<Pitch> pitches )
   {
     ArgumentNullException.ThrowIfNull( instrumentDefinition );
     ArgumentException.ThrowIfNullOrEmpty( id );
@@ -67,7 +68,7 @@ public sealed class Tuning: IEquatable<Tuning>
 
   /// <summary>Gets the tunings pitches.</summary>
   /// <value>The pitches.</value>
-  public PitchCollection Pitches { get; }
+  public IReadOnlyList<Pitch> Pitches { get; }
 
   /// <summary>Indexer to get pitches within this tuning using array index syntax.</summary>
   /// <exception cref="ArgumentOutOfRangeException">

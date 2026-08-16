@@ -107,40 +107,6 @@ public sealed class PitchCollectionTest
   }
 
   [Fact]
-  public void Parse_ShouldReturnExpectedValue_WhenInputIsPitchClasses()
-  {
-    var expected = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
-
-    PitchCollection.Parse( "C4,C5" )
-                   .Should()
-                   .BeEquivalentTo( expected ); // Using pitches
-  }
-
-  [Fact]
-  public void Parse_ShouldReturnExpectedValue_WhenInputIsMidiNotes()
-  {
-    var expected = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
-
-    PitchCollection.Parse( "60,72" )
-                   .Should()
-                   .BeEquivalentTo( expected ); // Using midi
-  }
-
-  [Theory]
-  [MemberData( nameof( UnparsableValues ) )]
-  public void Parse_ShouldThrow_WhenInputIsInvalid(
-    string input,
-    Type expectedExceptionType )
-  {
-    Action act = () => PitchCollection.Parse( input );
-
-    act.Should()
-       .Throw<Exception>()
-       .Which.Should()
-       .BeOfType( expectedExceptionType );
-  }
-
-  [Fact]
   public void ToString_ShouldReturnExpectedValue()
   {
     var actual = new PitchCollection( [Pitch.Parse( "C4" ), Pitch.Parse( "C5" )] );
@@ -202,14 +168,6 @@ public sealed class PitchCollectionTest
           .Should()
           .BeFalse();
   }
-
-  public static TheoryData<string, Type> UnparsableValues =>
-    new()
-    {
-      { null!, typeof( ArgumentNullException ) },
-      { "", typeof( ArgumentException ) },
-      { "C$4,Z5", typeof( FormatException ) }
-    };
 
   #endregion
 }

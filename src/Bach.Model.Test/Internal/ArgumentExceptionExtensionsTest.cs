@@ -22,17 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test;
+namespace Bach.Model.Test.Internal;
 
 using Bach.Model.Internal;
-using System.Collections.Generic;
 
 public sealed class ArgumentExceptionExtensionsTest
 {
   [Fact]
   public void ThrowIfNullOrEmpty_ShouldThrowArgumentNullException_WhenSourceIsNull()
   {
-    var act = () => ArgumentExceptionExtensions.ThrowIfNullOrEmpty<int>( null, "source" );
+    var act = () => ArgumentException.ThrowIfNullOrEmpty<int>( null, "source" );
 
     act.Should()
        .Throw<ArgumentNullException>()
@@ -42,7 +41,7 @@ public sealed class ArgumentExceptionExtensionsTest
   [Fact]
   public void ThrowIfNullOrEmpty_ShouldThrowArgumentException_WhenSourceIsEmpty()
   {
-    var act = () => ArgumentExceptionExtensions.ThrowIfNullOrEmpty( Array.Empty<int>(), "source" );
+    var act = () => ArgumentException.ThrowIfNullOrEmpty( Array.Empty<int>(), "source" );
 
     act.Should()
        .Throw<ArgumentException>()
@@ -52,7 +51,7 @@ public sealed class ArgumentExceptionExtensionsTest
   [Fact]
   public void ThrowIfNullOrEmpty_ShouldSucceed_WhenSourceContainsItems()
   {
-    var act = () => ArgumentExceptionExtensions.ThrowIfNullOrEmpty( new[] { 1, 2, 3 }, "source" );
+    var act = () => ArgumentException.ThrowIfNullOrEmpty( new[] { 1, 2, 3 }, "source" );
 
     act.Should()
        .NotThrow();

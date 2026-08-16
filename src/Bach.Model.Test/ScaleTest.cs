@@ -573,7 +573,7 @@ public sealed class ScaleTest
                       .ToArray();
 
     actual.Should()
-          .BeEquivalentTo( PitchCollection.Parse( expectedNotes ) );
+          .BeEquivalentTo( expectedNotes.ParsePitches() );
   }
 
   [Theory]

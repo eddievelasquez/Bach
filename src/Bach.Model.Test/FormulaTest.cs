@@ -1,7 +1,6 @@
 namespace Bach.Model.Test;
 
 using System.Collections.Generic;
-using System.Linq;
 
 public sealed class FormulaTest
 {
