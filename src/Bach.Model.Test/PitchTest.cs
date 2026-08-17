@@ -165,27 +165,20 @@ public sealed class PitchTest
   #region Public Methods
 
   [Fact]
-  public void Pitch_ShouldImplementIPitchClassContract()
+  public void Accidental_ShouldReturnPitchClassAccidental_WhenAccessed()
   {
-    IPitch<Pitch> pitch = Pitch.Create( NoteName.C, Accidental.Natural, 4 );
+    // Arrange
+    var pitch = Pitch.Create( PitchClass.AFlat, 2 );
 
-    pitch.NoteName.Should().Be( NoteName.C );
-    pitch.Accidental.Should().Be( Accidental.Natural );
-    pitch.Transpose( 1 ).Should().Be( Pitch.Create( NoteName.C, Accidental.Sharp, 4 ) );
-    pitch.Transpose( -1 ).Should().Be( Pitch.Create( NoteName.B, Accidental.Natural, 3 ) );
-  }
+    // Act
+    var result = pitch.Accidental;
 
-  [Fact]
-  public void GetEnharmonic_ShouldReturnExpectedPitch_WhenGivenEnharmonicNoteName()
-  {
-    var pitch = Pitch.Create( NoteName.C, Accidental.Sharp, 4 );
+    // Assert
+    result.Should()
+          .Be( PitchClass.AFlat.Accidental );
 
-    var enharmonic = pitch.GetEnharmonic( NoteName.D );
-
-    enharmonic.Should().NotBeNull();
-    var enharmonicPitch = enharmonic.GetValueOrDefault();
-    enharmonicPitch.PitchClass.Should().Be( PitchClass.DFlat );
-    enharmonicPitch.Octave.Should().Be( pitch.Octave );
+    result.Should()
+          .Be( Accidental.Flat );
   }
 
   [Fact]
@@ -492,6 +485,24 @@ public sealed class PitchTest
   }
 
   [Fact]
+  public void GetEnharmonic_ShouldReturnExpectedPitch_WhenGivenEnharmonicNoteName()
+  {
+    var pitch = Pitch.Create( NoteName.C, Accidental.Sharp, 4 );
+
+    var enharmonic = pitch.GetEnharmonic( NoteName.D );
+
+    enharmonic.Should()
+              .NotBeNull();
+    var enharmonicPitch = enharmonic.GetValueOrDefault();
+
+    enharmonicPitch.PitchClass.Should()
+                   .Be( PitchClass.DFlat );
+
+    enharmonicPitch.Octave.Should()
+                   .Be( pitch.Octave );
+  }
+
+  [Fact]
   public void GetHashCode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
   {
     var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
@@ -533,6 +544,48 @@ public sealed class PitchTest
 
     ( a != b ).Should()
               .BeFalse();
+  }
+
+  [Fact]
+  public void IsValid_ShouldReturnFalse_ForEmpty()
+  {
+    // Arrange
+    var pitch = Pitch.Empty;
+
+    // Act
+    var result = pitch.IsValid;
+
+    // Assert
+    result.Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void IsValid_ShouldReturnTrue_ForMaxValue()
+  {
+    // Arrange
+    var pitch = Pitch.MaxValue;
+
+    // Act
+    var result = pitch.IsValid;
+
+    // Assert
+    result.Should()
+          .BeTrue();
+  }
+
+  [Fact]
+  public void IsValid_ShouldReturnTrue_ForMinValue()
+  {
+    // Arrange
+    var pitch = Pitch.MinValue;
+
+    // Act
+    var result = pitch.IsValid;
+
+    // Assert
+    result.Should()
+          .BeTrue();
   }
 
   [Fact]
@@ -590,6 +643,23 @@ public sealed class PitchTest
   }
 
   [Fact]
+  public void NoteName_ShouldReturnPitchClassNoteName_WhenAccessed()
+  {
+    // Arrange
+    var pitch = Pitch.Create( PitchClass.GSharp, 3 );
+
+    // Act
+    var result = pitch.NoteName;
+
+    // Assert
+    result.Should()
+          .Be( PitchClass.GSharp.NoteName );
+
+    result.Should()
+          .Be( NoteName.G );
+  }
+
+  [Fact]
   public void Parse_ShouldThrowFormatException_WhenValueIsInvalid()
   {
     var act1 = () => Pitch.Parse( "C$4" );
@@ -600,6 +670,41 @@ public sealed class PitchTest
 
     act2.Should()
         .Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Fact]
+  public void PitchClass_ShouldReturnGivenPitchClass_WhenCreatedWithThatPitchClass()
+  {
+    // Arrange
+    var expected = PitchClass.DSharp;
+    var pitch = Pitch.Create( expected, 4 );
+
+    // Act
+    var result = pitch.PitchClass;
+
+    // Assert
+    result.Should()
+          .Be( expected );
+  }
+
+  [Fact]
+  public void Pitch_ShouldImplementIPitchClassContract()
+  {
+    IPitch<Pitch> pitch = Pitch.Create( NoteName.C, Accidental.Natural, 4 );
+
+    pitch.NoteName.Should()
+         .Be( NoteName.C );
+
+    pitch.Accidental.Should()
+         .Be( Accidental.Natural );
+
+    pitch.Transpose( 1 )
+         .Should()
+         .Be( Pitch.Create( NoteName.C, Accidental.Sharp, 4 ) );
+
+    pitch.Transpose( -1 )
+         .Should()
+         .Be( Pitch.Create( NoteName.B, Accidental.Natural, 3 ) );
   }
 
   [Fact]
@@ -703,6 +808,40 @@ public sealed class PitchTest
     pitch.ToString( format )
          .Should()
          .Be( expected );
+  }
+
+  [Fact]
+  public void TotalPitchCount_ShouldReturnDifferenceBetweenMaxAndMin_WhenCalled()
+  {
+    // Act
+    var result = Pitch.TotalPitchCount;
+
+    // Assert
+    result.Should()
+          .Be( (int) Pitch.MaxValue - (int) Pitch.MinValue );
+
+    result.Should()
+          .BePositive();
+
+    result.Should()
+          .Be( 115 );
+  }
+
+  [Fact]
+  public void TotalPitchCount_ShouldReturnExpectedValue_WhenCalled()
+  {
+    // Act
+    var result = Pitch.TotalPitchCount;
+
+    // Assert
+    result.Should()
+          .Be( (int) Pitch.MaxValue - (int) Pitch.MinValue );
+
+    result.Should()
+          .BePositive();
+
+    result.Should()
+          .Be( 115 );
   }
 
   [Theory]

@@ -1,20 +1,20 @@
 // Module Name: NoteNameTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -24,8 +24,15 @@
 
 namespace Bach.Model.Test;
 
+using System.Globalization;
+
 public sealed class NoteNameTest
 {
+  #region Properties
+
+
+  #endregion
+
   #region Public Methods
 
   [Theory]
@@ -51,6 +58,29 @@ public sealed class NoteNameTest
                      .Be( expected );
   }
 
+  [Fact]
+  public void CompareTo_ShouldReturnExpectedValue_WhenComparingNoteNames()
+  {
+    // Arrange
+    var lesser = NoteName.C;
+    var greater = NoteName.D;
+
+    // Act
+    var lt = lesser.CompareTo( greater );
+    var gt = greater.CompareTo( lesser );
+    var eq = lesser.CompareTo( NoteName.C );
+
+    // Assert
+    lt.Should()
+      .BeNegative();
+
+    gt.Should()
+      .BePositive();
+
+    eq.Should()
+      .Be( 0 );
+  }
+
   [Theory]
   [MemberData( nameof( DecrementSteps ) )]
   public void DecrementOperator_ShouldReturnExpectedValue(
@@ -67,6 +97,20 @@ public sealed class NoteNameTest
 
     noteName.Should()
             .Be( expected );
+  }
+
+  [Fact]
+  public void Equals_ObjectVariant_ShouldReturnFalse_WhenComparingWithDifferentType()
+  {
+    // Arrange
+    object value = NoteName.C;
+
+    // Act
+    var areEqual = value.Equals( 42 );
+
+    // Assert
+    areEqual.Should()
+            .BeFalse();
   }
 
   [Fact]
@@ -107,6 +151,21 @@ public sealed class NoteNameTest
     actual.Equals( actual )
           .Should()
           .BeTrue();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnTrue_WhenValuesAreEqual_TypeSafe()
+  {
+    // Arrange
+    var a = NoteName.C;
+    var b = NoteName.C;
+
+    // Act
+    var areEqual = a.Equals( b );
+
+    // Assert
+    areEqual.Should()
+            .BeTrue();
   }
 
   [Fact]
@@ -172,6 +231,27 @@ public sealed class NoteNameTest
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
+  }
+
+  [Fact]
+  public void GetHashCode_ShouldBeEqual_ForEqualObjects_AndDifferentForDifferentObjects()
+  {
+    // Arrange
+    var a = NoteName.C;
+    var b = NoteName.C;
+    var c = NoteName.D;
+
+    // Act
+    var hashA = a.GetHashCode();
+    var hashB = b.GetHashCode();
+    var hashC = c.GetHashCode();
+
+    // Assert
+    hashA.Should()
+         .Be( hashB );
+
+    hashA.Should()
+         .NotBe( hashC );
   }
 
   [Fact]
@@ -251,6 +331,118 @@ public sealed class NoteNameTest
     act.Should()
        .Throw<Exception>()
        .Where( e => e.GetType() == expectedExceptionType );
+  }
+
+  [Fact]
+  public void Parse_Span_ShouldReturnExpectedValue_WhenValid()
+  {
+    // Arrange
+    var span = "E".AsSpan();
+
+    // Act
+    var result = NoteName.Parse( span, null );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.E );
+  }
+
+  [Fact]
+  public void Parse_StringWithProvider_ShouldReturnExpectedValue_WhenLowercaseProvided()
+  {
+    // Arrange
+    var value = "d";
+
+    // Act
+    var result = NoteName.Parse( value, CultureInfo.InvariantCulture );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.D );
+  }
+
+  [Fact]
+  public void Parse_String_ShouldReturnExpectedValue_WhenValid()
+  {
+    // Arrange
+    var value = "C";
+
+    // Act
+    var result = NoteName.Parse( value );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.C );
+  }
+
+  [Fact]
+  public void Parse_String_ShouldThrowArgumentException_WhenNullOrEmpty()
+  {
+    // Arrange
+    string? nullValue = null;
+
+    // Act / Assert
+    FluentActions.Invoking( () => NoteName.Parse( nullValue! ) )
+                 .Should()
+                 .Throw<ArgumentException>();
+
+    FluentActions.Invoking( () => NoteName.Parse( string.Empty ) )
+                 .Should()
+                 .Throw<ArgumentException>();
+  }
+
+  [Fact]
+  public void Subtract_Int_ShouldReturnNextNote_WhenNegativeOne()
+  {
+    // Act
+    var result = NoteName.C.Subtract( -1 );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.D );
+  }
+
+  [Fact]
+  public void Subtract_Int_ShouldReturnPreviousNote_WhenOneStep()
+  {
+    // Act
+    var result = NoteName.C.Subtract( 1 );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.B );
+  }
+
+  [Fact]
+  public void Subtract_Int_ShouldWrapAroundCorrectly_WhenLargeSteps()
+  {
+    // Act
+    var result = NoteName.C.Subtract( 8 );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.B );
+  }
+
+  [Fact]
+  public void Subtract_NoteName_ShouldReturnCorrectDistance_BetweenNotes()
+  {
+    // Act / Assert
+    NoteName.D.Subtract( NoteName.C )
+            .Should()
+            .Be( 1 );
+
+    NoteName.C.Subtract( NoteName.B )
+            .Should()
+            .Be( 1 );
+
+    NoteName.C.Subtract( NoteName.C )
+            .Should()
+            .Be( 0 );
+
+    NoteName.B.Subtract( NoteName.C )
+            .Should()
+            .Be( 6 );
   }
 
   [Theory]

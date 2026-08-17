@@ -221,6 +221,105 @@ public sealed class ScaleTest
   }
 
   [Fact]
+  public void Constructor_WithFormulaName_ShouldInitializeProperties_WhenGivenValidName()
+  {
+    // Arrange
+    var root = PitchClass.C;
+    var name = "Major";
+
+    // Act
+    var scale = new Scale( root, name );
+
+    // Assert
+    scale.Root.Should()
+         .Be( root );
+
+    scale.Formula.Should()
+         .BeEquivalentTo( Registry.ScaleFormulas[name] );
+
+    scale.Name.Should()
+         .Be( "C" );
+  }
+
+  [Fact]
+  public void Constructor_WithFormulaName_ShouldThrowArgumentNullException_WhenNameIsNull()
+  {
+    // Arrange
+    string? name = null;
+
+    // Act
+    Action act = () => _ = new Scale( PitchClass.C, name! );
+
+    // Assert
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void Constructor_WithFormula_ShouldInitializeProperties_WhenGivenValidFormula()
+  {
+    // Arrange
+    var formula = Registry.ScaleFormulas["Major"]!;
+    var root = PitchClass.C;
+
+    // Act
+    var scale = new Scale( root, formula );
+
+    // Assert
+    scale.Root.Should()
+         .Be( root );
+
+    scale.Formula.Should()
+         .BeSameAs( formula );
+
+    scale.Name.Should()
+         .Be( "C" );
+
+    scale.Count.Should()
+         .Be( formula!.Intervals.Count );
+
+    scale.Theoretical.Should()
+         .BeFalse();
+
+    // Ensure the pitch classes returned by the scale match the formula generate sequence (first N)
+    var expected = formula.Generate( root )
+                          .Take( formula.Intervals.Count )
+                          .ToArray();
+
+    scale.Should()
+         .ContainInOrder( expected );
+  }
+
+  [Fact]
+  public void Constructor_WithFormula_ShouldThrowArgumentNullException_WhenFormulaIsNull()
+  {
+    // Arrange
+    ScaleFormula? formula = null;
+
+    // Act
+    Action act = () => _ = new Scale( PitchClass.C, formula! );
+
+    // Assert
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void Contains_ShouldReturnTrue_ForEmptySequence()
+  {
+    // Arrange
+    var scale = new Scale( PitchClass.C, "Major" );
+    var notes = Array.Empty<PitchClass>();
+
+    // Act
+    var result = scale.Contains( notes );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+  }
+
+  [Fact]
   public void Contains_ShouldReturnTrue_WhenScaleContainsAllPitchClasses()
   {
     var scale = new Scale( PitchClass.C, "major" );
@@ -236,6 +335,75 @@ public sealed class ScaleTest
     scale.Contains( [PitchClass.C, PitchClass.E, PitchClass.GFlat] )
          .Should()
          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_Object_Override_ShouldHandleDifferentTypesAndNullsAndSameValue()
+  {
+    // Arrange
+    var x = new Scale( PitchClass.C, "Major" );
+    object? same = x;
+    object otherType = 123;
+    object? nullObj = null;
+    object equalScale = new Scale( PitchClass.C, "Major" );
+
+    // Act & Assert
+    // Same reference
+    x.Equals( same )
+     .Should()
+     .BeTrue();
+
+    // Different type
+    x.Equals( otherType )
+     .Should()
+     .BeFalse();
+
+    // Null
+    x.Equals( nullObj )
+     .Should()
+     .BeFalse();
+
+    // Different instance but equal value
+    x.Equals( equalScale )
+     .Should()
+     .BeTrue();
+  }
+
+  [Fact]
+  public void Equals_Scale_ShouldRespectReferenceAndValueEquality()
+  {
+    // Arrange
+    var a = new Scale( PitchClass.C, "Major" );
+    var b = new Scale( PitchClass.C, "Major" );
+    var c = a; // same reference
+    var differentRoot = new Scale( PitchClass.D, "Major" );
+    var differentFormula = new Scale( PitchClass.C, "NaturalMinor" );
+
+    // Act & Assert
+    // Reference equality
+    a!.Equals( c )
+      .Should()
+      .BeTrue();
+
+    // Value equality (same root and formula)
+    a!.Equals( b )
+      .Should()
+      .BeTrue();
+
+    // Not equal to null
+    a!.Equals( null )
+      .Should()
+      .BeFalse();
+
+    // Different root
+    a!.Equals( differentRoot )
+      .Should()
+      .BeFalse();
+
+    // Different formula
+    a!.Equals( differentFormula )
+      .Should()
+      .BeFalse();
   }
 
   [Fact]
@@ -392,6 +560,30 @@ public sealed class ScaleTest
   }
 
   [Fact]
+  public void GetAscending_ShouldWrapAround_WhenIteratingBeyondCount()
+  {
+    // Arrange
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    // Act
+    var items = scale.GetAscending()
+                     .Take( scale.Count + 1 )
+                     .ToArray();
+
+    // Assert
+    items.Length.Should()
+         .Be( scale.Count + 1 );
+
+    items[0]
+      .Should()
+      .Be( scale[0] );
+
+    items[scale.Count]
+      .Should()
+      .Be( scale[0] ); // wrapped
+  }
+
+  [Fact]
   public void GetDescending_ShouldReturnCorrectNotes_WhenIteratingScale()
   {
     var scale = new Scale( PitchClass.C, "Major" );
@@ -472,6 +664,63 @@ public sealed class ScaleTest
           .BeEquivalentTo( expected );
   }
 
+  [Fact]
+  public void GetDescending_ShouldWrapAround_WhenIteratingBeyondCount()
+  {
+    // Arrange
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    // Act
+    var items = scale.GetDescending()
+                     .Take( scale.Count + 1 )
+                     .ToArray();
+
+    // Assert
+    items.Length.Should()
+         .Be( scale.Count + 1 );
+
+    items[0]
+      .Should()
+      .Be( scale[0] );
+
+    items[scale.Count]
+      .Should()
+      .Be( scale[0] ); // wrapped
+  }
+
+  [Fact]
+  public void GetEnharmonicScale_ShouldReturnAppropriateScale_DependingOnEnharmonicAvailability()
+  {
+    // Arrange
+    var scale = new Scale( PitchClass.DSharp, "Major" );
+
+    var expectedPitchForLookup = scale.Root.Accidental >= Accidental.Natural ? scale.Root + 1 : scale.Root - 1;
+    var enharmonicRoot = scale.Root.GetEnharmonic( expectedPitchForLookup.NoteName );
+
+    // Act
+    var actual = scale.GetEnharmonicScale();
+
+    // Assert
+    if( enharmonicRoot == null || enharmonicRoot.Value == scale.Root )
+    {
+      // Implementation returns the same instance in this case
+      ReferenceEquals( actual, scale )
+        .Should()
+        .BeTrue();
+    }
+    else
+    {
+      actual.Should()
+            .NotBeSameAs( scale );
+
+      actual.Root.Should()
+            .Be( enharmonicRoot.Value );
+
+      actual.Formula.Should()
+            .BeSameAs( scale.Formula );
+    }
+  }
+
   [Theory]
   [MemberData( nameof( EnharmonicScaleData ) )]
   public void GetEnharmonicScale_ShouldReturnEquivalentScale_WhenEnharmonicExists(
@@ -485,6 +734,37 @@ public sealed class ScaleTest
 
     actual.Should()
           .BeEquivalentTo( expected );
+  }
+
+  [Fact]
+  public void GetEnharmonicScale_ShouldReturnSameInstance_WhenNoEnharmonicExistsOrSame()
+  {
+    // Arrange
+    var scale = new Scale( PitchClass.C, "Major" );
+
+    // Act
+    var actual = scale.GetEnharmonicScale();
+
+    // Assert
+    ReferenceEquals( actual, scale )
+      .Should()
+      .BeTrue();
+  }
+
+  [Fact]
+  public void GetHashCode_ShouldDiffer_WhenDifferentScales()
+  {
+    // Arrange
+    var a = new Scale( PitchClass.C, "Major" );
+    var b = new Scale( PitchClass.D, "Major" );
+
+    // Act
+    var ha = a.GetHashCode();
+    var hb = b.GetHashCode();
+
+    // Assert
+    ha.Should()
+      .NotBe( hb );
   }
 
   [Fact]
@@ -574,6 +854,30 @@ public sealed class ScaleTest
 
     actual.Should()
           .BeEquivalentTo( expectedNotes.ParsePitches() );
+  }
+
+  [Fact]
+  public void Render_ShouldReturnPitchesWithExpectedOctave_WhenCalled()
+  {
+    // Arrange
+    var scale = new Scale( PitchClass.C, "Major" );
+    var octave = 3;
+
+    // Act
+    var actual = scale.Render( octave )
+                      .Take( scale.Formula.Intervals.Count )
+                      .ToArray();
+
+    // Assert
+    actual.Should()
+          .HaveCount( scale.Formula.Intervals.Count );
+
+    for( var i = 0; i < actual.Length; ++i )
+    {
+      actual[i]
+        .PitchClass.Should()
+        .Be( scale[i] );
+    }
   }
 
   [Theory]

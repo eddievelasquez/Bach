@@ -171,6 +171,14 @@ public sealed class IntervalTest
     { IntervalQuantity.Second, IntervalQuality.Diminished, true, 0 }
   };
 
+  public static TheoryData<IntervalQuantity, IntervalQuality> InvalidCombinations => new()
+  {
+    { IntervalQuantity.Unison, IntervalQuality.Diminished },
+    { IntervalQuantity.Unison, IntervalQuality.Minor },
+    { IntervalQuantity.Unison, IntervalQuality.Major },
+    { IntervalQuantity.Second, IntervalQuality.Perfect }
+  };
+
   #endregion
 
   #region Public Methods
@@ -368,6 +376,49 @@ public sealed class IntervalTest
                   .BeTrue();
   }
 
+  [Fact]
+  public void InternalConstructor_ShouldSetQualityBasedOnSemitoneAndDescending()
+  {
+    // Arrange
+    var quantity = IntervalQuantity.Unison;
+    var semitones = 1; // Unison augmented maps to 1 semitone
+
+    // Act
+    var interval = new Interval( quantity, semitones, true );
+
+    // Assert
+    interval.Quantity.Should()
+            .Be( quantity );
+
+    interval.Quality.Should()
+            .Be( IntervalQuality.Augmented );
+
+    interval.IsAscending.Should()
+            .BeFalse();
+  }
+
+  [Fact]
+  public void InternalConstructor_UnisonZeroDescendingTrue_ShouldBeAscending()
+  {
+    // Arrange
+    var quantity = IntervalQuantity.Unison;
+    var semitones = 0; // Unison perfect maps to 0 semitones
+
+    // Act
+    var interval = new Interval( quantity, semitones, true );
+
+    // Assert
+    interval.Quantity.Should()
+            .Be( quantity );
+
+    interval.Quality.Should()
+            .Be( IntervalQuality.Perfect );
+
+    // semitoneCount == 0 for unison should prevent descending state
+    interval.IsAscending.Should()
+            .BeTrue();
+  }
+
   [Theory]
   [MemberData( nameof( InversionData ) )]
   public void Inversion_ShouldReturnCorrectInterval(
@@ -433,6 +484,84 @@ public sealed class IntervalTest
 
     act.Should()
        .Throw<FormatException>();
+  }
+
+  [Fact]
+  public void PublicConstructor_ShouldBeDescending_WhenNonUnisonAndDescendingTrue()
+  {
+    // Arrange
+    var quantity = IntervalQuantity.Second;
+    var quality = IntervalQuality.Major;
+
+    // Act
+    var interval = new Interval( quantity, quality, true );
+
+    // Assert
+    interval.Quantity.Should()
+            .Be( quantity );
+
+    interval.Quality.Should()
+            .Be( quality );
+
+    interval.IsAscending.Should()
+            .BeFalse();
+  }
+
+  [Fact]
+  public void PublicConstructor_ShouldSetQuantityQualityAndBeAscending_WhenNotDescending()
+  {
+    // Arrange
+    var quantity = IntervalQuantity.Second;
+    var quality = IntervalQuality.Major;
+
+    // Act
+    var interval = new Interval( quantity, quality );
+
+    // Assert
+    interval.Quantity.Should()
+            .Be( quantity );
+
+    interval.Quality.Should()
+            .Be( quality );
+
+    interval.IsAscending.Should()
+            .BeTrue();
+  }
+
+  [Theory]
+  [MemberData( nameof( InvalidCombinations ) )]
+  public void PublicConstructor_ShouldThrowArgumentException_ForInvalidCombination(
+    IntervalQuantity q,
+    IntervalQuality qual )
+  {
+    // Act
+    Action act = () => _ = new Interval( q, qual );
+
+    // Assert
+    act.Should()
+       .Throw<ArgumentException>();
+  }
+
+  [Fact]
+  public void PublicConstructor_UnisonDescendingTrue_ShouldRemainAscending()
+  {
+    // Arrange
+    var quantity = IntervalQuantity.Unison;
+    var quality = IntervalQuality.Perfect;
+
+    // Act
+    var interval = new Interval( quantity, quality, true );
+
+    // Assert
+    interval.Quantity.Should()
+            .Be( quantity );
+
+    interval.Quality.Should()
+            .Be( quality );
+
+    // Unison with perfect (0 semitones) should not be considered descending even if "descending" was true
+    interval.IsAscending.Should()
+            .BeTrue();
   }
 
   [Fact]
