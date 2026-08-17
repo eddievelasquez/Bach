@@ -46,6 +46,7 @@ public static class Registry
   private const string LIBRARY_FILE_NAME = "Bach.Model.Library.json";
 
   private static readonly FrozenDictionary<string, ChordFormula> s_chordFormulaBySymbol;
+  private static readonly FrozenDictionary<string,ChordFormula>.AlternateLookup<ReadOnlySpan<char>> s_chordFormulaBySymbolAltLookup;
 
   #endregion
 
@@ -103,6 +104,7 @@ public static class Registry
     }
 
     s_chordFormulaBySymbol = chordFormulaBySymbol.ToFrozenDictionary( StringComparer.OrdinalIgnoreCase );
+    s_chordFormulaBySymbolAltLookup = s_chordFormulaBySymbol.GetAlternateLookup<ReadOnlySpan<char>>();
 
     // Load Instrument definitions
     foreach( var instrument in library.StringedInstruments )
@@ -169,6 +171,22 @@ public static class Registry
     [MaybeNullWhen( false )] out ChordFormula result )
   {
     return s_chordFormulaBySymbol.TryGetValue( symbol, out result );
+  }
+
+  /// <summary>
+  /// Tries to get a chord formula by symbol.
+  /// </summary>
+  /// <param name="symbol">The symbol of the chord formula.</param>
+  /// <param name="result">
+  ///   When this method returns, contains the chord formula associated with the specified symbol, if found;
+  ///   otherwise, null. This parameter is passed uninitialized.
+  /// </param>
+  /// <returns>true if the chord formula is found; otherwise, false.</returns>
+  public static bool TryGetChordFormulaBySymbol(
+    ReadOnlySpan<char> symbol,
+    [MaybeNullWhen( false )] out ChordFormula result )
+  {
+    return s_chordFormulaBySymbolAltLookup.TryGetValue( symbol, out result );
   }
 
   /// <summary>

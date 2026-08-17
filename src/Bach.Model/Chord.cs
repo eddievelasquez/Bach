@@ -247,7 +247,7 @@ public class Chord
     var nonSymbolPos = tail.IndexOfNonChordSymbol();
     var formulaSymbolSpan = nonSymbolPos != -1 ? tail[..nonSymbolPos] : tail;
 
-    if( !Registry.TryGetChordFormulaBySymbol( formulaSymbolSpan.ToString(), out var chordFormula ) )
+    if( !Registry.TryGetChordFormulaBySymbol( formulaSymbolSpan, out var chordFormula ) )
     {
       chord = null;
       return false;

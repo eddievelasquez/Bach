@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Bach.Model.Internal;
@@ -97,7 +96,7 @@ public class PitchChord
     int octave = 4,
     int inversion = 0 )
   {
-    return Create( Pitch.Create( root, octave ), Registry.ChordFormulas[formulaIdOrName], inversion );
+    return Create( root, Registry.ChordFormulas[formulaIdOrName], octave, inversion );
   }
 
   /// <summary>
@@ -178,7 +177,7 @@ public class PitchChord
     var nonSymbolPos = tail.IndexOfNonChordSymbol();
     var formulaSymbolSpan = nonSymbolPos != -1 ? tail[..nonSymbolPos] : tail;
 
-    if( !Registry.TryGetChordFormulaBySymbol( formulaSymbolSpan.ToString(), out var chordFormula ) )
+    if( !Registry.TryGetChordFormulaBySymbol( formulaSymbolSpan, out var chordFormula ) )
     {
       chord = null;
       return false;
