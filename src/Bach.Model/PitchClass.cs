@@ -206,6 +206,13 @@ public readonly struct PitchClass
   /// <value>The accidental.</value>
   public Accidental Accidental => (Accidental) _accidental;
 
+  /// <summary>
+  /// Gets the pitch of the pitch class at the specified octave.
+  /// </summary>
+  /// <param name="octave">The octave.</param>
+  /// <returns>The pitch.</returns>
+  public Pitch this[int octave] => Pitch.Create( this, octave );
+
   #endregion
 
   #region Public Methods

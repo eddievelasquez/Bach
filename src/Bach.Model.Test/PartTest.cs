@@ -1,91 +1,217 @@
+// Module Name: PartTest.cs
+// Project:     Bach.Model.Test
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+//
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+// and associated documentation files (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
+// do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 namespace Bach.Model.Test;
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 
 public sealed class PartTest
 {
+  #region Public Methods
+
   [Fact]
   public void AddAndEnumerate_ShouldStoreEventsAndPreserveChordsAsSingleEvents()
   {
-    var part = new Part();
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( pitch, ChordFormula.Major );
-
-    part.Add( pitch );
-    part.Add( chord );
-
-    part.Count.Should().Be( 2 );
+    var part = Part.Parse( "C4,C" );
 
     var events = part.ToArray();
-    events.Should().HaveCount( 2 );
-    events[0].Should().Be(pitch);
-    events[1].Should().Be(chord);
+
+    events.Should()
+          .HaveCount( 2 );
+
+    events[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    events[1]
+      .Should()
+      .Be( PitchChord.Parse( "C" ) );
   }
 
   [Fact]
-  public void Part_ShouldInitializeEmptyList_WhenDefaultConstructorIsUsed()
-  {
-    // Arrange & Act
-    var part = new Part();
-
-    // Assert
-    part.Count.Should().Be( 0 );
-    part.IsReadOnly.Should().BeFalse();
-  }
-
-  [Fact]
-  public void Part_ShouldInitializeWithEvents_WhenEventsAreProvided()
-  {
-    // Arrange
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-
-    // Act
-    var part = new Part( [pitch1, pitch2] );
-
-    // Assert
-    part.Count.Should().Be( 2 );
-    part[0].Should().Be( pitch1 );
-    part[1].Should().Be( pitch2 );
-  }
-
-  [Fact]
-  public void Part_ShouldThrowArgumentNullException_WhenEventsIsNull()
-  {
-    // Arrange
-    IEnumerable<IPartEvent>? events = null;
-
-    // Act
-    var act = () => new Part( events! );
-
-    // Assert
-    act.Should().Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void Part_ShouldInitializeWithCapacity_WhenCapacityIsProvided()
-  {
-    // Arrange
-    var part = new Part( 10 );
-
-    // Act & Assert
-    part.Count.Should().Be( 0 );
-    part.IsReadOnly.Should().BeFalse();
-  }
-
-  [Fact]
-  public void Count_ShouldReturnZero_WhenPartIsEmpty()
+  public void Add_ShouldThrowArgumentNullException_WhenPartEventIsNull()
   {
     // Arrange
     var part = new Part();
 
     // Act
-    var count = part.Count;
+    var act = () => part.Add( null! );
 
     // Assert
-    count.Should().Be( 0 );
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void Clear_ShouldDoNothing_WhenPartIsEmpty()
+  {
+    // Arrange
+    var part = new Part();
+
+    // Act
+    part.Clear();
+
+    // Assert
+    part.Count.Should()
+        .Be( 0 );
+  }
+
+  [Fact]
+  public void Clear_ShouldRemoveAllEvents_WhenCalled()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4" );
+
+    // Act
+    part.Clear();
+
+    // Assert
+    part.Count.Should()
+        .Be( 0 );
+  }
+
+  [Fact]
+  public void Contains_ShouldReturnFalse_WhenEventDoesNotExist()
+  {
+    // Arrange
+    var part = Part.Parse( "C4" );
+
+    // Act
+    var result = part.Contains( PitchClass.D[4] );
+
+    // Assert
+    result.Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Contains_ShouldReturnFalse_WhenPartIsEmpty()
+  {
+    // Arrange
+    var part = new Part();
+
+    // Act
+    var result = part.Contains( PitchClass.C[4] );
+
+    // Assert
+    result.Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Contains_ShouldReturnTrue_WhenEventExists()
+  {
+    // Arrange
+    var part = Part.Parse( "C4" );
+
+    // Act
+    var result = part.Contains( PitchClass.C[4] );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+  }
+
+  [Fact]
+  public void Contains_ShouldThrowArgumentNullException_WhenItemIsNull()
+  {
+    // Arrange
+    var part = new Part();
+
+    // Act
+    var act = () => part.Contains( null! );
+
+    // Assert
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void CopyTo_ShouldCopyEventsToArrayAtIndex_WhenArrayIndexIsProvided()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4" );
+    var array = new IPartEvent[4];
+
+    // Act
+    part.CopyTo( array, 2 );
+
+    // Assert
+    array[0]
+      .Should()
+      .BeNull();
+
+    array[1]
+      .Should()
+      .BeNull();
+
+    array[2]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    array[3]
+      .Should()
+      .Be( PitchClass.D[4] );
+  }
+
+  [Fact]
+  public void CopyTo_ShouldCopyEventsToArray_WhenCalled()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4" );
+    var array = new IPartEvent[2];
+
+    // Act
+    part.CopyTo( array, 0 );
+
+    // Assert
+    array.Should()
+         .HaveCount( 2 );
+
+    array[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    array[1]
+      .Should()
+      .Be( PitchClass.D[4] );
+  }
+
+  [Fact]
+  public void CopyTo_ShouldThrowArgumentNullException_WhenArrayIsNull()
+  {
+    // Arrange
+    var part = new Part();
+
+    // Act
+    var act = () => part.CopyTo( null!, 0 );
+
+    // Assert
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
@@ -100,200 +226,22 @@ public sealed class PartTest
     var count = part.Count;
 
     // Assert
-    count.Should().Be( 1 );
+    count.Should()
+         .Be( 1 );
   }
 
   [Fact]
-  public void IsReadOnly_ShouldReturnFalse()
+  public void Count_ShouldReturnZero_WhenPartIsEmpty()
   {
     // Arrange
     var part = new Part();
 
     // Act
-    var isReadOnly = part.IsReadOnly;
+    var count = part.Count;
 
     // Assert
-    isReadOnly.Should().BeFalse();
-  }
-
-  [Fact]
-  public void Add_ShouldThrowArgumentNullException_WhenPartEventIsNull()
-  {
-    // Arrange
-    var part = new Part();
-
-    // Act
-    var act = () => part.Add( null! );
-
-    // Assert
-    act.Should().Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void Clear_ShouldRemoveAllEvents_WhenCalled()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-
-    // Act
-    part.Clear();
-
-    // Assert
-    part.Count.Should().Be( 0 );
-  }
-
-  [Fact]
-  public void Clear_ShouldDoNothing_WhenPartIsEmpty()
-  {
-    // Arrange
-    var part = new Part();
-
-    // Act
-    part.Clear();
-
-    // Assert
-    part.Count.Should().Be( 0 );
-  }
-
-  [Fact]
-  public void Contains_ShouldReturnTrue_WhenEventExists()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    part.Add( pitch );
-
-    // Act
-    var result = part.Contains( pitch );
-
-    // Assert
-    result.Should().BeTrue();
-  }
-
-  [Fact]
-  public void Contains_ShouldReturnFalse_WhenEventDoesNotExist()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-
-    // Act
-    var result = part.Contains( pitch2 );
-
-    // Assert
-    result.Should().BeFalse();
-  }
-
-  [Fact]
-  public void Contains_ShouldReturnFalse_WhenPartIsEmpty()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-
-    // Act
-    var result = part.Contains( pitch );
-
-    // Assert
-    result.Should().BeFalse();
-  }
-
-  [Fact]
-  public void Contains_ShouldThrowArgumentNullException_WhenItemIsNull()
-  {
-    // Arrange
-    var part = new Part();
-
-    // Act
-    var act = () => part.Contains( null! );
-
-    // Assert
-    act.Should().Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void CopyTo_ShouldCopyEventsToArray_WhenCalled()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-    var array = new IPartEvent[2];
-
-    // Act
-    part.CopyTo( array, 0 );
-
-    // Assert
-    array.Should().HaveCount( 2 );
-    array[0].Should().Be( pitch1 );
-    array[1].Should().Be( pitch2 );
-  }
-
-  [Fact]
-  public void CopyTo_ShouldCopyEventsToArrayAtIndex_WhenArrayIndexIsProvided()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-    var array = new IPartEvent[4];
-
-    // Act
-    part.CopyTo( array, 2 );
-
-    // Assert
-    array[0].Should().BeNull();
-    array[1].Should().BeNull();
-    array[2].Should().Be( pitch1 );
-    array[3].Should().Be( pitch2 );
-  }
-
-  [Fact]
-  public void CopyTo_ShouldThrowArgumentNullException_WhenArrayIsNull()
-  {
-    // Arrange
-    var part = new Part();
-
-    // Act
-    var act = () => part.CopyTo( null!, 0 );
-
-    // Assert
-    act.Should().Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void GetEnumerator_ShouldReturnEnumerator_WhenCalled()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-
-    // Act
-    var enumerator = part.GetEnumerator();
-
-    // Assert
-    enumerator.Should().NotBeNull();
-    var events = new List<IPartEvent>();
-    while ( enumerator.MoveNext() )
-    {
-      events.Add( enumerator.Current );
-    }
-    events.Should().HaveCount( 2 );
-    events[0].Should().Be( pitch1 );
-    events[1].Should().Be( pitch2 );
+    count.Should()
+         .Be( 0 );
   }
 
   [Fact]
@@ -306,68 +254,102 @@ public sealed class PartTest
     var enumerator = part.GetEnumerator();
 
     // Assert
-    enumerator.Should().NotBeNull();
-    enumerator.MoveNext().Should().BeFalse();
+    enumerator.Should()
+              .NotBeNull();
+
+    enumerator.MoveNext()
+              .Should()
+              .BeFalse();
+  }
+
+  [Fact]
+  public void GetEnumerator_ShouldReturnEnumerator_WhenCalled()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4" );
+
+    // Act
+    var enumerator = part.GetEnumerator();
+
+    // Assert
+    enumerator.Should()
+              .NotBeNull();
+    var events = new List<IPartEvent>();
+
+    while( enumerator.MoveNext() )
+    {
+      events.Add( enumerator.Current );
+    }
+
+    events.Should()
+          .HaveCount( 2 );
+
+    events[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    events[1]
+      .Should()
+      .Be( PitchClass.D[4] );
   }
 
   [Fact]
   public void IEnumerableGetEnumerator_ShouldReturnEnumerator_WhenCalled()
   {
     // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
+    var part = Part.Parse( "C4,D4" );
 
     // Act
-    var enumerator = ( (System.Collections.IEnumerable)part ).GetEnumerator();
+    var enumerator = ( (IEnumerable) part ).GetEnumerator();
 
     // Assert
-    enumerator.Should().NotBeNull();
+    enumerator.Should()
+              .NotBeNull();
     var events = new List<IPartEvent>();
-    while ( enumerator.MoveNext() )
+
+    while( enumerator.MoveNext() )
     {
-      events.Add( (IPartEvent)enumerator.Current );
+      events.Add( (IPartEvent) enumerator.Current );
     }
-    events.Should().HaveCount( 2 );
-    events[0].Should().Be( pitch1 );
-    events[1].Should().Be( pitch2 );
+
+    events.Should()
+          .HaveCount( 2 );
+
+    events[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    events[1]
+      .Should()
+      .Be( PitchClass.D[4] );
   }
 
   [Fact]
   public void IndexOf_ShouldReturnCorrectIndex_WhenEventExists()
   {
     // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    var pitch3 = Pitch.Create( PitchClass.E, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-    part.Add( pitch3 );
+    var part = Part.Parse( "C4,D4,E4" );
 
     // Act
-    var index = part.IndexOf( pitch2 );
+    var index = part.IndexOf( PitchClass.D[4] );
 
     // Assert
-    index.Should().Be( 1 );
+    index.Should()
+         .Be( 1 );
   }
 
   [Fact]
   public void IndexOf_ShouldReturnMinusOne_WhenEventDoesNotExist()
   {
     // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
+    var part = Part.Parse( "C4" );
 
     // Act
-    var index = part.IndexOf( pitch2 );
+    var index = part.IndexOf( PitchClass.D[4] );
 
     // Assert
-    index.Should().Be( -1 );
+    index.Should()
+         .Be( -1 );
   }
 
   [Fact]
@@ -375,13 +357,13 @@ public sealed class PartTest
   {
     // Arrange
     var part = new Part();
-    var pitch = Pitch.Create( PitchClass.C, 4 );
 
     // Act
-    var index = part.IndexOf( pitch );
+    var index = part.IndexOf( PitchClass.C[4] );
 
     // Assert
-    index.Should().Be( -1 );
+    index.Should()
+         .Be( -1 );
   }
 
   [Fact]
@@ -394,64 +376,79 @@ public sealed class PartTest
     var act = () => part.IndexOf( null! );
 
     // Assert
-    act.Should().Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void Insert_ShouldInsertEventAtIndex_WhenCalled()
-  {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.E, 4 );
-    var pitch3 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-
-    // Act
-    part.Insert( 1, pitch3 );
-
-    // Assert
-    part.Count.Should().Be( 3 );
-    part[0].Should().Be( pitch1 );
-    part[1].Should().Be( pitch3 );
-    part[2].Should().Be( pitch2 );
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
   public void Insert_ShouldInsertEventAtBeginning_WhenIndexIsZero()
   {
     // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
+    var part = Part.Parse("C4");
+    var pitch = Pitch.Create( PitchClass.D, 4 );
 
     // Act
-    part.Insert( 0, pitch2 );
+    part.Insert( 0, pitch );
 
     // Assert
-    part.Count.Should().Be( 2 );
-    part[0].Should().Be( pitch2 );
-    part[1].Should().Be( pitch1 );
+    part.Count.Should()
+        .Be( 2 );
+
+    part[0]
+      .Should()
+      .Be( pitch );
+
+    part[1]
+      .Should()
+      .Be( PitchClass.C[4] );
   }
 
   [Fact]
   public void Insert_ShouldInsertEventAtEnd_WhenIndexIsCount()
   {
     // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
+    var part = Part.Parse( "C4" );
 
     // Act
-    part.Insert( part.Count, pitch2 );
+    part.Insert( part.Count, PitchClass.D[4] );
 
     // Assert
-    part.Count.Should().Be( 2 );
-    part[0].Should().Be( pitch1 );
-    part[1].Should().Be( pitch2 );
+    part.Count.Should()
+        .Be( 2 );
+
+    part[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    part[1]
+      .Should()
+      .Be( PitchClass.D[4] );
+  }
+
+  [Fact]
+  public void Insert_ShouldInsertEventAtIndex_WhenCalled()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,E4" );
+
+    // Act
+    part.Insert( 1, PitchClass.D[4]);
+
+    // Assert
+    part.Count.Should()
+        .Be( 3 );
+
+    part[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    part[1]
+      .Should()
+      .Be( PitchClass.D[4] );
+
+    part[2]
+      .Should()
+      .Be( PitchClass.E[4] );
   }
 
   [Fact]
@@ -464,46 +461,162 @@ public sealed class PartTest
     var act = () => part.Insert( 0, null! );
 
     // Assert
-    act.Should().Throw<ArgumentNullException>();
+    act.Should()
+       .Throw<ArgumentNullException>();
   }
 
   [Fact]
-  public void Remove_ShouldReturnTrueAndRemoveEvent_WhenEventExists()
+  public void IsReadOnly_ShouldReturnFalse()
   {
     // Arrange
     var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    var pitch3 = Pitch.Create( PitchClass.E, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-    part.Add( pitch3 );
 
     // Act
-    var result = part.Remove( pitch2 );
+    var isReadOnly = part.IsReadOnly;
 
     // Assert
-    result.Should().BeTrue();
-    part.Count.Should().Be( 2 );
-    part[0].Should().Be( pitch1 );
-    part[1].Should().Be( pitch3 );
+    isReadOnly.Should()
+              .BeFalse();
+  }
+
+  [Fact]
+  public void Part_ShouldInitializeEmptyList_WhenDefaultConstructorIsUsed()
+  {
+    // Arrange & Act
+    var part = new Part();
+
+    // Assert
+    part.Count.Should()
+        .Be( 0 );
+
+    part.IsReadOnly.Should()
+        .BeFalse();
+  }
+
+  [Fact]
+  public void Part_ShouldInitializeWithCapacity_WhenCapacityIsProvided()
+  {
+    // Arrange
+    var part = new Part( 10 );
+
+    // Act & Assert
+    part.Count.Should()
+        .Be( 0 );
+
+    part.IsReadOnly.Should()
+        .BeFalse();
+  }
+
+  [Fact]
+  public void Part_ShouldInitializeWithEvents_WhenEventsAreProvided()
+  {
+    // Arrange
+    var pitch1 = Pitch.Create( PitchClass.C, 4 );
+    var pitch2 = Pitch.Create( PitchClass.D, 4 );
+
+    // Act
+    var part = new Part( [pitch1, pitch2] );
+
+    // Assert
+    part.Count.Should()
+        .Be( 2 );
+
+    part[0]
+      .Should()
+      .Be( pitch1 );
+
+    part[1]
+      .Should()
+      .Be( pitch2 );
+  }
+
+  [Fact]
+  public void Part_ShouldThrowArgumentNullException_WhenEventsIsNull()
+  {
+    // Arrange
+    IEnumerable<IPartEvent>? events = null;
+
+    // Act
+    var act = () => new Part( events! );
+
+    // Assert
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void RemoveAt_ShouldRemoveEventAtIndex_WhenCalled()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4,E4" );
+
+    // Act
+    part.RemoveAt( 1 );
+
+    // Assert
+    part.Count.Should()
+        .Be( 2 );
+
+    part[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    part[1]
+      .Should()
+      .Be( PitchClass.E[4] );
+  }
+
+  [Fact]
+  public void RemoveAt_ShouldRemoveFirstElement_WhenIndexIsZero()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4" );
+
+    // Act
+    part.RemoveAt( 0 );
+
+    // Assert
+    part.Count.Should()
+        .Be( 1 );
+
+    part[0]
+      .Should()
+      .Be( PitchClass.D[4] );
+  }
+
+  [Fact]
+  public void RemoveAt_ShouldRemoveLastElement_WhenIndexIsCountMinusOne()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4" );
+
+    // Act
+    part.RemoveAt( part.Count - 1 );
+
+    // Assert
+    part.Count.Should()
+        .Be( 1 );
+
+    part[0]
+      .Should()
+      .Be( PitchClass.C[4] );
   }
 
   [Fact]
   public void Remove_ShouldReturnFalse_WhenEventDoesNotExist()
   {
     // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
+    var part = Part.Parse( "C4" );
 
     // Act
-    var result = part.Remove( pitch2 );
+    var result = part.Remove( PitchClass.D[4] );
 
     // Assert
-    result.Should().BeFalse();
-    part.Count.Should().Be( 1 );
+    result.Should()
+          .BeFalse();
+
+    part.Count.Should()
+        .Be( 1 );
   }
 
   [Fact]
@@ -511,14 +624,41 @@ public sealed class PartTest
   {
     // Arrange
     var part = new Part();
-    var pitch = Pitch.Create( PitchClass.C, 4 );
 
     // Act
-    var result = part.Remove( pitch );
+    var result = part.Remove( PitchClass.C[4] );
 
     // Assert
-    result.Should().BeFalse();
-    part.Count.Should().Be( 0 );
+    result.Should()
+          .BeFalse();
+
+    part.Count.Should()
+        .Be( 0 );
+  }
+
+  [Fact]
+  public void Remove_ShouldReturnTrueAndRemoveEvent_WhenEventExists()
+  {
+    // Arrange
+    var part = Part.Parse( "C4,D4,E4" );
+
+    // Act
+    var result = part.Remove( PitchClass.D[4] );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+
+    part.Count.Should()
+        .Be( 2 );
+
+    part[0]
+      .Should()
+      .Be( PitchClass.C[4] );
+
+    part[1]
+      .Should()
+      .Be( PitchClass.E[4] );
   }
 
   [Fact]
@@ -531,63 +671,137 @@ public sealed class PartTest
     var act = () => part.Remove( null! );
 
     // Assert
-    act.Should().Throw<ArgumentNullException>();
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  #endregion
+
+  #region Parsing
+
+  [Theory]
+  [InlineData( "C4", 1, "" )]
+  [InlineData( "C4, E4, G4", 3, "" )]
+  [InlineData( "Cmaj7", 1, "" )]
+  [InlineData( "C4, Am, G5", 3, "" )]
+  [InlineData( "", 0, "" )]
+  [InlineData( "  ", 0, "" )]
+  [InlineData( " C4 , E4 ", 2, " " )]
+  [InlineData( "C4,,E4", 2, "" )]
+  [InlineData( "C4, E4, ", 2, ", " )]
+  public void TryParse_ShouldParseValidInputs(
+    string input,
+    int expectedCount,
+    string expectedTail )
+  {
+    var result = Part.TryParse( input.AsSpan(), null, out var part, out var tail );
+    result.Should()
+          .BeTrue();
+    part.Should()
+        .NotBeNull();
+    part!.Count.Should()
+         .Be( expectedCount );
+    tail.ToString()
+        .Should()
+        .Be( expectedTail );
   }
 
   [Fact]
-  public void RemoveAt_ShouldRemoveEventAtIndex_WhenCalled()
+  public void TryParse_ShouldHandlePitchAndPitchChord()
   {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    var pitch3 = Pitch.Create( PitchClass.E, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-    part.Add( pitch3 );
+    var input = "C4, Cmaj7, E4, Am".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+    result.Should()
+          .BeTrue();
+    part.Should()
+        .HaveCount( 4 );
+    part![0].Should()
+            .Be( Pitch.Parse( "C4" ) );
+    part![1].Should()
+            .Be( PitchChord.Parse( "Cmaj7" ) );
+    part![2].Should()
+            .Be( Pitch.Parse( "E4" ) );
+    part![3].Should()
+            .Be( PitchChord.Parse( "Am" ) );
+  }
 
-    // Act
-    part.RemoveAt( 1 );
-
-    // Assert
-    part.Count.Should().Be( 2 );
-    part[0].Should().Be( pitch1 );
-    part[1].Should().Be( pitch3 );
+  [Theory]
+  [InlineData( "invalid" )]
+  [InlineData( "C4, invalid" )]
+  public void TryParse_ShouldReturnFalseForInvalidInputs( string input )
+  {
+    var result = Part.TryParse( input.AsSpan(), null, out var part, out var tail );
+    result.Should()
+          .BeFalse();
   }
 
   [Fact]
-  public void RemoveAt_ShouldRemoveFirstElement_WhenIndexIsZero()
+  public void TryParse_EmptySegments_ShouldBeIgnored()
   {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
-
-    // Act
-    part.RemoveAt( 0 );
-
-    // Assert
-    part.Count.Should().Be( 1 );
-    part[0].Should().Be( pitch2 );
+    var input = "C4, , , E4".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+    result.Should()
+          .BeTrue();
+    part.Should()
+        .HaveCount( 2 );
+    part![0].Should()
+            .Be( Pitch.Parse( "C4" ) );
+    part![1].Should()
+            .Be( Pitch.Parse( "E4" ) );
+    tail.IsEmpty.Should()
+        .BeTrue();
   }
 
   [Fact]
-  public void RemoveAt_ShouldRemoveLastElement_WhenIndexIsCountMinusOne()
+  public void TryParse_WithOnlyCommas_ShouldReturnTrueAndEmptyPart()
   {
-    // Arrange
-    var part = new Part();
-    var pitch1 = Pitch.Create( PitchClass.C, 4 );
-    var pitch2 = Pitch.Create( PitchClass.D, 4 );
-    part.Add( pitch1 );
-    part.Add( pitch2 );
+    var input = ", , ,".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+    result.Should()
+          .BeTrue();
+    part.Should()
+        .BeEmpty();
 
-    // Act
-    part.RemoveAt( part.Count - 1 );
-
-    // Assert
-    part.Count.Should().Be( 1 );
-    part[0].Should().Be( pitch1 );
+    // Since no events were parsed, tail should be the trimmed input.
+    tail.ToString()
+        .Should()
+        .Be( ", , ," );
   }
+
+  [Fact]
+  public void Parse_ShouldThrowFormatExceptionForInvalidInput()
+  {
+    var act = () => Part.Parse( "invalid".AsSpan(), null );
+    act.Should()
+       .Throw<FormatException>();
+  }
+
+  [Fact]
+  public void TryParse_ShouldHandlePitchChordWithBassNote()
+  {
+    var input = "Cmaj7/E, G4".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+    result.Should()
+          .BeTrue();
+    part.Should()
+        .HaveCount( 2 );
+    var chord = (PitchChord) part![0];
+    chord.Root.PitchClass.Should()
+         .Be( PitchClass.C );
+    chord.Inversion.Should()
+         .Be( 1 ); // E is the 3rd of Cmaj7
+  }
+
+  [Fact]
+  public void TryParse_PrefersPitchChordOverPitch()
+  {
+    var input = "C, E, G".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+    result.Should()
+          .BeTrue();
+    part![0].Should()
+            .BeOfType<PitchChord>();
+  }
+
+  #endregion
 }
