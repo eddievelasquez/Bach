@@ -30,8 +30,8 @@ using System.Text;
 using Bach.Model.Internal;
 
 /// <summary>
-///   A PitchClass represents a combination of a <see cref="P:Bach.Model.NoteName" />
-///   and an optional <see cref="P:Bach.Model.Accidental" /> following
+///   A PitchClass represents a combination of a <see cref="P:Bach.Model.NoteName"/>
+///   and an optional <see cref="P:Bach.Model.Accidental"/> following
 ///   the <see href="https://en.wikipedia.org/wiki/Scientific_pitch_notation">Scientific Pitch Notation</see>.
 /// </summary>
 public readonly struct PitchClass
@@ -45,40 +45,23 @@ public readonly struct PitchClass
 
   private static readonly PitchClass[] s_pitchClasses =
   [
-    new( 0, 0, NoteName.D, Accidental.DoubleFlat ),
-    new( 1, 0, NoteName.C, Accidental.Natural ),
-    new( 2, 0, NoteName.B, Accidental.Sharp ),
-    new( 3, 1, NoteName.D, Accidental.Flat ),
-    new( 4, 1, NoteName.C, Accidental.Sharp ),
-    new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
-    new( 6, 2, NoteName.E, Accidental.DoubleFlat ),
-    new( 7, 2, NoteName.D, Accidental.Natural ),
-    new( 8, 2, NoteName.C, Accidental.DoubleSharp ),
-    new( 9, 3, NoteName.F, Accidental.DoubleFlat ),
-    new( 10, 3, NoteName.E, Accidental.Flat ),
-    new( 11, 3, NoteName.D, Accidental.Sharp ),
-    new( 12, 4, NoteName.F, Accidental.Flat ),
-    new( 13, 4, NoteName.E, Accidental.Natural ),
-    new( 14, 4, NoteName.D, Accidental.DoubleSharp ),
-    new( 15, 5, NoteName.G, Accidental.DoubleFlat ),
-    new( 16, 5, NoteName.F, Accidental.Natural ),
-    new( 17, 5, NoteName.E, Accidental.Sharp ),
-    new( 18, 6, NoteName.G, Accidental.Flat ),
-    new( 19, 6, NoteName.F, Accidental.Sharp ),
-    new( 20, 6, NoteName.E, Accidental.DoubleSharp ),
-    new( 21, 7, NoteName.A, Accidental.DoubleFlat ),
-    new( 22, 7, NoteName.G, Accidental.Natural ),
-    new( 23, 7, NoteName.F, Accidental.DoubleSharp ),
-    new( 24, 8, NoteName.A, Accidental.Flat ),
-    new( 25, 8, NoteName.G, Accidental.Sharp ),
-    new( 26, 9, NoteName.B, Accidental.DoubleFlat ),
-    new( 27, 9, NoteName.A, Accidental.Natural ),
-    new( 28, 9, NoteName.G, Accidental.DoubleSharp ),
-    new( 29, 10, NoteName.C, Accidental.DoubleFlat ),
-    new( 30, 10, NoteName.B, Accidental.Flat ),
-    new( 31, 10, NoteName.A, Accidental.Sharp ),
-    new( 32, 11, NoteName.C, Accidental.Flat ),
-    new( 33, 11, NoteName.B, Accidental.Natural ),
+    new( 0, 0, NoteName.D, Accidental.DoubleFlat ), new( 1, 0, NoteName.C, Accidental.Natural ),
+    new( 2, 0, NoteName.B, Accidental.Sharp ), new( 3, 1, NoteName.D, Accidental.Flat ),
+    new( 4, 1, NoteName.C, Accidental.Sharp ), new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
+    new( 6, 2, NoteName.E, Accidental.DoubleFlat ), new( 7, 2, NoteName.D, Accidental.Natural ),
+    new( 8, 2, NoteName.C, Accidental.DoubleSharp ), new( 9, 3, NoteName.F, Accidental.DoubleFlat ),
+    new( 10, 3, NoteName.E, Accidental.Flat ), new( 11, 3, NoteName.D, Accidental.Sharp ),
+    new( 12, 4, NoteName.F, Accidental.Flat ), new( 13, 4, NoteName.E, Accidental.Natural ),
+    new( 14, 4, NoteName.D, Accidental.DoubleSharp ), new( 15, 5, NoteName.G, Accidental.DoubleFlat ),
+    new( 16, 5, NoteName.F, Accidental.Natural ), new( 17, 5, NoteName.E, Accidental.Sharp ),
+    new( 18, 6, NoteName.G, Accidental.Flat ), new( 19, 6, NoteName.F, Accidental.Sharp ),
+    new( 20, 6, NoteName.E, Accidental.DoubleSharp ), new( 21, 7, NoteName.A, Accidental.DoubleFlat ),
+    new( 22, 7, NoteName.G, Accidental.Natural ), new( 23, 7, NoteName.F, Accidental.DoubleSharp ),
+    new( 24, 8, NoteName.A, Accidental.Flat ), new( 25, 8, NoteName.G, Accidental.Sharp ),
+    new( 26, 9, NoteName.B, Accidental.DoubleFlat ), new( 27, 9, NoteName.A, Accidental.Natural ),
+    new( 28, 9, NoteName.G, Accidental.DoubleSharp ), new( 29, 10, NoteName.C, Accidental.DoubleFlat ),
+    new( 30, 10, NoteName.B, Accidental.Flat ), new( 31, 10, NoteName.A, Accidental.Sharp ),
+    new( 32, 11, NoteName.C, Accidental.Flat ), new( 33, 11, NoteName.B, Accidental.Natural ),
     new( 34, 11, NoteName.A, Accidental.DoubleSharp )
   ];
 
@@ -194,7 +177,7 @@ public readonly struct PitchClass
   public static PitchClass B => s_pitchClasses[33];
 
   /// <summary>
-  /// Gets the pitch class of the pitch-like value.
+  ///   Gets the pitch class of the pitch-like value.
   /// </summary>
   PitchClass IPitch<PitchClass>.PitchClass => this;
 
@@ -207,11 +190,12 @@ public readonly struct PitchClass
   public Accidental Accidental => (Accidental) _accidental;
 
   /// <summary>
-  /// Gets the pitch of the pitch class at the specified octave.
+  ///   Gets the pitch of the pitch class at the specified octave.
   /// </summary>
   /// <param name="octave">The octave.</param>
   /// <returns>The pitch.</returns>
-  public Pitch this[int octave] => Pitch.Create( this, octave );
+  public Pitch this[
+    int octave ] => Pitch.Create( this, octave );
 
   #endregion
 
@@ -233,8 +217,9 @@ public readonly struct PitchClass
   public PitchClass Transpose(
     Interval interval )
   {
-    // First we calculate the new note name from the interval quantity, wrapping around the 7 note names
-    var noteIndex = (int) NoteName + ( (int) interval.Quantity * ( interval.IsAscending ? 1 : -1 ) );
+    // First we calculate the new note name from the interval quantity, wrapping around the 7 note names.
+    // We must subtract 1 from the interval quantity because the interval quantity is 1-based (unison = 1, second = 2, etc.)
+    var noteIndex = (int) NoteName + ( ((int) interval.Quantity - 1 ) * ( interval.IsAscending ? 1 : -1 ) );
     var expectedNoteName = (NoteName) noteIndex.Wrap( NoteName.TotalCount );
 
     // Next we calculate the new enharmonic index, wrapping around the 12 semitones
@@ -269,16 +254,17 @@ public readonly struct PitchClass
   public Interval GetIntervalTo(
     PitchClass pitchClass )
   {
-    // First we determine the interval quantity
-    var quantity = (IntervalQuantity) (pitchClass.NoteName - NoteName).Wrap( NoteName.TotalCount );
+    // First we determine the interval quantity. We must add one because the interval quantity is 1-based (unison = 1, second = 2, etc.)
+    var quantity = (IntervalQuantity) (( pitchClass.NoteName - NoteName).Wrap( NoteName.TotalCount ) + 1);
 
     // Then we determine the semitone count
-    var semitoneCount = (pitchClass._enharmonicIndex - _enharmonicIndex).Wrap( SEMITONE_COUNT );
-    var interval = new Interval( quantity, semitoneCount );
+    var semitoneCount = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( SEMITONE_COUNT );
+    var quality = Interval.GetIntervalQuality( quantity, semitoneCount );
+    var interval = new Interval( quantity, quality );
     return interval;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int CompareTo(
     PitchClass other )
   {
@@ -337,14 +323,14 @@ public readonly struct PitchClass
     return pitchClass;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     PitchClass other )
   {
     return _enharmonicIndex == other._enharmonicIndex;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -382,7 +368,7 @@ public readonly struct PitchClass
     return null;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return _enharmonicIndex;
@@ -440,20 +426,20 @@ public readonly struct PitchClass
       : throw new FormatException( $"{value} is not a valid pitch class" );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return $"{NoteName}{Accidental.ToSymbol()}";
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Formula"/> instance, according to the
   ///   provided format specifier.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Formula"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>Format specifiers:</para>
@@ -467,14 +453,14 @@ public readonly struct PitchClass
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Formula"/> instance, according to the
   ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. (Currently unused)</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Formula"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>Format specifiers:</para>
@@ -574,7 +560,7 @@ public readonly struct PitchClass
     return TryParse( value, provider, out pitchClass, out var tail ) && tail.IsEmpty;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public static bool TryParse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider,
@@ -598,6 +584,7 @@ public readonly struct PitchClass
     }
 
     var accidental = Accidental.Natural;
+
     if( value.Length > 1 )
     {
       // Could be an accidental or some other character; use any partial match and

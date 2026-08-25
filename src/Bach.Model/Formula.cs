@@ -45,7 +45,9 @@ public abstract class Formula
       Interval x,
       Interval y )
     {
-      return x.CompareTo( y );
+      var xValue = (int)x;
+      var yValue = (int)y;
+      return xValue.CompareTo( yValue );
     }
 
     #endregion

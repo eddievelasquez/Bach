@@ -1,4 +1,4 @@
-﻿// Module Name: IntervalQuantity.cs
+// Module Name: IntervalQuantity.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2023  Eddie Velasquez.
 //
@@ -27,45 +27,48 @@ namespace Bach.Model;
 /// <summary>Values that represent interval quantities.</summary>
 public enum IntervalQuantity
 {
-  /// <summary>An enum constant representing a unison.</summary>
+  /// <summary>An undefined interval quantity.</summary>
+  Undefined,
+
+  /// <summary>A unison interval. </summary>
   Unison,
 
-  /// <summary>An enum constant representing a second.</summary>
+  /// <summary>A second interval.</summary>
   Second,
 
-  /// <summary>An enum constant representing a third.</summary>
+  /// <summary>A third interval.</summary>
   Third,
 
-  /// <summary>An enum constant representing a fourth.</summary>
+  /// <summary>A fourth interval.</summary>
   Fourth,
 
-  /// <summary>An enum constant representing a fifth.</summary>
+  /// <summary>A fifth interval.</summary>
   Fifth,
 
-  /// <summary>An enum constant representing a sixth.</summary>
+  /// <summary>A sixth interval.</summary>
   Sixth,
 
-  /// <summary>An enum constant representing a seventh.</summary>
+  /// <summary>A seventh interval.</summary>
   Seventh,
 
-  /// <summary>An enum constant representing an octave.</summary>
+  /// <summary>An octave interval.</summary>
   Octave,
 
-  /// <summary>An enum constant representing a ninth.</summary>
+  /// <summary>A ninth interval.</summary>
   Ninth,
 
-  /// <summary>An enum constant representing a tenth.</summary>
+  /// <summary>A tenth interval.</summary>
   Tenth,
 
-  /// <summary>An enum constant representing an eleventh.</summary>
+  /// <summary>An eleventh interval.</summary>
   Eleventh,
 
-  /// <summary>An enum constant representing a twelfth.</summary>
+  /// <summary>A twelfth interval.</summary>
   Twelfth,
 
-  /// <summary>An enum constant representing a thirteenth.</summary>
+  /// <summary>A thirteenth interval.</summary>
   Thirteenth,
 
-  /// <summary>An enum constant representing a fourteenth.</summary>
+  /// <summary>A fourteenth interval.</summary>
   Fourteenth
 }

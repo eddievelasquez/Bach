@@ -24,7 +24,6 @@
 
 namespace Bach.Model;
 
-using System.Diagnostics;
 using System.Text;
 
 /// <summary>An interval.</summary>
@@ -38,24 +37,19 @@ public readonly struct Interval
 
   private const string SYMBOL_QUANTITY_TO_STRING_FORMAT = "sq";
 
-  private static readonly int[][] s_quantitySemitones =
-  [
-    // Diminished, Minor, Perfect, Major, Augmented
-    [-1, -1, 00, -1, 01], // First
-    [00, 01, -1, 02, 03], // Second
-    [02, 03, -1, 04, 05], // Third
-    [04, -1, 05, -1, 06], // Fourth
-    [06, -1, 07, -1, 08], // Fifth
-    [07, 08, -1, 09, 10], // Sixth
-    [09, 10, -1, 11, 12], // Seventh
-    [11, -1, 12, -1, 13], // Octave
-    [12, 13, -1, 14, 15], // Ninth (Second)
-    [14, 15, -1, 16, 17], // Tenth (Third)
-    [16, -1, 17, -1, 18], // Eleventh (Fourth)
-    [18, -1, 19, -1, 20], // Twelfth (Fifth)
-    [19, 20, -1, 21, 22], // Thirteenth (Sixth)
-    [21, 22, -1, 23, 24] // Fourteenth (Seventh)
-  ];
+  private const int SHIFT_SEMITONES = 10;
+  private const int SHIFT_QUANTITY = 6;
+  private const int SHIFT_QUALITY = 3;
+  private const int SHIFT_DISPLACEMENT = 0;
+
+  private const ushort MASK_SEMITONES = 0b111111;
+  private const ushort MASK_QUANTITY = 0b1111;
+  private const ushort MASK_QUALITY = 0b111;
+  private const ushort MASK_DISPLACEMENT = 0b111;
+
+  // Base semitone count for each interval quantity (unison, second, third, ..., fourteenth)
+  // without considering quality.
+  private static readonly int[] s_quantitySemitones = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23];
 
   /// <summary>
   ///   The Unison interval
@@ -191,10 +185,16 @@ public readonly struct Interval
 
   #region Fields
 
-  private readonly byte _quality;
-  private readonly byte _quantity;
-  private readonly byte _semitoneCount;
-  private readonly bool _isDescending;
+  // Bit layout
+  // +---------------------------------------------------------------+
+  // | 15            10 | 9        6 | 5        3 | 2        0       |
+  // +---------------------------------------------------------------+
+  // | Semitone Distance | Quantity  | Quality   | Displacement      |
+  // +---------------------------------------------------------------+
+  // | signed (−26…+26)  | 0–13      | 0–4       | encoded 0–6       |
+  // |        6 bits     | 4 bits    | 3 bits    | 3 bits            |
+  // +---------------------------------------------------------------+
+  private readonly ushort _value;
 
   #endregion
 
@@ -210,119 +210,94 @@ public readonly struct Interval
     IntervalQuantity quantity,
     IntervalQuality quality,
     bool descending = false )
+    : this( Pack( quantity, quality, GetDisplacement( quantity, quality ), descending ) )
   {
-    Debug.Assert( quantity >= IntervalQuantity.Unison );
-    Debug.Assert( quantity <= IntervalQuantity.Fourteenth );
-    Debug.Assert( quality >= IntervalQuality.Diminished );
-    Debug.Assert( quality <= IntervalQuality.Augmented );
-
-    _semitoneCount = (byte) GetSemitoneCount( quantity, quality );
-    _quantity = (byte) quantity;
-    _quality = (byte) quality;
-    _isDescending = ( quantity != IntervalQuantity.Unison || _semitoneCount != 0 ) && descending;
   }
 
-  /// <summary>Constructor.</summary>
-  /// <param name="quantity">The interval quantity.</param>
-  /// <param name="semitoneCount">The number of semitones in the interval.</param>
-  /// <param name="descending">Whether the interval is descending.</param>
-  internal Interval(
-    IntervalQuantity quantity,
-    int semitoneCount,
-    bool descending = false)
+  /// <summary>
+  ///   Initializes a new instance of the Interval class with a packed ushort value.
+  /// </summary>
+  /// <param name="value">The packed <c>ushort</c> value.</param>
+  private Interval(
+    ushort value )
   {
-    var pos = Array.IndexOf( s_quantitySemitones[(int) quantity], semitoneCount );
-    Debug.Assert( pos != -1, $"A {quantity} with {semitoneCount} is not a valid interval" );
-    Debug.Assert( pos is >= 0 and <= 24 );
-
-    _quantity = (byte) quantity;
-    _quality = (byte) pos;
-    _semitoneCount = (byte) semitoneCount;
-    _isDescending = ( quantity != IntervalQuantity.Unison || semitoneCount != 0 ) && descending;
+    _value = value;
   }
 
   #endregion
 
   #region Properties
 
+  /// <summary>
+  ///   Gets the interval's semitone distance from the unison. This value can be negative for descending intervals.
+  /// </summary>
+  public int SemitoneCount
+  {
+    get
+    {
+      var raw = ( _value >> SHIFT_SEMITONES ) & MASK_SEMITONES;
+      return ( raw >= 32 ) ? raw - 64 : raw; // Sign extend
+    }
+  }
+
   /// <summary>Gets the interval's quantity.</summary>
   /// <value>The quantity.</value>
-  public IntervalQuantity Quantity => (IntervalQuantity) _quantity;
+  public IntervalQuantity Quantity => (IntervalQuantity) ( ( _value >> SHIFT_QUANTITY ) & MASK_QUANTITY );
 
   /// <summary>Gets the interval's quality.</summary>
   /// <value>The quality.</value>
-  public IntervalQuality Quality => (IntervalQuality) _quality;
+  public IntervalQuality Quality => (IntervalQuality) ( ( _value >> SHIFT_QUALITY ) & MASK_QUALITY );
+
+  /// <summary>
+  ///   Gets the interval's quality displacement. This is the number of semitones the interval is displaced from its base
+  ///   quality. For perfect quantities (unison, fourth, fifth, etc.), the base quality is perfect. For major quantities
+  ///   (second, third, sixth, seventh), the base quality is major. The displacement can be negative (diminished) or
+  ///   positive (augmented). Up to triple diminished or augmented intervals are supported, hence the range of -3 to +3.
+  /// </summary>
+  public int Displacement => ( ( _value >> SHIFT_DISPLACEMENT ) & MASK_DISPLACEMENT ) - 3;
 
   /// <summary>Gets a value indicating whether the interval is ascending.</summary>
   /// <value>True if ascending, false if descending.</value>
-  public bool IsAscending => !_isDescending;
+  public bool IsAscending => SemitoneCount >= 0;
 
   /// <summary>Gets a value indicating whether the interval is descending.</summary>
   /// <value>True if descending, false if ascending.</value>
-  public bool IsDescending => _isDescending;
+  public bool IsDescending => SemitoneCount < 0;
 
   /// <summary>
   ///   Gets the interval's inversion. An interval and its inversion always add up to an octave.
   /// </summary>
-  public Interval Inversion
-  {
-    get
-    {
-      var newQuantity = (IntervalQuantity) ( 8 - (int) Quantity - 1 );
-      var newQuality = IntervalQuality.Augmented - (int) Quality;
-
-      var result = new Interval( newQuantity, newQuality );
-      return _isDescending ? -result : result;
-    }
-  }
-
-  /// <summary>Gets the number of semitones in the interval.</summary>
-  /// <value>The number of semitones.</value>
-  public int SemitoneCount => _isDescending ? -_semitoneCount : _semitoneCount;
+  public Interval Inversion => new( Quantity.Inverse, Quality.Inverse, !IsDescending );
 
   #endregion
 
   #region Public Methods
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int CompareTo(
     Interval other )
   {
-    var result = SemitoneCount - other.SemitoneCount;
-    if( result != 0 )
-    {
-      return result;
-    }
-
-    result = ( _isDescending ? -_quantity : _quantity ) - ( other._isDescending ? -other._quantity : other._quantity );
-    if( result != 0 )
-    {
-      return result;
-    }
-
-    return ( _isDescending ? -_quality : _quality ) - ( other._isDescending ? -other._quality : other._quality );
+    return SemitoneCount.CompareTo( other.SemitoneCount );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     Interval other )
   {
-    return other._quantity == _quantity
-           && other._quality == _quality
-           && other._isDescending == _isDescending;
+    return other._value == _value;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
     return obj is Interval other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
-    return HashCode.Combine( _quality, _quantity, _isDescending );
+    return _value;
   }
 
   /// <summary>Gets semitone count of the interval.</summary>
@@ -345,41 +320,16 @@ public readonly struct Interval
   {
     ArgumentOutOfRangeException.ThrowIfLessThan( (int) quantity, (int) IntervalQuantity.Unison );
     ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quantity, (int) IntervalQuantity.Fourteenth );
-    ArgumentOutOfRangeException.ThrowIfLessThan( quality, IntervalQuality.Diminished );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( quality, IntervalQuality.Augmented );
+    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quality, (int) IntervalQuality.Diminished );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quality, (int) IntervalQuality.Augmented );
 
-    var steps = s_quantitySemitones[(int) quantity][(int) quality];
-
-    if( steps == -1 )
-    {
-      throw new ArgumentException( $"{quantity}{quality} is not a valid interval" );
-    }
-
-    return descending ? -steps : steps;
-  }
-
-  /// <summary>Determine if the interval quantity and quality refer to a valid interval.</summary>
-  /// <param name="quantity">The interval quantity.</param>
-  /// <param name="quality">The interval quality.</param>
-  /// <returns>True if valid, false if not.</returns>
-  public static bool IsValid(
-    IntervalQuantity quantity,
-    IntervalQuality quality )
-  {
-    if( quantity < IntervalQuantity.Unison
-        || quantity > IntervalQuantity.Fourteenth
-        || quality < IntervalQuality.Diminished
-        || quality > IntervalQuality.Augmented )
-    {
-      return false;
-    }
-
-    var steps = s_quantitySemitones[(int) quantity][(int) quality];
-    return steps != -1;
+    var displacement = GetDisplacement( quantity, quality );
+    var semitones = s_quantitySemitones[(int) quantity - 1] + displacement;
+    return descending ? -semitones : semitones;
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent.
+  ///   Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent.
   /// </summary>
   /// <param name="value">A string containing the interval to convert.</param>
   /// <returns>An object that is equivalent to the interval contained in value.</returns>
@@ -392,7 +342,7 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent
+  ///   Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent
   ///   using the specified format provider.
   /// </summary>
   /// <param name="value">A string containing the interval to convert.</param>
@@ -408,7 +358,7 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Converts the specified span representation of an interval to its <see cref="Interval" /> equivalent
+  ///   Converts the specified span representation of an interval to its <see cref="Interval"/> equivalent
   ///   using the specified format provider.
   /// </summary>
   /// <param name="value">A read-only character span containing the interval to convert.</param>
@@ -432,13 +382,13 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Interval"/> instance, according to the
   ///   provided format specifier.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Interval"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
@@ -453,14 +403,14 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Interval" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Interval"/> instance, according to the
   ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. (Currently unused)</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Interval" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Interval"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
@@ -479,15 +429,18 @@ public readonly struct Interval
 
     var buf = new StringBuilder();
 
-    if( _isDescending )
-    {
-      buf.Append( '-' );
-    }
-
     foreach( var f in format )
     {
       switch( f )
       {
+        case 'd':
+          if( IsDescending )
+          {
+            buf.Append( '-' );
+          }
+
+          break;
+
         case 's':
         {
           if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
@@ -503,7 +456,7 @@ public readonly struct Interval
           break;
 
         case 'q':
-          buf.Append( (int) ( Quantity + 1 ) );
+          buf.Append( (int) Quantity );
           break;
 
         case 'Q':
@@ -520,7 +473,7 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent
+  ///   Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent
   ///   and returns a value that indicates whether the conversion succeeded.
   /// </summary>
   /// <param name="value">A string containing the interval quality to convert.</param>
@@ -531,7 +484,7 @@ public readonly struct Interval
   ///   representation of an interval. This parameter is passed uninitialized.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>
   ///   .
   /// </returns>
   public static bool TryParse(
@@ -542,7 +495,7 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an interval to its <see cref="Interval" /> equivalent
+  ///   Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent
   ///   and returns a value that indicates whether the conversion succeeded.
   /// </summary>
   /// <param name="value">A string containing the interval quality to convert.</param>
@@ -552,7 +505,7 @@ public readonly struct Interval
   ///   value.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>
   ///   .
   /// </returns>
   public static bool TryParse(
@@ -564,7 +517,7 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Converts the specified character span representation of an interval to its <see cref="Interval" /> equivalent
+  ///   Converts the specified character span representation of an interval to its <see cref="Interval"/> equivalent
   ///   and returns a value that indicates whether the conversion succeeded.
   /// </summary>
   /// <param name="value">A read-only character span containing the interval quality to convert.</param>
@@ -575,7 +528,7 @@ public readonly struct Interval
   ///   representation of an interval. This parameter is passed uninitialized.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.
   /// </returns>
   public static bool TryParse(
     ReadOnlySpan<char> value,
@@ -585,7 +538,7 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Converts the specified character span representation of an interval to its <see cref="Interval" /> equivalent
+  ///   Converts the specified character span representation of an interval to its <see cref="Interval"/> equivalent
   ///   and returns a value that indicates whether the conversion succeeded.
   /// </summary>
   /// <param name="value">A read-only character span containing the interval quality to convert.</param>
@@ -595,7 +548,7 @@ public readonly struct Interval
   ///   value.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>
   ///   .
   /// </returns>
   public static bool TryParse(
@@ -640,7 +593,7 @@ public readonly struct Interval
         return true;
       }
 
-      if( !IntervalQuality.TryParse( value[i], out quality ) )
+      if( !IntervalQuality.TryParse( value[i..], null, out quality, out _ ) )
       {
         return false;
       }
@@ -648,16 +601,7 @@ public readonly struct Interval
       ++i;
     }
 
-    // Check if we have a double-digit compound interval and adjust the length accordingly
-    var intervalSpan = value[i..];
-    var intervalNumberLength = 0;
-
-    while( intervalNumberLength < intervalSpan.Length && char.IsDigit( intervalSpan[intervalNumberLength] ) )
-    {
-      ++intervalNumberLength;
-    }
-
-    if( intervalNumberLength == 0 || !int.TryParse( intervalSpan[..intervalNumberLength], out var number ) )
+    if( !IntervalQuantity.TryParse( value[i..], null, out var quantity, out _ ) )
     {
       return false;
     }
@@ -665,19 +609,130 @@ public readonly struct Interval
     if( !hasExplicitQuality )
     {
       // If the quality is not explicitly specified, we can infer it based on the interval number.
-      var temp = ( number - 1 ) % 7 + 1;
-      quality = temp is 1 or 4 or 5 ? IntervalQuality.Perfect : IntervalQuality.Major;
+      quality = quantity.IsPerfectBased ? IntervalQuality.Perfect : IntervalQuality.Major;
     }
 
-    var quantity = (IntervalQuantity) ( number - 1 );
-
-    if( !IsValid( quantity, quality ) )
+    if( !quality.IsValidFor( quantity ) )
     {
       return false;
     }
 
-    interval = new Interval( quantity, (byte) GetSemitoneCount( quantity, quality ), isDescending );
+    interval = new Interval( quantity, quality, isDescending );
     return true;
+  }
+
+  /// <summary>
+  ///   Flips the direction of the interval making an ascending interval descending and vice versa.
+  /// </summary>
+  /// <returns>The interval with its direction flipped.</returns>
+  public Interval FlipDirection()
+  {
+    // To flip the direction of the interval, we need to negate the semitone count while keeping the other properties intact.
+    var qqd = (ushort) ( _value & 0x03FF ); // keep low 10 bits (Quantity, Quality, Displacement)
+    var packed = (ushort) ( ( ( -SemitoneCount & MASK_SEMITONES ) << SHIFT_SEMITONES ) | qqd );
+    return new Interval( packed );
+  }
+
+  #endregion
+
+  #region Implementation
+
+  /// <summary>
+  ///   Packs the interval properties into a single ushort value.
+  /// </summary>
+  /// <param name="quantity">The quantity of the interval.</param>
+  /// <param name="quality">The quality of the interval.</param>
+  /// <param name="displacement">The displacement of the interval.</param>
+  /// <param name="descending">Whether the interval is descending.</param>
+  /// <returns>The packed ushort value representing the interval.</returns>
+  /// <exception cref="ArgumentOutOfRangeException"></exception>
+  private static ushort Pack(
+    IntervalQuantity quantity,
+    IntervalQuality quality,
+    int displacement,
+    bool descending )
+  {
+    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quantity, (int) IntervalQuantity.Unison );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quantity, (int) IntervalQuantity.Fourteenth );
+    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quality, (int) IntervalQuality.Diminished );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quality, (int) IntervalQuality.Augmented );
+    ArgumentOutOfRangeException.ThrowIfLessThan( displacement, -3 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( displacement, 3 );
+
+    var q = (int) quantity;
+    var semitones = s_quantitySemitones[q - 1] + displacement;
+
+    if( descending )
+    {
+      semitones = -semitones;
+    }
+
+    if( semitones < -26 || semitones > 26 )
+    {
+      throw new ArgumentOutOfRangeException( nameof( semitones ) );
+    }
+
+    var encodedDisplacement = displacement + 3; // 0..6
+
+    var packed =
+      (ushort) (
+        ( ( semitones & MASK_SEMITONES ) << SHIFT_SEMITONES )
+        | ( q << SHIFT_QUANTITY )
+        | ( (int) quality << SHIFT_QUALITY )
+        | ( encodedDisplacement << SHIFT_DISPLACEMENT )
+      );
+    return packed;
+  }
+
+  private static int GetDisplacement(
+    IntervalQuantity quantity,
+    IntervalQuality quality )
+  {
+    if( quantity.IsPerfectBased )
+    {
+      return quality switch
+      {
+        IntervalQuality.Perfect => 0,
+        IntervalQuality.Diminished => -1,
+        IntervalQuality.Augmented => 1,
+        _ => throw new ArgumentException( $"{quality} is not valid for a perfect-based interval ({quantity})" )
+      };
+    }
+
+    return quality switch
+    {
+      IntervalQuality.Major => 0,
+      IntervalQuality.Diminished => -2,
+      IntervalQuality.Minor => -1,
+      IntervalQuality.Augmented => 1,
+      _ => throw new ArgumentException( $"{quality} is not valid for a major-based interval ({quantity})" )
+    };
+  }
+
+  internal static IntervalQuality GetIntervalQuality(
+    IntervalQuantity quantity,
+    int semitoneCount )
+  {
+    var baseLine = s_quantitySemitones[(int) quantity - 1];
+    var offset = semitoneCount - baseLine;
+
+    if( quantity.IsPerfectBased )
+    {
+      return offset switch
+      {
+        0   => IntervalQuality.Perfect,
+        > 0 => IntervalQuality.Augmented,
+        < 0 => IntervalQuality.Diminished
+      };
+    }
+
+    return offset switch
+    {
+      0   => IntervalQuality.Major,
+      -1  => IntervalQuality.Minor,
+      > 0 => IntervalQuality.Augmented,
+      < 0 => IntervalQuality.Diminished
+    };
   }
 
   #endregion
@@ -690,8 +745,7 @@ public readonly struct Interval
   public static explicit operator int(
     Interval interval )
   {
-    var value = ( interval._quality << 8 ) | interval._quantity;
-    return !interval._isDescending ? value : -value;
+    return interval._value;
   }
 
   /// <summary>Explicit cast that converts the given int to an Interval.</summary>
@@ -700,24 +754,78 @@ public readonly struct Interval
   public static explicit operator Interval(
     int value )
   {
-    var isDescending = value < 0;
-    var absValue = Math.Abs( value );
-    var quantity = (IntervalQuantity) ( absValue & 0xFF );
-    var quality = (IntervalQuality) ( ( absValue >> 8 ) & 0xFF );
-    return new Interval( quantity, (byte) GetSemitoneCount( quantity, quality ), isDescending );
+    // Must fit in 16 bits
+    if( value < ushort.MinValue || value > ushort.MaxValue )
+    {
+      throw new ArgumentOutOfRangeException( nameof( value ), "Packed interval must be a 16-bit value." );
+    }
+
+    var packed = (ushort) value;
+
+    // Extract fields
+    var semitones = ( packed >> SHIFT_SEMITONES ) & MASK_SEMITONES;
+
+    if( semitones >= 32 )
+    {
+      semitones -= 64; // sign-extend 6-bit
+    }
+
+    var quantity = ( packed >> SHIFT_QUANTITY ) & MASK_QUANTITY;
+    var quality = ( packed >> SHIFT_QUALITY ) & MASK_QUALITY;
+    var displacement = ( ( packed >> SHIFT_DISPLACEMENT ) & MASK_DISPLACEMENT ) - 3;
+
+    // Validate semitone range
+    if( semitones < -26 || semitones > 26 )
+    {
+      throw new ArgumentException( "Invalid semitone count", nameof( value ) );
+    }
+
+    // Validate quantity
+    if( (uint) quantity > 13 )
+    {
+      throw new ArgumentException( "Invalid interval quantity", nameof( value ) );
+    }
+
+    // Validate quality
+    if( (uint) quality > 4 )
+    {
+      throw new ArgumentException( "Invalid interval quality", nameof( value ) );
+    }
+
+    // Validate displacement
+    if( displacement < -3 || displacement > 3 )
+    {
+      throw new ArgumentException( "Invalid displacement", nameof( value ) );
+    }
+
+    // Validate semitone consistency with identity
+    var baseline = s_quantitySemitones[quantity];
+    var expected = baseline + displacement;
+
+    var isDescending = semitones < 0;
+    var actual = isDescending ? -semitones : semitones;
+
+    if( actual != expected )
+    {
+      throw new ArgumentException(
+        "Semitone count does not match the interval's quantity/quality/displacement",
+        nameof( value )
+      );
+    }
+
+    return new Interval( packed );
   }
 
   /// <summary>
-  /// Negates the interval, effectively reversing its direction (ascending to descending or vice versa).
+  ///   Negates the interval, effectively reversing its direction (ascending to descending or vice versa).
   /// </summary>
   /// <param name="interval">The interval to negate.</param>
   /// <returns>The negated interval.</returns>
   public static Interval operator -(
     Interval interval )
   {
-    return new Interval( interval.Quantity, interval._semitoneCount, !interval._isDescending );
+    return interval.FlipDirection();
   }
-
 
   /// <summary>Equality operator.</summary>
   /// <param name="lhs">The first instance to compare.</param>
@@ -727,7 +835,7 @@ public readonly struct Interval
     Interval lhs,
     Interval rhs )
   {
-    return Equals( lhs, rhs );
+    return lhs.Equals( rhs );
   }
 
   /// <summary>Inequality operator.</summary>
@@ -738,7 +846,7 @@ public readonly struct Interval
     Interval lhs,
     Interval rhs )
   {
-    return !Equals( lhs, rhs );
+    return !lhs.Equals( rhs );
   }
 
   /// <summary>Lesser-than comparison operator.</summary>
