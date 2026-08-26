@@ -24,6 +24,8 @@
 
 namespace Bach.Model;
 
+using Bach.Model.Internal;
+
 /// <summary>
 ///   Extension methods for the <see cref="IntervalQuantity"/> enumeration.
 /// </summary>
@@ -69,7 +71,7 @@ public static class IntervalQuantityExtensions
     ///   a 2nd inverts to a 7th, etc.). Compound intervals are treated as their simple equivalents (e.g., a 10th inverts
     ///   to a 3rd, an 11th inverts to a 4th, etc.).
     /// </remarks>
-    public IntervalQuantity Inverse => (IntervalQuantity) ( 9 - ( ( ( (int) quantity - 1 ) % NoteName.TotalCount ) + 1 ) );
+    public IntervalQuantity Inverse => (IntervalQuantity) ( 9 - ( ( ( (int) quantity - 1 ) % Constants.NoteNameCount ) + 1 ) );
 
     #endregion
 

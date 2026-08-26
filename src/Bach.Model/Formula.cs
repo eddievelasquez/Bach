@@ -208,7 +208,7 @@ public abstract class Formula
       var octaveAdd = index / intervalCount;
       if( octaveAdd > 0 )
       {
-        pitch += octaveAdd * Pitch.IntervalsPerOctave;
+        pitch += octaveAdd * Constants.OctaveSemitoneCount;
       }
 
       if( pitch > Pitch.MaxValue )
@@ -283,7 +283,7 @@ public abstract class Formula
 
     // Add last step between the root octave and the
     // last interval
-    steps[^1] = 12 - lastCount;
+    steps[^1] = Constants.OctaveSemitoneCount - lastCount;
     return steps;
   }
 
@@ -425,7 +425,7 @@ public abstract class Formula
 
     // Add last step between the root octave and the
     // last interval
-    steps[^1] = 12 - lastCount;
+    steps[^1] = Constants.OctaveSemitoneCount - lastCount;
     return steps;
   }
 

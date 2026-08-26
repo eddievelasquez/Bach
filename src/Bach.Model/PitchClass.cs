@@ -40,7 +40,6 @@ public readonly struct PitchClass
   #region Constants
 
   private const int ENHARMONIC_COUNT = 5; // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
-  private const int SEMITONE_COUNT = 12;
   private const string NOTE_NAME_SYMBOL_TO_STRING_FORMAT = "NS";
 
   private static readonly PitchClass[] s_pitchClasses =
@@ -220,10 +219,10 @@ public readonly struct PitchClass
     // First we calculate the new note name from the interval quantity, wrapping around the 7 note names.
     // We must subtract 1 from the interval quantity because the interval quantity is 1-based (unison = 1, second = 2, etc.)
     var noteIndex = (int) NoteName + ( ((int) interval.Quantity - 1 ) * ( interval.IsAscending ? 1 : -1 ) );
-    var expectedNoteName = (NoteName) noteIndex.Wrap( NoteName.TotalCount );
+    var expectedNoteName = (NoteName) noteIndex.Wrap( Constants.NoteNameCount );
 
-    // Next we calculate the new enharmonic index, wrapping around the 12 semitones
-    var semitoneCount = ( _enharmonicIndex + interval.SemitoneCount ).Wrap( SEMITONE_COUNT );
+    // Next we calculate the new enharmonic index, wrapping around the 12 semitones in an octave
+    var semitoneCount = ( _enharmonicIndex + interval.SemitoneCount ).Wrap( Constants.OctaveSemitoneCount );
 
     // Now we look for a pitch class that matches the calculated note name and the enharmonic index
     for( var i = 0; i < ENHARMONIC_COUNT; i++ )
@@ -255,10 +254,10 @@ public readonly struct PitchClass
     PitchClass pitchClass )
   {
     // First we determine the interval quantity. We must add one because the interval quantity is 1-based (unison = 1, second = 2, etc.)
-    var quantity = (IntervalQuantity) (( pitchClass.NoteName - NoteName).Wrap( NoteName.TotalCount ) + 1);
+    var quantity = (IntervalQuantity) (( pitchClass.NoteName - NoteName).Wrap( Constants.NoteNameCount ) + 1);
 
     // Then we determine the semitone count
-    var semitoneCount = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( SEMITONE_COUNT );
+    var semitoneCount = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
     var quality = Interval.GetIntervalQuality( quantity, semitoneCount );
     var interval = new Interval( quantity, quality );
     return interval;

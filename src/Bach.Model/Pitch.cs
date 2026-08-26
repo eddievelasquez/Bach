@@ -32,9 +32,8 @@ using Bach.Model.Internal;
 ///   on a given octave.
 /// </summary>
 /// <remarks>
-///   The octave of a Pitch ranges from 0 to 9,
-///   which corresponds to MIDI pitches from 12 (C0)
-///   to 127 (B9).
+///   The octave of a Pitch ranges from 0 to 9, which corresponds to
+///   MIDI pitches from 12 (C0) to 127 (B9).
 /// </remarks>
 public readonly struct Pitch
   : IPitch<Pitch>,
@@ -49,7 +48,6 @@ public readonly struct Pitch
   public const int MaxOctave = 9;
 
   internal const double A4Frequency = 440.0;
-  internal const int IntervalsPerOctave = 12;
 
   private static readonly int[] s_semitonesBetween =
   [
@@ -150,14 +148,14 @@ public readonly struct Pitch
     get
     {
       var interval = _absoluteValue - s_a4._absoluteValue;
-      var freq = Math.Pow( 2, interval / 12.0 ) * A4Frequency;
+      var freq = Math.Pow( 2, interval / (double) Constants.OctaveSemitoneCount ) * A4Frequency;
       return freq;
     }
   }
 
   /// <summary>Gets the pitch's MIDI value.</summary>
   /// <value>The MIDI value.</value>
-  public int Midi => _absoluteValue + 12;
+  public int Midi => _absoluteValue + Constants.OctaveSemitoneCount;
 
   /// <summary>
   ///   Gets the pitch classes contained in the event.
@@ -246,7 +244,7 @@ public readonly struct Pitch
     ArgumentOutOfRangeException.ThrowIfLessThan( midi, 0 );
     ArgumentOutOfRangeException.ThrowIfGreaterThan( midi, 127 );
 
-    var absoluteValue = midi - 12;
+    var absoluteValue = midi - Constants.OctaveSemitoneCount;
 
     if( absoluteValue < 0 )
     {
@@ -543,7 +541,7 @@ public readonly struct Pitch
     Accidental accidental,
     int octave )
   {
-    var absoluteValue = octave * IntervalsPerOctave + SemitonesBetween( NoteName.C, noteName ) + (int) accidental;
+    var absoluteValue = octave * Constants.OctaveSemitoneCount + SemitonesBetween( NoteName.C, noteName ) + (int) accidental;
     return absoluteValue;
   }
 
@@ -552,7 +550,7 @@ public readonly struct Pitch
     out PitchClass pitchClass,
     out byte octave )
   {
-    octave = (byte) Math.DivRem( absoluteValue, IntervalsPerOctave, out var remainder );
+    octave = (byte) Math.DivRem( absoluteValue, Constants.OctaveSemitoneCount, out var remainder );
     pitchClass = PitchClass.LookupPitchClass( remainder );
   }
 

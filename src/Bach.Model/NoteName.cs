@@ -40,11 +40,6 @@ public readonly struct NoteName
   #region Constants
 
   /// <summary>
-  /// The total number of note names. C, D, E, F, G, A, B
-  /// </summary>
-  public const int TotalCount = 7;
-
-  /// <summary>
   ///   The C (Do) note
   /// </summary>
   public static readonly NoteName C = new( 0 );
@@ -80,7 +75,7 @@ public readonly struct NoteName
   public static readonly NoteName B = new( 6 );
 
   // ReSharper disable once StringLiteralTypo
-  private static readonly string s_names = "CDEFGAB";
+  private const string NOTE_NAMES = "CDEFGAB";
 
   #endregion
 
@@ -96,7 +91,7 @@ public readonly struct NoteName
     int value )
   {
     ArgumentOutOfRangeException.ThrowIfLessThan( value, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, TotalCount - 1 );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, Constants.NoteNameCount - 1 );
     _value = value;
   }
 
@@ -111,7 +106,7 @@ public readonly struct NoteName
   public NoteName Add(
     int steps )
   {
-    var result = (NoteName) (_value + steps).Wrap( TotalCount );
+    var result = (NoteName) (_value + steps).Wrap( Constants.NoteNameCount );
     return result;
   }
 
@@ -208,7 +203,7 @@ public readonly struct NoteName
   /// <inheritdoc />
   public override string ToString()
   {
-    return s_names[_value]
+    return NOTE_NAMES[_value]
       .ToString();
   }
 
@@ -288,7 +283,7 @@ public readonly struct NoteName
       return false;
     }
 
-    var value = s_names.IndexOf( char.ToUpperInvariant( span[0] ) );
+    var value = NOTE_NAMES.IndexOf( char.ToUpperInvariant( span[0] ) );
     if( value == -1 )
     {
       noteName = C;
