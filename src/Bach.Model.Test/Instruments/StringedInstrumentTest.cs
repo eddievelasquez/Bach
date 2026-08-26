@@ -1,20 +1,20 @@
 // Module Name: StringedInstrumentTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,10 +22,10 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test.Instruments;
-
 using System.Linq;
-using Model.Instruments;
+using Bach.Model.Instruments;
+
+namespace Bach.Model.Test.Instruments;
 
 public sealed class StringedInstrumentTest
 {
@@ -38,12 +38,16 @@ public sealed class StringedInstrumentTest
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = StringedInstrument.Create( definition, 22 );
+
     instrument.Should()
               .NotBeNull();
+
     instrument.Definition.Should()
               .Be( definition );
+
     instrument.PositionCount.Should()
               .Be( 22 );
+
     instrument.Tuning.Should()
               .Be( expectedTuning );
   }
@@ -55,12 +59,16 @@ public sealed class StringedInstrumentTest
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = StringedInstrument.Create( definition, 22, expectedTuning );
+
     instrument.Should()
               .NotBeNull();
+
     instrument.Definition.Should()
               .Be( definition );
+
     instrument.PositionCount.Should()
               .Be( 22 );
+
     instrument.Tuning.Should()
               .Be( expectedTuning );
   }
@@ -70,6 +78,7 @@ public sealed class StringedInstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var act = () => StringedInstrument.Create( definition, 0 );
+
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
@@ -80,6 +89,7 @@ public sealed class StringedInstrumentTest
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var expectedTuning = definition.Tunings.Standard;
     var act = () => StringedInstrument.Create( null!, 22, expectedTuning );
+
     act.Should()
        .Throw<ArgumentNullException>();
   }
@@ -91,12 +101,16 @@ public sealed class StringedInstrumentTest
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = StringedInstrument.Create( "guitar", 22 );
+
     instrument.Should()
               .NotBeNull();
+
     instrument.Definition.Should()
               .Be( definition );
+
     instrument.PositionCount.Should()
               .Be( 22 );
+
     instrument.Tuning.Should()
               .Be( expectedTuning );
   }
@@ -108,12 +122,16 @@ public sealed class StringedInstrumentTest
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = StringedInstrument.Create( "guitar", 22, "standard" );
+
     instrument.Should()
               .NotBeNull();
+
     instrument.Definition.Should()
               .Be( definition );
+
     instrument.PositionCount.Should()
               .Be( 22 );
+
     instrument.Tuning.Should()
               .Be( expectedTuning );
   }
@@ -122,6 +140,7 @@ public sealed class StringedInstrumentTest
   public void CreateWithNamesThrowsOnInvalidPositionCountTest()
   {
     var act = () => StringedInstrument.Create( "guitar", 0 );
+
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
@@ -130,6 +149,7 @@ public sealed class StringedInstrumentTest
   public void CreateWithNamesThrowsOnNullDefinitionNameTest()
   {
     var act = () => StringedInstrument.Create( null!, 22, "standard" );
+
     act.Should()
        .Throw<ArgumentNullException>();
   }
@@ -147,18 +167,23 @@ public sealed class StringedInstrumentTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
@@ -174,12 +199,15 @@ public sealed class StringedInstrumentTest
     a.Equals( b )
      .Should()
      .BeFalse();
+
     b.Equals( a )
      .Should()
      .BeFalse();
+
     Equals( a, b )
       .Should()
       .BeFalse();
+
     Equals( b, a )
       .Should()
       .BeFalse();
@@ -190,6 +218,7 @@ public sealed class StringedInstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     object actual = StringedInstrument.Create( definition, 22 );
+
     actual.Equals( null )
           .Should()
           .BeFalse();
@@ -200,6 +229,7 @@ public sealed class StringedInstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var actual = StringedInstrument.Create( definition, 22 );
+
     actual.Equals( actual )
           .Should()
           .BeTrue();
@@ -211,9 +241,11 @@ public sealed class StringedInstrumentTest
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var actual = StringedInstrument.Create( definition, 22 );
     var expected = StringedInstrument.Create( definition, 22 );
+
     expected.Equals( actual )
             .Should()
             .BeTrue();
+
     actual.GetHashCode()
           .Should()
           .Be( expected.GetHashCode() );
@@ -225,6 +257,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 0, 4 )
       .Should()
       .Be( "6x 53 42 30 21 10" );
@@ -236,6 +269,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 12, 4 )
       .Should()
       .Be( "6x 515 414 312 213 112" );
@@ -247,6 +281,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 3, 4 )
       .Should()
       .Be( "6x 53 45 35 25 13" );
@@ -258,6 +293,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 5, 4 )
       .Should()
       .Be( "68 57 45 35 25 18" );
@@ -269,6 +305,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 8, 4 )
       .Should()
       .Be( "68 510 410 39 28 18" );
@@ -279,7 +316,9 @@ public sealed class StringedInstrumentTest
   {
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] ).GetInversion( 1 );
+    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] )
+                     .GetInversion( 1 );
+
     RenderChord( instrument, chord, 0, 4 )
       .Should()
       .Be( "60 53 42 30 21 10" );
@@ -291,6 +330,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 12, 4 )
       .Should()
       .Be( "6x 515 414 312 213 112" );
@@ -302,6 +342,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 3, 4 )
       .Should()
       .Be( "6x 53 45 35 25 13" );
@@ -313,6 +354,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 5, 4 )
       .Should()
       .Be( "68 57 45 35 25 18" );
@@ -324,6 +366,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 8, 4 )
       .Should()
       .Be( "68 510 410 39 28 18" );
@@ -335,6 +378,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 0, 4 )
       .Should()
       .Be( "6x 5x 40 32 23 12" );
@@ -346,6 +390,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 12, 4 )
       .Should()
       .Be( "6x 5x 412 314 215 114" );
@@ -357,6 +402,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 5, 4 )
       .Should()
       .Be( "6x 55 47 37 27 15" );
@@ -368,6 +414,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+
     RenderChord( instrument, chord, 7, 4 )
       .Should()
       .Be( "610 59 47 37 27 110" );
@@ -379,11 +426,13 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var scale = new Scale( PitchClass.A, "MelodicMinor" );
+
     RenderScale( instrument, scale, 5, 4 )
       .Should()
       .Be( "65 67 68 55 57 59 46 47 49 35 37 25 27 29 15 17 18" );
 
     scale = new Scale( PitchClass.G, "MelodicMinor" );
+
     RenderScale( instrument, scale, 5, 4 )
       .Should()
       .Be( "65 66 68 55 57 59 45 47 48 35 37 25 27 28 15 16 18" );
@@ -395,11 +444,13 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var scale = new Scale( PitchClass.A, "MelodicMinor" );
+
     RenderScale( instrument, scale, 0, 4 )
       .Should()
       .Be( "60 62 64 50 52 53 40 42 44 31 32 20 21 23 10 12 14" );
 
     scale = new Scale( PitchClass.G, "MelodicMinor" );
+
     RenderScale( instrument, scale, 0, 4 )
       .Should()
       .Be( "60 62 63 50 51 53 40 42 44 30 32 33 21 23 10 12 13" );
@@ -411,11 +462,13 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var scale = new Scale( PitchClass.A, "MinorPentatonic" );
+
     RenderScale( instrument, scale, 5, 4 )
       .Should()
       .Be( "65 68 55 57 45 47 35 37 25 28 15 18" );
 
     scale = new Scale( PitchClass.G, "MinorPentatonic" );
+
     RenderScale( instrument, scale, 5, 4 )
       .Should()
       .Be( "66 68 55 58 45 48 35 37 26 28 16 18" );
@@ -427,11 +480,13 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var scale = new Scale( PitchClass.A, "MinorPentatonic" );
+
     RenderScale( instrument, scale, 0, 4 )
       .Should()
       .Be( "60 63 50 53 40 42 30 32 21 23 10 13" );
 
     scale = new Scale( PitchClass.G, "MinorPentatonic" );
+
     RenderScale( instrument, scale, 0, 4 )
       .Should()
       .Be( "61 63 51 53 40 43 30 33 21 23 11 13" );
@@ -443,6 +498,7 @@ public sealed class StringedInstrumentTest
     var instrument = StringedInstrument.Create( "guitar", 22 );
 
     var scale = new Scale( PitchClass.DSharp, "MinorPentatonic" );
+
     RenderScale( instrument, scale, 0, 4 )
       .Should()
       .Be( "62 64 51 54 41 44 31 33 22 24 12 14" );
@@ -453,6 +509,7 @@ public sealed class StringedInstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var instrument = StringedInstrument.Create( definition, 22 );
+
     instrument.Tuning.Should()
               .Be( definition.Tunings.Standard );
   }
@@ -473,6 +530,7 @@ public sealed class StringedInstrumentTest
   public void TestFactoryNullDefinition()
   {
     var act = () => { StringedInstrument.Create( (StringedInstrumentDefinition) null!, 22 ); };
+
     act.Should()
        .Throw<ArgumentNullException>();
   }
@@ -489,18 +547,23 @@ public sealed class StringedInstrumentTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
@@ -516,12 +579,15 @@ public sealed class StringedInstrumentTest
     a.Equals( b )
      .Should()
      .BeFalse();
+
     b.Equals( a )
      .Should()
      .BeFalse();
+
     Equals( a, b )
       .Should()
       .BeFalse();
+
     Equals( b, a )
       .Should()
       .BeFalse();
@@ -532,6 +598,7 @@ public sealed class StringedInstrumentTest
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
     var actual = StringedInstrument.Create( definition, 22 );
+
     actual.Equals( null )
           .Should()
           .BeFalse();

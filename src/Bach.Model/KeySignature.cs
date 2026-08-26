@@ -1,12 +1,35 @@
+// Module Name: KeySignature.cs
+// Project:     Bach.Model
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+// and associated documentation files (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
+// do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 namespace Bach.Model;
 
 /// <summary>Represents the accidentals used by a key signature.</summary>
 public readonly struct KeySignature
 {
-  private static readonly KeySignature s_empty = new( 0, false );
+  #region Constants
 
-  /// <summary>Gets an empty key signature.</summary>
-  public static KeySignature Empty => s_empty;
+  private static readonly KeySignature s_empty = new( 0, false );
 
   /// <summary>Gets the C major key signature.</summary>
   public static readonly KeySignature CMajor = new( 0, true );
@@ -92,6 +115,10 @@ public readonly struct KeySignature
   /// <summary>Gets the A flat minor key signature.</summary>
   public static readonly KeySignature AFlatMinor = new( 7, false );
 
+  #endregion
+
+  #region Constructors
+
   /// <summary>Initializes a new instance of the <see cref="KeySignature"/> struct.</summary>
   /// <param name="accidentalCount">The number of accidentals.</param>
   /// <param name="isSharp">True when the signature uses sharps; otherwise, flats.</param>
@@ -106,17 +133,30 @@ public readonly struct KeySignature
     Accidental = isSharp ? Accidental.Sharp : Accidental.Flat;
   }
 
+  #endregion
+
+  #region Properties
+
   /// <summary>Gets the number of accidentals in the signature.</summary>
   public int AccidentalCount { get; }
 
   /// <summary>Gets the accidental corresponding to the signature's direction.</summary>
   public Accidental Accidental { get; }
 
-  /// <inheritdoc />
+  /// <summary>Gets an empty key signature.</summary>
+  public static KeySignature Empty => s_empty;
+
+  #endregion
+
+  #region Public Methods
+
+  /// <inheritdoc/>
   public override string ToString()
   {
     return Accidental == Accidental.Sharp
       ? $"{AccidentalCount} sharps"
       : $"{AccidentalCount} flats";
   }
+
+  #endregion
 }

@@ -1,20 +1,20 @@
 // Module Name: Pitch.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Text;
 using Bach.Model.Internal;
 
+namespace Bach.Model;
+
 /// <summary>
-///   A Pitch represents the pitch of a sound (<see cref="PitchClass" />)
+///   A Pitch represents the pitch of a sound (<see cref="PitchClass"/>)
 ///   on a given octave.
 /// </summary>
 /// <remarks>
@@ -68,13 +68,13 @@ public readonly struct Pitch
 
   private static readonly Pitch s_a4 = Create( NoteName.A, Accidental.Natural, 4 );
 
-  /// <summary>An empty <see cref="Pitch" />.</summary>
+  /// <summary>An empty <see cref="Pitch"/>.</summary>
   public static readonly Pitch Empty = new( PitchClass.B, 9, 128 );
 
-  /// <summary>The minimum possible <see cref="Pitch" />> value.</summary>
+  /// <summary>The minimum possible <see cref="Pitch"/>> value.</summary>
   public static readonly Pitch MinValue = Create( PitchClass.C, MinOctave );
 
-  /// <summary>The maximum possible <see cref="Pitch" /> value.</summary>
+  /// <summary>The maximum possible <see cref="Pitch"/> value.</summary>
   public static readonly Pitch MaxValue = Create( PitchClass.G, MaxOctave );
 
   #endregion
@@ -171,8 +171,8 @@ public readonly struct Pitch
   #region Public Methods
 
   /// <summary>Adds an Interval to a given Pitch.</summary>
-  /// <param name="pitch">The <see cref="Pitch" />>.</param>
-  /// <param name="interval">An <see cref="Interval" />> to add to it.</param>
+  /// <param name="pitch">The <see cref="Pitch"/>>.</param>
+  /// <param name="interval">An <see cref="Interval"/>> to add to it.</param>
   /// <returns>A Pitch.</returns>
   public static Pitch Add(
     Pitch pitch,
@@ -186,7 +186,7 @@ public readonly struct Pitch
     return result;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int CompareTo(
     Pitch other )
   {
@@ -255,14 +255,14 @@ public readonly struct Pitch
     return note;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     Pitch obj )
   {
     return obj._absoluteValue == _absoluteValue;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -292,7 +292,7 @@ public readonly struct Pitch
     }
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return _absoluteValue;
@@ -361,14 +361,14 @@ public readonly struct Pitch
     return result;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return $"{PitchClass}{Octave}";
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Pitch" /> instance according to the provided
+  ///   Returns a string representation of the value of this <see cref="Pitch"/> instance according to the provided
   ///   format.
   /// </summary>
   /// <param name="format">A format string.</param>
@@ -380,7 +380,7 @@ public readonly struct Pitch
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Pitch" /> instance according to the provided
+  ///   Returns a string representation of the value of this <see cref="Pitch"/> instance according to the provided
   ///   format and format provider.
   /// </summary>
   /// <param name="format">A format string.</param>
@@ -502,7 +502,7 @@ public readonly struct Pitch
   }
 
   /// <summary>
-  /// Attempts to parse a Pitch from the given span using the specified format provider.
+  ///   Attempts to parse a Pitch from the given span using the specified format provider.
   /// </summary>
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>

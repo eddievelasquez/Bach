@@ -25,7 +25,7 @@
 namespace Bach.Model.Internal;
 
 /// <summary>
-/// Contains constants used throughout the Bach.Model library.
+///   Contains constants used throughout the Bach.Model library.
 /// </summary>
 internal static class Constants
 {

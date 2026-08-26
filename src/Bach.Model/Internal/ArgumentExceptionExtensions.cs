@@ -22,15 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal;
-
 using System.Collections.Generic;
 using System.Linq;
 
+namespace Bach.Model.Internal;
+
 /// <summary>
-///   Provides extension methods for <see cref="ArgumentException" /> to enhance argument validation.
+///   Provides extension methods for <see cref="ArgumentException"/> to enhance argument validation.
 /// </summary>
-public static class ArgumentExceptionExtensions
+internal static class ArgumentExceptionExtensions
 {
   #region Implementation
 
@@ -40,8 +40,8 @@ public static class ArgumentExceptionExtensions
     #region Public Methods
 
     /// <summary>
-    ///   Throws an <see cref="ArgumentNullException" /> if the specified source is null, or an
-    ///   <see cref="ArgumentException" /> if the source is empty.
+    ///   Throws an <see cref="ArgumentNullException"/> if the specified source is null, or an
+    ///   <see cref="ArgumentException"/> if the source is empty.
     /// </summary>
     /// <typeparam name="T">The type of elements in the source sequence.</typeparam>
     /// <param name="source">The source sequence to check.</param>

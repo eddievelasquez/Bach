@@ -1,20 +1,20 @@
 // Module Name: ScaleFormulaBuilder.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Internal;
+using Bach.Model.Internal;
+
+namespace Bach.Model;
 
 /// <summary>Creates scale formulas.</summary>
 public sealed class ScaleFormulaBuilder
@@ -45,12 +45,12 @@ public sealed class ScaleFormulaBuilder
 
   #region Constructors
 
-  /// <summary>Initializes a new instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
+  /// <summary>Initializes a new instance of the <see cref="ScaleFormulaBuilder"/> class.</summary>
   public ScaleFormulaBuilder()
   {
   }
 
-  /// <summary>Initializes a new named instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
+  /// <summary>Initializes a new named instance of the <see cref="ScaleFormulaBuilder"/> class.</summary>
   /// <param name="name">The scale formula's name.</param>
   public ScaleFormulaBuilder(
     string name )
@@ -58,7 +58,7 @@ public sealed class ScaleFormulaBuilder
     SetName( name );
   }
 
-  /// <summary>Initializes a new named instance of the <see cref="ScaleFormulaBuilder" /> class.</summary>
+  /// <summary>Initializes a new named instance of the <see cref="ScaleFormulaBuilder"/> class.</summary>
   /// <param name="id">The scale formula's identifier.</param>
   /// <param name="name">The scale formula's name.</param>
   public ScaleFormulaBuilder(
@@ -98,6 +98,7 @@ public sealed class ScaleFormulaBuilder
     foreach( var alias in aliases )
     {
       var trimmed = alias.Trim();
+
       if( trimmed.Length > 0 )
       {
         _aliases.Add( trimmed );
@@ -122,6 +123,7 @@ public sealed class ScaleFormulaBuilder
     foreach( var category in categories )
     {
       var trimmed = category.Trim();
+
       if( trimmed.Length > 0 )
       {
         _categories.Add( trimmed );
@@ -326,6 +328,7 @@ public sealed class ScaleFormulaBuilder
     }
 
     var builder = new StringBuilder( value.Length );
+
     foreach( var c in value )
     {
       if( char.IsWhiteSpace( c ) )

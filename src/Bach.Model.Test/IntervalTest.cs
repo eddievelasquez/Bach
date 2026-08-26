@@ -1,20 +1,20 @@
 // Module Name: IntervalTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -26,7 +26,165 @@ namespace Bach.Model.Test;
 
 public sealed class IntervalTest
 {
-  #region Tests
+  #region Properties
+
+  public static TheoryData<IntervalQuantity, IntervalQuality> InvalidIntervalCombinations =>
+    new()
+    {
+      { IntervalQuantity.Unison, IntervalQuality.Minor },
+      { IntervalQuantity.Unison, IntervalQuality.Major },
+      { IntervalQuantity.Second, IntervalQuality.Perfect },
+      { IntervalQuantity.Third, IntervalQuality.Perfect },
+      { IntervalQuantity.Fourth, IntervalQuality.Minor },
+      { IntervalQuantity.Fourth, IntervalQuality.Major },
+      { IntervalQuantity.Fifth, IntervalQuality.Minor },
+      { IntervalQuantity.Fifth, IntervalQuality.Major },
+      { IntervalQuantity.Sixth, IntervalQuality.Perfect },
+      { IntervalQuantity.Seventh, IntervalQuality.Perfect },
+      { IntervalQuantity.Octave, IntervalQuality.Minor },
+      { IntervalQuantity.Octave, IntervalQuality.Major },
+      { IntervalQuantity.Ninth, IntervalQuality.Perfect },
+      { IntervalQuantity.Tenth, IntervalQuality.Perfect },
+      { IntervalQuantity.Eleventh, IntervalQuality.Minor },
+      { IntervalQuantity.Eleventh, IntervalQuality.Major },
+      { IntervalQuantity.Twelfth, IntervalQuality.Minor },
+      { IntervalQuantity.Twelfth, IntervalQuality.Major },
+      { IntervalQuantity.Thirteenth, IntervalQuality.Perfect },
+      { IntervalQuantity.Fourteenth, IntervalQuality.Perfect }
+    };
+
+  public static TheoryData<string, string> InversionData => new()
+  {
+    { "m2", "-M7" },
+    { "M2", "-m7" },
+    { "m3", "-M6" },
+    { "M3", "-m6" },
+    { "P4", "-P5" },
+    { "A4", "-d5" },
+    { "P5", "-P4" },
+    { "A5", "-d4" },
+    { "m6", "-M3" },
+    { "M6", "-m3" },
+    { "m7", "-M2" },
+    { "M7", "-m2" },
+    { "m9", "-M7" },
+    { "M9", "-m7" },
+    { "m10", "-M6" },
+    { "M10", "-m6" },
+    { "P11", "-P5" },
+    { "d11", "-A5" },
+    { "A11", "-d5" },
+    { "P12", "-P4" },
+    { "d12", "-A4" },
+    { "A12", "-d4" },
+    { "m13", "-M3" },
+    { "M13", "-m3" },
+    { "m14", "-M2" },
+    { "M14", "-m2" }
+  };
+
+  public static TheoryData<string, Interval> ValidIntervalStrings => new()
+  {
+    { "P1", Interval.Unison },
+    { "R", Interval.Unison },
+    { "1", Interval.Unison },
+    { "A1", Interval.AugmentedFirst },
+    { "d2", Interval.DiminishedSecond },
+    { "m2", Interval.MinorSecond },
+    { "M2", Interval.MajorSecond },
+    { "A2", Interval.AugmentedSecond },
+    { "d3", Interval.DiminishedThird },
+    { "m3", Interval.MinorThird },
+    { "M3", Interval.MajorThird },
+    { "A3", Interval.AugmentedThird },
+    { "d4", Interval.DiminishedFourth },
+    { "P4", Interval.Fourth },
+    { "A4", Interval.AugmentedFourth },
+    { "d5", Interval.DiminishedFifth },
+    { "P5", Interval.Fifth },
+    { "A5", Interval.AugmentedFifth },
+    { "d6", Interval.DiminishedSixth },
+    { "m6", Interval.MinorSixth },
+    { "M6", Interval.MajorSixth },
+    { "A6", Interval.AugmentedSixth },
+    { "d7", Interval.DiminishedSeventh },
+    { "m7", Interval.MinorSeventh },
+    { "M7", Interval.MajorSeventh },
+    { "A7", Interval.AugmentedSeventh },
+    { "d8", Interval.DiminishedOctave },
+    { "P8", Interval.Octave },
+    { "-P1", -Interval.Unison },
+    { "-M3", -Interval.MajorThird }
+  };
+
+  public static TheoryData<Interval, int> SemitoneCountData => new()
+  {
+    { Interval.Unison, 0 },
+    { Interval.AugmentedFirst, 1 },
+    { Interval.DiminishedSecond, 0 },
+    { Interval.MinorSecond, 1 },
+    { Interval.MajorSecond, 2 },
+    { Interval.AugmentedSecond, 3 },
+    { Interval.DiminishedThird, 2 },
+    { Interval.MinorThird, 3 },
+    { Interval.MajorThird, 4 },
+    { Interval.AugmentedThird, 5 },
+    { Interval.DiminishedFourth, 4 },
+    { Interval.Fourth, 5 },
+    { Interval.AugmentedFourth, 6 },
+    { Interval.DiminishedFifth, 6 },
+    { Interval.Fifth, 7 },
+    { Interval.AugmentedFifth, 8 },
+    { Interval.DiminishedSixth, 7 },
+    { Interval.MinorSixth, 8 },
+    { Interval.MajorSixth, 9 },
+    { Interval.AugmentedSixth, 10 },
+    { Interval.DiminishedSeventh, 9 },
+    { Interval.MinorSeventh, 10 },
+    { Interval.MajorSeventh, 11 },
+    { Interval.AugmentedSeventh, 12 },
+    { Interval.DiminishedOctave, 11 },
+    { Interval.Octave, 12 }
+  };
+
+  public static TheoryData<string?> InvalidIntervalStrings => [(string?) null, "", "   ", "M1", "P2", "L2", "Px"];
+
+  public static TheoryData<Interval, string, string> ToStringWithFormatData =>
+    new()
+    {
+      { Interval.Unison, "sq", "1" },
+      { Interval.MajorSecond, "Sq", "M2" },
+      { Interval.MajorThird, "SQ", "MThird" },
+      { Interval.Fifth, "sq", "5" },
+      { Interval.Fifth, "Sq", "P5" },
+      { Interval.MinorSeventh, "Sq", "m7" },
+      { Interval.MinorSeventh, "sq", "m7" },
+      { Interval.Octave, "q", "8" },
+      { -Interval.MajorThird, "dSq", "-M3" },
+      { -Interval.MajorThird, "dq", "-3" },
+      { -Interval.MajorThird, "dQ", "-Third" },
+      { -Interval.Unison, "Sq", "P1" },
+      { -Interval.Unison, "q", "1" },
+      { -Interval.Unison, "Q", "Unison" }
+    };
+
+  public static TheoryData<IntervalQuantity, IntervalQuality, bool, int> GetSemitoneCountDataWithDirection => new()
+  {
+    { IntervalQuantity.Third, IntervalQuality.Major, false, 4 },
+    { IntervalQuantity.Third, IntervalQuality.Major, true, -4 },
+    { IntervalQuantity.Fifth, IntervalQuality.Perfect, false, 7 },
+    { IntervalQuantity.Fifth, IntervalQuality.Perfect, true, -7 },
+    { IntervalQuantity.Unison, IntervalQuality.Perfect, false, 0 },
+    { IntervalQuantity.Unison, IntervalQuality.Perfect, true, 0 },
+    { IntervalQuantity.Unison, IntervalQuality.Augmented, false, 1 },
+    { IntervalQuantity.Unison, IntervalQuality.Augmented, true, -1 },
+    { IntervalQuantity.Second, IntervalQuality.Diminished, false, 0 },
+    { IntervalQuantity.Second, IntervalQuality.Diminished, true, 0 }
+  };
+
+  #endregion
+
+  #region Public Methods
 
   [Fact]
   public void DefaultInterval_ShouldBeAscending()
@@ -219,6 +377,28 @@ public sealed class IntervalTest
 
     ( lhs != rhs ).Should()
                   .BeTrue();
+  }
+
+  [Theory]
+  [InlineData( "1", IntervalQuantity.Unison, "" )]
+  [InlineData( "12", IntervalQuantity.Twelfth, "" )]
+  [InlineData( "10A", IntervalQuantity.Tenth, "A" )]
+  [InlineData( "123", IntervalQuantity.Twelfth, "3" )]
+  public void IntervalQuantityTryParse_ShouldReadOnlyOneOrTwoDigitsAndIgnoreTail(
+    string input,
+    IntervalQuantity expected,
+    string expectedTail )
+  {
+    IntervalQuantity.TryParse( input.AsSpan(), null, out var actual, out var tail )
+                    .Should()
+                    .BeTrue();
+
+    actual.Should()
+          .Be( expected );
+
+    tail.ToString()
+        .Should()
+        .Be( expectedTail );
   }
 
   [Theory]
@@ -475,28 +655,6 @@ public sealed class IntervalTest
             .BeFalse();
   }
 
-  [Theory]
-  [InlineData( "1", IntervalQuantity.Unison, "" )]
-  [InlineData( "12", IntervalQuantity.Twelfth, "" )]
-  [InlineData( "10A", IntervalQuantity.Tenth, "A" )]
-  [InlineData( "123", IntervalQuantity.Twelfth, "3" )]
-  public void IntervalQuantityTryParse_ShouldReadOnlyOneOrTwoDigitsAndIgnoreTail(
-    string input,
-    IntervalQuantity expected,
-    string expectedTail )
-  {
-    IntervalQuantity.TryParse( input.AsSpan(), null, out var actual, out var tail )
-                    .Should()
-                    .BeTrue();
-
-    actual.Should()
-          .Be( expected );
-
-    tail.ToString()
-        .Should()
-        .Be( expectedTail );
-  }
-
   [Fact]
   public void TryParse_ShouldSkipLeadingWhitespace_WhenValidStringIsProvided()
   {
@@ -507,164 +665,6 @@ public sealed class IntervalTest
     actual.Should()
           .Be( Interval.Fifth );
   }
-
-  #endregion
-
-  #region Implementation
-
-  public static TheoryData<IntervalQuantity, IntervalQuality> InvalidIntervalCombinations =>
-    new()
-    {
-      { IntervalQuantity.Unison, IntervalQuality.Minor },
-      { IntervalQuantity.Unison, IntervalQuality.Major },
-      { IntervalQuantity.Second, IntervalQuality.Perfect },
-      { IntervalQuantity.Third, IntervalQuality.Perfect },
-      { IntervalQuantity.Fourth, IntervalQuality.Minor },
-      { IntervalQuantity.Fourth, IntervalQuality.Major },
-      { IntervalQuantity.Fifth, IntervalQuality.Minor },
-      { IntervalQuantity.Fifth, IntervalQuality.Major },
-      { IntervalQuantity.Sixth, IntervalQuality.Perfect },
-      { IntervalQuantity.Seventh, IntervalQuality.Perfect },
-      { IntervalQuantity.Octave, IntervalQuality.Minor },
-      { IntervalQuantity.Octave, IntervalQuality.Major },
-      { IntervalQuantity.Ninth, IntervalQuality.Perfect },
-      { IntervalQuantity.Tenth, IntervalQuality.Perfect },
-      { IntervalQuantity.Eleventh, IntervalQuality.Minor },
-      { IntervalQuantity.Eleventh, IntervalQuality.Major },
-      { IntervalQuantity.Twelfth, IntervalQuality.Minor },
-      { IntervalQuantity.Twelfth, IntervalQuality.Major },
-      { IntervalQuantity.Thirteenth, IntervalQuality.Perfect },
-      { IntervalQuantity.Fourteenth, IntervalQuality.Perfect }
-    };
-
-  public static TheoryData<string, string> InversionData => new()
-  {
-    { "m2", "-M7" },
-    { "M2", "-m7" },
-    { "m3", "-M6" },
-    { "M3", "-m6" },
-    { "P4", "-P5" },
-    { "A4", "-d5" },
-    { "P5", "-P4" },
-    { "A5", "-d4" },
-    { "m6", "-M3" },
-    { "M6", "-m3" },
-    { "m7", "-M2" },
-    { "M7", "-m2" },
-    { "m9", "-M7" },
-    { "M9", "-m7" },
-    { "m10", "-M6" },
-    { "M10", "-m6" },
-    { "P11", "-P5" },
-    { "d11", "-A5" },
-    { "A11", "-d5" },
-    { "P12", "-P4" },
-    { "d12", "-A4" },
-    { "A12", "-d4" },
-    { "m13", "-M3" },
-    { "M13", "-m3" },
-    { "m14", "-M2" },
-    { "M14", "-m2" }
-  };
-
-  public static TheoryData<string, Interval> ValidIntervalStrings => new()
-  {
-    { "P1", Interval.Unison },
-    { "R", Interval.Unison },
-    { "1", Interval.Unison },
-    { "A1", Interval.AugmentedFirst },
-    { "d2", Interval.DiminishedSecond },
-    { "m2", Interval.MinorSecond },
-    { "M2", Interval.MajorSecond },
-    { "A2", Interval.AugmentedSecond },
-    { "d3", Interval.DiminishedThird },
-    { "m3", Interval.MinorThird },
-    { "M3", Interval.MajorThird },
-    { "A3", Interval.AugmentedThird },
-    { "d4", Interval.DiminishedFourth },
-    { "P4", Interval.Fourth },
-    { "A4", Interval.AugmentedFourth },
-    { "d5", Interval.DiminishedFifth },
-    { "P5", Interval.Fifth },
-    { "A5", Interval.AugmentedFifth },
-    { "d6", Interval.DiminishedSixth },
-    { "m6", Interval.MinorSixth },
-    { "M6", Interval.MajorSixth },
-    { "A6", Interval.AugmentedSixth },
-    { "d7", Interval.DiminishedSeventh },
-    { "m7", Interval.MinorSeventh },
-    { "M7", Interval.MajorSeventh },
-    { "A7", Interval.AugmentedSeventh },
-    { "d8", Interval.DiminishedOctave },
-    { "P8", Interval.Octave },
-    { "-P1", -Interval.Unison },
-    { "-M3", -Interval.MajorThird }
-  };
-
-  public static TheoryData<Interval, int> SemitoneCountData => new()
-  {
-    { Interval.Unison, 0 },
-    { Interval.AugmentedFirst, 1 },
-    { Interval.DiminishedSecond, 0 },
-    { Interval.MinorSecond, 1 },
-    { Interval.MajorSecond, 2 },
-    { Interval.AugmentedSecond, 3 },
-    { Interval.DiminishedThird, 2 },
-    { Interval.MinorThird, 3 },
-    { Interval.MajorThird, 4 },
-    { Interval.AugmentedThird, 5 },
-    { Interval.DiminishedFourth, 4 },
-    { Interval.Fourth, 5 },
-    { Interval.AugmentedFourth, 6 },
-    { Interval.DiminishedFifth, 6 },
-    { Interval.Fifth, 7 },
-    { Interval.AugmentedFifth, 8 },
-    { Interval.DiminishedSixth, 7 },
-    { Interval.MinorSixth, 8 },
-    { Interval.MajorSixth, 9 },
-    { Interval.AugmentedSixth, 10 },
-    { Interval.DiminishedSeventh, 9 },
-    { Interval.MinorSeventh, 10 },
-    { Interval.MajorSeventh, 11 },
-    { Interval.AugmentedSeventh, 12 },
-    { Interval.DiminishedOctave, 11 },
-    { Interval.Octave, 12 }
-  };
-
-  public static TheoryData<string?> InvalidIntervalStrings => [(string?) null, "", "   ", "M1", "P2", "L2", "Px"];
-
-  public static TheoryData<Interval, string, string> ToStringWithFormatData =>
-    new()
-    {
-      { Interval.Unison, "sq", "1" },
-      { Interval.MajorSecond, "Sq", "M2" },
-      { Interval.MajorThird, "SQ", "MThird" },
-      { Interval.Fifth, "sq", "5" },
-      { Interval.Fifth, "Sq", "P5" },
-      { Interval.MinorSeventh, "Sq", "m7" },
-      { Interval.MinorSeventh, "sq", "m7" },
-      { Interval.Octave, "q", "8" },
-      { -Interval.MajorThird, "dSq", "-M3" },
-      { -Interval.MajorThird, "dq", "-3" },
-      { -Interval.MajorThird, "dQ", "-Third" },
-      { -Interval.Unison, "Sq", "P1" },
-      { -Interval.Unison, "q", "1" },
-      { -Interval.Unison, "Q", "Unison" }
-    };
-
-  public static TheoryData<IntervalQuantity, IntervalQuality, bool, int> GetSemitoneCountDataWithDirection => new()
-  {
-    { IntervalQuantity.Third, IntervalQuality.Major, false, 4 },
-    { IntervalQuantity.Third, IntervalQuality.Major, true, -4 },
-    { IntervalQuantity.Fifth, IntervalQuality.Perfect, false, 7 },
-    { IntervalQuantity.Fifth, IntervalQuality.Perfect, true, -7 },
-    { IntervalQuantity.Unison, IntervalQuality.Perfect, false, 0 },
-    { IntervalQuantity.Unison, IntervalQuality.Perfect, true, 0 },
-    { IntervalQuantity.Unison, IntervalQuality.Augmented, false, 1 },
-    { IntervalQuantity.Unison, IntervalQuality.Augmented, true, -1 },
-    { IntervalQuantity.Second, IntervalQuality.Diminished, false, 0 },
-    { IntervalQuantity.Second, IntervalQuality.Diminished, true, 0 }
-  };
 
   #endregion
 }

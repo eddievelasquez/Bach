@@ -1,6 +1,6 @@
-﻿// Module Name: INamedObject.cs
+// Module Name: INamedObject.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -26,7 +26,7 @@ namespace Bach.Model.Internal;
 
 /// <summary>Interface for a named object.</summary>
 /// <remarks>
-///   A named object has an invariant culture, case insensitive identifier and a current culture, case insensitive
+///   A named object has an invariant culture, case-insensitive identifier and a current culture, case-insensitive
 ///   name.
 /// </remarks>
 public interface INamedObject

@@ -22,11 +22,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments;
-
 using System.Collections.Generic;
 using Bach.Model.Instruments.Internal;
 using Bach.Model.Internal;
+
+namespace Bach.Model.Instruments;
 
 /// <summary>Creates stringed instrument definitions.</summary>
 public sealed class StringedInstrumentDefinitionBuilder

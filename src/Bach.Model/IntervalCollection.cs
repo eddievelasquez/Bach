@@ -1,20 +1,20 @@
 // Module Name: IntervalCollection.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,12 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bach.Model.Internal;
+
+namespace Bach.Model;
 
 /// <summary>
 ///   Represents a collection of intervals.
@@ -45,7 +45,7 @@ public sealed class IntervalCollection
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="IntervalCollection" /> class.
+  ///   Initializes a new instance of the <see cref="IntervalCollection"/> class.
   /// </summary>
   /// <param name="intervals">The intervals to include in the collection.</param>
   /// <exception cref="ArgumentException">Thrown when the intervals are not sorted or contain duplicates.</exception>
@@ -66,7 +66,7 @@ public sealed class IntervalCollection
   }
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="IntervalCollection" /> class with the specified intervals.
+  ///   Initializes a new instance of the <see cref="IntervalCollection"/> class with the specified intervals.
   /// </summary>
   /// <param name="intervals">The intervals to include in the collection.</param>
   public IntervalCollection(
@@ -79,10 +79,10 @@ public sealed class IntervalCollection
 
   #region Properties
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int Count => _intervals.Length;
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public Interval this[
     int index ] => _intervals[index];
 
@@ -90,7 +90,7 @@ public sealed class IntervalCollection
 
   #region Public Methods
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     IntervalCollection? other )
   {
@@ -99,10 +99,10 @@ public sealed class IntervalCollection
       return true;
     }
 
-    return other is not null && _intervals.SequenceEqual( other._intervals );
+    return other is not null && Enumerable.SequenceEqual( _intervals, other._intervals );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -114,19 +114,19 @@ public sealed class IntervalCollection
     return obj is IntervalCollection other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public IEnumerator<Interval> GetEnumerator()
   {
     return ( (IEnumerable<Interval>) _intervals ).GetEnumerator();
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   IEnumerator IEnumerable.GetEnumerator()
   {
     return GetEnumerator();
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     var hash = new HashCode();
@@ -145,10 +145,12 @@ public sealed class IntervalCollection
   /// </summary>
   /// <param name="interval">The interval to locate</param>
   /// <param name="comparer">
-  ///   The optional <see cref="IComparer&lt;Interval&gt;" />  implementation to use when comparing intervals. If no
+  ///   The optional <see cref="IComparer&lt;Interval&gt;"/>  implementation to use when comparing intervals. If no
   ///   comparer is provided, the intervals will be compared using an exact match.
   /// </param>
-  /// <returns>The index of the occurrence of <paramref name="interval" /> in the collection, if found; otherwise, -1.</returns>
+  /// <returns>
+  ///   The index of the occurrence of <paramref name="interval"/> in the collection, if found; otherwise, -1.
+  /// </returns>
   public int IndexOf(
     Interval interval,
     IComparer<Interval>? comparer = null )
@@ -156,7 +158,7 @@ public sealed class IntervalCollection
     return Array.BinarySearch( _intervals, interval, comparer ?? Comparer<Interval>.Default );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return string.Join( ",", _intervals );

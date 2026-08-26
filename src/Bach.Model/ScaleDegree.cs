@@ -1,20 +1,20 @@
 // Module Name: ScaleDegree.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,10 +22,10 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Diagnostics;
 using System.Linq;
+
+namespace Bach.Model;
 
 /// <summary>Represents a scale degree and resolves it within a key.</summary>
 public readonly struct ScaleDegree: IParsable<ScaleDegree>
@@ -54,9 +54,9 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   public static readonly ScaleDegree LeadingTone = new( nameof( LeadingTone ), 7, "vii" );
 
   /// <summary>
-  /// Represents an array of all scale degrees in order from tonic to leading tone.
+  ///   Represents an array of all scale degrees in order from tonic to leading tone.
   /// </summary>
-  public static ScaleDegree[] ScaleDegrees = [ Tonic, Supertonic, Mediant, Subdominant, Dominant, Submediant, LeadingTone ];
+  public static ScaleDegree[] ScaleDegrees = [Tonic, Supertonic, Mediant, Subdominant, Dominant, Submediant, LeadingTone];
 
   #endregion
 
@@ -173,7 +173,7 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     return new Triad( root, quality );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return Symbol;
@@ -232,11 +232,12 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     ReadOnlySpan<char> value,
     out ScaleDegree scaleDegree )
   {
-    Debug.Assert( !value.IsEmpty);
+    Debug.Assert( !value.IsEmpty );
 
     scaleDegree = default;
 
     var parsed = ParseRoman( value );
+
     if( parsed == -1 )
     {
       return false;
@@ -247,11 +248,12 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   }
 
   /// <summary>
-  /// Parses a roman numeral string and returns the corresponding scale degree number (1-7).
+  ///   Parses a roman numeral string and returns the corresponding scale degree number (1-7).
   /// </summary>
   /// <param name="s">The roman numeral string.</param>
   /// <returns>The corresponding scale degree number (1-7), or -1 if invalid.</returns>
-  private static int ParseRoman( ReadOnlySpan<char> s )
+  private static int ParseRoman(
+    ReadOnlySpan<char> s )
   {
     return s.Length switch
     {
@@ -288,7 +290,8 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
       _ => -1
     };
 
-    static char ToUpperAscii( char c ) => (char) ( c & ~0x20 ); // ASCII uppercase
+    static char ToUpperAscii(
+      char c ) => (char) ( c & ~0x20 ); // ASCII uppercase
   }
 
   /// <summary>Attempts to parse the supplied value as a Nashville number scale degree.</summary>
@@ -311,7 +314,7 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   }
 
   /// <summary>
-  /// Gets the diatonic triad quality for the scale degree in the specified mode.
+  ///   Gets the diatonic triad quality for the scale degree in the specified mode.
   /// </summary>
   /// <param name="mode">The mode to use for determining the triad quality.</param>
   /// <returns>The diatonic triad quality for the scale degree in the specified mode.</returns>

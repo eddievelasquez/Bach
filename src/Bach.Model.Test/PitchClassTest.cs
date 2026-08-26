@@ -1,20 +1,20 @@
 // Module Name: PitchClassTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -393,6 +393,69 @@ public sealed class PitchClassTest
 
   #region Public Methods
 
+  [Fact]
+  public void AFlat_ShouldReturnPitchClassWithNoteNameAAndFlatAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.AFlat;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.A );
+
+    result.Accidental.Should()
+          .Be( Accidental.Flat );
+
+    ( (int) result ).Should()
+                    .Be( 24 );
+
+    result.ToString()
+          .Should()
+          .Be( "Ab" );
+  }
+
+  [Fact]
+  public void ASharp_ShouldReturnPitchClassWithNoteNameAAndSharpAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.ASharp;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.A );
+
+    result.Accidental.Should()
+          .Be( Accidental.Sharp );
+
+    ( (int) result ).Should()
+                    .Be( 31 );
+
+    result.ToString()
+          .Should()
+          .Be( "A#" );
+  }
+
+  [Fact]
+  public void A_ShouldReturnPitchClassWithNoteNameAAndNaturalAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.A;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.A );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    ( (int) result ).Should()
+                    .Be( 27 );
+
+    result.ToString()
+          .Should()
+          .Be( "A" );
+  }
+
   [Theory]
   [MemberData( nameof( AddIntervals ) )]
   public void AdditionOperator_ShouldReturnExpectedPitchClass_WhenAddingInterval(
@@ -415,6 +478,90 @@ public sealed class PitchClassTest
                     .Be( expected );
   }
 
+  [Fact]
+  public void BFlat_ShouldReturnPitchClassWithNoteNameBAndFlatAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.BFlat;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.B );
+
+    result.Accidental.Should()
+          .Be( Accidental.Flat );
+
+    ( (int) result ).Should()
+                    .Be( 30 );
+
+    result.ToString()
+          .Should()
+          .Be( "Bb" );
+  }
+
+  [Fact]
+  public void B_ShouldReturnPitchClassWithNoteNameBAndNaturalAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.B;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.B );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    ( (int) result ).Should()
+                    .Be( 33 );
+
+    result.ToString()
+          .Should()
+          .Be( "B" );
+  }
+
+  [Fact]
+  public void CSharp_ShouldReturnPitchClassWithNoteNameCAndSharpAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.CSharp;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.C );
+
+    result.Accidental.Should()
+          .Be( Accidental.Sharp );
+
+    ( (int) result ).Should()
+                    .Be( 4 );
+
+    result.ToString()
+          .Should()
+          .Be( "C#" );
+  }
+
+  [Fact]
+  public void C_ShouldReturnPitchClassWithNoteNameCAndNaturalAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.C;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.C );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    ( (int) result ).Should()
+                    .Be( 1 );
+
+    result.ToString()
+          .Should()
+          .Be( "C" );
+  }
+
   [Theory]
   [MemberData( nameof( CompareToTestData ) )]
   public void CompareTo_ShouldReturnExpectedSign_WhenComparingPitchClasses(
@@ -425,6 +572,21 @@ public sealed class PitchClassTest
     Math.Sign( left.CompareTo( right ) )
         .Should()
         .Be( expectedSign );
+  }
+
+  [Fact]
+  public void CompareTo_ShouldReturnNegative_WhenThisIsLower()
+  {
+    // Arrange
+    var lower = PitchClass.C;
+    var higher = PitchClass.D;
+
+    // Act
+    var result = lower.CompareTo( higher );
+
+    // Assert
+    result.Should()
+          .BeLessThan( 0 );
   }
 
   [Theory]
@@ -440,6 +602,86 @@ public sealed class PitchClassTest
 
     note.Accidental.Should()
         .Be( accidental );
+  }
+
+  [Fact]
+  public void Create_ShouldReturnNaturalPitchClass_WhenGivenNoteName()
+  {
+    // Arrange & Act
+    var result = PitchClass.Create( NoteName.F );
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.F );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    result.Should()
+          .Be( PitchClass.F );
+  }
+
+  [Fact]
+  public void DFlat_ShouldReturnPitchClassWithNoteNameDAndFlatAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.DFlat;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.D );
+
+    result.Accidental.Should()
+          .Be( Accidental.Flat );
+
+    ( (int) result ).Should()
+                    .Be( 3 );
+
+    result.ToString()
+          .Should()
+          .Be( "Db" );
+  }
+
+  [Fact]
+  public void DSharp_ShouldReturnPitchClassWithNoteNameDAndSharpAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.DSharp;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.D );
+
+    result.Accidental.Should()
+          .Be( Accidental.Sharp );
+
+    ( (int) result ).Should()
+                    .Be( 11 );
+
+    result.ToString()
+          .Should()
+          .Be( "D#" );
+  }
+
+  [Fact]
+  public void D_ShouldReturnPitchClassWithNoteNameDAndNaturalAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.D;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.D );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    ( (int) result ).Should()
+                    .Be( 7 );
+
+    result.ToString()
+          .Should()
+          .Be( "D" );
   }
 
   [Theory]
@@ -461,6 +703,48 @@ public sealed class PitchClassTest
                     .Be( afterPreDecrement.Transpose( -1 ) );
   }
 
+  [Fact]
+  public void EFlat_ShouldReturnPitchClassWithNoteNameEAndFlatAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.EFlat;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.E );
+
+    result.Accidental.Should()
+          .Be( Accidental.Flat );
+
+    ( (int) result ).Should()
+                    .Be( 10 );
+
+    result.ToString()
+          .Should()
+          .Be( "Eb" );
+  }
+
+  [Fact]
+  public void E_ShouldReturnPitchClassWithNoteNameEAndNaturalAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.E;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.E );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    ( (int) result ).Should()
+                    .Be( 13 );
+
+    result.ToString()
+          .Should()
+          .Be( "E" );
+  }
+
   [Theory]
   [MemberData( nameof( EqualsTestData ) )]
   public void Equals_ShouldReturnExpectedValue_WhenComparingPitchClasses(
@@ -471,6 +755,111 @@ public sealed class PitchClassTest
     pitchClass.Equals( other )
               .Should()
               .Be( expected );
+  }
+
+  [Fact]
+  public void FSharp_ShouldReturnPitchClassWithNoteNameFAndSharpAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.FSharp;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.F );
+
+    result.Accidental.Should()
+          .Be( Accidental.Sharp );
+
+    ( (int) result ).Should()
+                    .Be( 19 );
+
+    result.ToString()
+          .Should()
+          .Be( "F#" );
+  }
+
+  [Fact]
+  public void F_ShouldReturnPitchClassWithNoteNameFAndNaturalAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.F;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.F );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    ( (int) result ).Should()
+                    .Be( 16 );
+
+    result.ToString()
+          .Should()
+          .Be( "F" );
+  }
+
+  [Fact]
+  public void GFlat_ShouldReturnPitchClassWithNoteNameGAndFlatAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.GFlat;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.G );
+
+    result.Accidental.Should()
+          .Be( Accidental.Flat );
+
+    ( (int) result ).Should()
+                    .Be( 18 );
+
+    result.ToString()
+          .Should()
+          .Be( "Gb" );
+  }
+
+  [Fact]
+  public void GSharp_ShouldReturnPitchClassWithNoteNameGAndSharpAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.GSharp;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.G );
+
+    result.Accidental.Should()
+          .Be( Accidental.Sharp );
+
+    ( (int) result ).Should()
+                    .Be( 25 );
+
+    result.ToString()
+          .Should()
+          .Be( "G#" );
+  }
+
+  [Fact]
+  public void G_ShouldReturnPitchClassWithNoteNameGAndNaturalAccidental_WhenAccessed()
+  {
+    // Arrange & Act
+    var result = PitchClass.G;
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.G );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    ( (int) result ).Should()
+                    .Be( 22 );
+
+    result.ToString()
+          .Should()
+          .Be( "G" );
   }
 
   [Theory]
@@ -501,6 +890,54 @@ public sealed class PitchClassTest
 
       ++startInclusive;
     }
+  }
+
+  [Theory]
+  [MemberData( nameof( GetIntervalToPitchClassTestData ) )]
+  public void GetIntervalTo_ShouldReturnExpectedInterval_WhenGettingIntervalToPitchClasses(
+    PitchClass left,
+    PitchClass right,
+    Interval expected )
+  {
+    left.GetIntervalTo( right )
+        .Should()
+        .Be( expected );
+  }
+
+  [Fact]
+  public void GetIntervalTo_ShouldReturnMajorSecond_WhenFromCToD()
+  {
+    // Arrange
+    var from = PitchClass.C;
+    var to = PitchClass.D;
+
+    // Act
+    var interval = from.GetIntervalTo( to );
+
+    // Assert
+    interval.Quantity.Should()
+            .Be( IntervalQuantity.Second );
+
+    interval.SemitoneCount.Should()
+            .Be( Interval.MajorSecond.SemitoneCount );
+
+    interval.Should()
+            .Be( Interval.MajorSecond );
+  }
+
+  [Fact]
+  public void IPitchPitchClass_PitchClassProperty_ShouldReturnSelf_WhenAccessed()
+  {
+    // Arrange
+    var original = PitchClass.B;
+    var asInterface = (IPitch<PitchClass>) original;
+
+    // Act
+    var pitchClass = asInterface.PitchClass;
+
+    // Assert
+    pitchClass.Should()
+              .Be( original );
   }
 
   [Theory]
@@ -606,18 +1043,6 @@ public sealed class PitchClassTest
   }
 
   [Theory]
-  [MemberData( nameof( GetIntervalToPitchClassTestData ) )]
-  public void GetIntervalTo_ShouldReturnExpectedInterval_WhenGettingIntervalToPitchClasses(
-    PitchClass left,
-    PitchClass right,
-    Interval expected )
-  {
-    left.GetIntervalTo( right )
-        .Should()
-        .Be( expected );
-  }
-
-  [Theory]
   [MemberData( nameof( SubtractIntervalTestData ) )]
   public void Subtract_ShouldReturnExpectedPitchClass_WhenSubtractingInterval(
     PitchClass pitchClass,
@@ -668,6 +1093,113 @@ public sealed class PitchClassTest
               .Be( expected );
   }
 
+  [Fact]
+  public void Transpose_Int_ShouldReturnPreviousNatural_WhenNegativeOneSemitone()
+  {
+    // Arrange
+    var original = PitchClass.C;
+
+    // Act
+    var result = original.Transpose( -1 );
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.B );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    result.ToString()
+          .Should()
+          .Be( "B" );
+  }
+
+  [Fact]
+  public void Transpose_Int_ShouldReturnSharp_WhenOneSemitoneUp()
+  {
+    // Arrange
+    var original = PitchClass.C;
+
+    // Act
+    var result = original.Transpose( 1 );
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.C );
+
+    result.Accidental.Should()
+          .Be( Accidental.Sharp );
+
+    result.ToString()
+          .Should()
+          .Be( "C#" );
+  }
+
+  [Fact]
+  public void Transpose_Int_ShouldWrapAround_WhenTwelveSemitones()
+  {
+    // Arrange
+    var original = PitchClass.C;
+
+    // Act
+    var result = original.Transpose( 12 );
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.C );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    result.ToString()
+          .Should()
+          .Be( "C" );
+  }
+
+  [Fact]
+  public void Transpose_Interval_ShouldReturnB_WhenDescendingMinorSecondFromC()
+  {
+    // Arrange
+    var original = PitchClass.C;
+    var interval = new Interval( IntervalQuantity.Second, IntervalQuality.Minor, true );
+
+    // Act
+    var result = original.Transpose( interval );
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.B );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    result.ToString()
+          .Should()
+          .Be( "B" );
+  }
+
+  [Fact]
+  public void Transpose_Interval_ShouldReturnD_WhenMajorSecondFromC()
+  {
+    // Arrange
+    var original = PitchClass.C;
+    var interval = Interval.MajorSecond;
+
+    // Act
+    var result = original.Transpose( interval );
+
+    // Assert
+    result.NoteName.Should()
+          .Be( NoteName.D );
+
+    result.Accidental.Should()
+          .Be( Accidental.Natural );
+
+    result.ToString()
+          .Should()
+          .Be( "D" );
+  }
+
   [Theory]
   [MemberData( nameof( TransposeTestData ) )]
   public void Transpose_ShouldReturnExpectedPitchClass_WhenGivenSemitoneCount(
@@ -705,360 +1237,4 @@ public sealed class PitchClassTest
   }
 
   #endregion
-
-  [Fact]
-  public void C_ShouldReturnPitchClassWithNoteNameCAndNaturalAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.C;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.C );
-    result.Accidental.Should().Be( Accidental.Natural );
-    ( (int) result ).Should().Be( 1 );
-    result.ToString().Should().Be( "C" );
-  }
-
-  [Fact]
-  public void CSharp_ShouldReturnPitchClassWithNoteNameCAndSharpAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.CSharp;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.C );
-    result.Accidental.Should().Be( Accidental.Sharp );
-    ( (int) result ).Should().Be( 4 );
-    result.ToString().Should().Be( "C#" );
-  }
-
-  [Fact]
-  public void DFlat_ShouldReturnPitchClassWithNoteNameDAndFlatAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.DFlat;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.D );
-    result.Accidental.Should().Be( Accidental.Flat );
-    ( (int) result ).Should().Be( 3 );
-    result.ToString().Should().Be( "Db" );
-  }
-
-  [Fact]
-  public void D_ShouldReturnPitchClassWithNoteNameDAndNaturalAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.D;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.D );
-    result.Accidental.Should().Be( Accidental.Natural );
-    ( (int) result ).Should().Be( 7 );
-    result.ToString().Should().Be( "D" );
-  }
-
-  [Fact]
-  public void DSharp_ShouldReturnPitchClassWithNoteNameDAndSharpAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.DSharp;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.D );
-    result.Accidental.Should().Be( Accidental.Sharp );
-    ( (int) result ).Should().Be( 11 );
-    result.ToString().Should().Be( "D#" );
-  }
-
-  [Fact]
-  public void EFlat_ShouldReturnPitchClassWithNoteNameEAndFlatAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.EFlat;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.E );
-    result.Accidental.Should().Be( Accidental.Flat );
-    ( (int) result ).Should().Be( 10 );
-    result.ToString().Should().Be( "Eb" );
-  }
-
-  [Fact]
-  public void E_ShouldReturnPitchClassWithNoteNameEAndNaturalAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.E;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.E );
-    result.Accidental.Should().Be( Accidental.Natural );
-    ( (int) result ).Should().Be( 13 );
-    result.ToString().Should().Be( "E" );
-  }
-
-  [Fact]
-  public void F_ShouldReturnPitchClassWithNoteNameFAndNaturalAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.F;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.F );
-    result.Accidental.Should().Be( Accidental.Natural );
-    ( (int) result ).Should().Be( 16 );
-    result.ToString().Should().Be( "F" );
-  }
-
-  [Fact]
-  public void FSharp_ShouldReturnPitchClassWithNoteNameFAndSharpAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.FSharp;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.F );
-    result.Accidental.Should().Be( Accidental.Sharp );
-    ( (int) result ).Should().Be( 19 );
-    result.ToString().Should().Be( "F#" );
-  }
-
-  [Fact]
-  public void GFlat_ShouldReturnPitchClassWithNoteNameGAndFlatAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.GFlat;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.G );
-    result.Accidental.Should().Be( Accidental.Flat );
-    ( (int) result ).Should().Be( 18 );
-    result.ToString().Should().Be( "Gb" );
-  }
-
-  [Fact]
-  public void G_ShouldReturnPitchClassWithNoteNameGAndNaturalAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.G;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.G );
-    result.Accidental.Should().Be( Accidental.Natural );
-    ( (int) result ).Should().Be( 22 );
-    result.ToString().Should().Be( "G" );
-  }
-
-  [Fact]
-  public void GSharp_ShouldReturnPitchClassWithNoteNameGAndSharpAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.GSharp;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.G );
-    result.Accidental.Should().Be( Accidental.Sharp );
-    ( (int) result ).Should().Be( 25 );
-    result.ToString().Should().Be( "G#" );
-  }
-
-  [Fact]
-  public void AFlat_ShouldReturnPitchClassWithNoteNameAAndFlatAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.AFlat;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.A );
-    result.Accidental.Should().Be( Accidental.Flat );
-    ( (int) result ).Should().Be( 24 );
-    result.ToString().Should().Be( "Ab" );
-  }
-
-  [Fact]
-  public void A_ShouldReturnPitchClassWithNoteNameAAndNaturalAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.A;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.A );
-    result.Accidental.Should().Be( Accidental.Natural );
-    ( (int) result ).Should().Be( 27 );
-    result.ToString().Should().Be( "A" );
-  }
-
-  [Fact]
-  public void ASharp_ShouldReturnPitchClassWithNoteNameAAndSharpAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.ASharp;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.A );
-    result.Accidental.Should().Be( Accidental.Sharp );
-    ( (int) result ).Should().Be( 31 );
-    result.ToString().Should().Be( "A#" );
-  }
-
-
-  [Fact]
-  public void BFlat_ShouldReturnPitchClassWithNoteNameBAndFlatAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.BFlat;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.B );
-    result.Accidental.Should().Be( Accidental.Flat );
-    ( (int) result ).Should().Be( 30 );
-    result.ToString().Should().Be( "Bb" );
-  }
-
-  [Fact]
-  public void B_ShouldReturnPitchClassWithNoteNameBAndNaturalAccidental_WhenAccessed()
-  {
-    // Arrange & Act
-    var result = PitchClass.B;
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.B );
-    result.Accidental.Should().Be( Accidental.Natural );
-    ( (int) result ).Should().Be( 33 );
-    result.ToString().Should().Be( "B" );
-  }
-
-  [Fact]
-  public void IPitchPitchClass_PitchClassProperty_ShouldReturnSelf_WhenAccessed()
-  {
-    // Arrange
-    var original = PitchClass.B;
-    var asInterface = (IPitch<PitchClass>) original;
-
-    // Act
-    var pitchClass = asInterface.PitchClass;
-
-    // Assert
-    pitchClass.Should().Be( original );
-  }
-
-  [Fact]
-  public void Transpose_Int_ShouldReturnSharp_WhenOneSemitoneUp()
-  {
-    // Arrange
-    var original = PitchClass.C;
-
-    // Act
-    var result = original.Transpose( 1 );
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.C );
-    result.Accidental.Should().Be( Accidental.Sharp );
-    result.ToString().Should().Be( "C#" );
-  }
-
-  [Fact]
-  public void Transpose_Int_ShouldWrapAround_WhenTwelveSemitones()
-  {
-    // Arrange
-    var original = PitchClass.C;
-
-    // Act
-    var result = original.Transpose( 12 );
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.C );
-    result.Accidental.Should().Be( Accidental.Natural );
-    result.ToString().Should().Be( "C" );
-  }
-
-  [Fact]
-  public void Transpose_Int_ShouldReturnPreviousNatural_WhenNegativeOneSemitone()
-  {
-    // Arrange
-    var original = PitchClass.C;
-
-    // Act
-    var result = original.Transpose( -1 );
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.B );
-    result.Accidental.Should().Be( Accidental.Natural );
-    result.ToString().Should().Be( "B" );
-  }
-
-  [Fact]
-  public void Transpose_Interval_ShouldReturnD_WhenMajorSecondFromC()
-  {
-    // Arrange
-    var original = PitchClass.C;
-    var interval = Interval.MajorSecond;
-
-    // Act
-    var result = original.Transpose( interval );
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.D );
-    result.Accidental.Should().Be( Accidental.Natural );
-    result.ToString().Should().Be( "D" );
-  }
-
-  [Fact]
-  public void Transpose_Interval_ShouldReturnB_WhenDescendingMinorSecondFromC()
-  {
-    // Arrange
-    var original = PitchClass.C;
-    var interval = new Interval( IntervalQuantity.Second, IntervalQuality.Minor, true );
-
-    // Act
-    var result = original.Transpose( interval );
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.B );
-    result.Accidental.Should().Be( Accidental.Natural );
-    result.ToString().Should().Be( "B" );
-  }
-
-  [Fact]
-  public void GetIntervalTo_ShouldReturnMajorSecond_WhenFromCToD()
-  {
-    // Arrange
-    var from = PitchClass.C;
-    var to = PitchClass.D;
-
-    // Act
-    var interval = from.GetIntervalTo( to );
-
-    // Assert
-    interval.Quantity.Should().Be( IntervalQuantity.Second );
-    interval.SemitoneCount.Should().Be( Interval.MajorSecond.SemitoneCount );
-    interval.Should().Be( Interval.MajorSecond );
-  }
-
-  [Fact]
-  public void CompareTo_ShouldReturnNegative_WhenThisIsLower()
-  {
-    // Arrange
-    var lower = PitchClass.C;
-    var higher = PitchClass.D;
-
-    // Act
-    var result = lower.CompareTo( higher );
-
-    // Assert
-    result.Should().BeLessThan( 0 );
-  }
-
-  [Fact]
-  public void Create_ShouldReturnNaturalPitchClass_WhenGivenNoteName()
-  {
-    // Arrange & Act
-    var result = PitchClass.Create( NoteName.F );
-
-    // Assert
-    result.NoteName.Should().Be( NoteName.F );
-    result.Accidental.Should().Be( Accidental.Natural );
-    result.Should().Be( PitchClass.F );
-  }
-
 }

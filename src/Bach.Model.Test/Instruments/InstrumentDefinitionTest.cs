@@ -22,9 +22,9 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test.Instruments;
-
 using Bach.Model.Instruments;
+
+namespace Bach.Model.Test.Instruments;
 
 public sealed class InstrumentDefinitionTest
 {

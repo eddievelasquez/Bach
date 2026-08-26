@@ -1,20 +1,20 @@
 // Module Name: StringedInstrumentDefinitionTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -39,18 +39,23 @@ public sealed class StringedInstrumentDefinitionTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
@@ -60,6 +65,7 @@ public sealed class StringedInstrumentDefinitionTest
   public void EqualsFailsWithDifferentTypeTest()
   {
     object actual = Registry.StringedInstrumentDefinitions["guitar"];
+
     actual.Equals( int.MinValue )
           .Should()
           .BeFalse();
@@ -69,6 +75,7 @@ public sealed class StringedInstrumentDefinitionTest
   public void EqualsFailsWithNullTest()
   {
     object actual = Registry.StringedInstrumentDefinitions["guitar"];
+
     actual.Equals( null )
           .Should()
           .BeFalse();
@@ -78,6 +85,7 @@ public sealed class StringedInstrumentDefinitionTest
   public void EqualsSucceedsWithSameObjectTest()
   {
     var actual = Registry.StringedInstrumentDefinitions["guitar"];
+
     actual.Equals( actual )
           .Should()
           .BeTrue();
@@ -88,9 +96,11 @@ public sealed class StringedInstrumentDefinitionTest
   {
     var actual = Registry.StringedInstrumentDefinitions["guitar"];
     var expected = Registry.StringedInstrumentDefinitions["guitar"];
+
     expected.Equals( actual )
             .Should()
             .BeTrue();
+
     actual.GetHashCode()
           .Should()
           .Be( expected.GetHashCode() );
@@ -106,18 +116,23 @@ public sealed class StringedInstrumentDefinitionTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
@@ -138,6 +153,7 @@ public sealed class StringedInstrumentDefinitionTest
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var actual = Registry.StringedInstrumentDefinitions["guitar"];
+
     actual.Equals( null )
           .Should()
           .BeFalse();

@@ -1,20 +1,20 @@
 // Module Name: IntervalQualityTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -26,7 +26,118 @@ namespace Bach.Model.Test;
 
 public sealed class IntervalQualityTest
 {
-  #region Tests
+  #region Properties
+
+  public static TheoryData<IntervalQuantity, IntervalQuality> InvalidIntervalCombinations =>
+    IntervalTest.InvalidIntervalCombinations;
+
+  public static TheoryData<IntervalQuality, int, IntervalQuality> ValidAdditionData { get; } = new()
+  {
+    { IntervalQuality.Diminished, 0, IntervalQuality.Diminished },
+    { IntervalQuality.Diminished, 1, IntervalQuality.Minor },
+    { IntervalQuality.Diminished, 2, IntervalQuality.Perfect },
+    { IntervalQuality.Diminished, 3, IntervalQuality.Major },
+    { IntervalQuality.Diminished, 4, IntervalQuality.Augmented },
+    { IntervalQuality.Minor, 1, IntervalQuality.Perfect },
+    { IntervalQuality.Minor, 2, IntervalQuality.Major },
+    { IntervalQuality.Minor, 3, IntervalQuality.Augmented },
+    { IntervalQuality.Perfect, 1, IntervalQuality.Major },
+    { IntervalQuality.Perfect, 2, IntervalQuality.Augmented },
+    { IntervalQuality.Major, 1, IntervalQuality.Augmented }
+  };
+
+  public static TheoryData<IntervalQuality, int> InvalidAdditionData { get; } = new()
+  {
+    { IntervalQuality.Diminished, 5 },
+    { IntervalQuality.Minor, 4 },
+    { IntervalQuality.Perfect, 3 },
+    { IntervalQuality.Major, 2 },
+    { IntervalQuality.Augmented, 1 },
+    { IntervalQuality.Diminished, -1 },
+    { IntervalQuality.Minor, -2 },
+    { IntervalQuality.Perfect, -3 },
+    { IntervalQuality.Major, -4 },
+    { IntervalQuality.Augmented, -5 }
+  };
+
+  public static TheoryData<IntervalQuality, int, IntervalQuality> ValidSubtractionData { get; } = new()
+  {
+    { IntervalQuality.Augmented, 0, IntervalQuality.Augmented },
+    { IntervalQuality.Augmented, 1, IntervalQuality.Major },
+    { IntervalQuality.Augmented, 2, IntervalQuality.Perfect },
+    { IntervalQuality.Augmented, 3, IntervalQuality.Minor },
+    { IntervalQuality.Augmented, 4, IntervalQuality.Diminished },
+    { IntervalQuality.Major, 1, IntervalQuality.Perfect },
+    { IntervalQuality.Major, 2, IntervalQuality.Minor },
+    { IntervalQuality.Major, 3, IntervalQuality.Diminished },
+    { IntervalQuality.Perfect, 1, IntervalQuality.Minor },
+    { IntervalQuality.Perfect, 2, IntervalQuality.Diminished },
+    { IntervalQuality.Minor, 1, IntervalQuality.Diminished }
+  };
+
+  public static TheoryData<IntervalQuality, int> InvalidSubtractionData { get; } = new()
+  {
+    { IntervalQuality.Augmented, 5 },
+    { IntervalQuality.Major, 4 },
+    { IntervalQuality.Perfect, 3 },
+    { IntervalQuality.Minor, 2 },
+    { IntervalQuality.Diminished, 1 }
+  };
+
+  public static TheoryData<IntervalQuality, string> LongNameData { get; } = new()
+  {
+    { IntervalQuality.Diminished, "Diminished" },
+    { IntervalQuality.Minor, "Minor" },
+    { IntervalQuality.Perfect, "Perfect" },
+    { IntervalQuality.Major, "Major" },
+    { IntervalQuality.Augmented, "Augmented" }
+  };
+
+  public static TheoryData<IntervalQuality, string> ShortNameData { get; } = new()
+  {
+    { IntervalQuality.Diminished, "dim" },
+    { IntervalQuality.Minor, "min" },
+    { IntervalQuality.Perfect, "Perf" },
+    { IntervalQuality.Major, "Maj" },
+    { IntervalQuality.Augmented, "Aug" }
+  };
+
+  public static TheoryData<IntervalQuality, string> ValidQualityNames { get; } = new()
+  {
+    { IntervalQuality.Diminished, "Diminished" },
+    { IntervalQuality.Minor, "Minor" },
+    { IntervalQuality.Perfect, "Perfect" },
+    { IntervalQuality.Major, "Major" },
+    { IntervalQuality.Augmented, "Augmented" }
+  };
+
+  public static TheoryData<string, IntervalQuality> ValidQualityStrings { get; } = new()
+  {
+    { "d", IntervalQuality.Diminished },
+    { "m", IntervalQuality.Minor },
+    { "P", IntervalQuality.Perfect },
+    { "M", IntervalQuality.Major },
+    { "A", IntervalQuality.Augmented }
+  };
+
+  public static TheoryData<IntervalQuality, string> SymbolData => new()
+  {
+    { IntervalQuality.Diminished, "d" },
+    { IntervalQuality.Minor, "m" },
+    { IntervalQuality.Perfect, "P" },
+    { IntervalQuality.Major, "M" },
+    { IntervalQuality.Augmented, "A" }
+  };
+
+  public static TheoryData<IntervalQuality, int> AddOutOfRangeData => new()
+  {
+    { IntervalQuality.Augmented, 1 },
+    { IntervalQuality.Diminished, -1 }
+  };
+
+  #endregion
+
+  #region Public Methods
 
   [Theory]
   [MemberData( nameof( AddOutOfRangeData ) )]
@@ -193,117 +304,6 @@ public sealed class IntervalQualityTest
            .Should()
            .Be( expectedName );
   }
-
-  #endregion
-
-  #region Implementation
-
-  public static TheoryData<IntervalQuantity, IntervalQuality> InvalidIntervalCombinations =>
-    IntervalTest.InvalidIntervalCombinations;
-
-  public static TheoryData<IntervalQuality, int, IntervalQuality> ValidAdditionData { get; } = new()
-  {
-    { IntervalQuality.Diminished, 0, IntervalQuality.Diminished },
-    { IntervalQuality.Diminished, 1, IntervalQuality.Minor },
-    { IntervalQuality.Diminished, 2, IntervalQuality.Perfect },
-    { IntervalQuality.Diminished, 3, IntervalQuality.Major },
-    { IntervalQuality.Diminished, 4, IntervalQuality.Augmented },
-    { IntervalQuality.Minor, 1, IntervalQuality.Perfect },
-    { IntervalQuality.Minor, 2, IntervalQuality.Major },
-    { IntervalQuality.Minor, 3, IntervalQuality.Augmented },
-    { IntervalQuality.Perfect, 1, IntervalQuality.Major },
-    { IntervalQuality.Perfect, 2, IntervalQuality.Augmented },
-    { IntervalQuality.Major, 1, IntervalQuality.Augmented }
-  };
-
-  public static TheoryData<IntervalQuality, int> InvalidAdditionData { get; } = new()
-  {
-    { IntervalQuality.Diminished, 5 },
-    { IntervalQuality.Minor, 4 },
-    { IntervalQuality.Perfect, 3 },
-    { IntervalQuality.Major, 2 },
-    { IntervalQuality.Augmented, 1 },
-    { IntervalQuality.Diminished, -1 },
-    { IntervalQuality.Minor, -2 },
-    { IntervalQuality.Perfect, -3 },
-    { IntervalQuality.Major, -4 },
-    { IntervalQuality.Augmented, -5 }
-  };
-
-  public static TheoryData<IntervalQuality, int, IntervalQuality> ValidSubtractionData { get; } = new()
-  {
-    { IntervalQuality.Augmented, 0, IntervalQuality.Augmented },
-    { IntervalQuality.Augmented, 1, IntervalQuality.Major },
-    { IntervalQuality.Augmented, 2, IntervalQuality.Perfect },
-    { IntervalQuality.Augmented, 3, IntervalQuality.Minor },
-    { IntervalQuality.Augmented, 4, IntervalQuality.Diminished },
-    { IntervalQuality.Major, 1, IntervalQuality.Perfect },
-    { IntervalQuality.Major, 2, IntervalQuality.Minor },
-    { IntervalQuality.Major, 3, IntervalQuality.Diminished },
-    { IntervalQuality.Perfect, 1, IntervalQuality.Minor },
-    { IntervalQuality.Perfect, 2, IntervalQuality.Diminished },
-    { IntervalQuality.Minor, 1, IntervalQuality.Diminished }
-  };
-
-  public static TheoryData<IntervalQuality, int> InvalidSubtractionData { get; } = new()
-  {
-    { IntervalQuality.Augmented, 5 },
-    { IntervalQuality.Major, 4 },
-    { IntervalQuality.Perfect, 3 },
-    { IntervalQuality.Minor, 2 },
-    { IntervalQuality.Diminished, 1 }
-  };
-
-  public static TheoryData<IntervalQuality, string> LongNameData { get; } = new()
-  {
-    { IntervalQuality.Diminished, "Diminished" },
-    { IntervalQuality.Minor, "Minor" },
-    { IntervalQuality.Perfect, "Perfect" },
-    { IntervalQuality.Major, "Major" },
-    { IntervalQuality.Augmented, "Augmented" }
-  };
-
-  public static TheoryData<IntervalQuality, string> ShortNameData { get; } = new()
-  {
-    { IntervalQuality.Diminished, "dim" },
-    { IntervalQuality.Minor, "min" },
-    { IntervalQuality.Perfect, "Perf" },
-    { IntervalQuality.Major, "Maj" },
-    { IntervalQuality.Augmented, "Aug" }
-  };
-
-  public static TheoryData<IntervalQuality, string> ValidQualityNames { get; } = new()
-  {
-    { IntervalQuality.Diminished, "Diminished" },
-    { IntervalQuality.Minor, "Minor" },
-    { IntervalQuality.Perfect, "Perfect" },
-    { IntervalQuality.Major, "Major" },
-    { IntervalQuality.Augmented, "Augmented" }
-  };
-
-  public static TheoryData<string, IntervalQuality> ValidQualityStrings { get; } = new()
-  {
-    { "d", IntervalQuality.Diminished },
-    { "m", IntervalQuality.Minor },
-    { "P", IntervalQuality.Perfect },
-    { "M", IntervalQuality.Major },
-    { "A", IntervalQuality.Augmented }
-  };
-
-  public static TheoryData<IntervalQuality, string> SymbolData => new()
-  {
-    { IntervalQuality.Diminished, "d" },
-    { IntervalQuality.Minor, "m" },
-    { IntervalQuality.Perfect, "P" },
-    { IntervalQuality.Major, "M" },
-    { IntervalQuality.Augmented, "A" }
-  };
-
-  public static TheoryData<IntervalQuality, int> AddOutOfRangeData => new()
-  {
-    { IntervalQuality.Augmented, 1 },
-    { IntervalQuality.Diminished, -1 }
-  };
 
   #endregion
 }

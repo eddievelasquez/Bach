@@ -1,20 +1,20 @@
 // Module Name: KeyTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -204,17 +204,6 @@ public sealed class KeyTest
   }
 
   [Fact]
-  public void Constructor_ShouldSetKeySignature_WhenKeyIsInTable()
-  {
-    // Arrange & Act
-    var key = new Key( PitchClass.G, ModeType.Major );
-
-    // Assert
-    key.KeySignature.Should()
-       .NotBe( KeySignature.Empty );
-  }
-
-  [Fact]
   public void Constructor_ShouldSetKeySignatureFromTable_WhenKeyIsInTable()
   {
     // Arrange & Act
@@ -248,146 +237,14 @@ public sealed class KeyTest
   }
 
   [Fact]
-  public void Parse_ShouldReturnKey_WhenValueHasAccidental()
+  public void Constructor_ShouldSetKeySignature_WhenKeyIsInTable()
   {
-    // Arrange
-    var value = "F#";
-
-    // Act
-    var key = Key.Parse( value );
+    // Arrange & Act
+    var key = new Key( PitchClass.G, ModeType.Major );
 
     // Assert
-    key.Should()
-       .NotBeNull();
-
-    key.Tonic.Should()
-       .Be( PitchClass.FSharp );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Fact]
-  public void Parse_ShouldReturnKey_WhenValueHasWhitespace()
-  {
-    // Arrange
-    var value = "  Bb  ";
-
-    // Act
-    var key = Key.Parse( value );
-
-    // Assert
-    key.Should()
-       .NotBeNull();
-
-    key.Tonic.Should()
-       .Be( PitchClass.BFlat );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Fact]
-  public void Parse_ShouldReturnKey_WhenValueIsValid()
-  {
-    // Arrange
-    var value = "C";
-
-    // Act
-    var key = Key.Parse( value );
-
-    // Assert
-    key.Should()
-       .NotBeNull();
-
-    key.Tonic.Should()
-       .Be( PitchClass.C );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Fact]
-  public void Parse_ShouldReturnKey_WhenValueIsValidSingleNote()
-  {
-    // Arrange
-    var value = "D";
-
-    // Act
-    var key = Key.Parse( value );
-
-    // Assert
-    key.Should()
-       .NotBeNull();
-
-    key.Tonic.Should()
-       .Be( PitchClass.D );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Theory]
-  [MemberData( nameof( ModeNames ) )]
-  public void Parse_ShouldReturnMinorKey_WhenValueEndsWithM(
-    string value,
-    PitchClass tonic,
-    ModeType mode )
-  {
-    // Act
-    var key = Key.Parse( value );
-
-    // Assert
-    key.Should()
-       .NotBeNull();
-
-    key.Tonic.Should()
-       .Be( tonic );
-
-    key.Mode.Should()
-       .Be( mode );
-  }
-
-  [Fact]
-  public void Parse_ShouldThrowArgumentNullException_WhenValueIsNull()
-  {
-    // Arrange
-    string value = null!;
-
-    // Act
-    Action act = () => Key.Parse( value );
-
-    // Assert
-    act.Should()
-       .Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void Parse_ShouldThrowFormatException_WhenValueIsEmpty()
-  {
-    // Arrange
-    var value = "";
-
-    // Act
-    Action act = () => Key.Parse( value );
-
-    // Assert
-    act.Should()
-       .Throw<FormatException>();
-  }
-
-  [Fact]
-  public void Parse_ShouldThrowFormatException_WhenValueIsInvalid()
-  {
-    // Arrange
-    var value = "Invalid";
-
-    // Act
-    Action act = () => Key.Parse( value );
-
-    // Assert
-    act.Should()
-       .Throw<FormatException>();
+    key.KeySignature.Should()
+       .NotBe( KeySignature.Empty );
   }
 
   [Fact]
@@ -635,6 +492,149 @@ public sealed class KeyTest
   }
 
   [Fact]
+  public void Parse_ShouldReturnKey_WhenValueHasAccidental()
+  {
+    // Arrange
+    var value = "F#";
+
+    // Act
+    var key = Key.Parse( value );
+
+    // Assert
+    key.Should()
+       .NotBeNull();
+
+    key.Tonic.Should()
+       .Be( PitchClass.FSharp );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void Parse_ShouldReturnKey_WhenValueHasWhitespace()
+  {
+    // Arrange
+    var value = "  Bb  ";
+
+    // Act
+    var key = Key.Parse( value );
+
+    // Assert
+    key.Should()
+       .NotBeNull();
+
+    key.Tonic.Should()
+       .Be( PitchClass.BFlat );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void Parse_ShouldReturnKey_WhenValueIsValid()
+  {
+    // Arrange
+    var value = "C";
+
+    // Act
+    var key = Key.Parse( value );
+
+    // Assert
+    key.Should()
+       .NotBeNull();
+
+    key.Tonic.Should()
+       .Be( PitchClass.C );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void Parse_ShouldReturnKey_WhenValueIsValidSingleNote()
+  {
+    // Arrange
+    var value = "D";
+
+    // Act
+    var key = Key.Parse( value );
+
+    // Assert
+    key.Should()
+       .NotBeNull();
+
+    key.Tonic.Should()
+       .Be( PitchClass.D );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Theory]
+  [MemberData( nameof( ModeNames ) )]
+  public void Parse_ShouldReturnMinorKey_WhenValueEndsWithM(
+    string value,
+    PitchClass tonic,
+    ModeType mode )
+  {
+    // Act
+    var key = Key.Parse( value );
+
+    // Assert
+    key.Should()
+       .NotBeNull();
+
+    key.Tonic.Should()
+       .Be( tonic );
+
+    key.Mode.Should()
+       .Be( mode );
+  }
+
+  [Fact]
+  public void Parse_ShouldThrowArgumentNullException_WhenValueIsNull()
+  {
+    // Arrange
+    string value = null!;
+
+    // Act
+    Action act = () => Key.Parse( value );
+
+    // Assert
+    act.Should()
+       .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void Parse_ShouldThrowFormatException_WhenValueIsEmpty()
+  {
+    // Arrange
+    var value = "";
+
+    // Act
+    Action act = () => Key.Parse( value );
+
+    // Assert
+    act.Should()
+       .Throw<FormatException>();
+  }
+
+  [Fact]
+  public void Parse_ShouldThrowFormatException_WhenValueIsInvalid()
+  {
+    // Arrange
+    var value = "Invalid";
+
+    // Act
+    Action act = () => Key.Parse( value );
+
+    // Assert
+    act.Should()
+       .Throw<FormatException>();
+  }
+
+  [Fact]
   public void ToString_ShouldRenderTonicAndMode()
   {
     var key = new Key( PitchClass.C, ModeType.Major );
@@ -712,189 +712,6 @@ public sealed class KeyTest
     // Assert
     result.Should()
           .Be( "F# Major" );
-  }
-
-  [Fact]
-  public void TryParse_ShouldDelegateToSpanOverload_WhenCalled()
-  {
-    // Arrange
-    var value = "G#";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeTrue();
-
-    key.Should()
-       .NotBeNull();
-
-    key!.Tonic.Should()
-        .Be( PitchClass.GSharp );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnFalse_WhenValueIsEmpty()
-  {
-    // Arrange
-    var value = "";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeFalse();
-
-    key.Should()
-       .BeNull();
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnFalse_WhenValueIsInvalid()
-  {
-    // Arrange
-    var value = "Invalid";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeFalse();
-
-    key.Should()
-       .BeNull();
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnFalse_WhenValueIsNull()
-  {
-    // Arrange
-    string? value = null;
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeFalse();
-
-    key.Should()
-       .BeNull();
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnFalse_WhenValueIsWhitespace()
-  {
-    // Arrange
-    var value = "   ";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeFalse();
-
-    key.Should()
-       .BeNull();
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnTrue_WhenValueEndsWithM()
-  {
-    // Arrange
-    var value = "Am";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeTrue();
-
-    key.Should()
-       .NotBeNull();
-
-    key!.Tonic.Should()
-        .Be( PitchClass.A );
-
-    key.Mode.Should()
-       .Be( ModeType.Minor );
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnTrue_WhenValueHasAccidental()
-  {
-    // Arrange
-    var value = "F#";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeTrue();
-
-    key.Should()
-       .NotBeNull();
-
-    key!.Tonic.Should()
-        .Be( PitchClass.FSharp );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnTrue_WhenValueHasFlat()
-  {
-    // Arrange
-    var value = "Bb";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeTrue();
-
-    key.Should()
-       .NotBeNull();
-
-    key!.Tonic.Should()
-        .Be( PitchClass.BFlat );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnTrue_WhenValueIsValid()
-  {
-    // Arrange
-    var value = "C";
-
-    // Act
-    var result = Key.TryParse( value, out var key );
-
-    // Assert
-    result.Should()
-          .BeTrue();
-
-    key.Should()
-       .NotBeNull();
-
-    key!.Tonic.Should()
-        .Be( PitchClass.C );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
   }
 
   [Fact]
@@ -1115,29 +932,6 @@ public sealed class KeyTest
   }
 
   [Fact]
-  public void TryParseSpan_ShouldReturnTrue_WhenSpanIsValidNoteWithoutAccidental()
-  {
-    // Arrange
-    var span = "G".AsSpan();
-
-    // Act
-    var result = Key.TryParse( span, null, out var key );
-
-    // Assert
-    result.Should()
-          .BeTrue();
-
-    key.Should()
-       .NotBeNull();
-
-    key!.Tonic.Should()
-        .Be( PitchClass.G );
-
-    key.Mode.Should()
-       .Be( ModeType.Major );
-  }
-
-  [Fact]
   public void TryParseSpan_ShouldReturnTrue_WhenSpanIsValidNoteWithSharp()
   {
     // Arrange
@@ -1155,6 +949,29 @@ public sealed class KeyTest
 
     key!.Tonic.Should()
         .Be( PitchClass.DSharp );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void TryParseSpan_ShouldReturnTrue_WhenSpanIsValidNoteWithoutAccidental()
+  {
+    // Arrange
+    var span = "G".AsSpan();
+
+    // Act
+    var result = Key.TryParse( span, null, out var key );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+
+    key.Should()
+       .NotBeNull();
+
+    key!.Tonic.Should()
+        .Be( PitchClass.G );
 
     key.Mode.Should()
        .Be( ModeType.Major );
@@ -1438,6 +1255,189 @@ public sealed class KeyTest
 
     key!.Tonic.Should()
         .Be( PitchClass.DSharp );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void TryParse_ShouldDelegateToSpanOverload_WhenCalled()
+  {
+    // Arrange
+    var value = "G#";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+
+    key.Should()
+       .NotBeNull();
+
+    key!.Tonic.Should()
+        .Be( PitchClass.GSharp );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnFalse_WhenValueIsEmpty()
+  {
+    // Arrange
+    var value = "";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeFalse();
+
+    key.Should()
+       .BeNull();
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnFalse_WhenValueIsInvalid()
+  {
+    // Arrange
+    var value = "Invalid";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeFalse();
+
+    key.Should()
+       .BeNull();
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnFalse_WhenValueIsNull()
+  {
+    // Arrange
+    string? value = null;
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeFalse();
+
+    key.Should()
+       .BeNull();
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnFalse_WhenValueIsWhitespace()
+  {
+    // Arrange
+    var value = "   ";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeFalse();
+
+    key.Should()
+       .BeNull();
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnTrue_WhenValueEndsWithM()
+  {
+    // Arrange
+    var value = "Am";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+
+    key.Should()
+       .NotBeNull();
+
+    key!.Tonic.Should()
+        .Be( PitchClass.A );
+
+    key.Mode.Should()
+       .Be( ModeType.Minor );
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnTrue_WhenValueHasAccidental()
+  {
+    // Arrange
+    var value = "F#";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+
+    key.Should()
+       .NotBeNull();
+
+    key!.Tonic.Should()
+        .Be( PitchClass.FSharp );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnTrue_WhenValueHasFlat()
+  {
+    // Arrange
+    var value = "Bb";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+
+    key.Should()
+       .NotBeNull();
+
+    key!.Tonic.Should()
+        .Be( PitchClass.BFlat );
+
+    key.Mode.Should()
+       .Be( ModeType.Major );
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnTrue_WhenValueIsValid()
+  {
+    // Arrange
+    var value = "C";
+
+    // Act
+    var result = Key.TryParse( value, out var key );
+
+    // Assert
+    result.Should()
+          .BeTrue();
+
+    key.Should()
+       .NotBeNull();
+
+    key!.Tonic.Should()
+        .Be( PitchClass.C );
 
     key.Mode.Should()
        .Be( ModeType.Major );

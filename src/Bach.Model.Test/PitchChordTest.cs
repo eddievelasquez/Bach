@@ -1,20 +1,20 @@
 // Module Name: PitchChordTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -188,7 +188,7 @@ public sealed class PitchChordTest
     var root = Pitch.Create( PitchClass.C, 4 );
     var formula = ChordFormula.Minor;
 
-    var actual = PitchChord.Create( root, formula, 0 );
+    var actual = PitchChord.Create( root, formula );
 
     actual.Should()
           .HaveCount( 3 );
@@ -231,7 +231,7 @@ public sealed class PitchChordTest
     var root = Pitch.Create( PitchClass.C, 4 );
     ChordFormula? formula = null;
 
-    var act = () => PitchChord.Create( root, formula!, 0 );
+    var act = () => PitchChord.Create( root, formula! );
 
     act.Should()
        .Throw<ArgumentNullException>();
@@ -340,7 +340,7 @@ public sealed class PitchChordTest
   public void Equals_ShouldReturnFalse_WhenInversionsAreDifferent()
   {
     var root = Pitch.Create( PitchClass.A, 4 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Major, 0 );
+    var chord1 = PitchChord.Create( root, ChordFormula.Major );
     var chord2 = PitchChord.Create( root, ChordFormula.Major, 1 );
 
     var actual = chord1.Equals( chord2 );
@@ -416,7 +416,7 @@ public sealed class PitchChordTest
   public void GetHashCode_ShouldReturnDifferentValue_WhenInversionsAreDifferent()
   {
     var root = Pitch.Create( PitchClass.A, 4 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Major, 0 );
+    var chord1 = PitchChord.Create( root, ChordFormula.Major );
     var chord2 = PitchChord.Create( root, ChordFormula.Major, 1 );
 
     var hash1 = chord1.GetHashCode();
@@ -458,7 +458,8 @@ public sealed class PitchChordTest
   {
     var root = Pitch.Create( PitchClass.C, 4 );
 
-    var actual = PitchChord.Create( root, ChordFormula.Major ).GetInversion( 1 );
+    var actual = PitchChord.Create( root, ChordFormula.Major )
+                           .GetInversion( 1 );
 
     actual.Inversion.Should()
           .Be( 1 );
@@ -493,7 +494,7 @@ public sealed class PitchChordTest
   {
     var root = Pitch.Create( PitchClass.FSharp, 3 );
     var formula = Registry.ChordFormulas["Augmented"];
-    var chord = PitchChord.Create( root, formula, 0 );
+    var chord = PitchChord.Create( root, formula );
 
     var actual = chord.GetInversion( 1 );
 
@@ -580,7 +581,7 @@ public sealed class PitchChordTest
   {
     var formula = new ChordFormula( "custom", "Custom", null, "P1,M3,P5" );
 
-    var chord = PitchChord.Create( PitchClass.C, formula, octave:4 );
+    var chord = PitchChord.Create( PitchClass.C, formula );
 
     chord.Name.Should()
          .Be( "CCustom" );
@@ -774,6 +775,27 @@ public sealed class PitchChordTest
   }
 
   [Fact]
+  public void TryParse_ShouldReturnTrue_WhenValueContainsPitchClassRoot()
+  {
+    var actual = PitchChord.TryParse( "C", out var chord );
+
+    actual.Should()
+          .BeTrue();
+
+    chord.Should()
+         .NotBeNull();
+
+    chord.Root.Should()
+         .Be( Pitch.Create( PitchClass.C, 4 ) );
+
+    chord.Formula.Should()
+         .Be( ChordFormula.Major );
+
+    chord.Inversion.Should()
+         .Be( 0 );
+  }
+
+  [Fact]
   public void TryParse_ShouldReturnTrue_WhenValueContainsPitchInversion()
   {
     var actual = PitchChord.TryParse( "Cmaj11/E3", out var chord );
@@ -795,27 +817,6 @@ public sealed class PitchChordTest
 
     chord.Bass.Should()
          .Be( Pitch.Create( PitchClass.E, 3 ) );
-  }
-
-  [Fact]
-  public void TryParse_ShouldReturnTrue_WhenValueContainsPitchClassRoot()
-  {
-    var actual = PitchChord.TryParse( "C", out var chord );
-
-    actual.Should()
-          .BeTrue();
-
-    chord.Should()
-         .NotBeNull();
-
-    chord.Root.Should()
-         .Be( Pitch.Create( PitchClass.C, 4 ) );
-
-    chord.Formula.Should()
-         .Be( ChordFormula.Major );
-
-    chord.Inversion.Should()
-         .Be( 0 );
   }
 
   #endregion

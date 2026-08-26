@@ -1,20 +1,20 @@
 // Module Name: Accidental.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,13 +22,13 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Diagnostics.Contracts;
 using Bach.Model.Internal;
 
+namespace Bach.Model;
+
 /// <summary>
-///   An Accidental represents a modification to a <see cref="Accidental" />
+///   An Accidental represents a modification to a <see cref="Accidental"/>
 ///   by raising or lowering its relative pitch.
 /// </summary>
 public readonly struct Accidental
@@ -93,7 +93,7 @@ public readonly struct Accidental
 
   /// <summary>Adds a number of steps to a pitch class name.</summary>
   /// <param name="steps">The number of steps to add.</param>
-  /// <returns>An <see cref="Accidental" />.</returns>
+  /// <returns>An <see cref="Accidental"/>.</returns>
   [Pure]
   public Accidental Add(
     int steps )
@@ -102,7 +102,7 @@ public readonly struct Accidental
     return result;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int CompareTo(
     object? obj )
   {
@@ -116,35 +116,35 @@ public readonly struct Accidental
       : throw new ArgumentException( $"Object must be of type {nameof( Accidental )}" );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int CompareTo(
     Accidental other )
   {
     return _value.CompareTo( other._value );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     Accidental other )
   {
     return _value == other._value;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
     return obj is Accidental other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return _value;
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent.
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent.
   /// </summary>
   /// <param name="value">A string containing the accidental to convert.</param>
   /// <returns>An object that is equivalent to the accidental contained in value.</returns>
@@ -156,7 +156,7 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent.
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent.
   /// </summary>
   /// <param name="value"></param>
   /// <param name="provider"></param>
@@ -170,7 +170,7 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent.
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent.
   /// </summary>
   /// <param name="value">The string representation of the accidental to convert.</param>
   /// <param name="provider">An object that supplies culture-specific formatting information.</param>
@@ -205,7 +205,7 @@ public readonly struct Accidental
     return s_extendedSymbols[_value + s_doubleFlatOffset];
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return s_names[_value + s_doubleFlatOffset];
@@ -222,7 +222,7 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent
   ///   and returns a value that indicates whether the conversion succeeded.
   /// </summary>
   /// <param name="value">A string containing the accidental to convert.</param>
@@ -233,7 +233,7 @@ public readonly struct Accidental
   ///   representation of an accidental. This parameter is passed uninitialized.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.
   /// </returns>
   public static bool TryParse(
     string? value,
@@ -243,7 +243,7 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent
   /// </summary>
   /// <param name="value">The string representation of the accidental to convert.</param>
   /// <param name="provider">An object that supplies culture-specific formatting information.</param>
@@ -252,7 +252,7 @@ public readonly struct Accidental
   ///   in value, if the conversion succeeded, or Natural if the conversion failed.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.
   /// </returns>
   public static bool TryParse(
     string? value,
@@ -263,7 +263,7 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent
   /// </summary>
   /// <param name="value">The string representation of the accidental to convert.</param>
   /// <param name="accidental">
@@ -271,7 +271,7 @@ public readonly struct Accidental
   ///   in value, if the conversion succeeded, or Natural if the conversion failed.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.
   /// </returns>
   public static bool TryParse(
     ReadOnlySpan<char> value,
@@ -281,7 +281,7 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent
   /// </summary>
   /// <param name="value">The string representation of the accidental to convert.</param>
   /// <param name="provider">An object that supplies culture-specific formatting information.</param>
@@ -290,7 +290,7 @@ public readonly struct Accidental
   ///   in value, if the conversion succeeded, or Natural if the conversion failed.
   /// </param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.
   /// </returns>
   public static bool TryParse(
     ReadOnlySpan<char> value,
@@ -302,7 +302,7 @@ public readonly struct Accidental
   }
 
   /// <summary>
-  ///   Converts the specified string representation of an accidental to its <see cref="Accidental" /> equivalent
+  ///   Converts the specified string representation of an accidental to its <see cref="Accidental"/> equivalent
   /// </summary>
   /// <param name="value">The string representation of the accidental to convert.</param>
   /// <param name="provider">An object that supplies culture-specific formatting information.</param>
@@ -312,7 +312,7 @@ public readonly struct Accidental
   /// </param>
   /// <param name="tail">When this method returns, contains the portion of the input string that was not converted.</param>
   /// <returns>
-  ///   <see langword="true" /> if the value parameter was converted successfully; otherwise, <see langword="false" />.
+  ///   <see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.
   /// </returns>
   public static bool TryParse(
     ReadOnlySpan<char> value,
@@ -390,7 +390,7 @@ public readonly struct Accidental
         return true;
 
       case '\uD834': // Double flat (𝄫) or double sharp(𝄪) UTF-16 surrogate pairs
-        if (value.Length > 1)
+        if( value.Length > 1 )
         {
           switch( value[1] )
           {

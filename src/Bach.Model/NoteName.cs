@@ -1,20 +1,20 @@
 // Module Name: NoteName.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,11 +22,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Diagnostics.CodeAnalysis;
-using Bach.Model.Internal;
 using System.Diagnostics.Contracts;
+using Bach.Model.Internal;
+
+namespace Bach.Model;
 
 /// <summary>
 ///   A NoteName represents the traditional note name
@@ -38,6 +38,9 @@ public readonly struct NoteName
     ISpanConsumingParsable<NoteName>
 {
   #region Constants
+
+  // ReSharper disable once StringLiteralTypo
+  private const string NOTE_NAMES = "CDEFGAB";
 
   /// <summary>
   ///   The C (Do) note
@@ -74,9 +77,6 @@ public readonly struct NoteName
   /// </summary>
   public static readonly NoteName B = new( 6 );
 
-  // ReSharper disable once StringLiteralTypo
-  private const string NOTE_NAMES = "CDEFGAB";
-
   #endregion
 
   #region Fields
@@ -106,32 +106,32 @@ public readonly struct NoteName
   public NoteName Add(
     int steps )
   {
-    var result = (NoteName) (_value + steps).Wrap( Constants.NoteNameCount );
+    var result = (NoteName) ( _value + steps ).Wrap( Constants.NoteNameCount );
     return result;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int CompareTo(
     NoteName other )
   {
     return _value.CompareTo( other._value );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     NoteName other )
   {
     return _value == other._value;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
     return obj is NoteName other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return _value;
@@ -150,7 +150,7 @@ public readonly struct NoteName
   }
 
   /// <summary>
-  /// Parses the provided string.
+  ///   Parses the provided string.
   /// </summary>
   /// <param name="value">The string to parse.</param>
   /// <param name="provider">The format provider.</param>
@@ -167,7 +167,7 @@ public readonly struct NoteName
   }
 
   /// <summary>
-  /// Parses the provided string.
+  ///   Parses the provided string.
   /// </summary>
   /// <param name="value">The string to parse.</param>
   /// <param name="provider">The format provider.</param>
@@ -177,7 +177,9 @@ public readonly struct NoteName
     ReadOnlySpan<char> value,
     IFormatProvider? provider )
   {
-    return TryParse( value, provider, out var result ) ? result : throw new FormatException( $"{value} is not a valid note name" );
+    return TryParse( value, provider, out var result )
+      ? result
+      : throw new FormatException( $"{value} is not a valid note name" );
   }
 
   /// <summary>Subtracts a number of steps from a note name.</summary>
@@ -200,7 +202,7 @@ public readonly struct NoteName
     return (int) Add( -(int) name );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return NOTE_NAMES[_value]
@@ -219,7 +221,7 @@ public readonly struct NoteName
   }
 
   /// <summary>
-  /// Attempts to parse a NoteName from the given string.
+  ///   Attempts to parse a NoteName from the given string.
   /// </summary>
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>
@@ -245,7 +247,7 @@ public readonly struct NoteName
   }
 
   /// <summary>
-  /// Attempts to parse a NoteName from the given span.
+  ///   Attempts to parse a NoteName from the given span.
   /// </summary>
   /// <param name="span">The span to parse.</param>
   /// <param name="provider">The format provider.</param>
@@ -258,11 +260,11 @@ public readonly struct NoteName
   {
     // We want to make sure that the entire span is consumed, so we call the
     // overload that returns the tail and check if it's empty.
-    return TryParse(span, provider, out noteName, out var tail ) && tail.IsEmpty;
+    return TryParse( span, provider, out noteName, out var tail ) && tail.IsEmpty;
   }
 
   /// <summary>
-  /// Attempts to parse a NoteName from the given span.
+  ///   Attempts to parse a NoteName from the given span.
   /// </summary>
   /// <param name="span">The span to parse.</param>
   /// <param name="provider">The format provider.</param>
@@ -276,6 +278,7 @@ public readonly struct NoteName
     out ReadOnlySpan<char> tail )
   {
     span = span.TrimStart();
+
     if( span.IsEmpty )
     {
       noteName = C;
@@ -284,6 +287,7 @@ public readonly struct NoteName
     }
 
     var value = NOTE_NAMES.IndexOf( char.ToUpperInvariant( span[0] ) );
+
     if( value == -1 )
     {
       noteName = C;

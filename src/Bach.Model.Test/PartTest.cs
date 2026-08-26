@@ -1,20 +1,20 @@
 // Module Name: PartTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,11 +22,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
+namespace Bach.Model.Test;
 
 public sealed class PartTest
 {
@@ -384,7 +384,7 @@ public sealed class PartTest
   public void Insert_ShouldInsertEventAtBeginning_WhenIndexIsZero()
   {
     // Arrange
-    var part = Part.Parse("C4");
+    var part = Part.Parse( "C4" );
     var pitch = Pitch.Create( PitchClass.D, 4 );
 
     // Act
@@ -432,7 +432,7 @@ public sealed class PartTest
     var part = Part.Parse( "C4,E4" );
 
     // Act
-    part.Insert( 1, PitchClass.D[4]);
+    part.Insert( 1, PitchClass.D[4] );
 
     // Assert
     part.Count.Should()
@@ -477,6 +477,15 @@ public sealed class PartTest
     // Assert
     isReadOnly.Should()
               .BeFalse();
+  }
+
+  [Fact]
+  public void Parse_ShouldThrowFormatExceptionForInvalidInput()
+  {
+    var act = () => Part.Parse( "invalid".AsSpan(), null );
+
+    act.Should()
+       .Throw<FormatException>();
   }
 
   [Fact]
@@ -675,9 +684,92 @@ public sealed class PartTest
        .Throw<ArgumentNullException>();
   }
 
-  #endregion
+  [Fact]
+  public void TryParse_EmptySegments_ShouldBeIgnored()
+  {
+    var input = "C4, , , E4".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
 
-  #region Parsing
+    result.Should()
+          .BeTrue();
+
+    part.Should()
+        .HaveCount( 2 );
+
+    part![0]
+      .Should()
+      .Be( Pitch.Parse( "C4" ) );
+
+    part![1]
+      .Should()
+      .Be( Pitch.Parse( "E4" ) );
+
+    tail.IsEmpty.Should()
+        .BeTrue();
+  }
+
+  [Fact]
+  public void TryParse_PrefersPitchChordOverPitch()
+  {
+    var input = "C, E, G".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+
+    result.Should()
+          .BeTrue();
+
+    part![0]
+      .Should()
+      .BeOfType<PitchChord>();
+  }
+
+  [Fact]
+  public void TryParse_ShouldHandlePitchAndPitchChord()
+  {
+    var input = "C4, Cmaj7, E4, Am".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+
+    result.Should()
+          .BeTrue();
+
+    part.Should()
+        .HaveCount( 4 );
+
+    part![0]
+      .Should()
+      .Be( Pitch.Parse( "C4" ) );
+
+    part![1]
+      .Should()
+      .Be( PitchChord.Parse( "Cmaj7" ) );
+
+    part![2]
+      .Should()
+      .Be( Pitch.Parse( "E4" ) );
+
+    part![3]
+      .Should()
+      .Be( PitchChord.Parse( "Am" ) );
+  }
+
+  [Fact]
+  public void TryParse_ShouldHandlePitchChordWithBassNote()
+  {
+    var input = "Cmaj7/E, G4".AsSpan();
+    var result = Part.TryParse( input, null, out var part, out var tail );
+
+    result.Should()
+          .BeTrue();
+
+    part.Should()
+        .HaveCount( 2 );
+    var chord = (PitchChord) part![0];
+
+    chord.Root.PitchClass.Should()
+         .Be( PitchClass.C );
+
+    chord.Inversion.Should()
+         .Be( 1 ); // E is the 3rd of Cmaj7
+  }
 
   [Theory]
   [InlineData( "C4", 1, "" )]
@@ -695,61 +787,31 @@ public sealed class PartTest
     string expectedTail )
   {
     var result = Part.TryParse( input.AsSpan(), null, out var part, out var tail );
+
     result.Should()
           .BeTrue();
+
     part.Should()
         .NotBeNull();
+
     part!.Count.Should()
          .Be( expectedCount );
+
     tail.ToString()
         .Should()
         .Be( expectedTail );
   }
 
-  [Fact]
-  public void TryParse_ShouldHandlePitchAndPitchChord()
-  {
-    var input = "C4, Cmaj7, E4, Am".AsSpan();
-    var result = Part.TryParse( input, null, out var part, out var tail );
-    result.Should()
-          .BeTrue();
-    part.Should()
-        .HaveCount( 4 );
-    part![0].Should()
-            .Be( Pitch.Parse( "C4" ) );
-    part![1].Should()
-            .Be( PitchChord.Parse( "Cmaj7" ) );
-    part![2].Should()
-            .Be( Pitch.Parse( "E4" ) );
-    part![3].Should()
-            .Be( PitchChord.Parse( "Am" ) );
-  }
-
   [Theory]
   [InlineData( "invalid" )]
   [InlineData( "C4, invalid" )]
-  public void TryParse_ShouldReturnFalseForInvalidInputs( string input )
+  public void TryParse_ShouldReturnFalseForInvalidInputs(
+    string input )
   {
     var result = Part.TryParse( input.AsSpan(), null, out var part, out var tail );
+
     result.Should()
           .BeFalse();
-  }
-
-  [Fact]
-  public void TryParse_EmptySegments_ShouldBeIgnored()
-  {
-    var input = "C4, , , E4".AsSpan();
-    var result = Part.TryParse( input, null, out var part, out var tail );
-    result.Should()
-          .BeTrue();
-    part.Should()
-        .HaveCount( 2 );
-    part![0].Should()
-            .Be( Pitch.Parse( "C4" ) );
-    part![1].Should()
-            .Be( Pitch.Parse( "E4" ) );
-    tail.IsEmpty.Should()
-        .BeTrue();
   }
 
   [Fact]
@@ -757,8 +819,10 @@ public sealed class PartTest
   {
     var input = ", , ,".AsSpan();
     var result = Part.TryParse( input, null, out var part, out var tail );
+
     result.Should()
           .BeTrue();
+
     part.Should()
         .BeEmpty();
 
@@ -766,41 +830,6 @@ public sealed class PartTest
     tail.ToString()
         .Should()
         .Be( ", , ," );
-  }
-
-  [Fact]
-  public void Parse_ShouldThrowFormatExceptionForInvalidInput()
-  {
-    var act = () => Part.Parse( "invalid".AsSpan(), null );
-    act.Should()
-       .Throw<FormatException>();
-  }
-
-  [Fact]
-  public void TryParse_ShouldHandlePitchChordWithBassNote()
-  {
-    var input = "Cmaj7/E, G4".AsSpan();
-    var result = Part.TryParse( input, null, out var part, out var tail );
-    result.Should()
-          .BeTrue();
-    part.Should()
-        .HaveCount( 2 );
-    var chord = (PitchChord) part![0];
-    chord.Root.PitchClass.Should()
-         .Be( PitchClass.C );
-    chord.Inversion.Should()
-         .Be( 1 ); // E is the 3rd of Cmaj7
-  }
-
-  [Fact]
-  public void TryParse_PrefersPitchChordOverPitch()
-  {
-    var input = "C, E, G".AsSpan();
-    var result = Part.TryParse( input, null, out var part, out var tail );
-    result.Should()
-          .BeTrue();
-    part![0].Should()
-            .BeOfType<PitchChord>();
   }
 
   #endregion

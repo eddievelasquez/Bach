@@ -1,20 +1,20 @@
 // Module Name: ChordChartTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,9 +22,9 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Test;
-
 using System.Linq;
+
+namespace Bach.Model.Test;
 
 public sealed class ChordChartTest
 {
@@ -102,6 +102,23 @@ public sealed class ChordChartTest
   }
 
   [Fact]
+  public void Constructor_ShouldPreserveKey_WhenScaleDegreesAreSuppliedForMinorKey()
+  {
+    var key = new Key( PitchClass.E, ModeType.Minor );
+
+    var chart = new ChordChart( key, ScaleDegree.Tonic, ScaleDegree.Subdominant, ScaleDegree.Dominant );
+
+    chart.Key.Should()
+         .BeSameAs( key );
+
+    chart.Key.Tonic.Should()
+         .Be( PitchClass.E );
+
+    chart.Key.Mode.Should()
+         .Be( ModeType.Minor );
+  }
+
+  [Fact]
   public void Constructor_ShouldResolveModeSpecificTriads_ForMinorKeyProgression()
   {
     var key = new Key( PitchClass.A, ModeType.Minor );
@@ -123,21 +140,6 @@ public sealed class ChordChartTest
   }
 
   [Fact]
-  public void Constructor_ShouldPreserveKey_WhenScaleDegreesAreSuppliedForMinorKey()
-  {
-    var key = new Key( PitchClass.E, ModeType.Minor );
-
-    var chart = new ChordChart( key, ScaleDegree.Tonic, ScaleDegree.Subdominant, ScaleDegree.Dominant );
-
-    chart.Key.Should()
-         .BeSameAs( key );
-    chart.Key.Tonic.Should()
-         .Be( PitchClass.E );
-    chart.Key.Mode.Should()
-         .Be( ModeType.Minor );
-  }
-
-  [Fact]
   public void Constructor_ShouldResolveModeSpecificTriads_ForMinorProgressionString()
   {
     var key = new Key( PitchClass.A, ModeType.Minor );
@@ -150,6 +152,17 @@ public sealed class ChordChartTest
     chart.Chords.Select( chord => chord.ToString() )
          .Should()
          .Equal( "Am", "C", "Em" );
+  }
+
+  [Fact]
+  public void Constructor_ShouldThrowArgumentException_WhenNoScaleDegreesAreProvided()
+  {
+    var key = new Key( PitchClass.C, ModeType.Major );
+
+    var act = () => new ChordChart( key );
+
+    act.Should()
+       .Throw<ArgumentException>();
   }
 
   [Theory]
@@ -179,29 +192,18 @@ public sealed class ChordChartTest
   }
 
   [Fact]
-  public void Constructor_ShouldThrowArgumentNullException_WhenKeyIsNullAndScaleDegreesAreProvided()
+  public void Constructor_ShouldThrowArgumentNullException_WhenKeyIsNullAndProgressionStringIsProvided()
   {
-    var act = () => new ChordChart( null!, ScaleDegree.Tonic );
+    var act = () => new ChordChart( null!, "I-IV-V-I" );
 
     act.Should()
        .Throw<ArgumentNullException>();
   }
 
   [Fact]
-  public void Constructor_ShouldThrowArgumentException_WhenNoScaleDegreesAreProvided()
+  public void Constructor_ShouldThrowArgumentNullException_WhenKeyIsNullAndScaleDegreesAreProvided()
   {
-    var key = new Key( PitchClass.C, ModeType.Major );
-
-    var act = () => new ChordChart( key );
-
-    act.Should()
-       .Throw<ArgumentException>();
-  }
-
-  [Fact]
-  public void Constructor_ShouldThrowArgumentNullException_WhenKeyIsNullAndProgressionStringIsProvided()
-  {
-    var act = () => new ChordChart( null!, "I-IV-V-I" );
+    var act = () => new ChordChart( null!, ScaleDegree.Tonic );
 
     act.Should()
        .Throw<ArgumentNullException>();

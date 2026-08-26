@@ -1,6 +1,6 @@
 // Module Name: NamedObjectCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,18 +22,18 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
+namespace Bach.Model.Internal;
+
 /// <summary>
 ///   Represents a collection of named objects indexed by both their identifier and display name.
 /// </summary>
 /// <typeparam name="T">
-///   The type of named object stored in the collection. The type must implement <see cref="INamedObject" />.
+///   The type of named object stored in the collection. The type must implement <see cref="INamedObject"/>.
 /// </typeparam>
 /// <remarks>
 ///   The collection preserves insertion order and supports lookups by either the object identifier or its name.
@@ -51,7 +51,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
 
   #region Constructors
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   internal NamedObjectCollection()
     : base( new List<T>() )
   {
@@ -129,7 +129,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
 
   #region Implementation
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   protected override void ClearItems()
   {
     base.ClearItems();
@@ -138,7 +138,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     _byName.Clear();
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   protected override void InsertItem(
     int index,
     T item )
@@ -151,7 +151,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     base.InsertItem( index, item );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   protected override void RemoveItem(
     int index )
   {
@@ -162,7 +162,7 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     base.RemoveItem( index );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   protected override void SetItem(
     int index,
     T item )

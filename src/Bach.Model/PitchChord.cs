@@ -1,20 +1,20 @@
 // Module Name: PitchChord.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,11 +22,11 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Bach.Model.Internal;
+
+namespace Bach.Model;
 
 /// <summary>
 ///   A chord expressed as a collection of actual pitches rather than pitch classes.
@@ -40,7 +40,7 @@ public class PitchChord
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="PitchChord" /> class.
+  ///   Initializes a new instance of the <see cref="PitchChord"/> class.
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
@@ -68,12 +68,12 @@ public class PitchChord
   #region Public Methods
 
   /// <summary>
-  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula, and inversion.
+  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula, and inversion.
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
   /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
+  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
   public static PitchChord Create(
     Pitch root,
     ChordFormula formula,
@@ -83,13 +83,13 @@ public class PitchChord
   }
 
   /// <summary>
-  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula ID or name, and inversion.
+  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula ID or name, and inversion.
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
   /// <param name="octave">The octave of the root pitch.</param>
   /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
+  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
   public static PitchChord Create(
     PitchClass root,
     string formulaIdOrName,
@@ -100,13 +100,13 @@ public class PitchChord
   }
 
   /// <summary>
-  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula, and inversion.
+  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula, and inversion.
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
   /// <param name="octave">The octave of the root pitch.</param>
   /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
+  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
   public static PitchChord Create(
     PitchClass root,
     ChordFormula formula,
@@ -117,12 +117,12 @@ public class PitchChord
   }
 
   /// <summary>
-  ///   Creates a new <see cref="PitchChord" /> instance with the specified root, formula ID or name, and inversion.
+  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula ID or name, and inversion.
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
   /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord" /> instance with the specified parameters.</returns>
+  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
   public static PitchChord Create(
     Pitch root,
     string formulaIdOrName,
@@ -135,7 +135,7 @@ public class PitchChord
   ///   Creates an inversion of the current chord.
   /// </summary>
   /// <param name="inversion">The inversion number.</param>
-  /// <returns>A new <see cref="PitchChord" /> representing the specified inversion.</returns>
+  /// <returns>A new <see cref="PitchChord"/> representing the specified inversion.</returns>
   public new PitchChord GetInversion(
     int inversion )
   {
@@ -143,7 +143,7 @@ public class PitchChord
   }
 
   /// <summary>
-  ///   Tries to parse a <see cref="PitchChord" /> from the provided span.
+  ///   Tries to parse a <see cref="PitchChord"/> from the provided span.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">The format provider.</param>

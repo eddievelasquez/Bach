@@ -1,20 +1,20 @@
 // Module Name: Part.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,12 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Bach.Model.Internal;
+
+namespace Bach.Model;
 
 /// <summary>A sequential collection of musical events that can contain either pitches or pitch chords.</summary>
 public sealed class Part
@@ -43,7 +43,7 @@ public sealed class Part
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="Part" /> class.
+  ///   Initializes a new instance of the <see cref="Part"/> class.
   /// </summary>
   public Part()
   {
@@ -51,7 +51,7 @@ public sealed class Part
   }
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="Part" /> class with the specified collection of part events.
+  ///   Initializes a new instance of the <see cref="Part"/> class with the specified collection of part events.
   /// </summary>
   /// <param name="events">The collection of part events to initialize the part with.</param>
   public Part(
@@ -62,7 +62,7 @@ public sealed class Part
   }
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="Part" /> class with the specified initial capacity.
+  ///   Initializes a new instance of the <see cref="Part"/> class with the specified initial capacity.
   /// </summary>
   /// <param name="capacity">The initial capacity of the part.</param>
   public Part(
@@ -75,13 +75,13 @@ public sealed class Part
 
   #region Properties
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int Count => _events.Count;
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool IsReadOnly => false;
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public IPartEvent this[
     int index ]
   {
@@ -108,13 +108,13 @@ public sealed class Part
     _events.Add( partEvent );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public void Clear()
   {
     _events.Clear();
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Contains(
     IPartEvent item )
   {
@@ -122,7 +122,7 @@ public sealed class Part
     return _events.Contains( item );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public void CopyTo(
     IPartEvent[] array,
     int arrayIndex )
@@ -131,19 +131,19 @@ public sealed class Part
     _events.CopyTo( array, arrayIndex );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public IEnumerator<IPartEvent> GetEnumerator()
   {
     return _events.GetEnumerator();
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   IEnumerator IEnumerable.GetEnumerator()
   {
     return GetEnumerator();
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public int IndexOf(
     IPartEvent item )
   {
@@ -151,7 +151,7 @@ public sealed class Part
     return _events.IndexOf( item );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public void Insert(
     int index,
     IPartEvent item )
@@ -160,29 +160,12 @@ public sealed class Part
     _events.Insert( index, item );
   }
 
-  /// <inheritdoc />
-  public bool Remove(
-    IPartEvent item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-    return _events.Remove( item );
-  }
-
-  /// <inheritdoc />
-  public void RemoveAt(
-    int index )
-  {
-    _events.RemoveAt( index );
-  }
-
-  #endregion
-
   /// <summary>
-  /// Parses a string representation of a musical part and returns a <see cref="Part" /> object.
+  ///   Parses a string representation of a musical part and returns a <see cref="Part"/> object.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed <see cref="Part" /> object.</returns>
+  /// <returns>The parsed <see cref="Part"/> object.</returns>
   public static Part Parse(
     string s,
     IFormatProvider? provider = null )
@@ -191,11 +174,11 @@ public sealed class Part
   }
 
   /// <summary>
-  /// Parses a span of characters representing a musical part and returns a <see cref="Part" /> object.
+  ///   Parses a span of characters representing a musical part and returns a <see cref="Part"/> object.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed <see cref="Part" /> object.</returns>
+  /// <returns>The parsed <see cref="Part"/> object.</returns>
   /// <exception cref="FormatException"></exception>
   public static Part Parse(
     ReadOnlySpan<char> span,
@@ -206,63 +189,78 @@ public sealed class Part
       : throw new FormatException( $"{span} is not a valid part" );
   }
 
-  /// <summary>
-  /// Attempts to parse a string representation of a musical part and returns a boolean indicating success or failure.
-  /// </summary>
-  /// <param name="s">The string to parse.</param>
-  /// <param name="part">The parsed <see cref="Part" /> object.</param>
-  /// <returns>true if the string was parsed successfully; otherwise, false.</returns>
-  public static bool TryParse(
-    string? s,
-    [NotNullWhen(true)] out Part? part )
+  /// <inheritdoc/>
+  public bool Remove(
+    IPartEvent item )
   {
-    return TryParse(s.AsSpan(), null, out part);
+    ArgumentNullException.ThrowIfNull( item );
+    return _events.Remove( item );
+  }
+
+  /// <inheritdoc/>
+  public void RemoveAt(
+    int index )
+  {
+    _events.RemoveAt( index );
   }
 
   /// <summary>
-  /// Attempts to parse a string representation of a musical part and returns a boolean indicating success or failure.
+  ///   Attempts to parse a string representation of a musical part and returns a boolean indicating success or failure.
+  /// </summary>
+  /// <param name="s">The string to parse.</param>
+  /// <param name="part">The parsed <see cref="Part"/> object.</param>
+  /// <returns>true if the string was parsed successfully; otherwise, false.</returns>
+  public static bool TryParse(
+    string? s,
+    [NotNullWhen( true )] out Part? part )
+  {
+    return TryParse( s.AsSpan(), null, out part );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a string representation of a musical part and returns a boolean indicating success or failure.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <param name="part">The parsed <see cref="Part" /> object.</param>
+  /// <param name="part">The parsed <see cref="Part"/> object.</param>
   /// <returns>true if the string was parsed successfully; otherwise, false.</returns>
   public static bool TryParse(
     string? s,
     IFormatProvider? provider,
-    [NotNullWhen(true)] out Part? part )
+    [NotNullWhen( true )] out Part? part )
   {
-    return TryParse(s.AsSpan(), provider, out part);
+    return TryParse( s.AsSpan(), provider, out part );
   }
 
   /// <summary>
-  /// Attempts to parse a span of characters representing a musical part and returns a boolean indicating success or
-  /// failure.
+  ///   Attempts to parse a span of characters representing a musical part and returns a boolean indicating success or
+  ///   failure.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <param name="part">The parsed <see cref="Part" /> object.</param>
+  /// <param name="part">The parsed <see cref="Part"/> object.</param>
   /// <returns></returns>
   public static bool TryParse(
     ReadOnlySpan<char> span,
     IFormatProvider? provider,
-    [MaybeNullWhen(false)] out Part part )
+    [MaybeNullWhen( false )] out Part part )
   {
     // We want to ensure that the entire string is consumed, so we check if the tail is empty after parsing.
-    return TryParse(span, provider, out part, out var tail) && tail.IsEmpty;
+    return TryParse( span, provider, out part, out var tail ) && tail.IsEmpty;
   }
 
   /// <summary>
-  /// Attempts to parse a span of characters representing a musical part and returns a boolean indicating success or
+  ///   Attempts to parse a span of characters representing a musical part and returns a boolean indicating success or
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <param name="part">The parsed <see cref="Part" /> object.</param>
+  /// <param name="part">The parsed <see cref="Part"/> object.</param>
   /// <param name="tail">The remaining unparsed portion of the span.</param>
   /// <returns></returns>
   public static bool TryParse(
     ReadOnlySpan<char> span,
     IFormatProvider? provider,
-    [NotNullWhen(true)] out Part? part,
+    [NotNullWhen( true )] out Part? part,
     out ReadOnlySpan<char> tail )
   {
     tail = span.TrimStart();
@@ -288,7 +286,7 @@ public sealed class Part
       var currentSpan = tail[ranges[i]];
 
       // Try to parse the current span as a PitchChord first, and if that fails, try to parse it as a Pitch.
-      if( PitchChord.TryParse( currentSpan, provider, out var pitchChord ))
+      if( PitchChord.TryParse( currentSpan, provider, out var pitchChord ) )
       {
         partEvents.Add( pitchChord );
         continue;
@@ -315,4 +313,6 @@ public sealed class Part
 
     return true;
   }
+
+  #endregion
 }

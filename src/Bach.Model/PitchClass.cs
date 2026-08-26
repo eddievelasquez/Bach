@@ -1,20 +1,20 @@
 // Module Name: PitchClass.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,12 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
 using Bach.Model.Internal;
+
+namespace Bach.Model;
 
 /// <summary>
 ///   A PitchClass represents a combination of a <see cref="P:Bach.Model.NoteName"/>
@@ -200,69 +200,6 @@ public readonly struct PitchClass
 
   #region Public Methods
 
-  /// <summary>Transposes the current instance by a number of semitones.</summary>
-  /// <param name="semitoneCount">Number of semitones. Negative values transpose downward.</param>
-  /// <returns>A PitchClass.</returns>
-  public PitchClass Transpose(
-    int semitoneCount )
-  {
-    var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex + semitoneCount );
-    return LookupPitchClass( enharmonicIndex );
-  }
-
-  /// <summary>Adds an interval to the current instance.</summary>
-  /// <param name="interval">An interval to add.</param>
-  /// <returns>A PitchClass.</returns>
-  public PitchClass Transpose(
-    Interval interval )
-  {
-    // First we calculate the new note name from the interval quantity, wrapping around the 7 note names.
-    // We must subtract 1 from the interval quantity because the interval quantity is 1-based (unison = 1, second = 2, etc.)
-    var noteIndex = (int) NoteName + ( ((int) interval.Quantity - 1 ) * ( interval.IsAscending ? 1 : -1 ) );
-    var expectedNoteName = (NoteName) noteIndex.Wrap( Constants.NoteNameCount );
-
-    // Next we calculate the new enharmonic index, wrapping around the 12 semitones in an octave
-    var semitoneCount = ( _enharmonicIndex + interval.SemitoneCount ).Wrap( Constants.OctaveSemitoneCount );
-
-    // Now we look for a pitch class that matches the calculated note name and the enharmonic index
-    for( var i = 0; i < ENHARMONIC_COUNT; i++ )
-    {
-      var enharmonicIndex = s_enharmonics[semitoneCount, i];
-
-      // If the enharmonic index is -1, it means that there is no pitch class for this combination of enharmonic index and accidental
-      if( enharmonicIndex == -1 )
-      {
-        continue;
-      }
-
-      var pitchClass = s_pitchClasses[enharmonicIndex];
-
-      // If the pitch class has the same note name as the calculated note name, we return it
-      if( pitchClass.NoteName == expectedNoteName )
-      {
-        return pitchClass;
-      }
-    }
-
-    throw new InvalidOperationException( "No pitch class found for the calculated note name and enharmonic index." );
-  }
-
-  /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
-  /// <param name="pitchClass">The pitch class.</param>
-  /// <returns>An interval.</returns>
-  public Interval GetIntervalTo(
-    PitchClass pitchClass )
-  {
-    // First we determine the interval quantity. We must add one because the interval quantity is 1-based (unison = 1, second = 2, etc.)
-    var quantity = (IntervalQuantity) (( pitchClass.NoteName - NoteName).Wrap( Constants.NoteNameCount ) + 1);
-
-    // Then we determine the semitone count
-    var semitoneCount = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
-    var quality = Interval.GetIntervalQuality( quantity, semitoneCount );
-    var interval = new Interval( quantity, quality );
-    return interval;
-  }
-
   /// <inheritdoc/>
   public int CompareTo(
     PitchClass other )
@@ -371,6 +308,22 @@ public readonly struct PitchClass
   public override int GetHashCode()
   {
     return _enharmonicIndex;
+  }
+
+  /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
+  /// <param name="pitchClass">The pitch class.</param>
+  /// <returns>An interval.</returns>
+  public Interval GetIntervalTo(
+    PitchClass pitchClass )
+  {
+    // First we determine the interval quantity. We must add one because the interval quantity is 1-based (unison = 1, second = 2, etc.)
+    var quantity = (IntervalQuantity) ( ( pitchClass.NoteName - NoteName ).Wrap( Constants.NoteNameCount ) + 1 );
+
+    // Then we determine the semitone count
+    var semitoneCount = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
+    var quality = Interval.GetIntervalQuality( quantity, semitoneCount );
+    var interval = new Interval( quantity, quality );
+    return interval;
   }
 
   /// <summary>Parses the provided string.</summary>
@@ -501,6 +454,53 @@ public readonly struct PitchClass
     }
 
     return buf.ToString();
+  }
+
+  /// <summary>Transposes the current instance by a number of semitones.</summary>
+  /// <param name="semitoneCount">Number of semitones. Negative values transpose downward.</param>
+  /// <returns>A PitchClass.</returns>
+  public PitchClass Transpose(
+    int semitoneCount )
+  {
+    var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex + semitoneCount );
+    return LookupPitchClass( enharmonicIndex );
+  }
+
+  /// <summary>Adds an interval to the current instance.</summary>
+  /// <param name="interval">An interval to add.</param>
+  /// <returns>A PitchClass.</returns>
+  public PitchClass Transpose(
+    Interval interval )
+  {
+    // First we calculate the new note name from the interval quantity, wrapping around the 7 note names.
+    // We must subtract 1 from the interval quantity because the interval quantity is 1-based (unison = 1, second = 2, etc.)
+    var noteIndex = (int) NoteName + ( ( (int) interval.Quantity - 1 ) * ( interval.IsAscending ? 1 : -1 ) );
+    var expectedNoteName = (NoteName) noteIndex.Wrap( Constants.NoteNameCount );
+
+    // Next we calculate the new enharmonic index, wrapping around the 12 semitones in an octave
+    var semitoneCount = ( _enharmonicIndex + interval.SemitoneCount ).Wrap( Constants.OctaveSemitoneCount );
+
+    // Now we look for a pitch class that matches the calculated note name and the enharmonic index
+    for( var i = 0; i < ENHARMONIC_COUNT; i++ )
+    {
+      var enharmonicIndex = s_enharmonics[semitoneCount, i];
+
+      // If the enharmonic index is -1, it means that there is no pitch class for this combination of enharmonic index and accidental
+      if( enharmonicIndex == -1 )
+      {
+        continue;
+      }
+
+      var pitchClass = s_pitchClasses[enharmonicIndex];
+
+      // If the pitch class has the same note name as the calculated note name, we return it
+      if( pitchClass.NoteName == expectedNoteName )
+      {
+        return pitchClass;
+      }
+    }
+
+    throw new InvalidOperationException( "No pitch class found for the calculated note name and enharmonic index." );
   }
 
   /// <summary>Attempts to parse a PitchClass from the given string.</summary>

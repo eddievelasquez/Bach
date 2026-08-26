@@ -1,20 +1,20 @@
 // Module Name: Scale.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,12 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Bach.Model.Internal;
+
+namespace Bach.Model;
 
 /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
 public sealed class Scale
@@ -90,7 +90,7 @@ public sealed class Scale
 
   #region Properties
 
-  /// <summary>Gets the root <see cref="PitchClass" /> of the scale.</summary>
+  /// <summary>Gets the root <see cref="PitchClass"/> of the scale.</summary>
   /// <value>The root.</value>
   public PitchClass Root { get; }
 
@@ -99,7 +99,7 @@ public sealed class Scale
   public string Name { get; }
 
   /// <summary>Gets the formula for the scale.</summary>
-  /// <value>The <see cref="ScaleFormula" />.</value>
+  /// <value>The <see cref="ScaleFormula"/>.</value>
   public ScaleFormula Formula { get; }
 
   /// <summary>Determines if this scale is theoretical.</summary>
@@ -107,7 +107,7 @@ public sealed class Scale
   ///   A theoretical scale is one that contains at least one double flat or double sharp accidental.
   ///   These scales exist in the musical theory realm but are not used in practice due to their complexity.
   ///   There's always another practical scale that contains exactly the same enharmonic pitches in the same order.
-  ///   See <see cref="GetEnharmonicScale" /> for a way to obtain said scale.
+  ///   See <see cref="GetEnharmonicScale"/> for a way to obtain said scale.
   /// </remarks>
   /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
   public bool Theoretical { get; }
@@ -125,7 +125,7 @@ public sealed class Scale
     return notes.All( note => IndexOf( note ) >= 0 );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     Scale? other )
   {
@@ -142,7 +142,7 @@ public sealed class Scale
     return Root.Equals( other.Root ) && Formula.Equals( other.Formula );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -210,7 +210,7 @@ public sealed class Scale
     return scale;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return HashCode.Combine( Root, Formula );
@@ -225,7 +225,9 @@ public sealed class Scale
     return Formula.Generate( Pitch.Create( Root, octave ) );
   }
 
-  /// <summary>Enumerates the scales that contain the given pitchClasses matching exactly the intervals between them.</summary>
+  /// <summary>
+  ///   Enumerates the scales that contain the given pitchClasses matching exactly the intervals between them.
+  /// </summary>
   /// <param name="notes">The pitchClasses.</param>
   /// <returns>
   ///   An enumerator to all the scales that contain the pitchClasses.
@@ -287,20 +289,20 @@ public sealed class Scale
 #endif
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return ToString( DEFAULT_TO_STRING_FORMAT, null );
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Scale" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Scale"/> instance, according to the
   ///   provided format specifier.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Scale" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Scale"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>"N": Name pattern. e.g. "C Major".</para>
@@ -316,14 +318,14 @@ public sealed class Scale
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Scale" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Scale"/> instance, according to the
   ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. (Currently unused)</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Scale" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Scale"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>Format specifiers:</para>

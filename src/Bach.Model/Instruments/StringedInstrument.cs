@@ -1,20 +1,20 @@
 // Module Name: StringedInstrument.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,10 +22,10 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments;
-
 using System.Collections.Generic;
 using System.Linq;
+
+namespace Bach.Model.Instruments;
 
 /// <summary>Represents a stringed instrument, such as guitars, basses, ukeleles, etc.</summary>
 public sealed class StringedInstrument
@@ -94,6 +94,7 @@ public sealed class StringedInstrument
     string? tuningName = null )
   {
     var definition = Registry.StringedInstrumentDefinitions[instrumentKey];
+
     if( string.IsNullOrEmpty( tuningName ) )
     {
       tuningName = "Standard";
@@ -102,7 +103,7 @@ public sealed class StringedInstrument
     return new StringedInstrument( definition, definition.Tunings[tuningName], positionCount );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     StringedInstrument? other )
   {
@@ -119,7 +120,7 @@ public sealed class StringedInstrument
     return base.Equals( other ) && Equals( Tuning, other.Tuning ) && PositionCount == other.PositionCount;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -131,7 +132,7 @@ public sealed class StringedInstrument
     return obj is StringedInstrument other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return HashCode.Combine( base.GetHashCode(), Tuning, PositionCount );
@@ -161,6 +162,7 @@ public sealed class StringedInstrument
 
     var startPitch = Tuning[startString] + startPosition;
     var octave = startPitch.Octave;
+
     if( startPitch.PitchClass > chord.Bass )
     {
       ++octave;
@@ -212,6 +214,7 @@ public sealed class StringedInstrument
 
     // Adjust the octave if necessary
     var octave = startPitch.Octave;
+
     if( startPitch.PitchClass < scale.Root )
     {
       --octave;
@@ -234,9 +237,11 @@ public sealed class StringedInstrument
         // between the position span on this string and the value of the pitch
         // before the start of the next string
         var high = Pitch.Min( low + positionSpan, GetPitchAt( currentString - 1, startPosition ) - 1 );
+
         while( true )
         {
           var current = scaleEnumerator.Current;
+
           if( current > high )
           {
             break;
@@ -277,6 +282,7 @@ public sealed class StringedInstrument
     }
 
     Fingering fingering;
+
     if( current <= high )
     {
       var position = current - low + startPosition;

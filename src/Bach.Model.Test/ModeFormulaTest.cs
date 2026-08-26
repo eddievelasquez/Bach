@@ -1,20 +1,20 @@
 // Module Name: ModeFormulaTest.cs
 // Project:     Bach.Model.Test
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -26,40 +26,39 @@ namespace Bach.Model.Test;
 
 public sealed class ModeFormulaTest
 {
+  #region Properties
+
+  public static TheoryData<ModeFormula, string> ModeNames =>
+    new()
+    {
+      { ModeFormula.Ionian, "Ionian" },
+      { ModeFormula.Dorian, "Dorian" },
+      { ModeFormula.Phrygian, "Phrygian" },
+      { ModeFormula.Lydian, "Lydian" },
+      { ModeFormula.Mixolydian, "Mixolydian" },
+      { ModeFormula.Aeolian, "Aeolian" },
+      { ModeFormula.Locrian, "Locrian" }
+    };
+
+  #endregion
+
   #region Public Methods
-
-  [Fact]
-  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
-  {
-    object x = ModeFormula.Dorian;
-    object y = ModeFormula.Dorian;
-    object z = ModeFormula.Dorian;
-
-    // ReSharper disable once EqualExpressionComparison
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-    x.Equals( null )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
 
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType()
   {
     object actual = ModeFormula.Dorian;
+
+    actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType_ObjectVariant()
+  {
+    object actual = ModeFormula.Dorian;
+
     actual.Equals( int.MinValue )
           .Should()
           .BeFalse();
@@ -69,40 +68,20 @@ public sealed class ModeFormulaTest
   public void Equals_ShouldReturnFalse_WhenComparedWithNull()
   {
     object actual = ModeFormula.Dorian;
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject()
+  public void Equals_ShouldReturnFalse_WhenComparedWithNull_ObjectVariant()
   {
-    var actual = ModeFormula.Dorian;
-    actual.Equals( actual )
-          .Should()
-          .BeTrue();
-  }
+    object actual = ModeFormula.Dorian;
 
-  [Fact]
-  public void GetHashCode_ShouldReturnEqualValue_WhenObjectsAreEqual()
-  {
-    var actual = ModeFormula.Dorian;
-    var expected = ModeFormula.Dorian;
-    expected.Equals( actual )
-            .Should()
-            .BeTrue();
-    actual.GetHashCode()
+    actual.Equals( null )
           .Should()
-          .Be( expected.GetHashCode() );
-  }
-
-  [Theory]
-  [MemberData( nameof( ModeNames ) )]
-  public void ToString_ShouldReturnExpectedValue( ModeFormula formula, string expected )
-  {
-    formula.ToString()
-           .Should()
-           .Be( expected );
+          .BeFalse();
   }
 
   [Fact]
@@ -117,52 +96,87 @@ public sealed class ModeFormulaTest
   }
 
   [Fact]
-  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithDifferentType_TypeSafeVariant()
   {
     var actual = ModeFormula.Dorian;
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
 
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparedWithDifferentType_ObjectVariant()
-  {
-    object actual = ModeFormula.Dorian;
+    // ReSharper disable once SuspiciousTypeConversion.Global
     actual.Equals( int.MinValue )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparedWithNull_ObjectVariant()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull()
   {
-    object actual = ModeFormula.Dorian;
+    var actual = ModeFormula.Dorian;
+
     actual.Equals( null )
           .Should()
           .BeFalse();
   }
 
   [Fact]
-  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject_TypeSafeVariant()
+  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull_TypeSafeVariant()
   {
     var actual = ModeFormula.Dorian;
+
+    actual.Equals( null )
+          .Should()
+          .BeFalse();
+  }
+
+  [Fact]
+  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject()
+  {
+    var actual = ModeFormula.Dorian;
+
     actual.Equals( actual )
           .Should()
           .BeTrue();
   }
 
   [Fact]
-  public void GetHashCode_ShouldReturnEqualValue_WhenObjectsAreEqual_TypeSafeVariant()
+  public void Equals_ShouldReturnTrue_WhenComparedWithSameObject_TypeSafeVariant()
   {
     var actual = ModeFormula.Dorian;
-    var expected = ModeFormula.Dorian;
-    expected.Equals( actual )
-            .Should()
-            .BeTrue();
-    actual.GetHashCode()
+
+    actual.Equals( actual )
           .Should()
-          .Be( expected.GetHashCode() );
+          .BeTrue();
+  }
+
+  [Fact]
+  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
+  {
+    object x = ModeFormula.Dorian;
+    object y = ModeFormula.Dorian;
+    object z = ModeFormula.Dorian;
+
+    // ReSharper disable once EqualExpressionComparison
+    x.Equals( x )
+     .Should()
+     .BeTrue(); // Reflexive
+
+    x.Equals( y )
+     .Should()
+     .BeTrue(); // Symmetric
+
+    y.Equals( x )
+     .Should()
+     .BeTrue();
+
+    y.Equals( z )
+     .Should()
+     .BeTrue(); // Transitive
+
+    x.Equals( z )
+     .Should()
+     .BeTrue();
+
+    x.Equals( null )
+     .Should()
+     .BeFalse(); // Never equal to null
   }
 
   [Fact]
@@ -175,54 +189,68 @@ public sealed class ModeFormulaTest
     x.Equals( x )
      .Should()
      .BeTrue(); // Reflexive
+
     x.Equals( y )
      .Should()
      .BeTrue(); // Symmetric
+
     y.Equals( x )
      .Should()
      .BeTrue();
+
     y.Equals( z )
      .Should()
      .BeTrue(); // Transitive
+
     x.Equals( z )
      .Should()
      .BeTrue();
+
     x.Equals( null )
      .Should()
      .BeFalse(); // Never equal to null
   }
 
   [Fact]
-  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithDifferentType_TypeSafeVariant()
+  public void GetHashCode_ShouldReturnEqualValue_WhenObjectsAreEqual()
   {
     var actual = ModeFormula.Dorian;
+    var expected = ModeFormula.Dorian;
 
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    actual.Equals( int.MinValue )
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+
+    actual.GetHashCode()
           .Should()
-          .BeFalse();
+          .Be( expected.GetHashCode() );
   }
 
   [Fact]
-  public void Equals_ShouldReturnFalse_WhenTypeSafeComparedWithNull_TypeSafeVariant()
+  public void GetHashCode_ShouldReturnEqualValue_WhenObjectsAreEqual_TypeSafeVariant()
   {
     var actual = ModeFormula.Dorian;
-    actual.Equals( null )
+    var expected = ModeFormula.Dorian;
+
+    expected.Equals( actual )
+            .Should()
+            .BeTrue();
+
+    actual.GetHashCode()
           .Should()
-          .BeFalse();
+          .Be( expected.GetHashCode() );
   }
 
-  public static TheoryData<ModeFormula, string> ModeNames =>
-    new()
-    {
-      { ModeFormula.Ionian, "Ionian" },
-      { ModeFormula.Dorian, "Dorian" },
-      { ModeFormula.Phrygian, "Phrygian" },
-      { ModeFormula.Lydian, "Lydian" },
-      { ModeFormula.Mixolydian, "Mixolydian" },
-      { ModeFormula.Aeolian, "Aeolian" },
-      { ModeFormula.Locrian, "Locrian" }
-    };
+  [Theory]
+  [MemberData( nameof( ModeNames ) )]
+  public void ToString_ShouldReturnExpectedValue(
+    ModeFormula formula,
+    string expected )
+  {
+    formula.ToString()
+           .Should()
+           .Be( expected );
+  }
 
   #endregion
 }

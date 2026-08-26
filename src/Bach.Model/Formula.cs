@@ -1,20 +1,20 @@
 // Module Name: Formula.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
-//
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,14 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Internal;
+using Bach.Model.Internal;
 
-/// <summary>A formula is a base class for constructing a sequence of pitch classes based on a series of intervals.</summary>
+namespace Bach.Model;
+
+/// <summary>
+///   A formula is a base class for constructing a sequence of pitch classes based on a series of intervals.
+/// </summary>
 public abstract class Formula
   : INamedObject,
     IEquatable<Formula>,
@@ -45,8 +47,8 @@ public abstract class Formula
       Interval x,
       Interval y )
     {
-      var xValue = (int)x;
-      var yValue = (int)y;
+      var xValue = (int) x;
+      var yValue = (int) y;
       return xValue.CompareTo( yValue );
     }
 
@@ -140,7 +142,7 @@ public abstract class Formula
     return intervals.All( interval => Intervals.IndexOf( interval, comparer ) >= 0 );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     Formula? other )
   {
@@ -159,7 +161,7 @@ public abstract class Formula
            && Intervals.SequenceEqual( other.Intervals );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -172,7 +174,7 @@ public abstract class Formula
   }
 
   /// <summary>
-  /// Generates a sequence of pitches based on the formula's intervals, starting from the provided root pitch.
+  ///   Generates a sequence of pitches based on the formula's intervals, starting from the provided root pitch.
   /// </summary>
   /// <typeparam name="TPitch">The type of pitch to generate.</typeparam>
   /// <param name="root">The root pitch.</param>
@@ -206,6 +208,7 @@ public abstract class Formula
 
       // Do we need to change the pitch's octave?
       var octaveAdd = index / intervalCount;
+
       if( octaveAdd > 0 )
       {
         pitch += octaveAdd * Constants.OctaveSemitoneCount;
@@ -247,7 +250,7 @@ public abstract class Formula
 
   /// <summary>
   ///   Generates a sequence of pitchClasses based on the provided formula's intervals and starting on the provided
-  ///   <see cref="PitchClass" />.
+  ///   <see cref="PitchClass"/>.
   /// </summary>
   /// <param name="root">The root pitch class.</param>
   /// <param name="intervals">The intervals.</param>
@@ -260,7 +263,7 @@ public abstract class Formula
     return intervals.Select( interval => root + interval );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return Comparer.IdComparer.GetHashCode( Id );
@@ -319,6 +322,7 @@ public abstract class Formula
     for( var i = 0; i < count; ++i )
     {
       var value = formula[ranges[i]];
+
       if( !Interval.TryParse( value, out var interval ) )
       {
         throw new FormatException( value.ToString() + " is not a valid interval" );
@@ -330,20 +334,20 @@ public abstract class Formula
     return [.. buf];
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override string ToString()
   {
     return ToString( NAME_INTERVALS_TO_STRING_FORMAT, null );
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Formula"/> instance, according to the
   ///   provided format specifier.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Formula"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>Format specifiers:</para>
@@ -357,14 +361,14 @@ public abstract class Formula
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Formula" /> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="Formula"/> instance, according to the
   ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. (Currently unused)</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Formula" /> object as specified by
-  ///   <paramref name="format" />.
+  ///   A string representation of the value of the current <see cref="Formula"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>Format specifiers:</para>
@@ -381,6 +385,7 @@ public abstract class Formula
     }
 
     var buf = new StringBuilder();
+
     foreach( var f in format )
     {
       switch( f )
