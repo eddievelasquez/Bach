@@ -24,7 +24,7 @@
 
 namespace Bach.Model.Test;
 
-public sealed class ChordOfTTest
+public sealed class ChordOfTTests
 {
   #region Public Methods
 

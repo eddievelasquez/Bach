@@ -24,7 +24,7 @@
 
 namespace Bach.Model.Test;
 
-public sealed class ScaleFormulaBuilderTest
+public sealed class ScaleFormulaBuilderTests
 {
   #region Public Methods
 
