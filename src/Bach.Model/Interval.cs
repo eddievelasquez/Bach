@@ -1,20 +1,20 @@
 // Module Name: Interval.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -22,6 +22,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Diagnostics;
 using System.Text;
 
 namespace Bach.Model;
@@ -46,6 +47,9 @@ public readonly struct Interval
   private const ushort MASK_QUANTITY = 0b1111;
   private const ushort MASK_QUALITY = 0b111;
   private const ushort MASK_DISPLACEMENT = 0b111;
+
+  private const int MIN_DISPLACEMENT = -4;
+  private const int MAX_DISPLACEMENT = 3;
 
   // Base semitone count for each interval quantity (unison, second, third, ..., fourteenth)
   // without considering quality.
@@ -191,7 +195,7 @@ public readonly struct Interval
   // +---------------------------------------------------------------+
   // | Semitone Distance | Quantity  | Quality   | Displacement      |
   // +---------------------------------------------------------------+
-  // | signed (−26…+26)  | 0–13      | 0–4       | encoded 0–6       |
+  // | signed (−26..26)  | 0–13      | 0–4       | encoded -4..+3    |
   // |        6 bits     | 4 bits    | 3 bits    | 3 bits            |
   // +---------------------------------------------------------------+
   private readonly ushort _value;
@@ -201,16 +205,21 @@ public readonly struct Interval
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the Interval class.
+  ///   Initializes a new instance of the Interval class with a specified alteration degree.
   /// </summary>
   /// <param name="quantity">The quantity of the interval.</param>
   /// <param name="quality">The quality of the interval.</param>
+  /// <param name="alterationDegree">
+  ///   The alteration degree of the interval for augmented and diminished intervals; where 1
+  ///   represents a single alteration, 2 represents a double alteration, and 3 represents a triple alteration.
+  /// </param>
   /// <param name="descending">Whether the interval is descending.</param>
   public Interval(
     IntervalQuantity quantity,
     IntervalQuality quality,
+    int alterationDegree = 1,
     bool descending = false )
-    : this( Pack( quantity, quality, GetDisplacement( quantity, quality ), descending ) )
+    : this( Pack( quantity, quality, alterationDegree, descending ) )
   {
   }
 
@@ -249,12 +258,23 @@ public readonly struct Interval
   public IntervalQuality Quality => (IntervalQuality) ( ( _value >> SHIFT_QUALITY ) & MASK_QUALITY );
 
   /// <summary>
+  ///   Gets the interval's alteration degree. This is the number of semitones the interval is altered from its base
+  ///   quality.
+  /// </summary>
+  public int AlterationDegree => Quality switch
+  {
+    IntervalQuality.Augmented  => Displacement,
+    IntervalQuality.Diminished => Quantity.IsPerfectBased ? -Displacement : -Displacement - 1,
+    _                          => 1
+  };
+
+  /// <summary>
   ///   Gets the interval's quality displacement. This is the number of semitones the interval is displaced from its base
   ///   quality. For perfect quantities (unison, fourth, fifth, etc.), the base quality is perfect. For major quantities
   ///   (second, third, sixth, seventh), the base quality is major. The displacement can be negative (diminished) or
-  ///   positive (augmented). Up to triple diminished or augmented intervals are supported, hence the range of -3 to +3.
+  ///   positive (augmented). Up to triple diminished or augmented intervals are supported, hence the range of -4 to +3.
   /// </summary>
-  public int Displacement => ( ( _value >> SHIFT_DISPLACEMENT ) & MASK_DISPLACEMENT ) - 3;
+  private int Displacement => DecodeDisplacement( _value );
 
   /// <summary>Gets a value indicating whether the interval is ascending.</summary>
   /// <value>True if ascending, false if descending.</value>
@@ -267,7 +287,17 @@ public readonly struct Interval
   /// <summary>
   ///   Gets the interval's inversion. An interval and its inversion always add up to an octave.
   /// </summary>
-  public Interval Inversion => new( Quantity.Inverse, Quality.Inverse, !IsDescending );
+  public Interval Inversion
+  {
+    get
+    {
+      // The inversion of an interval is calculated by inverting its quantity and quality.
+      var inversion = new Interval( Quantity.Inversion, Quality.Inversion, AlterationDegree );
+
+      // If the original interval is descending, the inversion should be ascending, and vice versa.
+      return inversion.IsDescending == IsAscending ? inversion : inversion.FlipDirection();
+    }
+  }
 
   #endregion
 
@@ -310,34 +340,6 @@ public readonly struct Interval
   public override int GetHashCode()
   {
     return _value;
-  }
-
-  /// <summary>Gets semitone count of the interval.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">
-  ///   Thrown when one or more arguments are outside the
-  ///   required range.
-  /// </exception>
-  /// <exception cref="ArgumentException">
-  ///   Thrown when the interval quantity and quality combination doesn't refer to a valid
-  ///   interval.
-  /// </exception>
-  /// <param name="quantity">The interval quantity.</param>
-  /// <param name="quality">The interval quality.</param>
-  /// <param name="descending">True if it is a descending interval; otherwise false.</param>
-  /// <returns>The semitone count.</returns>
-  public static int GetSemitoneCount(
-    IntervalQuantity quantity,
-    IntervalQuality quality,
-    bool descending = false )
-  {
-    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quantity, (int) IntervalQuantity.Unison );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quantity, (int) IntervalQuantity.Fourteenth );
-    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quality, (int) IntervalQuality.Diminished );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quality, (int) IntervalQuality.Augmented );
-
-    var displacement = GetDisplacement( quantity, quality );
-    var semitones = s_quantitySemitones[(int) quantity - 1] + displacement;
-    return descending ? -semitones : semitones;
   }
 
   /// <summary>
@@ -445,14 +447,6 @@ public readonly struct Interval
     {
       switch( f )
       {
-        case 'd':
-          if( IsDescending )
-          {
-            buf.Append( '-' );
-          }
-
-          break;
-
         case 's':
         {
           if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
@@ -569,51 +563,33 @@ public readonly struct Interval
     out Interval interval )
   {
     interval = Unison;
-    value = value.TrimStart();
+    var tail = value.TrimStart();
 
-    if( value.IsEmpty )
+    if( tail.IsEmpty )
     {
       return false;
     }
 
-    var isDescending = false;
-
-    if( value[0] == '-' )
-    {
-      isDescending = true;
-      value = value[1..];
-    }
-    else if( value[0] == '+' )
-    {
-      value = value[1..];
-    }
-
-    if( value.IsEmpty )
-    {
-      return false;
-    }
-
-    var i = 0;
     var quality = IntervalQuality.Perfect;
-    var hasExplicitQuality = char.IsLetter( value[i] );
+    var hasExplicitQuality = char.IsLetter( tail[0] );
+    var alterationDegree = 1;
 
     if( hasExplicitQuality )
     {
-      if( value[i] == 'R' )
+      // Formulas use 'R' to indicate the unison interval
+      if( tail[0] == 'R' )
       {
-        interval = !isDescending ? Unison : -Unison;
+        interval = Unison;
         return true;
       }
 
-      if( !IntervalQuality.TryParse( value[i..], null, out quality, out _ ) )
+      if( !IntervalQuality.TryParse( tail, null, out quality, out alterationDegree, out tail ) )
       {
         return false;
       }
-
-      ++i;
     }
 
-    if( !IntervalQuantity.TryParse( value[i..], null, out var quantity, out _ ) )
+    if( !IntervalQuantity.TryParse( tail, null, out var quantity, out tail ) )
     {
       return false;
     }
@@ -629,7 +605,7 @@ public readonly struct Interval
       return false;
     }
 
-    interval = new Interval( quantity, quality, isDescending );
+    interval = new Interval( quantity, quality, alterationDegree );
     return true;
   }
 
@@ -642,23 +618,35 @@ public readonly struct Interval
   /// </summary>
   /// <param name="quantity">The quantity of the interval.</param>
   /// <param name="quality">The quality of the interval.</param>
-  /// <param name="displacement">The displacement of the interval.</param>
+  /// <param name="alterationDegree">The alteration degree of the interval.</param>
   /// <param name="descending">Whether the interval is descending.</param>
   /// <returns>The packed ushort value representing the interval.</returns>
   /// <exception cref="ArgumentOutOfRangeException"></exception>
   private static ushort Pack(
     IntervalQuantity quantity,
     IntervalQuality quality,
-    int displacement,
+    int alterationDegree,
     bool descending )
   {
-    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quantity, (int) IntervalQuantity.Unison );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quantity, (int) IntervalQuantity.Fourteenth );
-    ArgumentOutOfRangeException.ThrowIfLessThan( (int) quality, (int) IntervalQuality.Diminished );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quality, (int) IntervalQuality.Augmented );
-    ArgumentOutOfRangeException.ThrowIfLessThan( displacement, -3 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( displacement, 3 );
+    if( quantity < IntervalQuantity.Unison || quantity > IntervalQuantity.Fourteenth )
+    {
+      throw new ArgumentOutOfRangeException( nameof( quantity ), $"{quantity} is not a valid interval quantity" );
+    }
 
+    if( quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented )
+    {
+      throw new ArgumentOutOfRangeException( nameof( quality ), $"{quality} is not a valid interval quality" );
+    }
+
+    if( alterationDegree < 1 || alterationDegree > 3 )
+    {
+      throw new ArgumentOutOfRangeException(
+        nameof( alterationDegree ),
+        $"{alterationDegree} is not a valid alteration degree"
+      );
+    }
+
+    var displacement = CalcDisplacement();
     var q = (int) quantity;
     var semitones = s_quantitySemitones[q - 1] + displacement;
 
@@ -667,12 +655,9 @@ public readonly struct Interval
       semitones = -semitones;
     }
 
-    if( semitones < -26 || semitones > 26 )
-    {
-      throw new ArgumentOutOfRangeException( nameof( semitones ) );
-    }
+    Debug.Assert( semitones is >= -26 and <= 26 );
 
-    var encodedDisplacement = displacement + 3; // 0..6
+    var encodedDisplacement = displacement == MIN_DISPLACEMENT ? MASK_DISPLACEMENT : (ushort) ( displacement + 3 );
 
     var packed =
       (ushort) (
@@ -682,57 +667,54 @@ public readonly struct Interval
         | ( encodedDisplacement << SHIFT_DISPLACEMENT )
       );
     return packed;
-  }
 
-  private static int GetDisplacement(
-    IntervalQuantity quantity,
-    IntervalQuality quality )
-  {
-    if( quantity.IsPerfectBased )
+    int CalcDisplacement()
     {
+      var perfectBased = quantity.IsPerfectBased;
+
       return quality switch
       {
-        IntervalQuality.Perfect => 0,
-        IntervalQuality.Diminished => -1,
-        IntervalQuality.Augmented => 1,
-        _ => throw new ArgumentException( $"{quality} is not valid for a perfect-based interval ({quantity})" )
+        IntervalQuality.Perfect when perfectBased => 0,
+        IntervalQuality.Major when !perfectBased  => 0,
+        IntervalQuality.Minor when !perfectBased  => -1,
+        IntervalQuality.Augmented                 => alterationDegree,
+        IntervalQuality.Diminished                => perfectBased ? -alterationDegree : -( alterationDegree + 1 ),
+
+        _ => throw new ArgumentException(
+          $"{quality} is not valid for a {( perfectBased ? "perfect-based" : "major-based" )} interval ({quantity})"
+        )
       };
     }
-
-    return quality switch
-    {
-      IntervalQuality.Major => 0,
-      IntervalQuality.Diminished => -2,
-      IntervalQuality.Minor => -1,
-      IntervalQuality.Augmented => 1,
-      _ => throw new ArgumentException( $"{quality} is not valid for a major-based interval ({quantity})" )
-    };
   }
 
-  internal static IntervalQuality GetIntervalQuality(
+  /// <summary>
+  ///   Calculates the interval quality based on the given quantity and displacement.
+  /// </summary>
+  /// <param name="quantity">The quantity of the interval.</param>
+  /// <param name="displacement">The displacement of the interval in semitones.</param>
+  /// <returns>The calculated interval quality.</returns>
+  internal static IntervalQuality CalcIntervalQuality(
     IntervalQuantity quantity,
-    int semitoneCount )
+    int displacement )
   {
-    var baseLine = s_quantitySemitones[(int) quantity - 1];
-    var offset = semitoneCount - baseLine;
+    var semitones = s_quantitySemitones[(int) quantity - 1];
+    var offset = displacement - semitones;
 
-    if( quantity.IsPerfectBased )
-    {
-      return offset switch
-      {
-        0   => IntervalQuality.Perfect,
-        > 0 => IntervalQuality.Augmented,
-        < 0 => IntervalQuality.Diminished
-      };
-    }
+    var perfectBased = quantity.IsPerfectBased;
 
     return offset switch
     {
-      0   => IntervalQuality.Major,
-      -1  => IntervalQuality.Minor,
-      > 0 => IntervalQuality.Augmented,
-      < 0 => IntervalQuality.Diminished
+      0                     => perfectBased ? IntervalQuality.Perfect : IntervalQuality.Major,
+      -1 when !perfectBased => IntervalQuality.Minor,
+      _                     => offset > 0 ? IntervalQuality.Augmented : IntervalQuality.Diminished
     };
+  }
+
+  private static int DecodeDisplacement(
+    ushort packed )
+  {
+    var encodedDisplacement = (ushort) ( ( packed >> SHIFT_DISPLACEMENT ) & MASK_DISPLACEMENT );
+    return encodedDisplacement == MASK_DISPLACEMENT ? MIN_DISPLACEMENT : encodedDisplacement - 3;
   }
 
   #endregion
@@ -772,7 +754,7 @@ public readonly struct Interval
 
     var quantity = ( packed >> SHIFT_QUANTITY ) & MASK_QUANTITY;
     var quality = ( packed >> SHIFT_QUALITY ) & MASK_QUALITY;
-    var displacement = ( ( packed >> SHIFT_DISPLACEMENT ) & MASK_DISPLACEMENT ) - 3;
+    var displacement = DecodeDisplacement( packed );
 
     // Validate semitone range
     if( semitones < -26 || semitones > 26 )
@@ -793,7 +775,7 @@ public readonly struct Interval
     }
 
     // Validate displacement
-    if( displacement < -3 || displacement > 3 )
+    if( displacement < MIN_DISPLACEMENT || displacement > MAX_DISPLACEMENT )
     {
       throw new ArgumentException( "Invalid displacement", nameof( value ) );
     }

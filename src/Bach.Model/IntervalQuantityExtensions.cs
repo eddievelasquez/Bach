@@ -64,15 +64,17 @@ public static class IntervalQuantityExtensions
     public bool IsCompoundInterval => (int) quantity > (int) IntervalQuantity.Octave;
 
     /// <summary>
-    ///   Gets the inverse of the interval quantity.
+    /// Gets the inversion of the interval quantity.
     /// </summary>
     /// <remarks>
-    ///   The sum of the interval quantities of an interval and its inversion is always 9 (e.g., a 3rd inverts to a 6th,
-    ///   a 2nd inverts to a 7th, etc.). Compound intervals are treated as their simple equivalents (e.g., a 10th inverts
-    ///   to a 3rd, an 11th inverts to a 4th, etc.).
+    /// The sum of the interval quantities of an interval and its inversion is always 9 (e.g., a 3rd inverts to a 6th, a
+    /// 2nd inverts to a 7th, etc.). Compound intervals are treated as their simple equivalents (e.g., a 10th inverts to
+    /// a 6th, an 11th inverts to a 5th, etc.). The inversion of an octave is a unison, and the inversion of a unison is
+    /// an octave.
     /// </remarks>
-    public IntervalQuantity Inverse =>
-      (IntervalQuantity) ( 9 - ( ( ( (int) quantity - 1 ) % Constants.NoteNameCount ) + 1 ) );
+    public IntervalQuantity Inversion => quantity == IntervalQuantity.Octave
+      ? IntervalQuantity.Unison
+      : (IntervalQuantity) ( 9 - ( ( ( (int) quantity - 1 ) % Constants.NoteNameCount ) + 1 ) );
 
     #endregion
 

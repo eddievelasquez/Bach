@@ -1,20 +1,20 @@
 // Module Name: IntervalQualityExtensions.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -60,9 +60,9 @@ public static class IntervalQualityExtensions
     public string LongName => s_longName[(int) intervalQuality];
 
     /// <summary>
-    ///   Returns the inverse of the given interval quality.
+    ///   Returns the inversion of the given interval quality.
     /// </summary>
-    public IntervalQuality Inverse => intervalQuality switch
+    public IntervalQuality Inversion => intervalQuality switch
     {
       IntervalQuality.Diminished => IntervalQuality.Augmented,
       IntervalQuality.Minor      => IntervalQuality.Major,
@@ -124,7 +124,7 @@ public static class IntervalQualityExtensions
       string value,
       IFormatProvider? provider = null )
     {
-      if( !IntervalQuality.TryParse( value.AsSpan(), provider, out var quality, out var tail ) || !tail.IsEmpty )
+      if( !IntervalQuality.TryParse( value.AsSpan(), provider, out var quality, out _, out var tail ) || !tail.IsEmpty )
       {
         throw new FormatException( $"\"{value}\" is not a valid interval quality" );
       }
@@ -153,28 +153,36 @@ public static class IntervalQualityExtensions
     ///   When this method returns, contains the interval quality equivalent to the value contained in span, if the conversion
     ///   succeeded, or IntervalQuality.Perfect if the conversion failed.
     /// </param>
+    /// <param name="alterationDegree">When this method returns, contains the alteration degree of the interval quality.</param>
     /// <param name="tail">When this method returns, contains the remaining unparsed portion of the span.</param>
     /// <returns>True if the conversion succeeded; otherwise, false.</returns>
     public static bool TryParse(
       ReadOnlySpan<char> span,
       IFormatProvider? provider,
       out IntervalQuality quality,
+      out int alterationDegree,
       out ReadOnlySpan<char> tail )
     {
       tail = span.TrimStart();
 
+      // TODO: Fix
+      alterationDegree = 1;
+
       if( tail.IsEmpty )
       {
         quality = IntervalQuality.Perfect;
+        alterationDegree = 1;
         return true;
       }
 
-      switch( tail[0] )
+      var alteration = tail[0];
+
+      switch( alteration )
       {
         case '°':
         case 'd':
           quality = IntervalQuality.Diminished;
-          tail = tail[1..];
+          alterationDegree = CalcAlterationDegree( alteration, ref tail );
           return true;
 
         case 'm':
@@ -195,12 +203,24 @@ public static class IntervalQualityExtensions
         case '+':
         case 'A':
           quality = IntervalQuality.Augmented;
-          tail = tail[1..];
+          alterationDegree = CalcAlterationDegree( alteration, ref tail );
           return true;
 
         default:
           quality = IntervalQuality.Perfect;
           return false;
+      }
+
+      static int CalcAlterationDegree(
+        char alteration,
+        ref ReadOnlySpan<char> span )
+      {
+        // Count the number of consecutive alterations (up to 3) to determine the alteration degree.
+        var count = span.Count( alteration );
+        var alterationDegree = Math.Clamp( count, 1, 3 );
+        span = span[alterationDegree..];
+
+        return alterationDegree;
       }
     }
 

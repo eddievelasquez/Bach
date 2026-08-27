@@ -1,20 +1,20 @@
 // Module Name: PitchClass.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -319,15 +319,15 @@ public readonly struct PitchClass
     // First we determine the interval quantity. We must add one because the interval quantity is 1-based (unison = 1, second = 2, etc.)
     var quantity = (IntervalQuantity) ( ( pitchClass.NoteName - NoteName ).Wrap( Constants.NoteNameCount ) + 1 );
 
-    // Then we determine the semitone count
-    var semitoneCount = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
-    var quality = Interval.GetIntervalQuality( quantity, semitoneCount );
+    // Then we determine the semitone displacement from the enharmonic index, wrapping around the 12 semitones in an octave
+    var semitoneDisplacement = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
+    var quality = Interval.CalcIntervalQuality( quantity, semitoneDisplacement );
     var interval = new Interval( quantity, quality );
     return interval;
   }
 
   /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a PitchClass.</exception>
+  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a PitchClass.</exception>
   /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   /// <param name="value">The value to parse.</param>
