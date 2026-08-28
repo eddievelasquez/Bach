@@ -252,6 +252,34 @@ public sealed class IntervalTests
     { Interval.Octave, 12 }
   };
 
+  public static TheoryData<int, Interval> FromSemitonesData => new()
+  {
+    { 0, Interval.Unison },
+    { 1, Interval.MinorSecond },
+    { 2, Interval.MajorSecond },
+    { 3, Interval.MinorThird },
+    { 4, Interval.MajorThird },
+    { 5, Interval.Fourth },
+    { 6, Interval.AugmentedFourth },
+    { 7, Interval.Fifth },
+    { 8, Interval.MinorSixth },
+    { 9, Interval.MajorSixth },
+    { 10, Interval.MinorSeventh },
+    { 11, Interval.MajorSeventh },
+    { 12, Interval.Octave },
+    { 13, new Interval( IntervalQuantity.Ninth, IntervalQuality.Minor ) },
+    { 14, new Interval( IntervalQuantity.Ninth, IntervalQuality.Major ) },
+    { 15, new Interval( IntervalQuantity.Tenth, IntervalQuality.Minor ) },
+    { 16, new Interval( IntervalQuantity.Tenth, IntervalQuality.Major ) },
+    { 17, new Interval( IntervalQuantity.Eleventh, IntervalQuality.Perfect ) },
+    { 18, new Interval( IntervalQuantity.Eleventh, IntervalQuality.Augmented ) },
+    { 19, new Interval( IntervalQuantity.Twelfth, IntervalQuality.Perfect ) },
+    { 20, new Interval( IntervalQuantity.Thirteenth, IntervalQuality.Minor ) },
+    { 21, new Interval( IntervalQuantity.Thirteenth, IntervalQuality.Major ) },
+    { 22, new Interval( IntervalQuantity.Fourteenth, IntervalQuality.Minor ) },
+    { 23, new Interval( IntervalQuantity.Fourteenth, IntervalQuality.Major ) }
+  };
+
   public static TheoryData<string?> InvalidIntervalStrings => [(string?) null, "", "   ", "M1", "P2", "L2", "Px"];
 
   public static TheoryData<Interval, string, string> ToStringWithFormatData =>
@@ -1082,6 +1110,17 @@ public sealed class IntervalTests
   {
     interval.SemitoneCount.Should()
             .Be( expectedSemitoneCount );
+  }
+
+  [Theory]
+  [MemberData( nameof( FromSemitonesData ) )]
+  public void FromSemitones_ShouldReturnCorrectInterval_ForSupportedSemitoneDistance(
+    int semitones,
+    Interval expected )
+  {
+    Interval.FromSemitones( semitones )
+            .Should()
+            .Be( expected );
   }
 
   [Fact]

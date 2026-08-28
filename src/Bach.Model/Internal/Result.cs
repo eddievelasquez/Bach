@@ -1,6 +1,6 @@
-// Module Name: Constants.cs
-// Project:     Bach.Model
-// Copyright (c) 2012, 2026  Eddie Velasquez.
+// Module Name: ${File.FileName}
+// Project:     ${File.ProjectName}
+// Copyright (c) 2012, ${CurrentDate.Year}  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -24,42 +24,32 @@
 
 namespace Bach.Model.Internal;
 
-/// <summary>
-///   Contains constants used throughout the Bach.Model library.
-/// </summary>
-internal static class Constants
+internal sealed class Result<T>
 {
-  #region Constants
+  private Result(T value, string? error, bool isSuccess)
+  {
+    Value = value;
+    Error = error;
+    IsSuccess = isSuccess;
+  }
 
-  /// <summary>
-  ///   The total number of note names. C, D, E, F, G, A, B
-  /// </summary>
-  public const int NoteNameCount = 7;
+  public T Value
+  {
+    get => IsSuccess ? field : throw new InvalidOperationException( "Cannot access Value when Result is a failure." );
+    init;
+  }
 
-  /// <summary>
-  ///   The total number of semitones in an octave. C, C#, D, D#, E, F, F#, G, G#, A, A#, B
-  /// </summary>
-  public const int OctaveSemitoneCount = 12;
+  public string? Error { get; }
+  public bool IsSuccess { get; }
 
-  /// <summary>
-  ///   The minimum size of a scale step is 1 semitone.
-  /// </summary>
-  public const int MinimumScaleStepSize = 1;
+  public static Result<T> Ok(T value)
+  {
+    return new Result<T>(value, null, true);
+  }
 
-  /// <summary>
-  ///   The maximum size of a scale step is 3 semitones.
-  /// </summary>
-  public const int MaximumScaleStepSize = 3;
-
-  /// <summary>
-  ///   In Western music, the minimum number of steps in a scale is 5, which corresponds to the pentatonic scale.
-  /// </summary>
-  public const int MinimumScaleStepCount = 5;
-
-  /// <summary>
-  ///   The maximum number of steps in a scale is equal to the number of semitones in an octave.
-  /// </summary>
-  public const int MaximumScaleStepCount = OctaveSemitoneCount;
-
-  #endregion
+  public static Result<T> Fail(
+    string error )
+  {
+    return new Result<T>(default!, error, false);
+  }
 }

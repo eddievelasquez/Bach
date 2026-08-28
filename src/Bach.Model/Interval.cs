@@ -343,6 +343,55 @@ public readonly struct Interval
   }
 
   /// <summary>
+  ///   Converts a semitone distance from the unison into the corresponding interval.
+  /// </summary>
+  /// <param name="semitones">The semitone distance from the unison.</param>
+  /// <returns>The interval represented by the semitone distance.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the semitone distance is outside the supported range.</exception>
+  public static Interval FromSemitones(
+    int semitones )
+  {
+    if( semitones == 0 )
+    {
+      return Unison;
+    }
+
+    // If the semitone distance is negative, it indicates a descending interval.
+    if( semitones < 0 )
+    {
+      return FromSemitones( -semitones ).FlipDirection();
+    }
+
+    // Iterate through the quantities to find the matching interval.
+    for( var quantityIndex = 1; quantityIndex < s_quantitySemitones.Length; quantityIndex++ )
+    {
+      var quantity = (IntervalQuantity) ( quantityIndex + 1 );
+      var quantitySemitones = s_quantitySemitones[quantityIndex];
+
+      // If the semitone distance matches the base semitone count for the quantity, we found a perfect or major interval
+      if( semitones == quantitySemitones )
+      {
+        return new Interval( quantity, quantity.IsPerfectBased ? IntervalQuality.Perfect : IntervalQuality.Major );
+      }
+
+      // If the semitone distance is less than the base semitone count for the quantity, we have a minor or augmented interval
+      if( semitones < quantitySemitones )
+      {
+        return quantity.IsPerfectBased
+          ? new Interval( quantity - 1, IntervalQuality.Augmented )
+          : new Interval( quantity, IntervalQuality.Minor );
+      }
+    }
+
+    // If we reach here, the semitone distance is outside the supported range of intervals.
+    throw new ArgumentOutOfRangeException(
+      nameof( semitones ),
+      semitones,
+      $"Semitone distance must be within the supported range of zero to {s_quantitySemitones[^1]}."
+    );
+  }
+
+  /// <summary>
   ///   Converts the specified string representation of an interval to its <see cref="Interval"/> equivalent.
   /// </summary>
   /// <param name="value">A string containing the interval to convert.</param>
