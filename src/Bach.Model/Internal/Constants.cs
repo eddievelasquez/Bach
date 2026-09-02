@@ -47,9 +47,9 @@ internal static class Constants
   public const int MinimumScaleStepSize = 1;
 
   /// <summary>
-  ///   The maximum size of a scale step is 3 semitones.
+  ///   The maximum size of a scale step is 4 semitones.
   /// </summary>
-  public const int MaximumScaleStepSize = 3;
+  public const int MaximumScaleStepSize = 4;
 
   /// <summary>
   ///   In Western music, the minimum number of steps in a scale is 5, which corresponds to the pentatonic scale.

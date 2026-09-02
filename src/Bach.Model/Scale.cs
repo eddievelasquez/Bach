@@ -1,20 +1,20 @@
 // Module Name: Scale.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -240,18 +240,18 @@ public sealed class Scale
 
   /// <summary>Enumerates the scales that contain the given pitchClasses.</summary>
   /// <param name="match">Interval matching strategy.</param>
-  /// <param name="notes">The pitchClasses.</param>
+  /// <param name="pitchClasses">The pitchClasses.</param>
   /// <returns>
   ///   An enumerator to all the scales that contain the pitchClasses.
   /// </returns>
   public static IEnumerable<Scale> ScalesContaining(
     IntervalMatch match,
-    IEnumerable<PitchClass> notes )
+    IEnumerable<PitchClass> pitchClasses )
   {
 #if BRUTE_FORCE_MATCHING
-    foreach( ScaleFormula formula in Registry.ScaleFormulas )
+    foreach( var formula in Registry.ScaleFormulas )
     {
-      PitchClass root = PitchClass.C;
+      var root = PitchClass.C;
 
       do
       {
@@ -266,7 +266,7 @@ public sealed class Scale
       } while( root != PitchClass.C );
     }
 #else
-    var rootNotes = new CircularArray<PitchClass>( notes );
+    var rootNotes = new CircularArray<PitchClass>( pitchClasses );
 
     do
     {
@@ -355,7 +355,7 @@ public sealed class Scale
           break;
 
         case 'I':
-          buf.Append( Formula.ToString( "I" ) );
+          buf.Append( string.Join(',', Formula.Intervals ) );
           break;
 
         case 'N':
@@ -367,7 +367,7 @@ public sealed class Scale
           break;
 
         case 'S':
-          buf.Append( string.Join( ",", this ) );
+          buf.Append( string.Join( ",", Formula.Generate( Root ).Take( Formula.Steps.Count ) ) );
           break;
 
         default:
@@ -389,9 +389,11 @@ public sealed class Scale
   {
     ArgumentNullException.ThrowIfNull( formula );
 
-    return formula.Generate( root )
-                  .Take( formula.Intervals.Count )
-                  .ToArray();
+    return
+    [
+      .. formula.Generate( root )
+                .Take( formula.Steps.Count )
+    ];
   }
 
   private static string GenerateName(

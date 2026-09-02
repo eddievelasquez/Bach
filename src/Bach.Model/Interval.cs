@@ -307,7 +307,16 @@ public readonly struct Interval
   public int CompareTo(
     Interval other )
   {
-    return SemitoneCount.CompareTo( other.SemitoneCount );
+    // First compare the semitone counts. If they are equal, compare the packed values to ensure
+    // a consistent ordering for ascending and descending intervals.
+    var result = SemitoneCount.CompareTo( other.SemitoneCount );
+
+    if( result != 0 )
+    {
+      return result;
+    }
+
+    return _value.CompareTo( other._value );
   }
 
   /// <inheritdoc/>
@@ -336,6 +345,92 @@ public readonly struct Interval
     return new Interval( packed );
   }
 
+  /// <summary>
+  ///   Gets the enharmonic equivalent of the interval in the specified direction.
+  /// </summary>
+  /// <param name="direction">The preferred direction when searching for an enharmonic equivalent with a different quantity.</param>
+  /// <returns>The enharmonic equivalent of the interval.</returns>
+  public Interval GetEnharmonicEquivalent(
+    EnharmonicDirection direction = EnharmonicDirection.Nearest )
+  {
+    var semitones = Math.Abs( SemitoneCount );
+    var descending = IsDescending;
+
+    Interval? best = null;
+    var bestAlterationDegree = int.MaxValue;
+    var bestDistance = int.MaxValue;
+
+    // Iterate through all possible interval quantities to find the best enharmonic equivalent.
+    for( var quantity = IntervalQuantity.Unison; quantity <= IntervalQuantity.Fourteenth; quantity++ )
+    {
+      // Skip candidates that are the same quantity as the original interval.
+      if( quantity == Quantity )
+      {
+        continue;
+      }
+
+      // Skip candidates that don't match the requested direction.
+      if( direction == EnharmonicDirection.SmallerQuantity && quantity > Quantity )
+      {
+        continue;
+      }
+
+      if( direction == EnharmonicDirection.LargerQuantity && quantity < Quantity )
+      {
+        continue;
+      }
+
+      // Calculate the semitone offset from the base semitone count for the candidate quantity.
+      var offset = semitones - s_quantitySemitones[(int) quantity - 1];
+
+      // Skip candidates that are outside the supported range of alterations.
+      if( offset < MIN_DISPLACEMENT || offset > MAX_DISPLACEMENT )
+      {
+        continue;
+      }
+
+      // Calculate the quality of the interval for the candidate quantity.
+      var quality = CalcIntervalQuality( quantity, semitones );
+
+      // Calculate the alteration degree of the interval for the candidate quantity.
+      var alterationDegree = quality switch
+      {
+        IntervalQuality.Augmented  => offset, // Positive offset for augmented intervals
+        IntervalQuality.Diminished => quantity.IsPerfectBased ? -offset : -offset - 1, // Negative offset for diminished intervals
+        _                          => 1 // Default alteration degree for perfect and major intervals
+      };
+
+      // Skip candidates that have an alteration degree outside the supported range.
+      if( alterationDegree is < 1 or > 3 )
+      {
+        continue;
+      }
+
+      var distance = Math.Abs( (int) quantity - (int) Quantity );
+
+      // Update the best candidate if this one is better.
+      // A better candidate is one with a smaller alteration degree, or if the alteration degree is the same,
+      // one with a smaller distance in quantity.
+      if( alterationDegree < bestAlterationDegree
+          || ( alterationDegree == bestAlterationDegree && distance < bestDistance ) )
+      {
+        bestAlterationDegree = alterationDegree;
+        bestDistance = distance;
+        best = new Interval( quantity, quality, alterationDegree, descending );
+      }
+    }
+
+    // Fall back to searching without a direction constraint if none was found in the preferred direction,
+    // so the method never silently returns `this` when a valid (opposite-direction) equivalent exists.
+    if( best is null && direction != EnharmonicDirection.Nearest )
+    {
+      return GetEnharmonicEquivalent();
+    }
+
+    // If no valid enharmonic equivalent was found, return the original interval.
+    return best ?? this;
+  }
+
   /// <inheritdoc/>
   public override int GetHashCode()
   {
@@ -359,7 +454,8 @@ public readonly struct Interval
     // If the semitone distance is negative, it indicates a descending interval.
     if( semitones < 0 )
     {
-      return FromSemitones( -semitones ).FlipDirection();
+      return FromSemitones( -semitones )
+        .FlipDirection();
     }
 
     // Iterate through the quantities to find the matching interval.
@@ -626,11 +722,11 @@ public readonly struct Interval
     if( hasExplicitQuality )
     {
       // Formulas use 'R' to indicate the unison interval
-      if( tail[0] == 'R' )
-      {
-        interval = Unison;
-        return true;
-      }
+      //if( tail[0] == 'R' )
+      //{
+      //  interval = Unison;
+      //  return true;
+      //}
 
       if( !IntervalQuality.TryParse( tail, null, out quality, out alterationDegree, out tail ) )
       {

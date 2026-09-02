@@ -1,5 +1,5 @@
-// Module Name: DisplayScalesContainingCommand.cs
-// Project:     Bach.Cli
+// Module Name: EnharmonicDirection.cs
+// Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
@@ -22,54 +22,20 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
-using System.CommandLine;
-using System.Linq;
-using Bach.Model;
+namespace Bach.Model;
 
-namespace Bach.Cli;
-
-internal sealed class DisplayScalesContainingCommand: BachCommand
+/// <summary>
+///   Specifies a preferred direction when searching for an enharmonic equivalent with a
+///   different quantity.
+/// </summary>
+public enum EnharmonicDirection
 {
-  #region Constructors
+  /// <summary>No preference; choose the simplest spelling regardless of quantity direction.</summary>
+  Nearest,
 
-  /// <inheritdoc/>
-  public DisplayScalesContainingCommand()
-  {
-    var notesArg = CreateMultiArgument<string>( "notes", "The notes that will be searched for" );
+  /// <summary>Prefer an equivalent with a smaller quantity than the original.</summary>
+  SmallerQuantity,
 
-    var command = CreateCommand( "scales-containing", arguments: [notesArg] );
-    command.SetHandler( Execute, notesArg );
-    Command = command;
-  }
-
-  #endregion
-
-  #region Properties
-
-  /// <inheritdoc/>
-  public override Command Command { get; }
-
-  #endregion
-
-  #region Implementation
-
-  private static void Execute(
-    IEnumerable<string> notes )
-  {
-    var pitchClasses = notes.Select( PitchClass.Parse )
-                            .ToArray();
-
-    WriteList( "Scales containing: ", pitchClasses );
-    WriteLine();
-
-    foreach( var scale in Scale.ScalesContaining( pitchClasses ) )
-    {
-      WriteList( $"  {scale.Name}: ", scale );
-      WriteList( "    => ", scale.Formula.Intervals.Select( interval => interval.ToString( "Sq" ) ) );
-      WriteLine();
-    }
-  }
-
-  #endregion
+  /// <summary>Prefer an equivalent with a larger quantity than the original.</summary>
+  LargerQuantity
 }

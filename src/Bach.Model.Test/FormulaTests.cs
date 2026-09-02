@@ -1,20 +1,20 @@
 // Module Name: FormulaTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -25,6 +25,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Bach.Model.Internal;
 using Xunit.Sdk;
 
 namespace Bach.Model.Test;
@@ -593,7 +594,7 @@ public sealed class FormulaTests
     };
 
     // Act
-    var steps = Formula.GetRelativeSteps( intervals );
+    var steps = intervals.ToSteps();
 
     // Assert
     steps.Should()
@@ -619,21 +620,10 @@ public sealed class FormulaTests
   }
 
   [Fact]
-  public void GetRelativeSteps_WithEmpty_ShouldThrowArgumentOutOfRangeException()
-  {
-    // Act
-    Action act = () => _ = Formula.GetRelativeSteps( new List<Interval>() );
-
-    // Assert
-    act.Should()
-       .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Fact]
   public void GetRelativeSteps_WithNull_ShouldThrowArgumentNullException()
   {
     // Act
-    Action act = () => _ = Formula.GetRelativeSteps( null! );
+    Action act = () => _ = ((IList<Interval>)null!).ToSteps();
 
     // Assert
     act.Should()
@@ -643,7 +633,7 @@ public sealed class FormulaTests
   [Fact]
   public void ParseIntervals_ShouldParseIntervalList_WhenFormulaUsesCSV()
   {
-    var intervals = Formula.ParseIntervals( "R,M2,M3" );
+    var intervals = Formula.ParseIntervals( "1,M2,M3" );
 
     intervals.Should()
              .Equal( Interval.Unison, Interval.MajorSecond, Interval.MajorThird );
@@ -652,7 +642,7 @@ public sealed class FormulaTests
   [Fact]
   public void ParseIntervals_ShouldThrowFormatException_WhenFormulaContainsInvalidInterval()
   {
-    var act = () => Formula.ParseIntervals( "R,ZZ" );
+    var act = () => Formula.ParseIntervals( "1,ZZ" );
 
     act.Should()
        .Throw<FormatException>()
@@ -715,38 +705,6 @@ public sealed class FormulaTests
     // Assert
     act.Should()
        .Throw<ArgumentNullException>();
-  }
-
-  [Fact]
-  public void ScaleFormula_ShouldExposeCategoriesAliasesAndFlags()
-  {
-    var formula = new ScaleFormula(
-      "custom",
-      "Custom",
-      new[] { Interval.Unison, Interval.MajorSecond },
-      new HashSet<string>
-      {
-        ScaleCategory.Diatonic,
-        ScaleCategory.Major
-      },
-      new HashSet<string> { "custom-name" }
-    );
-
-    formula.Categories.Should()
-           .Contain( ScaleCategory.Diatonic )
-           .And.Contain( ScaleCategory.Major );
-
-    formula.Aliases.Should()
-           .Contain( "custom-name" );
-
-    formula.IsDiatonic.Should()
-           .BeTrue();
-
-    formula.IsMajor.Should()
-           .BeTrue();
-
-    formula.IsMinor.Should()
-           .BeFalse();
   }
 
   [Fact]

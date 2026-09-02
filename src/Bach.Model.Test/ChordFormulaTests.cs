@@ -31,7 +31,7 @@ public sealed class ChordFormulaTests
   private const string CHORD_ID = "Id";
   private const string CHORD_NAME = "Name";
   private const string CHORD_SYMBOL = "Symbol";
-  private const string CHORD_FORMULA = "R,M2,M3";
+  private const string CHORD_FORMULA = "1,M2,M3";
 
   #endregion
 
@@ -40,7 +40,7 @@ public sealed class ChordFormulaTests
   [Fact]
   public void Constructor_ShouldThrowArgumentException_WhenIntervalsAreNotSorted()
   {
-    var act = () => new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, "R,M3,M2" );
+    var act = () => new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, "1,M3,M2" );
 
     act.Should()
        .Throw<ArgumentException>();
@@ -49,7 +49,7 @@ public sealed class ChordFormulaTests
   [Fact]
   public void Constructor_ShouldThrowArgumentException_WhenIntervalsHaveDuplicates()
   {
-    var act = () => new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, "R,M2,M2,M3" );
+    var act = () => new ChordFormula( CHORD_ID, CHORD_NAME, CHORD_SYMBOL, "1,M2,M2,M3" );
 
     act.Should()
        .Throw<ArgumentException>();

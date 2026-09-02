@@ -26,34 +26,40 @@ namespace Bach.Model.Test;
 
 public sealed class ScaleFormulaBuilderTests
 {
+  #region Constants
+
+  private const string PENTATONIC_STEPS = "W-W-3-W-3";
+  private const string DEFAULT_FORMULA_NAME = "Name";
+  private static readonly StepCollection s_pentatonicSteps = StepCollection.Parse( PENTATONIC_STEPS );
+
+  #endregion
+
   #region Public Methods
 
   [Fact]
   public void AddAlias_ShouldAddMultipleAliases_WhenGivenSemicolonSeparatedString()
   {
-    const string Name = "Name";
     const string Alias = "Alias1;Alias2";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
+    var steps = s_pentatonicSteps;
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddAlias( Alias );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddAlias( Alias )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .NotBeEmpty();
@@ -68,29 +74,27 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddAlias_ShouldAddSingleAlias_WhenGivenNonSeparatedString()
   {
-    const string Name = "Name";
     const string Alias = "Alias";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
+    var steps = s_pentatonicSteps;
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddAlias( Alias );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddAlias( Alias )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .NotBeEmpty();
@@ -102,29 +106,27 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddAlias_ShouldAddSingleAlias_WhenGivenValidString()
   {
-    const string Name = "Name";
     const string Alias = "Alias";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
+    var steps = s_pentatonicSteps;
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddAlias( Alias );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddAlias( Alias )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .NotBeEmpty();
@@ -136,29 +138,27 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddAlias_ShouldAddTrimmedAliases_WhenGivenPaddedStrings()
   {
-    const string Name = "Name";
     const string Alias = "   Alias1   ; Alias2  ";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
+    var steps = s_pentatonicSteps;
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddAlias( Alias );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddAlias( Alias )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .NotBeEmpty();
@@ -173,29 +173,27 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddAliases_ShouldAddMultipleAliases_WhenGivenEnumerableOfStrings()
   {
-    const string Name = "Name";
     string[] aliases = ["Alias1", "Alias2"];
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
+    var steps = s_pentatonicSteps;
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddAliases( aliases );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddAliases( aliases )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .NotBeEmpty();
@@ -210,26 +208,24 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddCategories_ShouldAddMultipleCategories_WhenGivenEnumerableOfStrings()
   {
-    const string Name = "Name";
     string[] categories = ["Category1", "Category2"];
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
+    var steps = s_pentatonicSteps;
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategories( categories );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddCategories( categories )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
            .NotBeEmpty();
@@ -247,27 +243,24 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddCategory_ShouldAddCategory_WhenGivenValidString()
   {
-    const string Name = "Name";
     const string Category = "Category";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
+    var steps = s_pentatonicSteps;
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategory( Category );
-
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddCategory( Category )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
            .NotBeEmpty();
@@ -282,26 +275,23 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddCategory_ShouldAddMultipleCategories_WhenGivenSemicolonSeparatedString()
   {
-    const string Name = "Name";
     const string Categories = "Category1;Category2";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategory( Categories );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddCategory( Categories )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
            .NotBeEmpty();
@@ -319,26 +309,23 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddCategory_ShouldAddSingleCategory_WhenGivenNonSeparatedString()
   {
-    const string Name = "Name";
     const string Category = "Category";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategory( Category );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddCategory( Category )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
            .NotBeEmpty();
@@ -353,26 +340,23 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void AddCategory_ShouldAddTrimmedCategories_WhenGivenPaddedStrings()
   {
-    const string Name = "Name";
     const string Categories = "   Category1   ;  Category2  ";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString )
-                                                 .AddCategory( Categories );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS )
+                                                                 .AddCategory( Categories )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
            .NotBeEmpty();
@@ -388,142 +372,9 @@ public sealed class ScaleFormulaBuilderTests
   }
 
   [Fact]
-  public void AppendInterval_ShouldBuildScaleWithIntervals_WhenAddingIntervalsSequentially()
-  {
-    const string Name = "Name";
-    Interval[] intervals = [Interval.Unison, Interval.MajorSecond, Interval.MinorSixth];
-
-    var builder = new ScaleFormulaBuilder( Name );
-
-    foreach( var interval in intervals )
-    {
-      builder.AppendInterval( interval );
-    }
-
-    var formula = builder.Build();
-
-    formula.Should()
-           .NotBeNull();
-
-    formula.Name.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Id.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
-
-    formula.Categories.Should()
-           .BeEmpty();
-
-    formula.Aliases.Should()
-           .BeEmpty();
-  }
-
-  [Fact]
-  public void Build_ShouldAddDiatonicCategory_WhenScaleHasSevenNoteMajorPattern()
-  {
-    const string Name = "Name";
-    const string IntervalString = "R,M2,M3,4,5,M6,M7";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder().SetName( Name )
-                                           .SetIntervals( IntervalString );
-    var formula = builder.Build();
-
-    formula.Should()
-           .NotBeNull();
-
-    formula.Name.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Id.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
-
-    formula.Categories.Should()
-           .NotBeEmpty();
-
-    formula.Categories.Should()
-           .Contain( "Diatonic" );
-
-    formula.Aliases.Should()
-           .BeEmpty();
-  }
-
-  [Fact]
-  public void Build_ShouldAddMajorCategory_WhenScaleHasMajorThirdAndFifth()
-  {
-    const string Name = "Name";
-    const string IntervalString = "R,M2,M3,4,5,M6,M7";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder().SetName( Name )
-                                           .SetIntervals( IntervalString );
-    var formula = builder.Build();
-
-    formula.Should()
-           .NotBeNull();
-
-    formula.Name.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Id.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
-
-    formula.Categories.Should()
-           .NotBeEmpty();
-
-    formula.Categories.Should()
-           .Contain( "Major" );
-
-    formula.Aliases.Should()
-           .BeEmpty();
-  }
-
-  [Fact]
-  public void Build_ShouldAddMinorCategory_WhenScaleHasMinorThirdAndFifth()
-  {
-    const string Name = "Name";
-    const string IntervalString = "R,M2,m3,4,5,M6,M7";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder().SetName( Name )
-                                           .SetIntervals( IntervalString );
-    var formula = builder.Build();
-
-    formula.Should()
-           .NotBeNull();
-
-    formula.Name.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Id.Should()
-           .BeEquivalentTo( Name );
-
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
-
-    formula.Categories.Should()
-           .NotBeEmpty();
-
-    formula.Categories.Should()
-           .Contain( "Minor" );
-
-    formula.Aliases.Should()
-           .BeEmpty();
-  }
-
-  [Fact]
   public void Build_ShouldThrowInvalidOperationException_WhenIntervalsAreNotSet()
   {
-    var builder = new ScaleFormulaBuilder( "Name" );
+    var builder = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME );
     var act = () => builder.Build();
 
     act.Should()
@@ -533,7 +384,7 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void Build_ShouldThrowInvalidOperationException_WhenNameIsNotSet()
   {
-    var builder = new ScaleFormulaBuilder().SetIntervals( "R,M2,m6" );
+    var builder = new ScaleFormulaBuilder().SetSteps( PENTATONIC_STEPS );
     var act = () => builder.Build();
 
     act.Should()
@@ -543,40 +394,35 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void ParseIntervals_ShouldReturnSameIntervals_WhenUsingStringOrSpan()
   {
-    const string IntervalString = "R,M2,m6";
-    var intervalsFromString = Formula.ParseIntervals( IntervalString );
-    var intervalsFromSpan = Formula.ParseIntervals( IntervalString.AsSpan() );
+    var steps = StepCollection.Parse( PENTATONIC_STEPS.AsSpan() );
 
-    intervalsFromSpan.Should()
-                     .BeEquivalentTo( intervalsFromString );
+    steps.Should()
+         .BeEquivalentTo( s_pentatonicSteps );
   }
 
   [Fact]
   public void SetId_ShouldUseProvidedId_WhenIdIsSet()
   {
-    const string Name = "Name";
     const string Id = "Id";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetId( Id )
-                                                 .SetIntervals( IntervalString );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetId( Id )
+                                                                 .SetSteps( PENTATONIC_STEPS )
+                                                                 .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
            .BeEquivalentTo( Id );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .BeEmpty();
@@ -585,26 +431,25 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void SetIntervals_ShouldBuildScaleWithIntervals_WhenGivenIntervalArray()
   {
-    const string Name = "Name";
-    Interval[] intervals = [Interval.Unison, Interval.MajorSecond, Interval.MinorSixth];
+    int[] steps = [2, 2, 3, 2, 3];
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( intervals );
+    var builder = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( steps );
     var formula = builder.Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( steps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .BeEmpty();
@@ -613,27 +458,23 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void SetIntervals_ShouldBuildScaleWithIntervals_WhenGivenIntervalString()
   {
-    const string Name = "Name";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString );
+    var builder = new ScaleFormulaBuilder( DEFAULT_FORMULA_NAME ).SetSteps( PENTATONIC_STEPS );
     var formula = builder.Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .BeEmpty();
@@ -642,28 +483,24 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void SetName_ShouldBuildScaleWithNameAndIntervals_WhenNameAndIntervalsAreSet()
   {
-    const string Name = "Name";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder().SetName( Name )
-                                           .SetIntervals( IntervalString );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder().SetName( DEFAULT_FORMULA_NAME )
+                                           .SetSteps( PENTATONIC_STEPS )
+                                           .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( Name );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .BeEmpty();
@@ -673,11 +510,9 @@ public sealed class ScaleFormulaBuilderTests
   public void SetName_ShouldSetIdWithoutSpaces_WhenNameContainsSpaces()
   {
     const string Name = "Name With Spaces";
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
 
-    var builder = new ScaleFormulaBuilder( Name ).SetIntervals( IntervalString );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder( Name ).SetSteps( PENTATONIC_STEPS )
+                                                 .Build();
 
     formula.Should()
            .NotBeNull();
@@ -688,11 +523,11 @@ public sealed class ScaleFormulaBuilderTests
     formula.Id.Should()
            .BeEquivalentTo( "NameWithSpaces" );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .BeEmpty();
@@ -701,27 +536,24 @@ public sealed class ScaleFormulaBuilderTests
   [Fact]
   public void SetName_ShouldUseTrimmedName_WhenNameContainsPadding()
   {
-    const string IntervalString = "R,M2,m6";
-    var intervals = Formula.ParseIntervals( IntervalString );
-
-    var builder = new ScaleFormulaBuilder().SetName( "   Name    " )
-                                           .SetIntervals( IntervalString );
-    var formula = builder.Build();
+    var formula = new ScaleFormulaBuilder().SetName( "   Name    " )
+                                           .SetSteps( PENTATONIC_STEPS )
+                                           .Build();
 
     formula.Should()
            .NotBeNull();
 
     formula.Name.Should()
-           .BeEquivalentTo( "Name" );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
     formula.Id.Should()
-           .BeEquivalentTo( "Name" );
+           .BeEquivalentTo( DEFAULT_FORMULA_NAME );
 
-    formula.Intervals.Should()
-           .BeEquivalentTo( intervals );
+    formula.Steps.Should()
+           .BeEquivalentTo( s_pentatonicSteps );
 
     formula.Categories.Should()
-           .BeEmpty();
+           .Contain( ScaleCategory.Major );
 
     formula.Aliases.Should()
            .BeEmpty();

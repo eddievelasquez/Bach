@@ -147,7 +147,6 @@ public sealed class IntervalTests
   public static TheoryData<string, Interval> ValidIntervalStrings => new()
   {
     { "P1", Interval.Unison },
-    { "R", Interval.Unison },
     { "1", Interval.Unison },
     { "A1", Interval.AugmentedFirst },
     { "d2", Interval.DiminishedSecond },
@@ -1099,7 +1098,7 @@ public sealed class IntervalTests
 
     // 1 and d2 have zero semitones so they are equal
     ( Interval.Unison < Interval.DiminishedSecond ).Should()
-                                                   .BeFalse();
+                                                   .BeTrue();
   }
 
   [Theory]
@@ -1219,4 +1218,71 @@ public sealed class IntervalTests
   }
 
   #endregion
+
+  [Fact]
+  public void GetEnharmonicEquivalent_ShouldReturnDiminishedFifth_WhenIntervalIsAugmentedFourth_Nearest()
+  {
+    // Arrange
+    var interval = Interval.AugmentedFourth;
+
+    // Act
+    var actual = interval.GetEnharmonicEquivalent();
+
+    // Assert
+    actual.Should()
+          .Be( Interval.DiminishedFifth );
+
+    // Direction should be preserved
+    actual.IsAscending.Should()
+          .Be( interval.IsAscending );
+  }
+
+  [Fact]
+  public void GetEnharmonicEquivalent_ShouldReturnAugmentedThird_WhenIntervalIsAugmentedFourth_SmallerQuantity()
+  {
+    // Arrange
+    var interval = Interval.AugmentedFourth;
+
+    // Act
+    var actual = interval.GetEnharmonicEquivalent( EnharmonicDirection.SmallerQuantity );
+
+    // Assert
+    var expected = new Interval( IntervalQuantity.Third, IntervalQuality.Augmented, 2 );
+    actual.Should()
+          .Be( expected );
+  }
+
+  [Fact]
+  public void GetEnharmonicEquivalent_ShouldReturnAugmentedFirst_WhenIntervalIsMinorSecond_Nearest()
+  {
+    // Arrange
+    var interval = Interval.MinorSecond;
+
+    // Act
+    var actual = interval.GetEnharmonicEquivalent();
+
+    // Assert
+    actual.Should()
+          .Be( Interval.AugmentedFirst );
+  }
+
+  [Fact]
+  public void GetEnharmonicEquivalent_ShouldFallbackToNearest_WhenNoCandidateInPreferredDirection()
+  {
+    // Arrange
+    var interval = new Interval( IntervalQuantity.Fourteenth, IntervalQuality.Major );
+
+    // Act
+    var directed = interval.GetEnharmonicEquivalent( EnharmonicDirection.LargerQuantity );
+    var nearest = interval.GetEnharmonicEquivalent();
+
+    // Assert
+    directed.Should()
+            .Be( nearest );
+
+    // Ensure a different enharmonic equivalent was found (not the original interval)
+    nearest.Should()
+           .NotBe( interval );
+  }
+
 }

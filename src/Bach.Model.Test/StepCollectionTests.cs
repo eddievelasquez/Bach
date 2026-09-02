@@ -24,30 +24,12 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Bach.Model.Test;
 
 public class StepCollectionTests
 {
   #region Public Methods
-
-  [Theory]
-  [InlineData( new[] { 1, 1, 1, 1 } )] // Less than minimum steps
-  [InlineData( new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } )] // More than maximum steps
-  [InlineData( new[] { 0, 1, 1, 1, 1, 1 } )] // Step less than minimum size
-  [InlineData( new[] { 4, 1, 1, 1, 1, 1 } )] // Step greater than maximum size
-  [InlineData( new[] { 2, 2, 2, 2, 2, 1 } )] // Sum not equal to 12
-  public void Constructor_ShouldThrowArgumentOutOfRangeException_WhenStepsAreInvalid(
-int[] steps )
-  {
-    // Act
-    Action act = () => new StepCollection( steps );
-
-    // Assert
-    act.Should()
-       .Throw<ArgumentOutOfRangeException>();
-  }
 
   [Theory]
   [InlineData( new[] { 2, 2, 2, 2, 2, 2 }, 6 )] // Valid case
@@ -126,27 +108,6 @@ int[] steps )
                   .NotBeNull();
     stepCollection.Count.Should()
                   .Be( 7 );
-  }
-
-  [Theory]
-  [InlineData( "W-W-H-W-W-W-H", new[] { "P1", "M2", "M3", "P4", "P5", "M6", "M7" } )]
-  [InlineData( "2-2-3-2-3", new[] { "P1", "M2", "M3", "P5", "M6" } )]
-  [InlineData( "3-2-2-3-2", new[] { "P1", "m3", "P4", "P5", "m7" } )]
-  [InlineData( "3-2-1-1-3-2", new[] { "P1", "m3", "P4", "A4", "P5", "m7" } )]
-  [InlineData( "2-1-2-2-1-2-2", new[] { "P1", "M2", "m3", "P4", "P5", "m6", "m7" } )]
-  public void ToIntervals_ShouldReturnIntervalsStartingAtUnison(
-    string input,
-    string[] expected )
-  {
-    // Arrange
-    var stepCollection = StepCollection.Parse( input );
-
-    // Act
-    var intervals = stepCollection.ToIntervals();
-
-    // Assert
-    intervals.Should()
-             .ContainInOrder( expected.Select( Interval.Parse ) );
   }
 
   [Theory]
@@ -419,7 +380,7 @@ int[] steps )
 
   [Theory]
   [InlineData( "X-Y-Z-A-B-C-D" )] // Invalid characters
-  [InlineData( "4-2-2-2-2-2" )] // Invalid number 4
+  [InlineData( "5-2-2-2-2-2" )] // Invalid number 4
   [InlineData( "0-2-2-2-2-2" )] // Invalid number 0
   public void TryParse_WithInvalidCharacters_ShouldReturnFalse(
     string input )
@@ -467,20 +428,191 @@ int[] steps )
          .NotBeNull();
   }
 
-  [Theory]
-  [InlineData( "2-2-2-2-2-1" )] // Sum is 11, not 12
-  [InlineData( "3-3-3-3-3" )] // Sum is 15, not 12
-  public void TryParse_WithInvalidSum_ShouldReturnFalse(
-    string input )
+  [Fact]
+  public void ToString_ShouldReturnUppercaseFormat_WhenFormatIsNull()
   {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
     // Act
-    var result = StepCollection.TryParse( input.AsSpan(), null, out var steps );
+    var result = stepCollection.ToString( null, null );
 
     // Assert
     result.Should()
-          .BeFalse();
-    steps.Should()
-         .BeNull();
+          .Be( "W-W-H-W-W-W-H" );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnNumericFormat_WhenFormatIsN()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
+    // Act
+    var result = stepCollection.ToString( "N", null );
+
+    // Assert
+    result.Should()
+          .Be( "2-2-1-2-2-2-1" );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnUppercaseFormat_WhenFormatIsS()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
+    // Act
+    var result = stepCollection.ToString( "S", null );
+
+    // Assert
+    result.Should()
+          .Be( "W-W-H-W-W-W-H" );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnLowercaseFormat_WhenFormatIsLowerS()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
+    // Act
+    var result = stepCollection.ToString( "s", null );
+
+    // Assert
+    result.Should()
+          .Be( "w-w-h-w-w-w-h" );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnEmptyString_WhenFormatIsEmpty()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
+    // Act
+    var result = stepCollection.ToString( "", null );
+
+    // Assert
+    result.Should()
+          .Be( "" );
+  }
+
+  [Fact]
+  public void ToString_ShouldIncludeLiteralCharacters_WhenFormatContainsNonFormatCharacters()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
+    // Act
+    var result = stepCollection.ToString( "(N)", null );
+
+    // Assert
+    result.Should()
+          .Be( "(2-2-1-2-2-2-1)" );
+  }
+
+  [Fact]
+  public void ToString_ShouldHandleMixedFormatCodes_WhenFormatContainsMultipleFormatCharacters()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
+    // Act
+    var result = stepCollection.ToString( "N=S", null );
+
+    // Assert
+    result.Should()
+          .Be( "2-2-1-2-2-2-1=W-W-H-W-W-W-H" );
+  }
+
+  [Fact]
+  public void ToString_ShouldHandleAllStepValues_WhenStepsInclude1And2And3()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 3, 3, 3, 2, 1 } );
+
+    // Act
+    var resultN = stepCollection.ToString( "N", null );
+    var resultS = stepCollection.ToString( "S", null );
+    var results = stepCollection.ToString( "s", null );
+
+    // Assert
+    resultN.Should()
+           .Be( "3-3-3-2-1" );
+    resultS.Should()
+           .Be( "3-3-3-W-H" );
+    results.Should()
+           .Be( "3-3-3-w-h" );
+  }
+
+  [Fact]
+  public void ToString_ShouldReturnLiteralText_WhenFormatContainsOnlyLiterals()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+
+    // Act
+    var result = stepCollection.ToString( "()[]", null );
+
+    // Assert
+    result.Should()
+          .Be( "()[]" );
+  }
+
+  [Fact]
+  public void ToString_ShouldIgnoreFormatProvider_WhenFormatProviderIsSpecified()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 1, 2, 2, 2, 1 } );
+    var formatProvider = System.Globalization.CultureInfo.InvariantCulture;
+
+    // Act
+    var result = stepCollection.ToString( "S", formatProvider );
+
+    // Assert
+    result.Should()
+          .Be( "W-W-H-W-W-W-H" );
+  }
+
+  [Fact]
+  public void ToString_ShouldHandleAllHalfSteps_WhenAllStepsAre1()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } );
+
+    // Act
+    var resultS = stepCollection.ToString( "S", null );
+    var results = stepCollection.ToString( "s", null );
+    var resultN = stepCollection.ToString( "N", null );
+
+    // Assert
+    resultS.Should()
+           .Be( "H-H-H-H-H-H-H-H-H-H-H-H" );
+    results.Should()
+           .Be( "h-h-h-h-h-h-h-h-h-h-h-h" );
+    resultN.Should()
+           .Be( "1-1-1-1-1-1-1-1-1-1-1-1" );
+  }
+
+  [Fact]
+  public void ToString_ShouldHandleAllWholeSteps_WhenAllStepsAre2()
+  {
+    // Arrange
+    var stepCollection = new StepCollection( new[] { 2, 2, 2, 2, 2, 2 } );
+
+    // Act
+    var resultS = stepCollection.ToString( "S", null );
+    var results = stepCollection.ToString( "s", null );
+    var resultN = stepCollection.ToString( "N", null );
+
+    // Assert
+    resultS.Should()
+           .Be( "W-W-W-W-W-W" );
+    results.Should()
+           .Be( "w-w-w-w-w-w" );
+    resultN.Should()
+           .Be( "2-2-2-2-2-2" );
   }
 
   #endregion

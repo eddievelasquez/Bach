@@ -1,20 +1,20 @@
 // Module Name: ScaleTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -108,7 +108,7 @@ public sealed class ScaleTests
 
   public static TheoryData<string, string[]> ScalesContainingData => new()
   {
-    { "C,E,G", ["C", "C Pentatonic", "E Natural Minor", "E Harmonic Minor", "G", "G Melodic Minor", "G Diminished"] }
+    { "C,E,G", ["C", "C Pentatonic", "E Natural Minor", "E Harmonic Minor", "G", "G Melodic Minor"] }
   };
 
   public static TheoryData<PitchClass, string, PitchClass[]> PitchClassesInScaleData => new()
@@ -276,14 +276,14 @@ public sealed class ScaleTests
          .Be( "C" );
 
     scale.Count.Should()
-         .Be( formula!.Intervals.Count );
+         .Be( formula.Steps.Count );
 
     scale.Theoretical.Should()
          .BeFalse();
 
     // Ensure the pitch classes returned by the scale match the formula generate sequence (first N)
     var expected = formula.Generate( root )
-                          .Take( formula.Intervals.Count )
+                          .Take( formula.Steps.Count )
                           .ToArray();
 
     scale.Should()
@@ -805,7 +805,7 @@ public sealed class ScaleTests
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
 
     scale.Count.Should()
-         .Be( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count );
+         .Be( Registry.ScaleFormulas["MinorPentatonic"].Steps.Count );
   }
 
   [Theory]
@@ -849,7 +849,7 @@ public sealed class ScaleTests
     var scale = new Scale( root, scaleName );
 
     var actual = scale.Render( octave )
-                      .Take( scale.Formula.Intervals.Count )
+                      .Take( scale.Formula.Steps.Count )
                       .ToArray();
 
     actual.Should()
@@ -865,12 +865,12 @@ public sealed class ScaleTests
 
     // Act
     var actual = scale.Render( octave )
-                      .Take( scale.Formula.Intervals.Count )
+                      .Take( scale.Formula.Steps.Count )
                       .ToArray();
 
     // Assert
     actual.Should()
-          .HaveCount( scale.Formula.Intervals.Count );
+          .HaveCount( scale.Formula.Steps.Count );
 
     for( var i = 0; i < actual.Length; ++i )
     {

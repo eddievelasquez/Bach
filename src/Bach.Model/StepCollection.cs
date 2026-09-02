@@ -26,18 +26,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using Bach.Model.Internal;
 
 namespace Bach.Model;
 
 /// <summary>
-///   Represents a collection of musical steps that span an octave.
+/// Represents a collection of musical steps that span an octave.
 /// </summary>
 public class StepCollection
   : IReadOnlyCollection<int>,
-    ISpanParsable<StepCollection>
+    ISpanParsable<StepCollection>,
+    IFormattable
 {
+  #region Constants
+
   private const char STEP_SEPARATOR = '-';
+  private const string STANDARD_TO_STRING_FORMAT = "S";
+
+  #endregion
 
   #region Fields
 
@@ -48,20 +55,14 @@ public class StepCollection
   #region Constructors
 
   /// <summary>
-  ///   Represents a collection of musical steps that span an octave.
+  /// Represents a collection of musical steps that span an octave.
   /// </summary>
   /// <param name="steps">The collection of step values. Must contain 2-12 steps with values 1-3 that sum to 12.</param>
   public StepCollection(
-    ICollection<int> steps )
+    IEnumerable<int> steps )
   {
-    var result = Validate( steps );
-
-    if( !result.IsSuccess )
-    {
-      throw new ArgumentOutOfRangeException( nameof( steps ), result.Error );
-    }
-
-    _steps = result.Value;
+    ArgumentNullException.ThrowIfNull( steps );
+    _steps = [.. steps];
   }
 
   #endregion
@@ -69,7 +70,7 @@ public class StepCollection
   #region Properties
 
   /// <summary>
-  ///   Gets the number of steps in the collection.
+  /// Gets the number of steps in the collection.
   /// </summary>
   public int Count => _steps.Length;
 
@@ -91,29 +92,7 @@ public class StepCollection
   }
 
   /// <summary>
-  ///   Converts the step pattern into a sequence of ascending intervals, beginning with the unison.
-  /// </summary>
-  /// <returns>The intervals represented by the step pattern.</returns>
-  public IntervalCollection ToIntervals()
-  {
-    var intervals = new List<Interval>( _steps.Length )
-    {
-      Interval.Unison
-    };
-
-    var semitones = 0;
-
-    for( var degree = 1; degree < _steps.Length; degree++ )
-    {
-      semitones += _steps[degree - 1];
-      intervals.Add( Interval.FromSemitones( semitones ) );
-    }
-
-    return new IntervalCollection( intervals );
-  }
-
-  /// <summary>
-  ///   Parses a string into a <see cref="StepCollection"/>.
+  /// Parses a string into a <see cref="StepCollection"/>.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <returns>The parsed <see cref="StepCollection"/>.</returns>
@@ -126,7 +105,7 @@ public class StepCollection
   }
 
   /// <summary>
-  ///   Parses a string into a <see cref="StepCollection"/>.
+  /// Parses a string into a <see cref="StepCollection"/>.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <param name="provider">An optional format provider.</param>
@@ -142,7 +121,20 @@ public class StepCollection
   }
 
   /// <summary>
-  ///   Parses a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
+  /// Parses a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
+  /// </summary>
+  /// <param name="span">The span of characters to parse.</param>
+  /// <returns>The parsed <see cref="StepCollection"/>.</returns>
+  /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
+  /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
+  public static StepCollection Parse(
+    ReadOnlySpan<char> span )
+  {
+    return Parse( span, null );
+  }
+
+  /// <summary>
+  /// Parses a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">An optional format provider.</param>
@@ -164,7 +156,108 @@ public class StepCollection
   }
 
   /// <summary>
-  ///   Tries to parse a string into a <see cref="StepCollection"/>.
+  /// Converts the step collection to its string representation using the standard format.
+  /// </summary>
+  /// <returns>The string representation of the step collection.</returns>
+  public override string ToString()
+  {
+    return ToString( STANDARD_TO_STRING_FORMAT, null );
+  }
+
+  /// <summary>
+  /// Converts the step collection to its string representation using the specified format and format provider.
+  /// </summary>
+  /// <param name="format">The format string.</param>
+  /// <returns>The string representation of the step collection.</returns>
+  /// <remarks>
+  ///
+  /// <para>Format specifiers:</para>
+  ///
+  /// <para>"N": Numeric pattern. e.g. "1-2-3".</para>
+  ///
+  /// <para>"S": Standard uppercase pattern. e.g. "W-W-H-W".</para>
+  ///
+  /// <para>"s": Standard lowercase pattern. e.g. "w-w-h-w".</para>
+  /// </remarks>
+  public string ToString(
+    string? format )
+  {
+    return ToString( format, null );
+  }
+
+  /// <summary>
+  /// Converts the step collection to its string representation using the specified format and format provider.
+  /// </summary>
+  /// <param name="format">The format string.</param>
+  /// <param name="formatProvider">The format provider.</param>
+  /// <returns>The string representation of the step collection.</returns>
+  /// <remarks>
+  ///
+  /// <para>Format specifiers:</para>
+  ///
+  /// <para>"N": Numeric pattern. e.g. "1-2-3".</para>
+  ///
+  /// <para>"S": Standard uppercase pattern. e.g. "W-W-H-W".</para>
+  ///
+  /// <para>"s": Standard lowercase pattern. e.g. "w-w-h-w".</para>
+  /// </remarks>
+  public string ToString(
+    string? format,
+    IFormatProvider? formatProvider )
+  {
+    format ??= STANDARD_TO_STRING_FORMAT;
+
+    var buf = new StringBuilder();
+
+    foreach( var c in format )
+    {
+      switch( c )
+      {
+        case 'N':
+          buf.Append( string.Join( STEP_SEPARATOR, _steps ) );
+          break;
+
+        case 'S':
+          buf.Append( string.Join( STEP_SEPARATOR, _steps.Select( ToUpperCase ) ) );
+          break;
+
+        case 's':
+          buf.Append( string.Join( STEP_SEPARATOR, _steps.Select( ToLowerCase ) ) );
+          break;
+
+        default:
+          buf.Append( c );
+          break;
+      }
+    }
+
+    return buf.ToString();
+
+    static char ToUpperCase(
+      int step )
+    {
+      return step switch
+      {
+        1 => 'H',
+        2 => 'W',
+        _ => (char) ( '0' + step )
+      };
+    }
+
+    static char ToLowerCase(
+      int step )
+    {
+      return step switch
+      {
+        1 => 'h',
+        2 => 'w',
+        _ => (char) ( '0' + step )
+      };
+    }
+  }
+
+  /// <summary>
+  /// Tries to parse a string into a <see cref="StepCollection"/>.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <param name="steps">The resulting <see cref="StepCollection"/> if parsing is successful.</param>
@@ -177,7 +270,7 @@ public class StepCollection
   }
 
   /// <summary>
-  ///   Tries to parse a string into a <see cref="StepCollection"/>.
+  /// Tries to parse a string into a <see cref="StepCollection"/>.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <param name="provider">An optional format provider.</param>
@@ -192,7 +285,7 @@ public class StepCollection
   }
 
   /// <summary>
-  ///   Tries to parse a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
+  /// Tries to parse a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">An optional format provider.</param>
@@ -214,7 +307,12 @@ public class StepCollection
 
     // Allocate a stack-allocated array of ranges to hold the start and end indices of each step in the span.
     Span<Range> ranges = stackalloc Range[sepCount + 1];
-    var rangeCount = span.Split( ranges, STEP_SEPARATOR, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries );
+
+    var rangeCount = span.Split(
+      ranges,
+      STEP_SEPARATOR,
+      StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+    );
     var tmp = new List<int>( rangeCount );
 
     for( var i = 0; i < rangeCount; i++ )
@@ -232,8 +330,9 @@ public class StepCollection
       {
         'H' or 'h' or '1' => 1,
         'W' or 'w' or '2' => 2,
-        '3'               => 3,
-        _                 => 0
+        '3' => 3,
+        '4' => 4,
+        _ => 0
       };
 
       // If the step value is 0, it means the character was invalid, so return false.
@@ -245,60 +344,8 @@ public class StepCollection
       tmp.Add( step );
     }
 
-    // Validate the collection of steps to ensure it meets the required criteria.
-    var result = Validate( tmp );
-
-    if( !result.IsSuccess )
-    {
-      return false;
-    }
-
-    steps = new StepCollection( result.Value );
+    steps = new StepCollection( tmp );
     return true;
-  }
-
-  #endregion
-
-  #region Implementation
-
-  /// <summary>
-  ///   Validates the provided collection of steps to ensure it meets the required criteria.
-  /// </summary>
-  /// <param name="steps">The collection of steps to validate.</param>
-  /// <returns>The validated array of steps.</returns>
-  /// <exception cref="ArgumentOutOfRangeException">
-  ///   Thrown when the steps collection doesn't meet the validation requirements.
-  /// </exception>
-  /// <remarks>
-  ///   This method ensures that the steps collection contains between 5 and 12 steps, each step is between 1 and 3, and
-  ///   the sum of all steps equals 12.
-  /// </remarks>
-  private static Result<int[]> Validate(
-    ICollection<int> steps )
-  {
-    if( steps.Count < Constants.MinimumScaleStepCount )
-    {
-      return Result<int[]>.Fail( $"A Step Collection must contain at least {Constants.MinimumScaleStepCount} steps." );
-    }
-
-    if( steps.Count > Constants.MaximumScaleStepCount )
-    {
-      return Result<int[]>.Fail( $"A Step Collection cannot contain more than {Constants.MaximumScaleStepCount} steps." );
-    }
-
-    if( steps.Any( step => step < Constants.MinimumScaleStepSize || step > Constants.MaximumScaleStepSize ) )
-    {
-      return Result<int[]>.Fail(
-        $"All steps must be between {Constants.MinimumScaleStepSize} and {Constants.MaximumScaleStepSize}."
-      );
-    }
-
-    if( steps.Sum() != Constants.OctaveSemitoneCount )
-    {
-      return Result<int[]>.Fail( $"The sum of all steps must be {Constants.OctaveSemitoneCount}." );
-    }
-
-    return Result<int[]>.Ok( [.. steps] );
   }
 
   #endregion

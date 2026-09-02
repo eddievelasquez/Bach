@@ -1,20 +1,20 @@
 // Module Name: ScaleFormulaBuilder.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -25,7 +25,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using Bach.Model.Internal;
 
 namespace Bach.Model;
@@ -35,9 +34,10 @@ public sealed class ScaleFormulaBuilder
 {
   #region Fields
 
-  private readonly SortedSet<Interval> _intervals = [];
+  private readonly List<int> _steps = [];
   private readonly HashSet<string> _aliases = new( Comparer.NameComparer );
   private readonly HashSet<string> _categories = new( Comparer.NameComparer );
+
   private string? _id;
   private string? _name;
 
@@ -80,7 +80,10 @@ public sealed class ScaleFormulaBuilder
   public ScaleFormulaBuilder AddAlias(
     string? alias )
   {
-    ArgumentException.ThrowIfNullOrEmpty( alias );
+    if( string.IsNullOrEmpty( alias ) )
+    {
+      return this;
+    }
 
     var aliases = alias.Split( ';' );
     return AddAliases( aliases );
@@ -149,13 +152,54 @@ public sealed class ScaleFormulaBuilder
     return AddCategories( categories );
   }
 
-  /// <summary>Appends an interval to the scale formula's list of intervals.</summary>
-  /// <param name="interval">The interval to append.</param>
+  /// <summary>Sets the scale formula's id.</summary>
+  /// <param name="id">The scale formula's identifier.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AppendInterval(
-    Interval interval )
+  public ScaleFormulaBuilder SetId(
+    string id )
   {
-    _intervals.Add( interval );
+    _id = RemoveWhitespace( id );
+    return this;
+  }
+
+  /// <summary>Sets the scale formula's name.</summary>
+  /// <param name="name">The name.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetName(
+    string name )
+  {
+    ArgumentNullException.ThrowIfNull( name );
+    _name = name.Trim();
+
+    return this;
+  }
+
+  /// <summary>
+  ///   Sets the scale formula's steps, which represent the number of semitones between consecutive notes in the scale.
+  /// </summary>
+  /// <param name="steps">The steps.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetSteps(
+    IEnumerable<int> steps )
+  {
+    ArgumentNullException.ThrowIfNull( steps );
+
+    _steps.Clear();
+    _steps.AddRange( steps );
+
+    return this;
+  }
+
+  /// <summary>
+  ///   Sets the scale formula's steps, which represent the number of semitones between consecutive notes in the scale.
+  /// </summary>
+  /// <param name="steps">The steps.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetSteps(
+    string steps )
+  {
+    ArgumentNullException.ThrowIfNull( steps );
+    SetSteps( StepCollection.Parse( steps ) );
     return this;
   }
 
@@ -181,30 +225,94 @@ public sealed class ScaleFormulaBuilder
       throw new InvalidOperationException( "Must provide a scale name" );
     }
 
-    if( _intervals.Count < 2 )
+    // Validate steps
+
+    // 1. Check that the number of steps is at least the minimum required for a scale (5 steps for a pentatonic scale)
+    if( _steps.Count < Constants.MinimumScaleStepCount )
     {
-      throw new InvalidOperationException( "A scale must contain at least two intervals" );
+      throw new InvalidOperationException(
+        $"A scale must contain at least {Constants.MinimumScaleStepCount} steps ({Constants.MinimumScaleStepCount - 1} intervals)"
+      );
+    }
+
+    // 2. Check that the number of steps does not exceed the maximum allowed for a scale (12 steps for a chromatic scale)
+    if( _steps.Count > Constants.MaximumScaleStepCount )
+    {
+      throw new InvalidOperationException(
+        $"A scale must contain at most {Constants.MaximumScaleStepCount} steps ({Constants.MaximumScaleStepCount - 1} intervals)"
+      );
+    }
+
+    // 3. Check that each step is within the valid range of semitones (1 to 4 semitones)
+    if( _steps.Any( step => step < Constants.MinimumScaleStepSize || step > Constants.MaximumScaleStepSize ) )
+    {
+      throw new InvalidOperationException(
+        $"A scale step must be between {Constants.MinimumScaleStepSize} and {Constants.MaximumScaleStepSize} semitones"
+      );
+    }
+
+    // 4. Check that the sum of the steps equals 12 semitones (the total number of semitones in an octave)
+    if( _steps.Sum() != Constants.OctaveSemitoneCount )
+    {
+      throw new InvalidOperationException( $"The sum of the scale steps must be {Constants.OctaveSemitoneCount} semitones" );
     }
 
     // Add default values
     _id ??= RemoveWhitespace( _name );
 
+    var intervals = new SortedSet<Interval>( _steps.ToIntervals() );
+    Categorize( intervals );
+
+    var formula = new ScaleFormula(
+      _id,
+      _name,
+      _steps,
+      intervals,
+      _categories,
+      _aliases
+    );
+    return formula;
+  }
+
+  #endregion
+
+  #region Implementation
+
+  private void Categorize(
+    SortedSet<Interval> intervals )
+  {
+    // Automatically add categories based on the scale's intervals
     if( IsDiatonic() )
     {
       _categories.Add( ScaleCategory.Diatonic );
     }
 
-    if( IsMajor() )
+    // Is the scale major or minor?
+    if( intervals.Contains( Interval.Fifth ) )
     {
-      _categories.Add( ScaleCategory.Major );
+      // If the scale contains a perfect fifth, it can be either major or minor. We can determine which one it is
+      // by checking for the presence of a major third or minor third.
+      var isMajor = intervals.Contains( Interval.MajorThird );
+      var isMinor = intervals.Contains( Interval.MinorThird );
+
+      if( isMajor )
+      {
+        _categories.Add( ScaleCategory.Major );
+      }
+
+      if( isMinor )
+      {
+        if( isMajor )
+        {
+          throw new InvalidOperationException( "A scale cannot be both major and minor" );
+        }
+
+        _categories.Add( ScaleCategory.Minor );
+      }
     }
 
-    if( IsMinor() )
-    {
-      _categories.Add( ScaleCategory.Minor );
-    }
-
-    switch( _intervals.Count )
+    // Automatically add categories based on the number of intervals
+    switch( intervals.Count )
     {
       case 5:
         _categories.Add( ScaleCategory.Pentatonic );
@@ -223,123 +331,47 @@ public sealed class ScaleFormulaBuilder
         break;
     }
 
-    var formula = new ScaleFormula( _id, _name, _intervals.ToArray(), _categories.ToHashSet(), _aliases.ToHashSet() );
-    return formula;
-  }
+    return;
 
-  /// <summary>Sets the scale formula's id.</summary>
-  /// <param name="id">The scale formula's identifier.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetId(
-    string id )
-  {
-    _id = RemoveWhitespace( id );
-    return this;
-  }
-
-  /// <summary>Sets the scale formula's intervals.</summary>
-  /// <param name="intervals">The intervals.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals(
-    IEnumerable<Interval> intervals )
-  {
-    ArgumentNullException.ThrowIfNull( intervals );
-
-    _intervals.Clear();
-
-    foreach( var interval in intervals )
+    bool IsDiatonic()
     {
-      _intervals.Add( interval );
-    }
-
-    return this;
-  }
-
-  /// <summary>Sets the scale formula's intervals.</summary>
-  /// <param name="intervals">The intervals.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetIntervals(
-    string intervals )
-  {
-    ArgumentNullException.ThrowIfNull( intervals );
-    SetIntervals( Formula.ParseIntervals( intervals ) );
-
-    return this;
-  }
-
-  /// <summary>Sets the scale formula's name.</summary>
-  /// <param name="name">The name.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetName(
-    string name )
-  {
-    ArgumentNullException.ThrowIfNull( name );
-    _name = name.Trim();
-
-    return this;
-  }
-
-  #endregion
-
-  #region Implementation
-
-  private bool IsDiatonic()
-  {
-    if( _intervals.Count != 7 )
-    {
-      return false;
-    }
-
-    var wholeSteps = 0;
-    var halfSteps = 0;
-
-    foreach( var step in Formula.GetRelativeSteps( _intervals.ToArray() ) )
-    {
-      if( step == 2 )
+      if( intervals.Count != 7 )
       {
-        ++wholeSteps;
+        return false;
       }
-      else if( step == 1 )
+
+      var wholeSteps = 0;
+      var halfSteps = 0;
+
+      foreach( var step in _steps )
       {
-        ++halfSteps;
+        if( step == 2 )
+        {
+          ++wholeSteps;
+        }
+        else if( step == 1 )
+        {
+          ++halfSteps;
+        }
       }
+
+      return wholeSteps == 5 && halfSteps == 2;
     }
-
-    return wholeSteps == 5 && halfSteps == 2;
-  }
-
-  private bool IsMajor()
-  {
-    return _intervals.Contains( Interval.MajorThird ) && _intervals.Contains( Interval.Fifth );
-  }
-
-  private bool IsMinor()
-  {
-    return _intervals.Contains( Interval.MinorThird ) && _intervals.Contains( Interval.Fifth );
   }
 
   [return: NotNullIfNotNull( nameof( value ) )]
   private static string? RemoveWhitespace(
     string? value )
   {
-    if( value == null )
+    if( value is null )
     {
       return null;
     }
 
-    var builder = new StringBuilder( value.Length );
-
-    foreach( var c in value )
-    {
-      if( char.IsWhiteSpace( c ) )
-      {
-        continue;
-      }
-
-      builder.Append( c );
-    }
-
-    return builder.ToString();
+    return new string(
+      value.Where( c => !char.IsWhiteSpace( c ) )
+           .ToArray()
+    );
   }
 
   #endregion
