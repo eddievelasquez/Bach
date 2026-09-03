@@ -22,6 +22,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Bach.Model.Internal;
+
 namespace Bach.Model;
 
 /// <summary>
@@ -31,7 +33,16 @@ public static class IntervalQualityExtensions
 {
   #region Constants
 
-  private static readonly string[] s_symbols = ["d", "m", "P", "M", "A"];
+  private static readonly string[] s_classicalSymbols =
+  [
+    $"{Constants.ClassicalDiminishedIntervalQualitySymbol}", "m", "P", "M", $"{Constants.ClassicalAugmentedIntervalQualitySymbol}"
+  ];
+
+  private static readonly string[] s_modernSymbols =
+  [
+    $"{Constants.ModernDiminishedIntervalQualitySymbol}", "m", "P", "M", $"{Constants.ModernAugmentedIntervalQualitySymbol}"
+  ];
+
   private static readonly string[] s_shortName = ["dim", "min", "Perf", "Maj", "Aug"];
   private static readonly string[] s_longName = ["Diminished", "Minor", "Perfect", "Major", "Augmented"];
 
@@ -45,9 +56,14 @@ public static class IntervalQualityExtensions
     #region Properties
 
     /// <summary>
-    ///   Returns the symbol for the given interval quality.
+    ///   Returns the classical, common practice, symbol for the given interval quality.
     /// </summary>
-    public string Symbol => s_symbols[(int) intervalQuality];
+    public string ClassicalSymbol => s_classicalSymbols[(int) intervalQuality];
+
+    /// <summary>
+    ///   Returns the modern, symbolic/analytical, symbol for the given interval quality.
+    /// </summary>
+    public string ModernSymbol => s_modernSymbols[(int) intervalQuality];
 
     /// <summary>
     ///   Returns the short name for the given interval quality.
@@ -179,29 +195,29 @@ public static class IntervalQualityExtensions
 
       switch( alteration )
       {
-        case '°':
-        case 'd':
+        case Constants.ModernDiminishedIntervalQualitySymbol:
+        case Constants.ClassicalDiminishedIntervalQualitySymbol:
           quality = IntervalQuality.Diminished;
           alterationDegree = CalcAlterationDegree( alteration, ref tail );
           return true;
 
-        case 'm':
+        case Constants.MinorIntervalQualitySymbol:
           quality = IntervalQuality.Minor;
           tail = tail[1..];
           return true;
 
-        case 'P':
+        case Constants.PerfectIntervalQualitySymbol:
           quality = IntervalQuality.Perfect;
           tail = tail[1..];
           return true;
 
-        case 'M':
+        case Constants.MajorIntervalQualitySymbol:
           quality = IntervalQuality.Major;
           tail = tail[1..];
           return true;
 
-        case '+':
-        case 'A':
+        case Constants.ModernAugmentedIntervalQualitySymbol:
+        case Constants.ClassicalAugmentedIntervalQualitySymbol:
           quality = IntervalQuality.Augmented;
           alterationDegree = CalcAlterationDegree( alteration, ref tail );
           return true;

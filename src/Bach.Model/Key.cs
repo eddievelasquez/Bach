@@ -25,6 +25,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Bach.Model.Internal;
 
 namespace Bach.Model;
 
@@ -274,12 +275,12 @@ public sealed class Key
     {
       switch( value[^1] )
       {
-        case 'm':
+        case Constants.MinorIntervalQualitySymbol:
           modeType = ModeType.Minor;
           pitchClassSpan = value[..^1]; // Exclude the mode from the pitch class span
           break;
 
-        case 'M':
+        case Constants.MajorIntervalQualitySymbol:
           modeType = ModeType.Major;
           pitchClassSpan = value[..^1]; // Exclude the mode from the pitch class span
           break;

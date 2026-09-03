@@ -1,20 +1,20 @@
 // Module Name: Accidental.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -64,8 +64,19 @@ public readonly struct Accidental
   /// </summary>
   public static readonly Accidental DoubleSharp = new( 2 );
 
-  private static readonly string[] s_symbols = ["bb", "b", "", "#", "##"];
-  private static readonly string[] s_extendedSymbols = ["𝄫", "♭", "", "♯", "𝄪"];
+  private static readonly string[] s_symbols =
+  [
+    $"{Constants.AsciiFlatAccidentalSymbol}{Constants.AsciiFlatAccidentalSymbol}",
+    $"{Constants.AsciiFlatAccidentalSymbol}", "", $"{Constants.AsciiSharpAccidentalSymbol}",
+    $"{Constants.AsciiSharpAccidentalSymbol}{Constants.AsciiSharpAccidentalSymbol}"
+  ];
+
+  private static readonly string[] s_extendedSymbols =
+  [
+    Constants.UnicodeDoubleFlatAccidentalSymbol, $"{Constants.UnicodeFlatAccidentalSymbol}", "",
+    $"{Constants.UnicodeSharpAccidentalSymbol}", Constants.UnicodeDoubleSharpAccidentalSymbol
+  ];
+
   private static readonly string[] s_names = ["DoubleFlat", "Flat", "Natural", "Sharp", "DoubleSharp"];
   private static readonly int s_doubleFlatOffset = Math.Abs( (int) DoubleFlat );
 
@@ -330,23 +341,23 @@ public readonly struct Accidental
 
     switch( value[0] )
     {
-      case '♮':
+      case Constants.UnicodeNaturalAccidentalSymbol:
         accidental = Natural;
         tail = value[1..];
         return true;
 
-      case 'b':
+      case Constants.AsciiFlatAccidentalSymbol:
       case 'B':
-      case '♭':
+      case Constants.UnicodeFlatAccidentalSymbol:
 
         // Do we have a potential double flat?
         if( value.Length > 1 )
         {
           switch( value[1] )
           {
-            case 'b':
+            case Constants.AsciiFlatAccidentalSymbol:
             case 'B':
-            case '♭':
+            case Constants.UnicodeFlatAccidentalSymbol:
               accidental = DoubleFlat;
               tail = value[2..];
               return true;
@@ -363,16 +374,16 @@ public readonly struct Accidental
         tail = value[1..];
         return true;
 
-      case '#':
-      case '♯':
+      case Constants.AsciiSharpAccidentalSymbol:
+      case Constants.UnicodeSharpAccidentalSymbol:
 
         // Do we have a potential double sharp?
         if( value.Length > 1 )
         {
           switch( value[1] )
           {
-            case '#':
-            case '♯':
+            case Constants.AsciiSharpAccidentalSymbol:
+            case Constants.UnicodeSharpAccidentalSymbol:
               accidental = DoubleSharp;
               tail = value[2..];
               return true;
@@ -389,17 +400,18 @@ public readonly struct Accidental
         tail = value[1..];
         return true;
 
-      case '\uD834': // Double flat (𝄫) or double sharp(𝄪) UTF-16 surrogate pairs
+      // Double flat (𝄫) or double sharp(𝄪) UTF-16 surrogate pairs
+      case Constants.UnicodeDoubleAccidentalStartSurrogatePair:
         if( value.Length > 1 )
         {
           switch( value[1] )
           {
-            case '\uDD2b':
+            case Constants.UnicodeDoubleAccidentalFlatSurrogatePair:
               accidental = DoubleFlat;
               tail = value[2..];
               return true;
 
-            case '\uDD2A':
+            case Constants.UnicodeDoubleAccidentalSharpSurrogatePair:
               accidental = DoubleSharp;
               tail = value[2..];
               return true;

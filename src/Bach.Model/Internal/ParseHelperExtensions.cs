@@ -55,15 +55,19 @@ internal static class ParseHelperExtensions
       // Common ASCII symbols
       return c switch
       {
-        '+' or '#' or 'b' or '(' or ')' => true,
+        Constants.ClassicalAugmentedIntervalQualitySymbol
+          or Constants.AsciiSharpAccidentalSymbol
+          or Constants.AsciiFlatAccidentalSymbol
+          or '('
+          or ')' => true,
 
         // Unicode accidentals + half-diminished
         _ => c switch
         {
-          '♯' => true,
-          '♭' => true,
-          'ø' => true,
-          _   => false
+          Constants.UnicodeSharpAccidentalSymbol => true,
+          Constants.UnicodeFlatAccidentalSymbol  => true,
+          Constants.UnicodeDiminishedChordSymbol => true,
+          _                                      => false
         }
       };
     }

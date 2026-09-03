@@ -61,5 +61,95 @@ internal static class Constants
   /// </summary>
   public const int MaximumScaleStepCount = OctaveSemitoneCount;
 
+  /// <summary>
+  ///   The symbol for a diminished interval in modern notation.
+  /// </summary>
+  public const char ModernDiminishedIntervalQualitySymbol = '°';
+
+  /// <summary>
+  ///   The symbol for a diminished interval in classical notation.
+  /// </summary>
+  public const char ClassicalDiminishedIntervalQualitySymbol = 'd';
+
+  /// <summary>
+  ///   The symbol for a minor interval.
+  /// </summary>
+  public const char MinorIntervalQualitySymbol = 'm';
+
+  /// <summary>
+  ///   The symbol for a perfect interval.
+  /// </summary>
+  public const char PerfectIntervalQualitySymbol = 'P';
+
+  /// <summary>
+  ///   The symbol for a major interval.
+  /// </summary>
+  public const char MajorIntervalQualitySymbol = 'M';
+
+  /// <summary>
+  ///   The symbol for an augmented interval in modern notation.
+  /// </summary>
+  public const char ModernAugmentedIntervalQualitySymbol = '+';
+
+  /// <summary>
+  ///   The symbol for an augmented interval in classical notation.
+  /// </summary>
+  public const char ClassicalAugmentedIntervalQualitySymbol = 'A';
+
+  /// <summary>
+  ///   The ASCII symbol for a sharp note.
+  /// </summary>
+  public const char AsciiSharpAccidentalSymbol = '#';
+
+  /// <summary>
+  ///   The ASCII symbol for a flat note.
+  /// </summary>
+  public const char AsciiFlatAccidentalSymbol = 'b';
+
+  /// <summary>
+  ///   The Unicode symbol for a sharp note.
+  /// </summary>
+  public const char UnicodeSharpAccidentalSymbol = '♯';
+
+  /// <summary>
+  ///   The Unicode symbol for a flat note.
+  /// </summary>
+  public const char UnicodeFlatAccidentalSymbol = '♭';
+
+  /// <summary>
+  ///   The Unicode symbol for a diminished chord.
+  /// </summary>
+  public const char UnicodeDiminishedChordSymbol = 'ø';
+
+  /// <summary>
+  ///   The Unicode symbol for a natural note.
+  /// </summary>
+  public const char UnicodeNaturalAccidentalSymbol = '♮';
+
+  /// <summary>
+  ///   The Unicode symbol for the start of a double accidental surrogate pair.
+  /// </summary>
+  public const char UnicodeDoubleAccidentalStartSurrogatePair = '\uD834';
+
+  /// <summary>
+  ///   The Unicode symbol for the end of a double flat note surrogate pair.
+  /// </summary>
+  public const char UnicodeDoubleAccidentalFlatSurrogatePair = '\uDD2b';
+
+  /// <summary>
+  ///   The Unicode symbol for the end of a double sharp note surrogate pair.
+  /// </summary>
+  public const char UnicodeDoubleAccidentalSharpSurrogatePair = '\uDD2A';
+
+  /// <summary>
+  ///   The Unicode symbol for a double flat note.
+  /// </summary>
+  public const string UnicodeDoubleFlatAccidentalSymbol = "𝄫";
+
+  /// <summary>
+  ///   The Unicode symbol for a double sharp note.
+  /// </summary>
+  public const string UnicodeDoubleSharpAccidentalSymbol = "𝄪";
+
   #endregion
 }

@@ -395,9 +395,10 @@ public readonly struct Interval
       // Calculate the alteration degree of the interval for the candidate quantity.
       var alterationDegree = quality switch
       {
-        IntervalQuality.Augmented  => offset, // Positive offset for augmented intervals
-        IntervalQuality.Diminished => quantity.IsPerfectBased ? -offset : -offset - 1, // Negative offset for diminished intervals
-        _                          => 1 // Default alteration degree for perfect and major intervals
+        IntervalQuality.Augmented => offset, // Positive offset for augmented intervals
+        IntervalQuality.Diminished =>
+          quantity.IsPerfectBased ? -offset : -offset - 1, // Negative offset for diminished intervals
+        _ => 1 // Default alteration degree for perfect and major intervals
       };
 
       // Skip candidates that have an alteration degree outside the supported range.
@@ -541,19 +542,21 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Interval"/> instance, according to the
-  ///   provided format specifier.
+  /// Returns a string representation of the value of this <see cref="Interval"/> instance, according to the provided
+  /// format specifier.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Interval"/> object as specified by
-  ///   <paramref name="format"/>.
+  /// A string representation of the value of the current <see cref="Interval"/> object as specified by
+  /// <paramref name="format"/>.
   /// </returns>
   /// <remarks>
-  ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
-  ///   <para>"S": Symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
-  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+  /// <para>"s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
+  /// <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
+  /// <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
+  /// <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
+  /// <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+  /// <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
   public string ToString(
     string format )
@@ -562,20 +565,22 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Interval"/> instance, according to the
-  ///   provided format specifier and format provider.
+  /// Returns a string representation of the value of this <see cref="Interval"/> instance, according to the provided
+  /// format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. (Currently unused)</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Interval"/> object as specified by
-  ///   <paramref name="format"/>.
+  /// A string representation of the value of the current <see cref="Interval"/> object as specified by
+  /// <paramref name="format"/>.
   /// </returns>
   /// <remarks>
-  ///   <para>"s": Symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
-  ///   <para>"S": Symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
-  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+  /// <para>"s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
+  /// <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
+  /// <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
+  /// <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
+  /// <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+  /// <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
   public string ToString(
     string? format,
@@ -596,14 +601,26 @@ public readonly struct Interval
         {
           if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
           {
-            buf.Append( Quality.Symbol );
+            buf.Append( Quality.ClassicalSymbol );
           }
 
           break;
         }
 
         case 'S':
-          buf.Append( Quality.Symbol );
+          buf.Append( Quality.ClassicalSymbol );
+          break;
+
+        case 'm':
+          if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
+          {
+            buf.Append( Quality.ModernSymbol );
+          }
+
+          break;
+
+        case 'M':
+          buf.Append( Quality.ModernSymbol );
           break;
 
         case 'q':
