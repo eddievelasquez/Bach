@@ -163,7 +163,9 @@ public sealed class StringedInstrument
     var startPitch = Tuning[startString] + startPosition;
     var octave = startPitch.Octave;
 
-    if( startPitch.PitchClass > chord.Bass )
+    // Use chromatic pitch height (not spelling) since the goal is to detect whether the starting
+    // pitch class sounds higher than the chord's bass.
+    if( startPitch.PitchClass.EnharmonicCompareTo( chord.Bass ) > 0 )
     {
       ++octave;
     }
@@ -212,10 +214,11 @@ public sealed class StringedInstrument
     // Find the scale pitch that is closest to starting string and position
     var startPitch = Tuning[startString] + startPosition;
 
-    // Adjust the octave if necessary
+    // Adjust the octave if necessary. Use chromatic pitch height (not spelling) since the goal is to
+    // detect whether the starting pitch class sounds lower than the scale's root.
     var octave = startPitch.Octave;
 
-    if( startPitch.PitchClass < scale.Root )
+    if( startPitch.PitchClass.EnharmonicCompareTo( scale.Root ) < 0 )
     {
       --octave;
     }

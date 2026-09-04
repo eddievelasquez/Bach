@@ -34,6 +34,17 @@ namespace Bach.Model;
 /// <summary>
 /// Represents a collection of musical steps that span an octave.
 /// </summary>
+/// <remarks>
+/// <see cref="StepCollection"/> only enforces shape-level rules at construction: each step
+/// character must map to a known step size, and (when parsing) the number of steps must fall
+/// within the supported range. It does <b>not</b> guarantee music-theory invariants such as
+/// octave closure (steps summing to 12 semitones) or a valid scale cardinality. The only
+/// supported way to obtain a <see cref="StepCollection"/> that is guaranteed to represent a
+/// valid scale is through <see cref="ScaleFormulaBuilder.Build"/>, which performs that
+/// validation before constructing the owning <see cref="ScaleFormula"/>. A <see cref="StepCollection"/>
+/// obtained directly from a constructor or a <c>Parse</c>/<c>TryParse</c> call should be treated
+/// as unverified until it has passed through <see cref="ScaleFormulaBuilder"/>.
+/// </remarks>
 public class StepCollection
   : IReadOnlyCollection<int>,
     ISpanParsable<StepCollection>,
@@ -57,7 +68,12 @@ public class StepCollection
   /// <summary>
   /// Represents a collection of musical steps that span an octave.
   /// </summary>
-  /// <param name="steps">The collection of step values. Must contain 2-12 steps with values 1-3 that sum to 12.</param>
+  /// <param name="steps">The collection of step values.</param>
+  /// <remarks>
+  /// This constructor does not validate <paramref name="steps"/>: it neither checks the number of
+  /// steps nor that the values sum to 12 semitones. Prefer building scale formulas through
+  /// <see cref="ScaleFormulaBuilder"/>, which validates these invariants before use.
+  /// </remarks>
   public StepCollection(
     IEnumerable<int> steps )
   {
@@ -141,6 +157,11 @@ public class StepCollection
   /// <returns>The parsed <see cref="StepCollection"/>.</returns>
   /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
   /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
+  /// <remarks>
+  /// Parsing only validates that the number of steps is within the supported range and that each
+  /// step character is recognized; it does not verify octave closure (steps summing to 12
+  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to obtain a validated scale formula.
+  /// </remarks>
   public static StepCollection Parse(
     ReadOnlySpan<char> span,
     IFormatProvider? provider )
@@ -291,6 +312,11 @@ public class StepCollection
   /// <param name="provider">An optional format provider.</param>
   /// <param name="steps">The resulting <see cref="StepCollection"/> if parsing is successful.</param>
   /// <returns>True if parsing is successful; otherwise, false.</returns>
+  /// <remarks>
+  /// Parsing only validates that the number of steps is within the supported range and that each
+  /// step character is recognized; it does not verify octave closure (steps summing to 12
+  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to obtain a validated scale formula.
+  /// </remarks>
   public static bool TryParse(
     ReadOnlySpan<char> span,
     IFormatProvider? provider,

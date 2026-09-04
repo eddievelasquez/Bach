@@ -97,13 +97,13 @@ public sealed class ScaleTests
     { "C,Bb,Ab,G,F,Eb,D", "NaturalMinor" },
     { "C,B,Ab,G,F,Eb,D", "HarmonicMinor" },
     { "C,B,A,G,F,Eb,D", "MelodicMinor" },
-    { "C,B,A,G#,Gb,F,Eb,D", "Diminished" },
-    { "C,Bb,A,G,F#,E,Eb,Db", "Polytonal" },
-    { "C,A#,G#,F#,E,D", "WholeTone" },
+    { "C,Cb,Bbb,Ab,Gb,F,Eb,D", "Diminished" },
+    { "C,A#,Bbb,Abb,Gb,Fb,Eb,Db", "Polytonal" },
+    { "C,Bb,Ab,F#,E,D", "WholeTone" },
     { "C,A,G,E,D", "Pentatonic" },
     { "C,Bb,G,F,Eb", "MinorPentatonic" },
-    { "C,Bb,G,Gb,F,Eb", "MinorBlues" },
-    { "C,A,G,E,Eb,D", "MajorBlues" }
+    { "C,Bb,Abb,Gb,F,Eb", "MinorBlues" },
+    { "C,A,G,Fb,Eb,D", "MajorBlues" }
   };
 
   public static TheoryData<string, string[]> ScalesContainingData => new()

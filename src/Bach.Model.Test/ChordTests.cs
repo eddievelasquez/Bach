@@ -73,7 +73,7 @@ public sealed class ChordTests
     { PitchClass.C, "SixNine", "C,E,G,A,D" },
     { PitchClass.C, "AddNine", "C,E,G,D" },
     { PitchClass.C, "Diminished", "C,Eb,Gb" },
-    { PitchClass.C, "Diminished7", "C,Eb,Gb,A" },
+    { PitchClass.C, "Diminished7", "C,Eb,Gb,Bbb" },
     { PitchClass.C, "HalfDiminished", "C,Eb,Gb,Bb" },
     { PitchClass.C, "Augmented", "C,E,G#" }
   };

@@ -22,6 +22,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections.Generic;
+
 namespace Bach.Model.Test;
 
 public sealed class PitchClassTests
@@ -44,7 +46,7 @@ public sealed class PitchClassTests
       { PitchClass.C, 11, PitchClass.B },
       { PitchClass.C, 12, PitchClass.C },
       { PitchClass.C, -1, PitchClass.B },
-      { PitchClass.C, -2, PitchClass.BFlat },
+      { PitchClass.C, -2, PitchClass.ASharp },
       { PitchClass.C, -3, PitchClass.A },
       { PitchClass.C, -4, PitchClass.GSharp },
       { PitchClass.C, -5, PitchClass.G },
@@ -111,7 +113,8 @@ public sealed class PitchClassTests
     new()
     {
       { PitchClass.C, PitchClass.Create( NoteName.C ), true },
-      { PitchClass.C, null, false }
+      { PitchClass.C, null, false },
+      { PitchClass.CSharp, PitchClass.DFlat, false }
     };
 
   public static TheoryData<PitchClass, string> EnharmonicData =>
@@ -200,11 +203,11 @@ public sealed class PitchClassTests
       { PitchClass.A, Interval.Fifth, PitchClass.E },
       { PitchClass.AFlat, Interval.Fifth, PitchClass.EFlat },
       { PitchClass.GSharp, Interval.DiminishedSixth, PitchClass.EFlat },
-      { PitchClass.FSharp, Interval.AugmentedFourth, PitchClass.C },
-      { PitchClass.GFlat, Interval.DiminishedFifth, PitchClass.C },
+      { PitchClass.FSharp, Interval.AugmentedFourth, PitchClass.Create( NoteName.B, Accidental.Sharp ) },
+      { PitchClass.GFlat, Interval.DiminishedFifth, PitchClass.Create( NoteName.D, Accidental.DoubleFlat ) },
       { PitchClass.C, Interval.AugmentedSecond, PitchClass.DSharp },
-      { PitchClass.C, Interval.DiminishedFifth, PitchClass.FSharp },
-      { PitchClass.C, Interval.AugmentedFourth, PitchClass.GFlat },
+      { PitchClass.C, Interval.DiminishedFifth, PitchClass.GFlat },
+      { PitchClass.C, Interval.AugmentedFourth, PitchClass.FSharp },
       { PitchClass.DSharp, Interval.DiminishedSeventh, PitchClass.C },
       { PitchClass.DSharp, Interval.DiminishedThird, PitchClass.F },
       { PitchClass.Parse( "D##" ), Interval.DiminishedFourth, PitchClass.GSharp }
@@ -227,11 +230,11 @@ public sealed class PitchClassTests
       { PitchClass.E, Interval.Fifth, PitchClass.A },
       { PitchClass.EFlat, Interval.Fifth, PitchClass.AFlat },
       { PitchClass.EFlat, Interval.DiminishedSixth, PitchClass.GSharp },
-      { PitchClass.C, Interval.AugmentedFourth, PitchClass.FSharp },
-      { PitchClass.C, Interval.DiminishedFifth, PitchClass.GFlat },
+      { PitchClass.C, Interval.AugmentedFourth, PitchClass.GFlat },
+      { PitchClass.C, Interval.DiminishedFifth, PitchClass.FSharp },
       { PitchClass.DSharp, Interval.AugmentedSecond, PitchClass.C },
-      { PitchClass.FSharp, Interval.DiminishedFifth, PitchClass.C },
-      { PitchClass.GFlat, Interval.AugmentedFourth, PitchClass.C },
+      { PitchClass.FSharp, Interval.DiminishedFifth, PitchClass.Create( NoteName.B, Accidental.Sharp ) },
+      { PitchClass.GFlat, Interval.AugmentedFourth, PitchClass.Create( NoteName.D, Accidental.DoubleFlat ) },
       { PitchClass.C, Interval.DiminishedSeventh, PitchClass.DSharp },
       { PitchClass.F, Interval.DiminishedThird, PitchClass.DSharp },
       { PitchClass.GSharp, Interval.DiminishedFourth, PitchClass.Parse( "D##" ) }
@@ -346,13 +349,13 @@ public sealed class PitchClassTests
     {
       { "C", PitchClass.C },
       { "C#", PitchClass.CSharp },
-      { "C##", PitchClass.D },
-      { "Cb", PitchClass.B },
-      { "Cbb", PitchClass.BFlat },
-      { "B#", PitchClass.C },
-      { "B##", PitchClass.CSharp },
+      { "C##", PitchClass.Create( NoteName.C, Accidental.DoubleSharp ) },
+      { "Cb", PitchClass.Create( NoteName.C, Accidental.Flat ) },
+      { "Cbb", PitchClass.Create( NoteName.C, Accidental.DoubleFlat ) },
+      { "B#", PitchClass.Create( NoteName.B, Accidental.Sharp ) },
+      { "B##", PitchClass.Create( NoteName.B, Accidental.DoubleSharp ) },
       { "Bb", PitchClass.BFlat },
-      { "Bbb", PitchClass.A }
+      { "Bbb", PitchClass.Create( NoteName.B, Accidental.DoubleFlat ) }
     };
 
   public static TheoryData<PitchClass, int, PitchClass> AdditionOperatorTestData => new()
@@ -386,7 +389,7 @@ public sealed class PitchClassTests
   public static TheoryData<PitchClass, PitchClass, PitchClass> ArithmeticDecrementTestData => new()
   {
     { PitchClass.C, PitchClass.C, PitchClass.B },
-    { PitchClass.B, PitchClass.B, PitchClass.BFlat }
+    { PitchClass.B, PitchClass.B, PitchClass.ASharp }
   };
 
   #endregion
@@ -587,6 +590,59 @@ public sealed class PitchClassTests
     // Assert
     result.Should()
           .BeLessThan( 0 );
+  }
+
+  [Fact]
+  public void CompareTo_ShouldReturnZero_WhenSpellingsAreIdentical()
+  {
+    PitchClass.CSharp.CompareTo( PitchClass.CSharp )
+              .Should()
+              .Be( 0 );
+  }
+
+  [Fact]
+  public void EnharmonicCompareTo_ShouldReturnNonZero_WhenEnharmonicallyEqualButSpelledDifferently()
+  {
+    // C# and Db are enharmonically equal (EnharmonicCompareTo == 0) but spelled differently, so
+    // CompareTo (spelling-sensitive, like Equals) must not treat them as equal.
+    PitchClass.CSharp.EnharmonicCompareTo( PitchClass.DFlat )
+              .Should()
+              .Be( 0 );
+
+    PitchClass.CSharp.CompareTo( PitchClass.DFlat )
+              .Should()
+              .NotBe( 0 );
+  }
+
+  [Fact]
+  public void CompareTo_ShouldOrderByNoteNameThenAccidental_WhenNoteNamesDiffer()
+  {
+    PitchClass.CSharp.CompareTo( PitchClass.DFlat )
+              .Should()
+              .BeLessThan( 0 );
+
+    PitchClass.DFlat.CompareTo( PitchClass.CSharp )
+              .Should()
+              .BeGreaterThan( 0 );
+  }
+
+  [Fact]
+  public void EnharmonicCompareTo_ShouldOrderByChromaticPitchHeight_WhenPitchClassesDiffer()
+  {
+    // Within a single octave's chromatic ordering, C (height 0) sounds lower than B (height 11),
+    // even though "B" sorts after "C" alphabetically too - use a case where the two orderings
+    // diverge to prove EnharmonicCompareTo is height-based rather than spelling-based.
+    PitchClass.CSharp.EnharmonicCompareTo( PitchClass.DFlat )
+              .Should()
+              .Be( 0 );
+
+    PitchClass.C.EnharmonicCompareTo( PitchClass.B )
+              .Should()
+              .BeLessThan( 0 );
+
+    PitchClass.B.EnharmonicCompareTo( PitchClass.C )
+              .Should()
+              .BeGreaterThan( 0 );
   }
 
   [Theory]
@@ -959,6 +1015,36 @@ public sealed class PitchClassTests
                     .Be( afterPreIncrement.Transpose( 1 ) );
   }
 
+  [Fact]
+  public void IEnharmonicEquals_ShouldReturnTrue_WhenPitchClassesAreEnharmonicallyEqual()
+  {
+    PitchClass.CSharp.EnharmonicEquals( PitchClass.DFlat )
+              .Should()
+              .BeTrue();
+  }
+
+  [Fact]
+  public void EnharmonicEquals_ShouldReturnFalse_WhenPitchClassesAreNotEnharmonicallyEqual()
+  {
+    PitchClass.C.EnharmonicEquals( PitchClass.D )
+              .Should()
+              .BeFalse();
+  }
+
+  [Fact]
+  public void EnharmonicEquals_ShouldDifferFromEquals_WhenPitchClassesAreEnharmonicButSpelledDifferently()
+  {
+    // C# and Db sound identical (enharmonically equivalent) but are spelled differently, so
+    // Equals (spelling-sensitive) and EnharmonicEquals (sounding-pitch-sensitive) disagree.
+    PitchClass.CSharp.EnharmonicEquals( PitchClass.DFlat )
+              .Should()
+              .BeTrue();
+
+    PitchClass.CSharp.Equals( PitchClass.DFlat )
+              .Should()
+              .BeFalse();
+  }
+
   [Theory]
   [MemberData( nameof( ValidPitchClassStrings ) )]
   public void Parse_ShouldReturnExpectedPitchClass_WhenGivenValidString(
@@ -1023,7 +1109,12 @@ public sealed class PitchClassTests
   [Fact]
   public void RelationalOperators_ShouldReturnTrue_WhenComparingPitchClasses()
   {
-    ( PitchClass.C == PitchClass.Create( NoteName.B, Accidental.Sharp ) ).Should()
+    ( PitchClass.C == PitchClass.Create( NoteName.C ) ).Should()
+                                                        .BeTrue();
+
+    // C and B# sound identical but are spelled differently, so == (spelling-sensitive) is false
+    // even though they compare as equal in chromatic pitch height.
+    ( PitchClass.C != PitchClass.Create( NoteName.B, Accidental.Sharp ) ).Should()
                                                                          .BeTrue();
 
     ( PitchClass.C != PitchClass.B ).Should()
@@ -1040,6 +1131,24 @@ public sealed class PitchClassTests
 
     ( PitchClass.D >= PitchClass.C ).Should()
                                     .BeTrue();
+  }
+
+  [Fact]
+  public void EnharmonicComparer_ShouldTreatEnharmonicSpellingsAsEqual_WhenUsedInHashSet()
+  {
+    var set = new HashSet<PitchClass>( PitchClass.EnharmonicComparer ) { PitchClass.CSharp, PitchClass.DFlat };
+
+    set.Should()
+       .ContainSingle();
+  }
+
+  [Fact]
+  public void EnharmonicComparer_ShouldTreatDifferentPitchesAsDistinct_WhenUsedInHashSet()
+  {
+    var set = new HashSet<PitchClass>( PitchClass.EnharmonicComparer ) { PitchClass.C, PitchClass.D };
+
+    set.Should()
+       .HaveCount( 2 );
   }
 
   [Theory]

@@ -24,6 +24,7 @@
 
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Collections.Generic;
 using System.Text;
 using Bach.Model.Internal;
 
@@ -34,6 +35,17 @@ namespace Bach.Model;
 ///   and an optional <see cref="P:Bach.Model.Accidental"/> following
 ///   the <see href="https://en.wikipedia.org/wiki/Scientific_pitch_notation">Scientific Pitch Notation</see>.
 /// </summary>
+/// <remarks>
+///   <see cref="PitchClass"/>'s equality and ordering members (<see cref="Equals(PitchClass)"/>,
+///   <see cref="GetHashCode"/>, <see cref="CompareTo"/>, and the relational operators) are all
+///   spelling-sensitive: two pitch classes are only equal (and only compare as equal) when they
+///   share the same note name and accidental, so C♯ and D♭ are <b>not</b> equal. Use
+///   <see cref="EnharmonicEquals"/> to test whether two pitch classes represent the same
+///   sounding pitch class regardless of spelling, <see cref="EnharmonicCompareTo"/> to order by
+///   chromatic pitch height instead of spelling, and <see cref="EnharmonicComparer"/> when an
+///   <see cref="IEqualityComparer{T}"/> with enharmonic behavior is required (e.g., for a
+///   <see cref="HashSet{T}"/> used in pitch-class-set operations).
+/// </remarks>
 public readonly struct PitchClass
   : IPitch<PitchClass>
 {
@@ -44,23 +56,40 @@ public readonly struct PitchClass
 
   private static readonly PitchClass[] s_pitchClasses =
   [
-    new( 0, 0, NoteName.D, Accidental.DoubleFlat ), new( 1, 0, NoteName.C, Accidental.Natural ),
-    new( 2, 0, NoteName.B, Accidental.Sharp ), new( 3, 1, NoteName.D, Accidental.Flat ),
-    new( 4, 1, NoteName.C, Accidental.Sharp ), new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
-    new( 6, 2, NoteName.E, Accidental.DoubleFlat ), new( 7, 2, NoteName.D, Accidental.Natural ),
-    new( 8, 2, NoteName.C, Accidental.DoubleSharp ), new( 9, 3, NoteName.F, Accidental.DoubleFlat ),
-    new( 10, 3, NoteName.E, Accidental.Flat ), new( 11, 3, NoteName.D, Accidental.Sharp ),
-    new( 12, 4, NoteName.F, Accidental.Flat ), new( 13, 4, NoteName.E, Accidental.Natural ),
-    new( 14, 4, NoteName.D, Accidental.DoubleSharp ), new( 15, 5, NoteName.G, Accidental.DoubleFlat ),
-    new( 16, 5, NoteName.F, Accidental.Natural ), new( 17, 5, NoteName.E, Accidental.Sharp ),
-    new( 18, 6, NoteName.G, Accidental.Flat ), new( 19, 6, NoteName.F, Accidental.Sharp ),
-    new( 20, 6, NoteName.E, Accidental.DoubleSharp ), new( 21, 7, NoteName.A, Accidental.DoubleFlat ),
-    new( 22, 7, NoteName.G, Accidental.Natural ), new( 23, 7, NoteName.F, Accidental.DoubleSharp ),
-    new( 24, 8, NoteName.A, Accidental.Flat ), new( 25, 8, NoteName.G, Accidental.Sharp ),
-    new( 26, 9, NoteName.B, Accidental.DoubleFlat ), new( 27, 9, NoteName.A, Accidental.Natural ),
-    new( 28, 9, NoteName.G, Accidental.DoubleSharp ), new( 29, 10, NoteName.C, Accidental.DoubleFlat ),
-    new( 30, 10, NoteName.B, Accidental.Flat ), new( 31, 10, NoteName.A, Accidental.Sharp ),
-    new( 32, 11, NoteName.C, Accidental.Flat ), new( 33, 11, NoteName.B, Accidental.Natural ),
+    new( 0, 0, NoteName.D, Accidental.DoubleFlat ),
+    new( 1, 0, NoteName.C, Accidental.Natural ),
+    new( 2, 0, NoteName.B, Accidental.Sharp ),
+    new( 3, 1, NoteName.D, Accidental.Flat ),
+    new( 4, 1, NoteName.C, Accidental.Sharp ),
+    new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
+    new( 6, 2, NoteName.E, Accidental.DoubleFlat ),
+    new( 7, 2, NoteName.D, Accidental.Natural ),
+    new( 8, 2, NoteName.C, Accidental.DoubleSharp ),
+    new( 9, 3, NoteName.F, Accidental.DoubleFlat ),
+    new( 10, 3, NoteName.E, Accidental.Flat ),
+    new( 11, 3, NoteName.D, Accidental.Sharp ),
+    new( 12, 4, NoteName.F, Accidental.Flat ),
+    new( 13, 4, NoteName.E, Accidental.Natural ),
+    new( 14, 4, NoteName.D, Accidental.DoubleSharp ),
+    new( 15, 5, NoteName.G, Accidental.DoubleFlat ),
+    new( 16, 5, NoteName.F, Accidental.Natural ),
+    new( 17, 5, NoteName.E, Accidental.Sharp ),
+    new( 18, 6, NoteName.G, Accidental.Flat ),
+    new( 19, 6, NoteName.F, Accidental.Sharp ),
+    new( 20, 6, NoteName.E, Accidental.DoubleSharp ),
+    new( 21, 7, NoteName.A, Accidental.DoubleFlat ),
+    new( 22, 7, NoteName.G, Accidental.Natural ),
+    new( 23, 7, NoteName.F, Accidental.DoubleSharp ),
+    new( 24, 8, NoteName.A, Accidental.Flat ),
+    new( 25, 8, NoteName.G, Accidental.Sharp ),
+    new( 26, 9, NoteName.B, Accidental.DoubleFlat ),
+    new( 27, 9, NoteName.A, Accidental.Natural ),
+    new( 28, 9, NoteName.G, Accidental.DoubleSharp ),
+    new( 29, 10, NoteName.C, Accidental.DoubleFlat ),
+    new( 30, 10, NoteName.B, Accidental.Flat ),
+    new( 31, 10, NoteName.A, Accidental.Sharp ),
+    new( 32, 11, NoteName.C, Accidental.Flat ),
+    new( 33, 11, NoteName.B, Accidental.Natural ),
     new( 34, 11, NoteName.A, Accidental.DoubleSharp )
   ];
 
@@ -176,6 +205,18 @@ public readonly struct PitchClass
   public static PitchClass B => s_pitchClasses[33];
 
   /// <summary>
+  ///   Gets an <see cref="IEqualityComparer{T}"/> that compares <see cref="PitchClass"/> values by
+  ///   enharmonic equivalence (same sounding pitch class) rather than by spelling.
+  /// </summary>
+  /// <remarks>
+  ///   Use this comparer when enharmonic-insensitive uniqueness or lookup is required, e.g., a
+  ///   <see cref="HashSet{T}"/> or <see cref="Dictionary{TKey,TValue}"/> used for pitch-class-set
+  ///   operations where C♯ and D♭ should be treated as the same entry. The default
+  ///   <see cref="Equals(PitchClass)"/> and <see cref="GetHashCode"/> members remain spelling-sensitive.
+  /// </remarks>
+  public static IEqualityComparer<PitchClass> EnharmonicComparer { get; } = new EnharmonicEqualityComparer();
+
+  /// <summary>
   ///   Gets the pitch class of the pitch-like value.
   /// </summary>
   PitchClass IPitch<PitchClass>.PitchClass => this;
@@ -201,7 +242,39 @@ public readonly struct PitchClass
   #region Public Methods
 
   /// <inheritdoc/>
+  /// <remarks>
+  ///   This ordering is spelling-sensitive, consistent with <see cref="Equals(PitchClass)"/>: it
+  ///   orders first by note name (C, D, E, F, G, A, B) and then by accidental (double flat to double
+  ///   sharp), so <c>CompareTo(other) == 0</c> if and only if <c>Equals(other) == true</c>. C♯ and D♭
+  ///   therefore do <b>not</b> compare as equal. Use <see cref="EnharmonicCompareTo"/> for an ordering
+  ///   based on chromatic pitch height (enharmonic position) instead.
+  /// </remarks>
   public int CompareTo(
+    PitchClass other )
+  {
+    var noteNameComparison = NoteName.CompareTo( other.NoteName );
+    return noteNameComparison != 0 ? noteNameComparison : Accidental.CompareTo( other.Accidental );
+  }
+
+  /// <summary>
+  ///   Compares the chromatic pitch height (enharmonic position) of this instance to another pitch
+  ///   class, ignoring spelling.
+  /// </summary>
+  /// <param name="other">The pitch class to compare against.</param>
+  /// <returns>
+  ///   A negative value if this instance sounds lower than <paramref name="other"/>, zero if both
+  ///   sound at the same pitch height, or a positive value if this instance sounds higher than
+  ///   <paramref name="other"/>.
+  /// </returns>
+  /// <remarks>
+  ///   This differs from <see cref="CompareTo"/>, which orders by spelling and is consistent with
+  ///   <see cref="Equals(PitchClass)"/>. Unlike <see cref="CompareTo"/>, C♯ and D♭ compare as equal
+  ///   (0) under this method even though <c>Equals(other) == false</c> for them. Use this method (or
+  ///   <see cref="EnharmonicEquals"/> for equality only) when chromatic pitch height matters,
+  ///   e.g., determining octave rollover when rendering a pitch sequence.
+  /// </remarks>
+  [Pure]
+  public int EnharmonicCompareTo(
     PitchClass other )
   {
     return _enharmonicIndex - other._enharmonicIndex;
@@ -260,7 +333,34 @@ public readonly struct PitchClass
   }
 
   /// <inheritdoc/>
+  /// <remarks>
+  ///   This comparison is spelling-sensitive: two pitch classes are only equal when they share the
+  ///   same note name and accidental, so C♯ and D♭ are <b>not</b> equal. Use
+  ///   <see cref="EnharmonicEquals"/> when enharmonic equivalence (same sounding pitch class,
+  ///   regardless of spelling) is what's needed instead.
+  /// </remarks>
   public bool Equals(
+    PitchClass other )
+  {
+    return _noteIndex == other._noteIndex;
+  }
+
+  /// <summary>
+  ///   Determines whether this instance and another pitch class are enharmonically equivalent, i.e.,
+  ///   they represent the same sounding pitch class regardless of spelling.
+  /// </summary>
+  /// <param name="other">The pitch class to compare against.</param>
+  /// <returns>True if both pitch classes are enharmonically equivalent; otherwise, false.</returns>
+  /// <remarks>
+  ///   Unlike <see cref="Equals(PitchClass)"/>, which is spelling-sensitive, this comparison treats
+  ///   enharmonically-equivalent spellings as equal (e.g., C♯ and D♭ are
+  ///   <see cref="EnharmonicEquals"/>-equal but not <see cref="Equals(PitchClass)"/>-equal). Use
+  ///   this when the sounding pitch class is what matters rather than its spelling, e.g., pitch-class-set
+  ///   membership or key-signature-agnostic comparisons. See also <see cref="EnharmonicComparer"/> for an
+  ///   <see cref="IEqualityComparer{T}"/> with this behavior.
+  /// </remarks>
+  [Pure]
+  public bool EnharmonicEquals(
     PitchClass other )
   {
     return _enharmonicIndex == other._enharmonicIndex;
@@ -305,9 +405,13 @@ public readonly struct PitchClass
   }
 
   /// <inheritdoc/>
+  /// <remarks>
+  ///   Consistent with the spelling-sensitive <see cref="Equals(PitchClass)"/>: pitch classes with
+  ///   different spellings (e.g., C♯ and D♭) hash differently even when enharmonically equivalent.
+  /// </remarks>
   public override int GetHashCode()
   {
-    return _enharmonicIndex;
+    return _noteIndex;
   }
 
   /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
@@ -619,6 +723,24 @@ public readonly struct PitchClass
 
     Trace.Assert( false, "Internal error! Must always find a pitch class" );
     return C;
+  }
+
+  // Compares PitchClass values by enharmonic equivalence (sounding pitch class) rather than by
+  // spelling. Backs the public EnharmonicComparer property.
+  private sealed class EnharmonicEqualityComparer: IEqualityComparer<PitchClass>
+  {
+    public bool Equals(
+      PitchClass x,
+      PitchClass y )
+    {
+      return x.EnharmonicEquals( y );
+    }
+
+    public int GetHashCode(
+      PitchClass obj )
+    {
+      return obj._enharmonicIndex;
+    }
   }
 
   #endregion

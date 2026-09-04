@@ -198,8 +198,14 @@ public sealed class Scale
   /// </remarks>
   public Scale GetEnharmonicScale()
   {
-    var expectedPitchClass = Root.Accidental >= Accidental.Natural ? Root + 1 : Root - 1;
-    var enharmonicRoot = Root.GetEnharmonic( expectedPitchClass.NoteName );
+    // A sharp-rooted scale re-spells using the next letter name (e.g. C# -> D-something); a flat-rooted
+    // scale re-spells using the previous letter name (e.g. Fb -> E-something). A natural root keeps its own
+    // letter name, which naturally resolves to itself below. Deriving the target letter name directly (rather
+    // than transposing by a semitone) avoids failing for roots whose neighboring pitch class would require an
+    // accidental beyond double sharp/flat.
+    var noteNameOffset = Math.Sign( (int) Root.Accidental );
+    var expectedNoteName = (NoteName) ( (int) Root.NoteName + noteNameOffset ).Wrap( Constants.NoteNameCount );
+    var enharmonicRoot = Root.GetEnharmonic( expectedNoteName );
 
     if( enharmonicRoot == null || enharmonicRoot.Value == Root )
     {
