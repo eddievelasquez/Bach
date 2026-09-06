@@ -1,4 +1,4 @@
-// Module Name: ChordEventTests.cs
+// Module Name: RootlessJazzVoicingTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -22,69 +22,55 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Linq;
+using Bach.Model.Analysis;
+
 namespace Bach.Model.Test.Analysis;
 
-public sealed class ChordEventTests
+public class RootlessJazzVoicingTests
 {
   #region Public Methods
 
   [Fact]
-  public void PitchChord_ShouldExposeChordMetadata_ViaIChordEvent()
+  public void Ctor_Should_CreateRecord()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var observed = new[] { PitchClass.C, PitchClass.E, PitchClass.G }; // triad-like voicing
+    var evidence = new EvidenceReason( EvidenceReasonCategory.HarmonicContext, "implied root C" );
 
-    ( chord as IChordEvent ).Should()
-                            .NotBeNull();
+    var v = new RootlessJazzVoicing( observed, null, PitchClass.C, 0.9, evidence );
 
-    var chordEvent = (IChordEvent) chord;
+    v.ObservedPitchClasses.Should()
+     .BeEquivalentTo( observed );
 
-    chordEvent.Root.Should()
-              .Be( root );
+    v.ImpliedRoot.Should()
+     .Be( PitchClass.C );
 
-    chordEvent.Inversion.Should()
-              .Be( 1 );
+    v.Confidence.Should()
+     .Be( 0.9 );
 
-    chordEvent.Formula.Should()
-              .Be( ChordFormula.Major );
-
-    chordEvent.Bass.Should()
-              .Be( chord.Bass );
+    v.Evidence.Should()
+     .Be( evidence );
   }
 
   [Fact]
-  public void InvertedChord_ShouldReportDistinctBass()
+  public void Ctor_Throws_OnEmptyObserved()
   {
-    var root = Pitch.Create( PitchClass.G, 3 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 2 );
+    var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "x" );
+    Action a = () => new RootlessJazzVoicing( Enumerable.Empty<PitchClass>(), null, PitchClass.C, 0.5, evidence );
 
-    var chordEvent = (IChordEvent) chord;
-
-    chordEvent.Bass.Should()
-              .Be( Pitch.Create( PitchClass.D, 4 ) );
+    a.Should()
+     .Throw<ArgumentException>();
   }
 
   [Fact]
-  public void Part_ShouldAllowPatternMatching_ForChordEvents()
+  public void Ctor_Throws_OnConfidenceOutOfRange()
   {
-    var part = Part.Parse( "C4,C" );
+    var observed = new[] { PitchClass.C };
+    var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "x" );
+    Action a = () => new RootlessJazzVoicing( observed, null, PitchClass.C, -0.1, evidence );
 
-    IChordEvent? found = null;
-
-    foreach( var ev in part )
-    {
-      if( ev is IChordEvent ce )
-      {
-        found = ce;
-        break;
-      }
-    }
-
-    found.Should()
-         .NotBeNull();
-
-    found!.Formula.Should()
-          .Be( ChordFormula.Major );
+    a.Should()
+     .Throw<ArgumentOutOfRangeException>();
   }
 
   #endregion

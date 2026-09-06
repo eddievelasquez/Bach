@@ -1,4 +1,4 @@
-// Module Name: ChordEventTests.cs
+// Module Name: BluesInflectionTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -22,69 +22,34 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Bach.Model.Analysis;
+
 namespace Bach.Model.Test.Analysis;
 
-public sealed class ChordEventTests
+public class BluesInflectionTests
 {
   #region Public Methods
 
   [Fact]
-  public void PitchChord_ShouldExposeChordMetadata_ViaIChordEvent()
+  public void Ctor_Should_CreateRecord()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var target = AnalysisTarget.ForPitch( Pitch.Create( PitchClass.E, 4 ) );
+    var alteration = new DegreeAlteration( ScaleDegree.Mediant, Interval.MinorThird );
+    var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "blue third" );
 
-    ( chord as IChordEvent ).Should()
-                            .NotBeNull();
+    var inf = new BluesInflection( target, InterpretationKinds.BluesInflectionKind.BlueThird, alteration, evidence );
 
-    var chordEvent = (IChordEvent) chord;
+    inf.Target.Should()
+       .Be( target );
 
-    chordEvent.Root.Should()
-              .Be( root );
+    inf.Kind.Should()
+       .Be( InterpretationKinds.BluesInflectionKind.BlueThird );
 
-    chordEvent.Inversion.Should()
-              .Be( 1 );
+    inf.Alteration.Should()
+       .Be( alteration );
 
-    chordEvent.Formula.Should()
-              .Be( ChordFormula.Major );
-
-    chordEvent.Bass.Should()
-              .Be( chord.Bass );
-  }
-
-  [Fact]
-  public void InvertedChord_ShouldReportDistinctBass()
-  {
-    var root = Pitch.Create( PitchClass.G, 3 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 2 );
-
-    var chordEvent = (IChordEvent) chord;
-
-    chordEvent.Bass.Should()
-              .Be( Pitch.Create( PitchClass.D, 4 ) );
-  }
-
-  [Fact]
-  public void Part_ShouldAllowPatternMatching_ForChordEvents()
-  {
-    var part = Part.Parse( "C4,C" );
-
-    IChordEvent? found = null;
-
-    foreach( var ev in part )
-    {
-      if( ev is IChordEvent ce )
-      {
-        found = ce;
-        break;
-      }
-    }
-
-    found.Should()
-         .NotBeNull();
-
-    found!.Formula.Should()
-          .Be( ChordFormula.Major );
+    inf.Evidence.Should()
+       .Be( evidence );
   }
 
   #endregion

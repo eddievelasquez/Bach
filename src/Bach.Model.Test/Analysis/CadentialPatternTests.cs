@@ -1,4 +1,4 @@
-// Module Name: ChordEventTests.cs
+// Module Name: CadentialPatternTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -22,69 +22,40 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Bach.Model.Analysis;
+
 namespace Bach.Model.Test.Analysis;
 
-public sealed class ChordEventTests
+public class CadentialPatternTests
 {
   #region Public Methods
 
   [Fact]
-  public void PitchChord_ShouldExposeChordMetadata_ViaIChordEvent()
+  public void Ctor_Should_CreateRecord()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var target = AnalysisTarget.ForPitch( Pitch.Create( PitchClass.C, 4 ) );
+    var evidence = new EvidenceReason( EvidenceReasonCategory.Resolution, "descending step to tonic" );
 
-    ( chord as IChordEvent ).Should()
-                            .NotBeNull();
+    var record = new CadentialPattern( target, InterpretationKinds.CadenceKind.Authentic, evidence );
 
-    var chordEvent = (IChordEvent) chord;
+    record.Target.Should()
+          .Be( target );
 
-    chordEvent.Root.Should()
-              .Be( root );
+    record.Kind.Should()
+          .Be( InterpretationKinds.CadenceKind.Authentic );
 
-    chordEvent.Inversion.Should()
-              .Be( 1 );
-
-    chordEvent.Formula.Should()
-              .Be( ChordFormula.Major );
-
-    chordEvent.Bass.Should()
-              .Be( chord.Bass );
+    record.Evidence.Should()
+          .Be( evidence );
   }
 
   [Fact]
-  public void InvertedChord_ShouldReportDistinctBass()
+  public void Ctor_Throws_OnNulls()
   {
-    var root = Pitch.Create( PitchClass.G, 3 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 2 );
+    var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "x" );
+    Action a = () => new CadentialPattern( null!, InterpretationKinds.CadenceKind.Half, evidence );
 
-    var chordEvent = (IChordEvent) chord;
-
-    chordEvent.Bass.Should()
-              .Be( Pitch.Create( PitchClass.D, 4 ) );
-  }
-
-  [Fact]
-  public void Part_ShouldAllowPatternMatching_ForChordEvents()
-  {
-    var part = Part.Parse( "C4,C" );
-
-    IChordEvent? found = null;
-
-    foreach( var ev in part )
-    {
-      if( ev is IChordEvent ce )
-      {
-        found = ce;
-        break;
-      }
-    }
-
-    found.Should()
-         .NotBeNull();
-
-    found!.Formula.Should()
-          .Be( ChordFormula.Major );
+    a.Should()
+     .Throw<ArgumentNullException>();
   }
 
   #endregion
