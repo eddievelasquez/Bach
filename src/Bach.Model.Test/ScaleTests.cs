@@ -106,6 +106,17 @@ public sealed class ScaleTests
     { "C,A,G,E,Eb,D", "MajorBlues" }
   };
 
+  public static TheoryData<ScaleDefinition, string> ChurchModeData => new()
+  {
+    { ScaleDefinition.Ionian, "C,D,E,F,G,A,B" },
+    { ScaleDefinition.Dorian, "C,D,Eb,F,G,A,Bb" },
+    { ScaleDefinition.Phrygian, "C,Db,Eb,F,G,Ab,Bb" },
+    { ScaleDefinition.Lydian, "C,D,E,F#,G,A,B" },
+    { ScaleDefinition.Mixolydian, "C,D,E,F,G,A,Bb" },
+    { ScaleDefinition.Aeolian, "C,D,Eb,F,G,Ab,Bb" },
+    { ScaleDefinition.Locrian, "C,Db,Eb,F,Gb,Ab,Bb" }
+  };
+
   public static TheoryData<string, string[]> ScalesContainingData => new()
   {
     { "C,E,G", ["C", "C Pentatonic", "E Natural Minor", "E Harmonic Minor", "G", "G Melodic Minor"] }
@@ -662,6 +673,34 @@ public sealed class ScaleTests
 
     actualNotes.Should()
           .BeEquivalentTo( expectedNotes );
+  }
+
+  [Theory]
+  [MemberData( nameof( ChurchModeData ) )]
+  public void GetAscending_ShouldReturnExpectedNotes_WhenUsingChurchMode(
+    ScaleDefinition definition,
+    string expectedNotes )
+  {
+    var scale = new Scale( PitchClass.C, definition.Formula );
+
+    var actualNotes = string.Join( ",", scale.GetAscending().Take( scale.Count ) );
+
+    actualNotes.Should()
+              .Be( expectedNotes );
+  }
+
+  [Fact]
+  public void GetDescending_ShouldUseNaturalMinorFormula_WhenUsingMelodicMinor()
+  {
+    var scale = new Scale( PitchClass.C, ScaleDefinition.MelodicMinor.Formula );
+
+    string.Join( ",", scale.GetAscending().Take( scale.Count ) )
+          .Should()
+          .Be( "C,D,Eb,F,G,A,B" );
+
+    string.Join( ",", scale.GetDescending().Take( scale.Count ) )
+          .Should()
+          .Be( "C,Bb,Ab,G,F,Eb,D" );
   }
 
   [Fact]

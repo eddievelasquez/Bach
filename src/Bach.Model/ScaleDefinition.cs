@@ -29,38 +29,86 @@ namespace Bach.Model;
 /// </summary>
 public sealed class ScaleDefinition
 {
+  #region Constants
+
+  /// <summary>
+  ///   Built-in major scale definition.
+  /// </summary>
+  public static readonly ScaleDefinition Major = new( "Major" );
+
+  /// <summary>
+  ///   Built-in natural minor scale definition.
+  /// </summary>
+  public static readonly ScaleDefinition NaturalMinor = new( "NaturalMinor" );
+
+  /// <summary>
+  ///   Built-in harmonic minor scale definition.
+  /// </summary>
+  public static readonly ScaleDefinition HarmonicMinor = new( "HarmonicMinor" );
+
+  /// <summary>
+  ///   Built-in melodic minor scale definition.
+  /// </summary>
+  public static readonly ScaleDefinition MelodicMinor = new( "MelodicMinor" );
+
+  /// <summary>
+  ///   Built-in Ionian mode definition.
+  /// </summary>
+  public static readonly ScaleDefinition Ionian = new( "Ionian", Interval.Unison );
+
+  /// <summary>
+  ///   Built-in Dorian mode definition.
+  /// </summary>
+  public static readonly ScaleDefinition Dorian = new( "Dorian", Interval.MajorSecond );
+
+  /// <summary>
+  ///   Built-in Phrygian mode definition.
+  /// </summary>
+  public static readonly ScaleDefinition Phrygian = new( "Phrygian", Interval.MajorThird );
+
+  /// <summary>
+  ///   Built-in Lydian mode definition.
+  /// </summary>
+  public static readonly ScaleDefinition Lydian = new( "Lydian", Interval.Fourth );
+
+  /// <summary>
+  ///   Built-in Mixolydian mode definition.
+  /// </summary>
+  public static readonly ScaleDefinition Mixolydian = new( "Mixolydian", Interval.Fifth );
+
+  /// <summary>
+  ///   Built-in Aeolian mode definition.
+  /// </summary>
+  public static readonly ScaleDefinition Aeolian = new( "Aeolian", Interval.MajorSixth );
+
+  /// <summary>
+  ///   Built-in Locrian mode definition.
+  /// </summary>
+  public static readonly ScaleDefinition Locrian = new( "Locrian", Interval.MajorSeventh );
+
+  // Contains a list of all built-in scale definitions for serialization
+  // and deserialization purposes (convert to/from an int).
+  private static readonly ScaleDefinition[] s_definitions =
+  [
+    Major, NaturalMinor, HarmonicMinor, MelodicMinor, Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian
+  ];
+
+  #endregion
+
   #region Constructors
 
   private ScaleDefinition(
-    string formulaId )
+    string formulaId,
+    Interval? relativeMajorInterval = null )
   {
     FormulaId = formulaId ?? throw new ArgumentNullException( nameof( formulaId ) );
     Formula = Registry.ScaleFormulas[FormulaId];
+    RelativeMajorInterval = relativeMajorInterval;
   }
 
   #endregion
 
   #region Properties
-
-  /// <summary>
-  ///   Built-in major scale definition.
-  /// </summary>
-  public static ScaleDefinition Major { get; } = new( "Major" );
-
-  /// <summary>
-  ///   Built-in natural minor scale definition.
-  /// </summary>
-  public static ScaleDefinition NaturalMinor { get; } = new( "NaturalMinor" );
-
-  /// <summary>
-  ///   Built-in harmonic minor scale definition.
-  /// </summary>
-  public static ScaleDefinition HarmonicMinor { get; } = new( "HarmonicMinor" );
-
-  /// <summary>
-  ///   Built-in melodic minor scale definition.
-  /// </summary>
-  public static ScaleDefinition MelodicMinor { get; } = new( "MelodicMinor" );
 
   /// <summary>
   ///   Identifier used to resolve a ScaleFormula from the Registry.
@@ -71,6 +119,11 @@ public sealed class ScaleDefinition
   ///   The governing formula for the scale definition.
   /// </summary>
   public ScaleFormula Formula { get; }
+
+  /// <summary>
+  ///   Gets the interval from a modal tonic down to the tonic of its relative major collection.
+  /// </summary>
+  public Interval? RelativeMajorInterval { get; }
 
   /// <summary>
   ///   Human-readable name for the scale definition.
@@ -86,6 +139,39 @@ public sealed class ScaleDefinition
   ///   True when the governing scale definition is minor.
   /// </summary>
   public bool IsMinor => Formula.IsMinor;
+
+  #endregion
+
+  #region Operators
+
+  /// <summary>
+  ///   Converts a ScaleDefinition to its corresponding index in the built-in definitions array.
+  /// </summary>
+  /// <param name="scaleDefinition">The ScaleDefinition to convert.</param>
+  public static explicit operator int(
+    ScaleDefinition scaleDefinition )
+  {
+    return Array.IndexOf( s_definitions, scaleDefinition );
+  }
+
+  /// <summary>
+  ///   Converts an index to its corresponding ScaleDefinition in the built-in definitions array.
+  /// </summary>
+  /// <param name="index">The index to convert.</param>
+  public static explicit operator ScaleDefinition(
+    int index )
+  {
+    if( index < 0 || index >= s_definitions.Length )
+    {
+      throw new ArgumentOutOfRangeException(
+        nameof( index ),
+        index,
+        $"Index must be between 0 and {s_definitions.Length - 1}."
+      );
+    }
+
+    return s_definitions[index];
+  }
 
   #endregion
 }

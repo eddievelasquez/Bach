@@ -18,6 +18,14 @@
       "DescendingDegrees": null
     },
     {
+      "Id": "Aeolian",
+      "Name": "Aeolian",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,m3,P4,P5,m6,m7",
+      "DescendingDegrees": null
+    },
+    {
       "Id": "Balinese",
       "Name": "Balinese",
       "Alias": "Balinese Pelog",
@@ -55,6 +63,14 @@
       "Alias": "",
       "Categories": "Exotic",
       "AscendingDegrees": "P1,m2,m3,M3,d5,P5,m6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Dorian",
+      "Name": "Dorian",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,m3,P4,P5,M6,m7",
       "DescendingDegrees": null
     },
     {
@@ -119,6 +135,14 @@
       "Alias": "Aeolian Dominant",
       "Categories": "Exotic",
       "AscendingDegrees": "P1,M2,M3,P4,P5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Ionian",
+      "Name": "Ionian",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,M3,P4,P5,M6,M7",
       "DescendingDegrees": null
     },
     {
@@ -194,11 +218,27 @@
       "DescendingDegrees": null
     },
     {
+      "Id": "Locrian",
+      "Name": "Locrian",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,m2,m3,P4,d5,m6,m7",
+      "DescendingDegrees": null
+    },
+    {
       "Id": "LydianDominant",
       "Name": "Lydian Dominant",
       "Alias": "Overtone;Acoustic;Lydian b7",
       "Categories": "Exotic",
       "AscendingDegrees": "P1,M2,M3,d5,P5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Lydian",
+      "Name": "Lydian",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,M3,A4,P5,M6,M7",
       "DescendingDegrees": null
     },
     {
@@ -223,6 +263,14 @@
       "Alias": "",
       "Categories": "Blues",
       "AscendingDegrees": "P1,M2,m3,M3,P5,M6",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Mixolydian",
+      "Name": "Mixolydian",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,M3,P4,P5,M6,m7",
       "DescendingDegrees": null
     },
     {
@@ -343,6 +391,14 @@
       "Alias": "",
       "Categories": "",
       "AscendingDegrees": "P1,M2,M3,P5,M6",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Phrygian",
+      "Name": "Phrygian",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,m2,m3,P4,P5,m6,m7",
       "DescendingDegrees": null
     },
     {

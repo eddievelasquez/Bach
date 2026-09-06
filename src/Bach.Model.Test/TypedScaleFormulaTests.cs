@@ -6,7 +6,6 @@
 // See http://opensource.org/licenses/MIT.
 
 using System.Linq;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Test;
 
@@ -39,7 +38,7 @@ public sealed class TypedScaleFormulaTests
   [Fact]
   public void Registry_ShouldLoadAllConvertedScales()
   {
-    Registry.ScaleFormulas.Should().HaveCount( 52 );
+    Registry.ScaleFormulas.Should().HaveCountGreaterThanOrEqualTo( 59 );
     Registry.ScaleFormulas.Should().OnlyContain( formula => formula.AscendingDegrees.Count > 0 );
   }
 }

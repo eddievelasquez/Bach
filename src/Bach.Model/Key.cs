@@ -88,10 +88,15 @@ public sealed class Key
     Tonic = pitchClass;
     ScaleDefinition = scaleDefinition ?? throw new ArgumentNullException( nameof( scaleDefinition ) );
 
-    var formula = ScaleDefinition.Formula;
-    Scale = new Scale( Tonic, formula );
+    Scale = new Scale( Tonic, ScaleDefinition.Formula );
 
-    if( s_keySignatureTable.TryGetValue( ( Tonic, ScaleDefinition.IsMinor ), out var signature ) )
+    var signatureTonic = ScaleDefinition.RelativeMajorInterval is { } relativeMajorInterval
+      ? Tonic - relativeMajorInterval
+      : Tonic;
+
+    var signatureIsMinor = ScaleDefinition.RelativeMajorInterval is null && ScaleDefinition.IsMinor;
+
+    if( s_keySignatureTable.TryGetValue( ( signatureTonic, signatureIsMinor ), out var signature ) )
     {
       KeySignature = signature;
     }

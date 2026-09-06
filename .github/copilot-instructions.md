@@ -19,6 +19,7 @@ Bach is a .NET 10 library for Western tonal music theory. The solution contains 
 - Preserve music-theory terms and behavior.
 - Add or update tests for observable behavior changes.
 - Use existing validation and error-handling patterns. Do not hide errors with broad catches or silent fallback values.
+- Keep directional scale data on `ScaleFormula.AscendingDegrees` and `ScaleFormula.DescendingDegrees`. Do not add redundant `AscendingFormula` or `DescendingFormula` properties to `ScaleDefinition` or `Scale` when both directions belong to one formula.
 
 ## Build and test commands
 
@@ -32,7 +33,7 @@ Bach is a .NET 10 library for Western tonal music theory. The solution contains 
 - Keep nullable reference types enabled.
 - Use file-scoped namespaces and PascalCase type names.
 - Prefer the least visible access level that fits the code.
-- Add XML documentation for new or changed public APIs.
+- Add XML documentation for new or changed public APIs. The <summary> tag should describe the behavior, not the implementation; the text should be on a separate line from the summary tags.
 
 ## Documentation and instructions
 

@@ -36,6 +36,17 @@ public sealed class KeyTests
       { "AM", PitchClass.A, ScaleDefinition.Major }
     };
 
+  public static TheoryData<PitchClass, string, int, Accidental> ModalKeySignatureData => new()
+  {
+    { PitchClass.D, "Dorian", 0, Accidental.Sharp },
+    { PitchClass.E, "Phrygian", 0, Accidental.Sharp },
+    { PitchClass.F, "Lydian", 0, Accidental.Sharp },
+    { PitchClass.G, "Mixolydian", 0, Accidental.Sharp },
+    { PitchClass.A, "Aeolian", 0, Accidental.Sharp },
+    { PitchClass.B, "Locrian", 0, Accidental.Sharp },
+    { PitchClass.E, "Dorian", 2, Accidental.Sharp }
+  };
+
   #endregion
 
   #region Public Methods
@@ -75,6 +86,44 @@ public sealed class KeyTests
     // Assert
     key.Scale.Formula.Name.Should()
        .Be( "Natural Minor" );
+  }
+
+  [Fact]
+  public void Definitions_ShouldUseRegistryFormulas_WhenUsingMinorCollections()
+  {
+    ScaleDefinition.HarmonicMinor.Formula.Should()
+                    .BeSameAs( Registry.ScaleFormulas[ "HarmonicMinor" ] );
+
+    ScaleDefinition.MelodicMinor.Formula.Should()
+                    .BeSameAs( Registry.ScaleFormulas[ "MelodicMinor" ] );
+  }
+
+  [Theory]
+  [MemberData( nameof( ModalKeySignatureData ) )]
+  public void Constructor_ShouldUseRelativeMajorSignature_WhenUsingChurchMode(
+    PitchClass tonic,
+    string definitionName,
+    int expectedAccidentalCount,
+    Accidental expectedAccidental )
+  {
+    var definition = definitionName switch
+    {
+      "Dorian" => ScaleDefinition.Dorian,
+      "Phrygian" => ScaleDefinition.Phrygian,
+      "Lydian" => ScaleDefinition.Lydian,
+      "Mixolydian" => ScaleDefinition.Mixolydian,
+      "Aeolian" => ScaleDefinition.Aeolian,
+      "Locrian" => ScaleDefinition.Locrian,
+      _ => throw new ArgumentOutOfRangeException( nameof( definitionName ) )
+    };
+
+    var key = new Key( tonic, definition );
+
+    key.KeySignature.AccidentalCount.Should()
+       .Be( expectedAccidentalCount );
+
+    key.KeySignature.Accidental.Should()
+       .Be( expectedAccidental );
   }
 
   [Fact]
