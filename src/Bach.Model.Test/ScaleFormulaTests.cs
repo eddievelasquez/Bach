@@ -23,12 +23,13 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Linq;
+using Bach.Model.Internal;
 
 namespace Bach.Model.Test;
 
 public sealed class ScaleFormulaTests
 {
-  private const string PENTATONIC_STEPS = "W-W-3-W-3";
+  private static readonly Interval[] s_pentatonicIntervals = [Interval.Unison, Interval.MajorSecond, Interval.MajorThird, Interval.Fifth, Interval.MajorSixth];
 
   #region Properties
 
@@ -53,15 +54,15 @@ public sealed class ScaleFormulaTests
   public void EqualsShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     var x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                             .SetSteps( PENTATONIC_STEPS )
+                                             .SetAscendingIntervals( s_pentatonicIntervals )
                                              .Build();
 
     var y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                             .SetSteps( PENTATONIC_STEPS )
+                                             .SetAscendingIntervals( s_pentatonicIntervals )
                                              .Build();
 
     var z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                             .SetSteps( PENTATONIC_STEPS )
+                                             .SetAscendingIntervals( s_pentatonicIntervals )
                                              .Build();
 
     x.Equals( x )
@@ -93,7 +94,7 @@ public sealed class ScaleFormulaTests
   public void Equals_ShouldReturnFalse_WhenComparingWithDifferentType()
   {
     object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                     .SetSteps( PENTATONIC_STEPS )
+                                                     .SetAscendingIntervals( s_pentatonicIntervals )
                                                      .Build();
 
     actual.Equals( int.MinValue )
@@ -105,7 +106,7 @@ public sealed class ScaleFormulaTests
   public void Equals_ShouldReturnFalse_WhenComparingWithNull()
   {
     object actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                     .SetSteps( PENTATONIC_STEPS )
+                                                     .SetAscendingIntervals( s_pentatonicIntervals )
                                                      .Build();
 
     actual.Equals( null )
@@ -117,7 +118,7 @@ public sealed class ScaleFormulaTests
   public void Equals_ShouldReturnTrue_WhenComparingWithSameObject()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                  .SetSteps( PENTATONIC_STEPS )
+                                                  .SetAscendingIntervals( s_pentatonicIntervals )
                                                   .Build();
 
     actual.Equals( actual )
@@ -129,15 +130,15 @@ public sealed class ScaleFormulaTests
   public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
     object x = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                .SetSteps( PENTATONIC_STEPS )
+                                                .SetAscendingIntervals( s_pentatonicIntervals )
                                                 .Build();
 
     object y = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                .SetSteps( PENTATONIC_STEPS )
+                                                .SetAscendingIntervals( s_pentatonicIntervals )
                                                 .Build();
 
     object z = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                .SetSteps( PENTATONIC_STEPS )
+                                                .SetAscendingIntervals( s_pentatonicIntervals )
                                                 .Build();
 
     // ReSharper disable once EqualExpressionComparison
@@ -170,7 +171,7 @@ public sealed class ScaleFormulaTests
   public void Generate_ShouldReturnAllPitches_WhenGivenStartingPitch()
   {
     var formula = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                   .SetSteps( PENTATONIC_STEPS )
+                                                   .SetAscendingIntervals( s_pentatonicIntervals )
                                                    .Build();
 
     var pitches = formula.Generate( Pitch.MinValue )
@@ -184,11 +185,11 @@ public sealed class ScaleFormulaTests
   public void GetHashCode_ShouldReturnSameValue_WhenObjectsAreEqual()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                  .SetSteps( PENTATONIC_STEPS )
+                                                  .SetAscendingIntervals( s_pentatonicIntervals )
                                                   .Build();
 
     var expected = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                    .SetSteps( PENTATONIC_STEPS )
+                                                    .SetAscendingIntervals( s_pentatonicIntervals )
                                                     .Build();
 
     expected.Equals( actual )
@@ -208,7 +209,7 @@ public sealed class ScaleFormulaTests
   {
     var formula = Registry.ScaleFormulas[scaleName];
 
-    formula.Steps
+    formula.GetSemitoneSteps()
          .Should()
          .BeEquivalentTo( expectedSteps );
   }
@@ -217,7 +218,7 @@ public sealed class ScaleFormulaTests
   public void TypeSafeEquals_ShouldReturnFalse_WhenComparingWithDifferentType()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                  .SetSteps( PENTATONIC_STEPS )
+                                                  .SetAscendingIntervals( s_pentatonicIntervals )
                                                   .Build();
 
     // ReSharper disable once SuspiciousTypeConversion.Global
@@ -230,7 +231,7 @@ public sealed class ScaleFormulaTests
   public void TypeSafeEquals_ShouldReturnFalse_WhenComparingWithNull()
   {
     var actual = new ScaleFormulaBuilder( "Name" ).SetId( "Id" )
-                                                  .SetSteps( PENTATONIC_STEPS )
+                                                  .SetAscendingIntervals( s_pentatonicIntervals )
                                                   .Build();
 
     actual.Equals( null )

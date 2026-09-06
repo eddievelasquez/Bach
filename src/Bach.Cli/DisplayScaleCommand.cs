@@ -60,7 +60,7 @@ internal sealed class DisplayScaleCommand: BachCommand
   {
     var formula = Registry.ScaleFormulas[scaleName];
 
-    WriteLine( $"{formula.Name} scale => ", formula.Steps.ToString() );
+    WriteList( $"{formula.Name} scale => ", formula.Intervals );
 
     foreach( var rootValue in roots )
     {

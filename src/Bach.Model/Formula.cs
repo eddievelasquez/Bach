@@ -44,12 +44,10 @@ public abstract class Formula
     #region Public Methods
 
     public int Compare(
-      Interval x,
-      Interval y )
+      Interval lhs,
+      Interval rhs )
     {
-      var xValue = (int) x;
-      var yValue = (int) y;
-      return xValue.CompareTo( yValue );
+      return lhs.CompareTo( rhs );
     }
 
     #endregion
@@ -60,10 +58,10 @@ public abstract class Formula
     #region Public Methods
 
     public int Compare(
-      Interval x,
-      Interval y )
+      Interval lhs,
+      Interval rhs )
     {
-      return x.SemitoneCount - y.SemitoneCount;
+      return lhs.SemitoneCount - rhs.SemitoneCount;
     }
 
     #endregion
@@ -172,6 +170,9 @@ public abstract class Formula
     return obj is Formula other && Equals( other );
   }
 
+  // TODO: Generate should take a direction: ascending or descending (Only makes sense for scale formulas, not chords
+  // Intervals should probably go in the concrete Scale or Chord Formulas.
+
   /// <summary>
   ///   Generates a sequence of pitches based on the formula's intervals, starting from the provided root pitch.
   /// </summary>
@@ -266,27 +267,6 @@ public abstract class Formula
   public override int GetHashCode()
   {
     return Comparer.IdComparer.GetHashCode( Id );
-  }
-
-  /// <summary>Gets the relative steps in terms of semitones between the intervals that compose the formula.</summary>
-  /// <returns>An array of integral semitone counts.</returns>
-  public int[] GetRelativeSteps()
-  {
-    var steps = new int[Intervals.Count];
-    var lastCount = 0;
-
-    for( var i = 1; i < Intervals.Count; i++ )
-    {
-      var semitoneCount = Intervals[i].SemitoneCount;
-      var step = semitoneCount - lastCount;
-      steps[i - 1] = step;
-      lastCount = semitoneCount;
-    }
-
-    // Add last step between the root octave and the
-    // last interval
-    steps[^1] = Constants.OctaveSemitoneCount - lastCount;
-    return steps;
   }
 
   /// <summary>Parse intervals.</summary>

@@ -120,22 +120,22 @@ public sealed class IntervalQualityTests
     { "A", IntervalQuality.Augmented }
   };
 
-  public static TheoryData<IntervalQuality, string> ClassicalSymbolData => new()
+  public static TheoryData<IntervalQuality, char> ClassicalSymbolData => new()
   {
-    { IntervalQuality.Diminished, "d" },
-    { IntervalQuality.Minor, "m" },
-    { IntervalQuality.Perfect, "P" },
-    { IntervalQuality.Major, "M" },
-    { IntervalQuality.Augmented, "A" }
+    { IntervalQuality.Diminished, 'd' },
+    { IntervalQuality.Minor, 'm' },
+    { IntervalQuality.Perfect, 'P' },
+    { IntervalQuality.Major, 'M' },
+    { IntervalQuality.Augmented, 'A' }
   };
 
-  public static TheoryData<IntervalQuality, string> ModernSymbolData => new()
+  public static TheoryData<IntervalQuality, char> ModernSymbolData => new()
   {
-    { IntervalQuality.Diminished, "°" },
-    { IntervalQuality.Minor, "m" },
-    { IntervalQuality.Perfect, "P" },
-    { IntervalQuality.Major, "M" },
-    { IntervalQuality.Augmented, "+" }
+    { IntervalQuality.Diminished, '°' },
+    { IntervalQuality.Minor, 'm' },
+    { IntervalQuality.Perfect, 'P' },
+    { IntervalQuality.Major, 'M' },
+    { IntervalQuality.Augmented, '+' }
   };
 
   public static TheoryData<IntervalQuality, int> AddOutOfRangeData => new()
@@ -293,7 +293,7 @@ public sealed class IntervalQualityTests
   [MemberData( nameof( ClassicalSymbolData ) )]
   public void ClassicalSymbol_QualityProvided_ReturnsExpected(
     IntervalQuality quality,
-    string expected )
+    char expected )
   {
     // Arrange & Act
     var result = quality.ClassicalSymbol;
@@ -307,7 +307,7 @@ public sealed class IntervalQualityTests
   [MemberData( nameof( ModernSymbolData ) )]
   public void ModernSymbol_QualityProvided_ReturnsExpected(
     IntervalQuality quality,
-    string expected )
+    char expected )
   {
     // Arrange & Act
     var result = quality.ModernSymbol;

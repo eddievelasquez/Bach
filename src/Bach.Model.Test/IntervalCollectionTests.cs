@@ -258,7 +258,7 @@ public sealed class IntervalCollectionTests
 
     collection.ToString()
               .Should()
-              .Be( "1,2,3" );
+              .Be( "P1,M2,M3" );
   }
 
   #endregion

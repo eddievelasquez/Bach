@@ -251,34 +251,6 @@ public sealed class IntervalTests
     { Interval.Octave, 12 }
   };
 
-  public static TheoryData<int, Interval> FromSemitonesData => new()
-  {
-    { 0, Interval.Unison },
-    { 1, Interval.MinorSecond },
-    { 2, Interval.MajorSecond },
-    { 3, Interval.MinorThird },
-    { 4, Interval.MajorThird },
-    { 5, Interval.Fourth },
-    { 6, Interval.AugmentedFourth },
-    { 7, Interval.Fifth },
-    { 8, Interval.MinorSixth },
-    { 9, Interval.MajorSixth },
-    { 10, Interval.MinorSeventh },
-    { 11, Interval.MajorSeventh },
-    { 12, Interval.Octave },
-    { 13, new Interval( IntervalQuantity.Ninth, IntervalQuality.Minor ) },
-    { 14, new Interval( IntervalQuantity.Ninth, IntervalQuality.Major ) },
-    { 15, new Interval( IntervalQuantity.Tenth, IntervalQuality.Minor ) },
-    { 16, new Interval( IntervalQuantity.Tenth, IntervalQuality.Major ) },
-    { 17, new Interval( IntervalQuantity.Eleventh, IntervalQuality.Perfect ) },
-    { 18, new Interval( IntervalQuantity.Eleventh, IntervalQuality.Augmented ) },
-    { 19, new Interval( IntervalQuantity.Twelfth, IntervalQuality.Perfect ) },
-    { 20, new Interval( IntervalQuantity.Thirteenth, IntervalQuality.Minor ) },
-    { 21, new Interval( IntervalQuantity.Thirteenth, IntervalQuality.Major ) },
-    { 22, new Interval( IntervalQuantity.Fourteenth, IntervalQuality.Minor ) },
-    { 23, new Interval( IntervalQuantity.Fourteenth, IntervalQuality.Major ) }
-  };
-
   public static TheoryData<string?> InvalidIntervalStrings => [(string?) null, "", "   ", "M1", "P2", "L2", "Px"];
 
   public static TheoryData<Interval, string, string> ToStringWithFormatData =>
@@ -1111,17 +1083,6 @@ public sealed class IntervalTests
             .Be( expectedSemitoneCount );
   }
 
-  [Theory]
-  [MemberData( nameof( FromSemitonesData ) )]
-  public void FromSemitones_ShouldReturnCorrectInterval_ForSupportedSemitoneDistance(
-    int semitones,
-    Interval expected )
-  {
-    Interval.FromSemitones( semitones )
-            .Should()
-            .Be( expected );
-  }
-
   [Fact]
   public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
   {
@@ -1159,7 +1120,7 @@ public sealed class IntervalTests
   {
     Interval.MajorThird.ToString( "" )
             .Should()
-            .Be( "3" );
+            .Be( "M3" );
   }
 
   [Fact]
@@ -1167,7 +1128,7 @@ public sealed class IntervalTests
   {
     Interval.MajorThird.ToString( null! )
             .Should()
-            .Be( "3" );
+            .Be( "M3" );
   }
 
   [Theory]
@@ -1241,13 +1202,13 @@ public sealed class IntervalTests
   public void GetEnharmonicEquivalent_ShouldReturnAugmentedThird_WhenIntervalIsAugmentedFourth_SmallerQuantity()
   {
     // Arrange
-    var interval = Interval.AugmentedFourth;
+    var interval = Interval.Parse("A4").FlipDirection();
 
     // Act
-    var actual = interval.GetEnharmonicEquivalent( EnharmonicDirection.SmallerQuantity );
+    var actual = interval.GetEnharmonicEquivalent();
 
     // Assert
-    var expected = new Interval( IntervalQuantity.Third, IntervalQuality.Augmented, 2 );
+    var expected = Interval.Parse("AA3").FlipDirection();
     actual.Should()
           .Be( expected );
   }
@@ -1256,33 +1217,44 @@ public sealed class IntervalTests
   public void GetEnharmonicEquivalent_ShouldReturnAugmentedFirst_WhenIntervalIsMinorSecond_Nearest()
   {
     // Arrange
-    var interval = Interval.MinorSecond;
+    var interval = Interval.Parse("m2");
 
     // Act
     var actual = interval.GetEnharmonicEquivalent();
 
     // Assert
     actual.Should()
-          .Be( Interval.AugmentedFirst );
+          .Be( Interval.Parse("dd3") );
   }
 
   [Fact]
-  public void GetEnharmonicEquivalent_ShouldFallbackToNearest_WhenNoCandidateInPreferredDirection()
+  public void GetEnharmonicEquivalent_ShouldReturnAugmentedThirteenth_WhenIntervalIsDescendingMajorFourteenth()
+  {
+    // Arrange
+    var interval = new Interval(IntervalQuantity.Fourteenth, IntervalQuality.Major, descending: true);
+
+    // Act
+    var actual = interval.GetEnharmonicEquivalent();
+
+    // Assert
+    var expected = new Interval( IntervalQuantity.Thirteenth, IntervalQuality.Augmented, 2, true );
+    actual.Should()
+          .Be( expected );
+  }
+
+
+  [Fact]
+  public void GetEnharmonicEquivalent_ShouldThrow_WhenIntervalIsAscendingFourteenth()
   {
     // Arrange
     var interval = new Interval( IntervalQuantity.Fourteenth, IntervalQuality.Major );
 
     // Act
-    var directed = interval.GetEnharmonicEquivalent( EnharmonicDirection.LargerQuantity );
-    var nearest = interval.GetEnharmonicEquivalent();
+    var act = interval.GetEnharmonicEquivalent;
 
     // Assert
-    directed.Should()
-            .Be( nearest );
-
-    // Ensure a different enharmonic equivalent was found (not the original interval)
-    nearest.Should()
-           .NotBe( interval );
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
   }
 
 }

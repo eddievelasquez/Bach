@@ -252,8 +252,8 @@ public readonly struct PitchClass
   public int CompareTo(
     PitchClass other )
   {
-    var noteNameComparison = NoteName.CompareTo( other.NoteName );
-    return noteNameComparison != 0 ? noteNameComparison : Accidental.CompareTo( other.Accidental );
+    var result = NoteName.CompareTo( other.NoteName );
+    return result != 0 ? result : Accidental.CompareTo( other.Accidental );
   }
 
   /// <summary>
@@ -425,8 +425,8 @@ public readonly struct PitchClass
 
     // Then we determine the semitone displacement from the enharmonic index, wrapping around the 12 semitones in an octave
     var semitoneDisplacement = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
-    var quality = Interval.CalcIntervalQuality( quantity, semitoneDisplacement );
-    var interval = new Interval( quantity, quality );
+    var quality = Interval.CalcIntervalQuality( quantity, semitoneDisplacement, out var alterationDegree );
+    var interval = new Interval( quantity, quality, alterationDegree );
     return interval;
   }
 

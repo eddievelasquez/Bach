@@ -57,7 +57,7 @@ internal sealed class DisplayIntervalsCommand: BachCommand
     IEnumerable<string> notes )
   {
     var values = notes.ToArray();
-    var intervals = values.Intervals();
+    var intervals = values.ParseIntervals();
 
     WriteList( "Notes:     ", string.Join( ",", values ) );
     WriteList( "Intervals: ", intervals.Select( interval => interval.ToString( "Sq" ) ) );

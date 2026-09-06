@@ -54,10 +54,10 @@ public sealed class ScaleTests
   {
     // Diatonic scales
     { "Major", ["Diatonic", "Major"], [] },
-    { "LeadingTone", ["Diatonic"], [] },
-    { "LydianDominant", ["Diatonic"], [] },
+    { "LeadingTone", [], [] },
+    { "LydianDominant", [], [] },
     { "Hindu", ["Diatonic"], [] },
-    { "Arabian", ["Diatonic"], [] },
+    { "Arabian", [], [] },
     { "NaturalMinor", ["Diatonic", "Minor"], [] },
     { "Javanese", ["Diatonic", "Minor"], [] },
     { "NeapolitanMajor", ["Diatonic", "Minor"], [] },
@@ -96,14 +96,14 @@ public sealed class ScaleTests
     { "C,B,A,G,F,E,D", "Major" },
     { "C,Bb,Ab,G,F,Eb,D", "NaturalMinor" },
     { "C,B,Ab,G,F,Eb,D", "HarmonicMinor" },
-    { "C,B,A,G,F,Eb,D", "MelodicMinor" },
-    { "C,Cb,Bbb,Ab,Gb,F,Eb,D", "Diminished" },
-    { "C,A#,Bbb,Abb,Gb,Fb,Eb,Db", "Polytonal" },
-    { "C,Bb,Ab,F#,E,D", "WholeTone" },
+    { "C,Bb,Ab,G,F,Eb,D", "MelodicMinor" },
+    { "C,Bb,Ab,G,Gb,E,Eb,Db", "Diminished" },
+    { "C,Bb,A,G,F#,Fb,Eb,Db", "Polytonal" },
+    { "C,A#,G#,F#,E,D", "WholeTone" },
     { "C,A,G,E,D", "Pentatonic" },
     { "C,Bb,G,F,Eb", "MinorPentatonic" },
-    { "C,Bb,Abb,Gb,F,Eb", "MinorBlues" },
-    { "C,A,G,Fb,Eb,D", "MajorBlues" }
+    { "C,Bb,G,Gb,F,Eb", "MinorBlues" },
+    { "C,A,G,E,Eb,D", "MajorBlues" }
   };
 
   public static TheoryData<string, string[]> ScalesContainingData => new()
@@ -177,7 +177,7 @@ public sealed class ScaleTests
       { PitchClass.C, "Major", "R", "C" },
       { PitchClass.C, "Major", "F", "Major" },
       { PitchClass.C, "Major", "S", "C,D,E,F,G,A,B" },
-      { PitchClass.C, "Major", "I", "1,2,3,4,5,6,7" },
+      { PitchClass.C, "Major", "I", "P1,M2,M3,P4,P5,M6,M7" },
       { PitchClass.C, "Major", "N", "C" },
       { PitchClass.C, "Major", "R F", "C Major" },
       { PitchClass.A, "NaturalMinor", "R F", "A Natural Minor" }
@@ -276,14 +276,14 @@ public sealed class ScaleTests
          .Be( "C" );
 
     scale.Count.Should()
-         .Be( formula.Steps.Count );
+         .Be( formula.Intervals.Count );
 
     scale.Theoretical.Should()
          .BeFalse();
 
     // Ensure the pitch classes returned by the scale match the formula generate sequence (first N)
     var expected = formula.Generate( root )
-                          .Take( formula.Steps.Count )
+                          .Take( formula.Intervals.Count )
                           .ToArray();
 
     scale.Should()
@@ -657,11 +657,11 @@ public sealed class ScaleTests
     var expected = expectedNotes.ParsePitchClasses();
     var scale = new Scale( PitchClass.C, formulaName );
 
-    var actual = scale.GetDescending()
-                      .Take( expected.Count );
+    var actualNotes = string.Join(",", scale.GetDescending()
+                      .Take( scale.Count ));
 
-    actual.Should()
-          .BeEquivalentTo( expected );
+    actualNotes.Should()
+          .BeEquivalentTo( expectedNotes );
   }
 
   [Fact]
@@ -805,7 +805,7 @@ public sealed class ScaleTests
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
 
     scale.Count.Should()
-         .Be( Registry.ScaleFormulas["MinorPentatonic"].Steps.Count );
+         .Be( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count );
   }
 
   [Theory]
@@ -849,7 +849,7 @@ public sealed class ScaleTests
     var scale = new Scale( root, scaleName );
 
     var actual = scale.Render( octave )
-                      .Take( scale.Formula.Steps.Count )
+                      .Take( scale.Formula.Intervals.Count )
                       .ToArray();
 
     actual.Should()
@@ -865,12 +865,12 @@ public sealed class ScaleTests
 
     // Act
     var actual = scale.Render( octave )
-                      .Take( scale.Formula.Steps.Count )
+                      .Take( scale.Formula.Intervals.Count )
                       .ToArray();
 
     // Assert
     actual.Should()
-          .HaveCount( scale.Formula.Steps.Count );
+          .HaveCount( scale.Formula.Intervals.Count );
 
     for( var i = 0; i < actual.Length; ++i )
     {

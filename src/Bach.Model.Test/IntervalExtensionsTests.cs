@@ -35,7 +35,7 @@ public sealed class IntervalExtensionsTests
   public void Intervals_ShouldReturnExpectedIntervals_ForMultiplePitchClasses()
   {
     var actual = "C,E,G".ParsePitchClasses()
-                        .Intervals()
+                        .CalculateIntervals()
                         .ToArray();
 
     actual.Should()
@@ -46,7 +46,7 @@ public sealed class IntervalExtensionsTests
   public void Intervals_ShouldReturnUnison_ForSinglePitchClass()
   {
     var actual = "C".ParsePitchClasses()
-                    .Intervals()
+                    .CalculateIntervals()
                     .ToArray();
 
     actual.Should()
@@ -58,7 +58,7 @@ public sealed class IntervalExtensionsTests
   [Fact]
   public void Intervals_ShouldThrowArgumentNullException_WhenPitchClassesIsNull()
   {
-    var act = () => ( (IEnumerable<PitchClass>) null! ).Intervals()
+    var act = () => ( (IEnumerable<PitchClass>) null! ).CalculateIntervals()
                                                        .ToArray();
 
     act.Should()

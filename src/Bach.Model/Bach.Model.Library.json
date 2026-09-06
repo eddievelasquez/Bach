@@ -1,102 +1,618 @@
 {
-  "Version": "0.3",
-  "Scales":
-  [
-    {"Id":"Arabian","Name":"Arabian","Formula":"W-W-H-H-W-W-W","Alias":"","Categories":"Exotic"},
-    {"Id":"Augmented","Name":"Augmented","Formula":"3-H-3-H-3-H","Alias":"Symmetrical Augmented","Categories":"Exotic"},
-    {"Id":"Balinese","Name":"Balinese","Formula":"H-W-4-H-4","Alias":"Balinese Pelog","Categories":"Exotic"},
-    {"Id":"BebopDominant","Name":"Bebop Dominant","Formula":"W-W-H-W-W-H-H-H","Alias":"","Categories":"Jazz"},
-    {"Id":"BebopDorian","Name":"Bebop Dorian","Formula":"W-H-W-W-W-H-H-H","Alias":"","Categories":"Jazz"},
-    {"Id":"Byzantine","Name":"Byzantine","Formula":"H-3-H-W-H-3-H","Alias":"Double Harmonic Mayamalavagowla;Bhairav Raga;Arabic;Gypsy Major","Categories":"Exotic"},
-    {"Id":"Diminished","Name":"Diminished","Formula":"W-H-W-H-W-H-W-H","Alias":"","Categories":"Exotic"},
-    {"Id":"Egyptian","Name":"Egyptian","Formula":"W-3-W-3-W","Alias":"","Categories":"Exotic"},
-    {"Id":"EnigmaticMajor","Name":"Enigmatic Major","Formula":"4-W-W-W-H-H","Alias":"","Categories":"Exotic"},
-    {"Id":"EnigmaticMinor","Name":"Enigmatic Minor","Formula":"H-W-3-H-3-H-H","Alias":"","Categories":"Exotic"},
-    {"Id":"Geez","Name":"Geez","Formula":"H-W-3-H-3-H-H","Alias":"Ethiopian;Ezel","Categories":"Exotic"},
-    {"Id":"Gypsy","Name":"Gypsy","Formula":"H-3-H-W-H-3-H","Alias":"","Categories":"Exotic"},
-    {"Id":"GypsyMinor","Name":"Gypsy Minor","Formula":"W-H-3-H-H-W-W","Alias":"","Categories":"Exotic"},
-    {"Id":"HarmonicMinor","Name":"Harmonic Minor","Formula":"W-H-W-W-H-3-H","Alias":"","Categories":""},
-    {"Id":"Hindu","Name":"Hindu","Formula":"W-W-H-W-H-W-W","Alias":"Aeolian Dominant","Categories":"Exotic"},
-    {"Id":"Hirajoshi","Name":"Hirajoshi","Formula":"W-H-4-H-4","Alias":"","Categories":"Exotic"},
-    {"Id":"HungarianFolk","Name":"Hungarian Folk","Formula":"H-3-3-H-3-H","Alias":"","Categories":"Exotic"},
-    {"Id":"HungarianGypsy","Name":"Hungarian Gypsy","Formula":"W-H-3-H-H-3-H","Alias":"Hungarian Minor","Categories":"Exotic"},
-    {"Id":"HungarianMajor","Name":"Hungarian Major","Formula":"3-H-W-H-W-H-W","Alias":"","Categories":"Exotic"},
-    {"Id":"Iwato","Name":"Iwato","Formula":"H-4-H-4-W","Alias":"","Categories":"Exotic"},
-    {"Id":"Japanese","Name":"Japanese","Formula":"H-4-W-3-W","Alias":"In Sen","Categories":"Exotic;Japanese"},
-    {"Id":"Javanese","Name":"Javanese","Formula":"H-W-W-W-W-H-W","Alias":"","Categories":"Exotic"},
-    {"Id":"Kumoi","Name":"Kumoi","Formula":"H-4-W-H-4","Alias":"","Categories":"Exotic"},
-    {"Id":"LeadingTone","Name":"Leading Tone","Formula":"H-W-W-H-W-W-W","Alias":"","Categories":"Exotic"},
-    {"Id":"LydianDominant","Name":"Lydian Dominant","Formula":"W-W-W-H-H-W-W","Alias":"Overtone;Acoustic;Lydian b7","Categories":"Exotic"},
-    {"Id":"Major","Name":"Major","Formula":"W-W-H-W-W-W-H","Alias":"","Categories":""},
-    {"Id":"MajorBebop","Name":"Major Bebop","Formula":"W-W-H-W-W-W-H","Alias":"","Categories":"Jazz"},
-    {"Id":"MajorBlues","Name":"MajorBlues","Formula":"W-H-H-3-W-3","Alias":"","Categories":"Blues"},
-    {"Id":"MelodicMinor","Name":"Melodic Minor","Formula":"W-H-W-W-W-W-H","Alias":"","Categories":""},
-    {"Id":"MinorBebop","Name":"Minor Bebop","Formula":"W-H-H-H-W-W-H-W","Alias":"","Categories":"Jazz"},
-    {"Id":"MinorBlues","Name":"Minor Blues","Formula":"3-W-H-H-3-W","Alias":"","Categories":"Blues"},
-    {"Id":"MinorPentatonic","Name":"Minor Pentatonic","Formula":"3-W-W-3-W","Alias":"","Categories":"Blues"},
-    {"Id":"Mongolian","Name":"Mongolian","Formula":"W-W-3-W-3","Alias":"","Categories":"Exotic"},
-    {"Id":"Mystic","Name":"Mystic","Formula":"W-W-W-3-H-W","Alias":"","Categories":"Exotic"},
-    {"Id":"NaturalMinor","Name":"Natural Minor","Formula":"W-H-W-W-H-W-W","Alias":"","Categories":""},
-    {"Id":"NeapolitanMajor","Name":"Neapolitan Major","Formula":"H-W-W-W-W-W-H","Alias":"","Categories":"Exotic"},
-    {"Id":"NeapolitanMinor","Name":"Neapolitan Minor","Formula":"H-W-W-W-H-3-H","Alias":"","Categories":"Exotic"},
-    {"Id":"NineTone","Name":"Nine Tone","Formula":"W-H-H-W-H-H-H-W-H","Alias":"","Categories":"Exotic"},
-    {"Id":"OctatonicHalfWhole","Name":"Octatonic Half Whole","Formula":"H-W-H-W-H-W-H-W","Alias":"","Categories":"Exotic"},
-    {"Id":"OctatonicWholeHalf","Name":"Octatonic Whole Half","Formula":"W-H-W-H-W-H-W-H","Alias":"","Categories":"Exotic"},
-    {"Id":"Oriental","Name":"Oriental","Formula":"H-3-H-H-3-H-W","Alias":"","Categories":"Exotic"},
-    {"Id":"Pelog","Name":"Pelog","Formula":"H-W-W-W-3-W","Alias":"","Categories":"Exotic"},
-    {"Id":"Pentatonic","Name":"Pentatonic","Formula":"W-W-3-W-3","Alias":"","Categories":""},
-    {"Id":"Persian","Name":"Persian","Formula":"H-3-H-H-W-3-H","Alias":"","Categories":"Exotic"},
-    {"Id":"Polytonal","Name":"Polytonal","Formula":"H-W-H-W-H-W-H-W","Alias":"","Categories":"Exotic"},
-    {"Id":"Romanian","Name":"Romanian","Formula":"W-H-3-H-W-3","Alias":"","Categories":"Exotic"},
-    {"Id":"Scottish","Name":"Scottish","Formula":"W-3-W-W-3","Alias":"","Categories":"Exotic"},
-    {"Id":"Spanish8Tone","Name":"Spanish 8 Tone","Formula":"H-W-H-H-H-H-3-W","Alias":"","Categories":"Exotic"},
-    {"Id":"SpanishGypsy","Name":"Spanish Gypsy","Formula":"H-3-H-W-H-W-W","Alias":"Phrygian Dominant;Spanish Phrygian","Categories":"Exotic"},
-    {"Id":"SuperLocrian","Name":"Super Locrian","Formula":"H-W-H-W-W-W-W","Alias":"Altered;Diminished Whole Tone","Categories":"Exotic;Jazz"},
-    {"Id":"WholeTone","Name":"Whole Tone","Formula":"W-W-W-W-W-W","Alias":"","Categories":"Exotic;Symmetrical"},
-    {"Id":"Yo","Name":"Yo","Formula":"3-W-W-3-W","Alias":"","Categories":"Exotic;Japanese"}
+  "Version": "0.4",
+  "Scales": [
+    {
+      "Id": "Arabian",
+      "Name": "Arabian",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,M3,P4,d5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Augmented",
+      "Name": "Augmented",
+      "Alias": "Symmetrical Augmented",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m3,M3,P5,A5,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Balinese",
+      "Name": "Balinese",
+      "Alias": "Balinese Pelog",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,P5,A5",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "BebopDominant",
+      "Name": "Bebop Dominant",
+      "Alias": "",
+      "Categories": "Jazz",
+      "AscendingDegrees": "P1,M2,M3,P4,P5,M6,m7,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "BebopDorian",
+      "Name": "Bebop Dorian",
+      "Alias": "",
+      "Categories": "Jazz",
+      "AscendingDegrees": "P1,M2,m3,P4,P5,M6,m7,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Byzantine",
+      "Name": "Byzantine",
+      "Alias": "Double Harmonic Mayamalavagowla;Bhairav Raga;Arabic;Gypsy Major",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,m3,P4,d5,A5,M6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Diminished",
+      "Name": "Diminished",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,M3,d5,P5,m6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Egyptian",
+      "Name": "Egyptian",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,P4,P5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "EnigmaticMajor",
+      "Name": "Enigmatic Major",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,M3,A4,A5,A6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "EnigmaticMinor",
+      "Name": "Enigmatic Minor",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,A4,P5,A6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Geez",
+      "Name": "Geez",
+      "Alias": "Ethiopian;Ezel",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,A4,P5,A6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Gypsy",
+      "Name": "Gypsy",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,M3,P4,P5,A5,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "GypsyMinor",
+      "Name": "Gypsy Minor",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,m3,d5,P5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "HarmonicMinor",
+      "Name": "Harmonic Minor",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,m3,P4,P5,m6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Hindu",
+      "Name": "Hindu",
+      "Alias": "Aeolian Dominant",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,M3,P4,P5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Hirajoshi",
+      "Name": "Hirajoshi",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,m3,P5,A5",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "HungarianFolk",
+      "Name": "Hungarian Folk",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,M3,P5,m6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "HungarianGypsy",
+      "Name": "Hungarian Gypsy",
+      "Alias": "Hungarian Minor",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,m3,d5,P5,A5,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "HungarianMajor",
+      "Name": "Hungarian Major",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m3,M3,d5,P5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Iwato",
+      "Name": "Iwato",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,P4,d5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Japanese",
+      "Name": "Japanese",
+      "Alias": "In Sen",
+      "Categories": "Exotic;Japanese",
+      "AscendingDegrees": "P1,m2,P4,P5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Javanese",
+      "Name": "Javanese",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,P4,P5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Kumoi",
+      "Name": "Kumoi",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,P4,P5,A5",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "LeadingTone",
+      "Name": "Leading Tone",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,M3,d5,A5,m7,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "LydianDominant",
+      "Name": "Lydian Dominant",
+      "Alias": "Overtone;Acoustic;Lydian b7",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,M3,d5,P5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Major",
+      "Name": "Major",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,M3,P4,P5,M6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "MajorBebop",
+      "Name": "Major Bebop",
+      "Alias": "",
+      "Categories": "Jazz",
+      "AscendingDegrees": "P1,M2,M3,P4,P5,M6,m7,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "MajorBlues",
+      "Name": "MajorBlues",
+      "Alias": "",
+      "Categories": "Blues",
+      "AscendingDegrees": "P1,M2,m3,M3,P5,M6",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "MelodicMinor",
+      "Name": "Melodic Minor",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,m3,P4,P5,M6,M7",
+      "DescendingDegrees": "P1,M2,m3,P4,P5,m6,m7"
+    },
+    {
+      "Id": "MinorBebop",
+      "Name": "Minor Bebop",
+      "Alias": "",
+      "Categories": "Jazz",
+      "AscendingDegrees": "P1,M2,m3,M3,P4,P5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "MinorBlues",
+      "Name": "Minor Blues",
+      "Alias": "",
+      "Categories": "Blues",
+      "AscendingDegrees": "P1,m3,P4,d5,P5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "MinorPentatonic",
+      "Name": "Minor Pentatonic",
+      "Alias": "",
+      "Categories": "Blues",
+      "AscendingDegrees": "P1,m3,P4,P5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Mongolian",
+      "Name": "Mongolian",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,M3,P5,M6",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Mystic",
+      "Name": "Mystic",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,M3,d5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "NaturalMinor",
+      "Name": "Natural Minor",
+      "Alias": "Minor",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,m3,P4,P5,m6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "NeapolitanMajor",
+      "Name": "Neapolitan Major",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,P4,P5,M6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "NeapolitanMinor",
+      "Name": "Neapolitan Minor",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,P4,P5,A5,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "NineTone",
+      "Name": "Nine Tone",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,m3,M3,d5,P5,m6,M6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "OctatonicHalfWhole",
+      "Name": "Octatonic Half Whole",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,M3,d5,P5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "OctatonicWholeHalf",
+      "Name": "Octatonic Whole Half",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,m3,P4,d5,m6,M6,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Oriental",
+      "Name": "Oriental",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,M3,P4,d5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Pelog",
+      "Name": "Pelog",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,P4,P5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Pentatonic",
+      "Name": "Pentatonic",
+      "Alias": "",
+      "Categories": "",
+      "AscendingDegrees": "P1,M2,M3,P5,M6",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Persian",
+      "Name": "Persian",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,M3,P4,d5,A5,M7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Polytonal",
+      "Name": "Polytonal",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,d4,A4,P5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Romanian",
+      "Name": "Romanian",
+      "Alias": "Romanian Minor;Mela Hemavati;Dorian #4",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,m3,A4,P5,M6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Scottish",
+      "Name": "Scottish",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,M2,P4,P5,M6",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Spanish8Tone",
+      "Name": "Spanish 8 Tone",
+      "Alias": "",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,m3,M3,P4,d5,d6,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "SpanishGypsy",
+      "Name": "Spanish Gypsy",
+      "Alias": "Phrygian Dominant;Spanish Phrygian",
+      "Categories": "Exotic",
+      "AscendingDegrees": "P1,m2,M3,P4,P5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "SuperLocrian",
+      "Name": "Super Locrian",
+      "Alias": "Altered;Diminished Whole Tone",
+      "Categories": "Exotic;Jazz",
+      "AscendingDegrees": "P1,m2,m3,M3,d5,A5,m7",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "WholeTone",
+      "Name": "Whole Tone",
+      "Alias": "",
+      "Categories": "Exotic;Symmetrical",
+      "AscendingDegrees": "P1,M2,M3,A4,A5,A6",
+      "DescendingDegrees": null
+    },
+    {
+      "Id": "Yo",
+      "Name": "Yo",
+      "Alias": "",
+      "Categories": "Exotic;Japanese",
+      "AscendingDegrees": "P1,m3,P4,P5,m7",
+      "DescendingDegrees": null
+    }
   ],
-  "Chords":
-  [
-    { "Id": "AddNine", "Name": "Add Nine", "Symbol": "add9", "Formula": "1,3,5,9" },
-    { "Id": "Augmented", "Name": "Augmented", "Symbol": "aug", "Formula": "1,3,A5" },
-    { "Id": "Augmented7", "Name": "Augmented Seventh", "Symbol": "+7", "Formula": "1,3,A5,m7" },
-    { "Id": "AugmentedMajor7", "Name": "Augmented Major Seventh", "Symbol": "+M7", "Formula": "1,3,A5,7" },
-    { "Id": "Diminished", "Name": "Diminished", "Symbol": "dim", "Formula": "1,m3,d5" },
-    { "Id": "Diminished7", "Name": "Diminished Seventh", "Symbol": "dim7", "Formula": "1,m3,d5,d7" },
-    { "Id": "Dominant11", "Name": "Dominant Eleventh", "Symbol": "11", "Formula": "1,3,5,m7,9,11" },
-    { "Id": "Dominant13", "Name": "Dominant Thirteenth", "Symbol": "13", "Formula": "1,3,5,m7,9,11,13" },
-    { "Id": "Dominant7", "Name": "Dominant Seventh", "Symbol": "7", "Formula": "1,3,5,m7" },
-    { "Id": "Dominant7Sharp9", "Name": "Dominant Seventh Sharp Ninth", "Symbol": "7#9", "Formula": "1,3,5,m7,A9" },
-    { "Id": "Dominant7Flat9", "Name": "Dominant Seventh Flat Ninth", "Symbol": "7b9", "Formula": "1,3,5,m7,m9" },
-    { "Id": "Dominant9", "Name": "Dominant Ninth", "Symbol": "9", "Formula": "1,3,5,m7,9" },
-    { "Id": "HalfDiminished", "Name": "Half Diminished", "Symbol": "7dim5", "Formula": "1,m3,d5,m7" },
-    { "Id": "Major", "Name": "Major", "Symbol": "", "Formula": "1,3,5" },
-    { "Id": "Major11", "Name": "Major Eleventh", "Symbol": "maj11", "Formula": "1,3,5,7,9,11" },
-    { "Id": "Major13", "Name": "Major Thirteenth", "Symbol": "maj13", "Formula": "1,3,5,7,9,11,13" },
-    { "Id": "Major6", "Name": "Major Sixth", "Symbol": "6", "Formula": "1,3,5,6" },
-    { "Id": "Major7", "Name": "Major Seventh", "Symbol": "maj7", "Formula": "1,3,5,7" },
-    { "Id": "Major9", "Name": "Major Ninth", "Symbol": "maj9", "Formula": "1,3,5,7,9" },
-    { "Id": "Minor", "Name": "Minor", "Symbol": "m", "Formula": "1,m3,5" },
-    { "Id": "Minor11", "Name": "Minor Eleventh", "Symbol": "m11", "Formula": "1,m3,5,m7,9,11" },
-    { "Id": "Minor13", "Name": "Minor Thirteenth", "Symbol": "m13", "Formula": "1,m3,5,m7,9,11,13" },
-    { "Id": "Minor6", "Name": "Minor Sixth", "Symbol": "m6", "Formula": "1,m3,5,6" },
-    { "Id": "Minor7", "Name": "Minor Seventh", "Symbol": "m7", "Formula": "1,m3,5,m7" },
-    { "Id": "Minor9", "Name": "Minor Ninth", "Symbol": "m9", "Formula": "1,m3,5,m7,9" },
-    { "Id": "MinorMajor7", "Name": "Minor-Major Seventh", "Symbol": "mM7", "Formula": "1,m3,5,7" },
-    { "Id": "SixNine", "Name": "Six Nine", "Symbol": "6/9", "Formula": "1,3,5,6,9" }
+  "Chords": [
+    {
+      "Id": "AddNine",
+      "Name": "Add Nine",
+      "Symbol": "add9",
+      "Formula": "P1,M3,P5,M9"
+    },
+    {
+      "Id": "Augmented",
+      "Name": "Augmented",
+      "Symbol": "aug",
+      "Formula": "P1,M3,A5"
+    },
+    {
+      "Id": "Augmented7",
+      "Name": "Augmented Seventh",
+      "Symbol": "+7",
+      "Formula": "P1,M3,A5,m7"
+    },
+    {
+      "Id": "AugmentedMajor7",
+      "Name": "Augmented Major Seventh",
+      "Symbol": "+M7",
+      "Formula": "P1,M3,A5,M7"
+    },
+    {
+      "Id": "Diminished",
+      "Name": "Diminished",
+      "Symbol": "dim",
+      "Formula": "P1,m3,d5"
+    },
+    {
+      "Id": "Diminished7",
+      "Name": "Diminished Seventh",
+      "Symbol": "dim7",
+      "Formula": "P1,m3,d5,d7"
+    },
+    {
+      "Id": "Dominant11",
+      "Name": "Dominant Eleventh",
+      "Symbol": "11",
+      "Formula": "P1,M3,P5,m7,M9,P11"
+    },
+    {
+      "Id": "Dominant13",
+      "Name": "Dominant Thirteenth",
+      "Symbol": "13",
+      "Formula": "P1,M3,P5,m7,M9,P11,M13"
+    },
+    {
+      "Id": "Dominant7",
+      "Name": "Dominant Seventh",
+      "Symbol": "7",
+      "Formula": "P1,M3,P5,m7"
+    },
+    {
+      "Id": "Dominant7Sharp9",
+      "Name": "Dominant Seventh Sharp Ninth",
+      "Symbol": "7#9",
+      "Formula": "P1,M3,P5,m7,A9"
+    },
+    {
+      "Id": "Dominant7Flat9",
+      "Name": "Dominant Seventh Flat Ninth",
+      "Symbol": "7b9",
+      "Formula": "P1,M3,P5,m7,m9"
+    },
+    {
+      "Id": "Dominant9",
+      "Name": "Dominant Ninth",
+      "Symbol": "9",
+      "Formula": "P1,M3,P5,m7,M9"
+    },
+    {
+      "Id": "HalfDiminished",
+      "Name": "Half Diminished",
+      "Symbol": "7dim5",
+      "Formula": "P1,m3,d5,m7"
+    },
+    {
+      "Id": "Major",
+      "Name": "Major",
+      "Symbol": "",
+      "Formula": "P1,M3,P5"
+    },
+    {
+      "Id": "Major11",
+      "Name": "Major Eleventh",
+      "Symbol": "maj11",
+      "Formula": "P1,M3,P5,M7,M9,P11"
+    },
+    {
+      "Id": "Major13",
+      "Name": "Major Thirteenth",
+      "Symbol": "maj13",
+      "Formula": "P1,M3,P5,M7,M9,P11,M13"
+    },
+    {
+      "Id": "Major6",
+      "Name": "Major Sixth",
+      "Symbol": "6",
+      "Formula": "P1,M3,P5,M6"
+    },
+    {
+      "Id": "Major7",
+      "Name": "Major Seventh",
+      "Symbol": "maj7",
+      "Formula": "P1,M3,P5,M7"
+    },
+    {
+      "Id": "Major9",
+      "Name": "Major Ninth",
+      "Symbol": "maj9",
+      "Formula": "P1,M3,P5,M7,M9"
+    },
+    {
+      "Id": "Minor",
+      "Name": "Minor",
+      "Symbol": "m",
+      "Formula": "P1,m3,P5"
+    },
+    {
+      "Id": "Minor11",
+      "Name": "Minor Eleventh",
+      "Symbol": "m11",
+      "Formula": "P1,m3,P5,m7,M9,P11"
+    },
+    {
+      "Id": "Minor13",
+      "Name": "Minor Thirteenth",
+      "Symbol": "m13",
+      "Formula": "P1,m3,P5,m7,M9,P11,M13"
+    },
+    {
+      "Id": "Minor6",
+      "Name": "Minor Sixth",
+      "Symbol": "m6",
+      "Formula": "P1,m3,P5,M6"
+    },
+    {
+      "Id": "Minor7",
+      "Name": "Minor Seventh",
+      "Symbol": "m7",
+      "Formula": "P1,m3,P5,m7"
+    },
+    {
+      "Id": "Minor9",
+      "Name": "Minor Ninth",
+      "Symbol": "m9",
+      "Formula": "P1,m3,P5,m7,M9"
+    },
+    {
+      "Id": "MinorMajor7",
+      "Name": "Minor-Major Seventh",
+      "Symbol": "mM7",
+      "Formula": "P1,m3,P5,M7"
+    },
+    {
+      "Id": "SixNine",
+      "Name": "Six Nine",
+      "Symbol": "6/9",
+      "Formula": "P1,M3,P5,M6,M9"
+    }
   ],
-  "StringedInstruments":
-  [
+  "StringedInstruments": [
     {
       "Id": "Guitar",
       "Name": "Guitar",
       "StringCount": 6,
       "Tunings": [
-        { "Id": "Standard", "Name": "Standard", "Pitches": "E4,B3,G3,D3,A2,E2" },
-        { "Id": "DropD", "Name": "Drop D", "Pitches": "E4,B3,G3,D3,A2,D2" },
-        { "Id": "OpenD", "Name": "Open D", "Pitches": "D4,A3,F#3,D3,A2,D2" },
-        { "Id": "OpenG", "Name": "Open G", "Pitches": "D4,B3,G3,D2,G2,D2" },
-        { "Id": "OpenA", "Name": "Open A", "Pitches": "E4,C#4,A3,E3,A2,E2" }
+        {
+          "Id": "Standard",
+          "Name": "Standard",
+          "Pitches": "E4,B3,G3,D3,A2,E2"
+        },
+        {
+          "Id": "DropD",
+          "Name": "Drop D",
+          "Pitches": "E4,B3,G3,D3,A2,D2"
+        },
+        {
+          "Id": "OpenD",
+          "Name": "Open D",
+          "Pitches": "D4,A3,F#3,D3,A2,D2"
+        },
+        {
+          "Id": "OpenG",
+          "Name": "Open G",
+          "Pitches": "D4,B3,G3,D2,G2,D2"
+        },
+        {
+          "Id": "OpenA",
+          "Name": "Open A",
+          "Pitches": "E4,C#4,A3,E3,A2,E2"
+        }
       ]
     },
     {
@@ -104,7 +620,11 @@
       "Name": "Bass",
       "StringCount": 4,
       "Tunings": [
-        { "Id": "Standard", "Name": "Standard", "Pitches": "G2,D2,A1,E1" }
+        {
+          "Id": "Standard",
+          "Name": "Standard",
+          "Pitches": "G2,D2,A1,E1"
+        }
       ]
     }
   ]

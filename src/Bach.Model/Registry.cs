@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using Bach.Model.Instruments;
 using Bach.Model.Internal;
 using Bach.Model.Serialization;
+using Bach.Model.Serialization.Json;
 
 namespace Bach.Model;
 
@@ -45,10 +45,10 @@ public static class Registry
 
   private const string LIBRARY_FILE_NAME = "Bach.Model.Library.json";
 
-  private static readonly FrozenDictionary<string, ChordFormula> s_chordFormulaBySymbol;
+  private static readonly JsonSerializerOptions s_jsonSerializerOptions =
+    new() { Converters = { new PersistentScaleDegreesJsonConverterFactory() } };
 
-  private static readonly FrozenDictionary<string, ChordFormula>.AlternateLookup<ReadOnlySpan<char>>
-    s_chordFormulaBySymbolAltLookup;
+  private static readonly Lookup<ChordFormula> s_chordSymbolLookup;
 
   #endregion
 
@@ -70,59 +70,12 @@ public static class Registry
       throw new InvalidOperationException( $"Could not load the library from {path}" );
     }
 
-    ScaleFormulas = [];
-    ChordFormulas = [];
-    StringedInstrumentDefinitions = [];
+    ScaleFormulas = LoadScaleFormulas( library );
+    ChordFormulas = LoadChordFormulas( library );
+    StringedInstrumentDefinitions = LoadStringedInstruments( library );
 
-    // Load scales
-    foreach( var scale in library.Scales )
-    {
-      var builder = new ScaleFormulaBuilder( scale.Id, scale.Name )
-                    .SetSteps( scale.Formula );
-
-      if( scale.Alias is not null )
-      {
-        builder.AddAlias( scale.Alias );
-      }
-
-      if( scale.Categories is not null )
-      {
-        builder.AddCategory( scale.Categories );
-      }
-
-      var formula = builder.Build();
-
-      ScaleFormulas.Add( formula );
-    }
-
-    // Load Chords
-    Dictionary<string, ChordFormula> chordFormulaBySymbol = new( StringComparer.OrdinalIgnoreCase );
-
-    foreach( var chord in library.Chords )
-    {
-      var formula = new ChordFormula( chord.Id, chord.Name, chord.Symbol, chord.Formula );
-      ChordFormulas.Add( formula );
-
-      var added = chordFormulaBySymbol.TryAdd( formula.Symbol, formula );
-      Debug.Assert( added, "Found duplicate chord formula symbol" );
-    }
-
-    s_chordFormulaBySymbol = chordFormulaBySymbol.ToFrozenDictionary( StringComparer.OrdinalIgnoreCase );
-    s_chordFormulaBySymbolAltLookup = s_chordFormulaBySymbol.GetAlternateLookup<ReadOnlySpan<char>>();
-
-    // Load Instrument definitions
-    foreach( var instrument in library.StringedInstruments )
-    {
-      var builder = new StringedInstrumentDefinitionBuilder( instrument.Id, instrument.Name, instrument.StringCount );
-
-      foreach( var tuning in instrument.Tunings )
-      {
-        builder.AddTuning( tuning.Id, tuning.Name, tuning.Pitches );
-      }
-
-      var definition = builder.Build();
-      StringedInstrumentDefinitions.Add( definition );
-    }
+    // Create a lookup for chord formulas by symbol for fast access
+    s_chordSymbolLookup = new Lookup<ChordFormula>( ChordFormulas, cf => cf.Symbol );
   }
 
   #endregion
@@ -174,7 +127,7 @@ public static class Registry
     string symbol,
     [MaybeNullWhen( false )] out ChordFormula result )
   {
-    return s_chordFormulaBySymbol.TryGetValue( symbol, out result );
+    return s_chordSymbolLookup.TryGetValue( symbol, out result );
   }
 
   /// <summary>
@@ -190,7 +143,7 @@ public static class Registry
     ReadOnlySpan<char> symbol,
     [MaybeNullWhen( false )] out ChordFormula result )
   {
-    return s_chordFormulaBySymbolAltLookup.TryGetValue( symbol, out result );
+    return s_chordSymbolLookup.TryGetValue( symbol, out result );
   }
 
   /// <summary>
@@ -230,6 +183,79 @@ public static class Registry
 
   #region Implementation
 
+  private static NamedObjectCollection<StringedInstrumentDefinition> LoadStringedInstruments(
+    Library library )
+  {
+    List<StringedInstrumentDefinition> definitions = [];
+
+    foreach( var instrument in library.StringedInstruments )
+    {
+      var builder = new StringedInstrumentDefinitionBuilder( instrument.Id, instrument.Name, instrument.StringCount );
+
+      foreach( var tuning in instrument.Tunings )
+      {
+        builder.AddTuning( tuning.Id, tuning.Name, tuning.Pitches );
+      }
+
+      var definition = builder.Build();
+      definitions.Add( definition );
+    }
+
+    return new NamedObjectCollection<StringedInstrumentDefinition>( definitions );
+  }
+
+  private static NamedObjectCollection<ChordFormula> LoadChordFormulas(
+    Library library )
+  {
+    List<ChordFormula> formulas = [];
+
+    foreach( var chord in library.Chords )
+    {
+      var formula = new ChordFormula( chord.Id, chord.Name, chord.Symbol, chord.Formula );
+      formulas.Add( formula );
+    }
+
+    return new NamedObjectCollection<ChordFormula>( formulas );
+  }
+
+  private static NamedObjectCollection<ScaleFormula> LoadScaleFormulas(
+    Library library )
+  {
+    List<ScaleFormula> formulas = [];
+
+    foreach( var scale in library.Scales )
+    {
+      var builder = new ScaleFormulaBuilder( scale.Id, scale.Name )
+        .SetAscendingIntervals( ParseDegreeIntervals( scale.AscendingDegrees ) );
+
+      if( scale.DescendingDegrees is not null )
+      {
+        builder.SetDescendingIntervals( ParseDegreeIntervals( scale.DescendingDegrees ) );
+      }
+
+      if( scale.Alias is not null )
+      {
+        builder.AddAlias( scale.Alias );
+      }
+
+      if( scale.Categories is not null )
+      {
+        builder.AddCategory( scale.Categories );
+      }
+
+      var formula = builder.Build();
+      formulas.Add( formula );
+    }
+
+    return new NamedObjectCollection<ScaleFormula>( formulas );
+
+    static IEnumerable<Interval> ParseDegreeIntervals(
+      IEnumerable<PersistentScaleDegree> degrees )
+    {
+      return degrees.Select( degree => Interval.Parse( degree.Interval ) );
+    }
+  }
+
   private static string GetLibraryPath()
   {
     // Load the library from the JSON file in the same directory as
@@ -246,7 +272,7 @@ public static class Registry
     var json = File.ReadAllText( path );
 
     // Deserialize
-    var library = JsonSerializer.Deserialize<Library>( json );
+    var library = JsonSerializer.Deserialize<Library>( json, s_jsonSerializerOptions );
     return library;
   }
 

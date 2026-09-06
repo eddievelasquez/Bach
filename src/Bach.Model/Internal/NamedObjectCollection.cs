@@ -22,10 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Bach.Model.Internal;
 
@@ -39,38 +41,41 @@ namespace Bach.Model.Internal;
 ///   The collection preserves insertion order and supports lookups by either the object identifier or its name.
 /// </remarks>
 [DebuggerDisplay( "Count = {Count}" )]
-public sealed class NamedObjectCollection<T>: Collection<T>
+public sealed class NamedObjectCollection<T>: IReadOnlyCollection<T>
   where T: INamedObject
 {
   #region Fields
 
-  private readonly Dictionary<string, T> _byId;
-  private readonly Dictionary<string, T> _byName;
+  private readonly FrozenDictionary<string, T> _byId;
+  private readonly FrozenDictionary<string, T> _byName;
 
   #endregion
 
   #region Constructors
 
-  /// <inheritdoc/>
-  internal NamedObjectCollection()
-    : base( new List<T>() )
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="NamedObjectCollection{T}"/> class with the specified items.
+  /// </summary>
+  /// <param name="items">The items to initialize the collection with.</param>
+  public NamedObjectCollection(
+    IEnumerable<T> items )
   {
-    _byId = new Dictionary<string, T>( Comparer.IdComparer );
-    _byName = new Dictionary<string, T>( Comparer.NameComparer );
+    var byId = new Dictionary<string, T>( Comparer.IdComparer );
+    var byName = new Dictionary<string, T>( Comparer.NameComparer );
+
+    foreach( var namedObject in items )
+    {
+      byId.Add( namedObject.Id, namedObject );
+      byName.Add( namedObject.Name, namedObject );
+    }
+
+    _byId = byId.ToFrozenDictionary( Comparer.IdComparer );
+    _byName = byName.ToFrozenDictionary( Comparer.NameComparer );
   }
 
   #endregion
 
   #region Properties
-
-  private new List<T> Items
-  {
-    get
-    {
-      Debug.Assert( base.Items is List<T> );
-      return (List<T>) base.Items;
-    }
-  }
 
   /// <summary>
   ///   Gets the value associated with the specified ID or name.
@@ -90,6 +95,11 @@ public sealed class NamedObjectCollection<T>: Collection<T>
       throw new KeyNotFoundException( string.Format( $"Id or name not found: {idOrName}" ) );
     }
   }
+
+  /// <summary>
+  ///   Gets the number of items in the collection.
+  /// </summary>
+  public int Count => _byId.Count;
 
   #endregion
 
@@ -125,76 +135,23 @@ public sealed class NamedObjectCollection<T>: Collection<T>
     return false;
   }
 
-  #endregion
-
-  #region Implementation
-
-  /// <inheritdoc/>
-  protected override void ClearItems()
+  /// <summary>
+  ///   Returns an enumerator that iterates through the collection.
+  /// </summary>
+  /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+  public IEnumerator<T> GetEnumerator()
   {
-    base.ClearItems();
-
-    _byId.Clear();
-    _byName.Clear();
+    return _byId.Values.AsEnumerable()
+                .GetEnumerator();
   }
 
-  /// <inheritdoc/>
-  protected override void InsertItem(
-    int index,
-    T item )
+  /// <summary>
+  ///   Returns an enumerator that iterates through the collection.
+  /// </summary>
+  /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+  IEnumerator IEnumerable.GetEnumerator()
   {
-    ArgumentNullException.ThrowIfNull( item );
-
-    _byId.Add( item.Id, item );
-    _byName.Add( item.Name, item );
-
-    base.InsertItem( index, item );
-  }
-
-  /// <inheritdoc/>
-  protected override void RemoveItem(
-    int index )
-  {
-    var item = Items[index];
-    _byId.Remove( item.Id );
-    _byName.Remove( item.Name );
-
-    base.RemoveItem( index );
-  }
-
-  /// <inheritdoc/>
-  protected override void SetItem(
-    int index,
-    T item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-
-    var existingItem = Items[index];
-    SetItem( _byId, item.Id, existingItem.Id, item );
-    SetItem( _byName, item.Name, existingItem.Name, item );
-
-    base.SetItem( index, item );
-  }
-
-  private static void SetItem(
-    Dictionary<string, T> dictionary,
-    string newId,
-    string existingId,
-    T item )
-  {
-    Debug.Assert( dictionary != null );
-    Debug.Assert( !string.IsNullOrEmpty( newId ) );
-    Debug.Assert( !string.IsNullOrEmpty( existingId ) );
-
-    if( dictionary.Comparer.Equals( newId, existingId ) )
-    {
-      dictionary[newId] = item;
-    }
-    else
-    {
-      dictionary.Add( newId, item );
-      dictionary.Remove( existingId );
-    }
+    return GetEnumerator();
   }
 
   #endregion

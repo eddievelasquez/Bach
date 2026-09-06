@@ -33,15 +33,11 @@ public static class IntervalQualityExtensions
 {
   #region Constants
 
-  private static readonly string[] s_classicalSymbols =
-  [
-    $"{Constants.ClassicalDiminishedIntervalQualitySymbol}", "m", "P", "M", $"{Constants.ClassicalAugmentedIntervalQualitySymbol}"
-  ];
+  private static readonly string s_classicalSymbols =
+    $"{Constants.ClassicalDiminishedIntervalQualitySymbol}{Constants.MinorIntervalQualitySymbol}{Constants.PerfectIntervalQualitySymbol}{Constants.MajorIntervalQualitySymbol}{Constants.ClassicalAugmentedIntervalQualitySymbol}";
 
-  private static readonly string[] s_modernSymbols =
-  [
-    $"{Constants.ModernDiminishedIntervalQualitySymbol}", "m", "P", "M", $"{Constants.ModernAugmentedIntervalQualitySymbol}"
-  ];
+  private static readonly string s_modernSymbols =
+    $"{Constants.ModernDiminishedIntervalQualitySymbol}{Constants.MinorIntervalQualitySymbol}{Constants.PerfectIntervalQualitySymbol}{Constants.MajorIntervalQualitySymbol}{Constants.ModernAugmentedIntervalQualitySymbol}";
 
   private static readonly string[] s_shortName = ["dim", "min", "Perf", "Maj", "Aug"];
   private static readonly string[] s_longName = ["Diminished", "Minor", "Perfect", "Major", "Augmented"];
@@ -58,12 +54,12 @@ public static class IntervalQualityExtensions
     /// <summary>
     ///   Returns the classical, common practice, symbol for the given interval quality.
     /// </summary>
-    public string ClassicalSymbol => s_classicalSymbols[(int) intervalQuality];
+    public char ClassicalSymbol => s_classicalSymbols[(int) intervalQuality];
 
     /// <summary>
     ///   Returns the modern, symbolic/analytical, symbol for the given interval quality.
     /// </summary>
-    public string ModernSymbol => s_modernSymbols[(int) intervalQuality];
+    public char ModernSymbol => s_modernSymbols[(int) intervalQuality];
 
     /// <summary>
     ///   Returns the short name for the given interval quality.
@@ -102,8 +98,10 @@ public static class IntervalQualityExtensions
     {
       var quality = (IntervalQuality) ( (int) intervalQuality + semitones );
 
-      ArgumentOutOfRangeException.ThrowIfLessThan( (int) quality, (int) IntervalQuality.Diminished );
-      ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) quality, (int) IntervalQuality.Augmented );
+      if( quality < IntervalQuality.Diminished || quality > IntervalQuality.Augmented )
+      {
+        throw new ArgumentOutOfRangeException( nameof( semitones ), semitones, null );
+      }
 
       return quality;
     }
@@ -181,13 +179,11 @@ public static class IntervalQualityExtensions
     {
       tail = span.TrimStart();
 
-      // TODO: Fix
       alterationDegree = 1;
 
       if( tail.IsEmpty )
       {
         quality = IntervalQuality.Perfect;
-        alterationDegree = 1;
         return true;
       }
 

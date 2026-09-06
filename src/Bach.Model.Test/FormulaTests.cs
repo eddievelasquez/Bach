@@ -555,75 +555,10 @@ public sealed class FormulaTests
   }
 
   [Fact]
-  public void GetRelativeSteps_ReturnsExpectedSteps_ForMultipleIntervals()
-  {
-    // Arrange
-    var f = new TestFormula( "f", "name", Interval.Unison, Interval.MajorThird, Interval.Fifth );
-
-    // Act
-    var steps = f.GetRelativeSteps();
-
-    // Assert
-    steps.Should()
-         .Equal( 4, 3, 5 );
-  }
-
-  [Fact]
-  public void GetRelativeSteps_ReturnsTwelve_WhenOnlyUnison()
-  {
-    // Arrange
-    var f = new TestFormula( "f", "name", Interval.Unison );
-
-    // Act
-    var steps = f.GetRelativeSteps();
-
-    // Assert
-    steps.Should()
-         .Equal( 12 );
-  }
-
-  [Fact]
-  public void GetRelativeSteps_ShouldReturnExpectedSteps_WhenMultipleIntervals()
-  {
-    // Arrange
-    var intervals = new List<Interval>
-    {
-      Interval.Unison,
-      Interval.MajorThird,
-      Interval.Fifth
-    };
-
-    // Act
-    var steps = intervals.ToSteps();
-
-    // Assert
-    steps.Should()
-         .Equal( 4, 3, 5 );
-  }
-
-  [Fact]
-  public void GetRelativeSteps_ShouldReturnSemitoneStepsBetweenIntervals()
-  {
-    var formula = new TestFormula(
-      "test",
-      "Test",
-      Interval.Unison,
-      Interval.MajorSecond,
-      Interval.MajorThird,
-      Interval.Fourth,
-      Interval.Fifth
-    );
-
-    formula.GetRelativeSteps()
-           .Should()
-           .Equal( 2, 2, 1, 2, 5 );
-  }
-
-  [Fact]
   public void GetRelativeSteps_WithNull_ShouldThrowArgumentNullException()
   {
     // Act
-    Action act = () => _ = ((IList<Interval>)null!).ToSteps();
+    Action act = () => _ = ((IList<Interval>)null!).GetSemitoneSteps();
 
     // Assert
     act.Should()
@@ -755,7 +690,7 @@ public sealed class FormulaTests
 
     // Assert
     s.Should()
-     .Be( "MyName: 1,3" );
+     .Be( "MyName: P1,M3" );
   }
 
   [Fact]
@@ -765,7 +700,7 @@ public sealed class FormulaTests
 
     formula.ToString( "N:I" )
            .Should()
-           .Be( "Test:1,3" );
+           .Be( "Test:P1,M3" );
   }
 
   [Fact]

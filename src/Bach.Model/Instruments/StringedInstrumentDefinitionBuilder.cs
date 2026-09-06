@@ -139,7 +139,7 @@ public sealed class StringedInstrumentDefinitionBuilder
   {
     CheckBuilderReuse();
 
-    if( _tuningInfo.Count == 0 )
+    if( _tuningInfo.Empty )
     {
       throw new InvalidOperationException( "A StringedInstrumentDefinition must have at least one Tuning" );
     }

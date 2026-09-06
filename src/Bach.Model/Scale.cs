@@ -158,24 +158,30 @@ public sealed class Scale
   /// <returns>An enumerable that iterates through the scale in ascending fashion.</returns>
   public IEnumerable<PitchClass> GetAscending()
   {
-    // maxIterationCount provides a way to break out of an otherwise infinite
-    // loop, as it doesn't make sense to generate more pitch classes than
-    // the number of pitches that are supported.
-    var maxIterationCount = Pitch.TotalPitchCount;
-    var index = 0;
-
-    while( maxIterationCount-- >= 0 )
-    {
-      yield return this[index];
-
-      index = this.WrapIndex( index + 1 );
-    }
+    return GeneratePitchClasses( Formula.AscendingDegrees );
   }
 
-  /// <summary>Returns an enumerable that iterates through the scale in descending fashion.</summary>
+  /// <summary>
+  /// Returns an enumerable that iterates through the scale in descending fashion.
+  /// </summary>
   /// <returns>An enumerable that iterates through the scale in descending fashion.</returns>
   public IEnumerable<PitchClass> GetDescending()
   {
+    return GeneratePitchClasses( Formula.DescendingDegrees );
+  }
+
+  private IEnumerable<PitchClass> GeneratePitchClasses(
+    IReadOnlyList<ScaleDegreeStep> degreeSteps )
+  {
+    // The root is always the first note in the scale; if the first interval is not Unison,
+    // we need to yield the root
+    if( degreeSteps[0].Interval != Interval.Unison)
+    {
+      yield return Root;
+    }
+
+    // The rest of the notes in the scale are based on the provided intervals.
+
     // maxIterationCount provides a way to break out of an otherwise infinite
     // loop, as it doesn't make sense to generate more pitch classes than
     // the number of pitches that are supported.
@@ -184,9 +190,10 @@ public sealed class Scale
 
     while( maxIterationCount-- >= 0 )
     {
-      yield return this[index];
+      var pitchClass = Root + degreeSteps[index].Interval;
+      yield return pitchClass;
 
-      index = this.WrapIndex( index - 1 );
+      index = this.WrapIndex( index + 1 );
     }
   }
 
@@ -272,13 +279,16 @@ public sealed class Scale
       } while( root != PitchClass.C );
     }
 #else
+    // We calculate the intervals between the given pitch classes and then check which scales contain those intervals.
     var rootNotes = new CircularArray<PitchClass>( pitchClasses );
 
     do
     {
-      var intervals = rootNotes.Intervals()
+      // Calculate the intervals between the given pitch classes, starting from the current root note.
+      var intervals = rootNotes.CalculateIntervals()
                                .ToArray();
 
+      // Check which scales contain those intervals.
       foreach( var formula in Registry.ScaleFormulas )
       {
         if( !formula.Contains( intervals, match ) )
@@ -286,10 +296,12 @@ public sealed class Scale
           continue;
         }
 
+        // If the formula contains the intervals, we create a scale with the current root note and the formula.
         var scale = new Scale( rootNotes[0], formula );
         yield return scale;
       }
 
+      // Move to the next root note in the circular array until we have checked all the pitch classes.
       ++rootNotes.Head;
     } while( rootNotes.Head != 0 );
 #endif
@@ -373,7 +385,7 @@ public sealed class Scale
           break;
 
         case 'S':
-          buf.Append( string.Join( ",", Formula.Generate( Root ).Take( Formula.Steps.Count ) ) );
+          buf.Append( string.Join( ",", Formula.Generate( Root ).Take( Formula.Intervals.Count ) ) );
           break;
 
         default:
@@ -398,7 +410,7 @@ public sealed class Scale
     return
     [
       .. formula.Generate( root )
-                .Take( formula.Steps.Count )
+                .Take( formula.Intervals.Count )
     ];
   }
 
@@ -424,7 +436,7 @@ public sealed class Scale
   private static bool IsTheoretical(
     Scale scale )
   {
-    // Scale is theoretical when it contains at least one double flat or sharp.
+    // A scale is theoretical when it contains at least one double flat or sharp.
     return scale.Any( note => note.Accidental == Accidental.DoubleFlat
                               || note.Accidental == Accidental.DoubleSharp
     );

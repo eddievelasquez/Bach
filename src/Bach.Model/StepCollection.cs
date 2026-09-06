@@ -45,116 +45,32 @@ namespace Bach.Model;
 /// obtained directly from a constructor or a <c>Parse</c>/<c>TryParse</c> call should be treated
 /// as unverified until it has passed through <see cref="ScaleFormulaBuilder"/>.
 /// </remarks>
-public class StepCollection
-  : IReadOnlyCollection<int>,
-    ISpanParsable<StepCollection>,
-    IFormattable
+public static class StepCollection
 {
   #region Constants
 
   private const char STEP_SEPARATOR = '-';
-  private const string STANDARD_TO_STRING_FORMAT = "S";
 
   #endregion
-
-  #region Fields
-
-  private readonly int[] _steps;
-
-  #endregion
-
-  #region Constructors
 
   /// <summary>
-  /// Represents a collection of musical steps that span an octave.
-  /// </summary>
-  /// <param name="steps">The collection of step values.</param>
-  /// <remarks>
-  /// This constructor does not validate <paramref name="steps"/>: it neither checks the number of
-  /// steps nor that the values sum to 12 semitones. Prefer building scale formulas through
-  /// <see cref="ScaleFormulaBuilder"/>, which validates these invariants before use.
-  /// </remarks>
-  public StepCollection(
-    IEnumerable<int> steps )
-  {
-    ArgumentNullException.ThrowIfNull( steps );
-    _steps = [.. steps];
-  }
-
-  #endregion
-
-  #region Properties
-
-  /// <summary>
-  /// Gets the number of steps in the collection.
-  /// </summary>
-  public int Count => _steps.Length;
-
-  #endregion
-
-  #region Public Methods
-
-  /// <inheritdoc/>
-  public IEnumerator<int> GetEnumerator()
-  {
-    return _steps.AsEnumerable()
-                 .GetEnumerator();
-  }
-
-  /// <inheritdoc/>
-  IEnumerator IEnumerable.GetEnumerator()
-  {
-    return GetEnumerator();
-  }
-
-  /// <summary>
-  /// Parses a string into a <see cref="StepCollection"/>.
+  /// Parses a string into a <see cref="List{Int32}"/>.
   /// </summary>
   /// <param name="s">The string to parse.</param>
-  /// <returns>The parsed <see cref="StepCollection"/>.</returns>
+  /// <returns>The parsed <see cref="List{Int32}"/>.</returns>
   /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
   /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
-  public static StepCollection Parse(
+  public static List<int> Parse(
     string s )
   {
-    return Parse( s.AsSpan(), null );
+    return Parse( s.AsSpan() );
   }
 
   /// <summary>
-  /// Parses a string into a <see cref="StepCollection"/>.
-  /// </summary>
-  /// <param name="s">The string to parse.</param>
-  /// <param name="provider">An optional format provider.</param>
-  /// <returns>The parsed <see cref="StepCollection"/>.</returns>
-  /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
-  /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
-  public static StepCollection Parse(
-    string s,
-    IFormatProvider? provider )
-  {
-    ArgumentNullException.ThrowIfNull( s );
-    return Parse( s.AsSpan(), provider );
-  }
-
-  /// <summary>
-  /// Parses a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
+  /// Parses a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="List{Int32}"/>.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
-  /// <returns>The parsed <see cref="StepCollection"/>.</returns>
-  /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
-  /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
-  public static StepCollection Parse(
-    ReadOnlySpan<char> span )
-  {
-    return Parse( span, null );
-  }
-
-  /// <summary>
-  /// Parses a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
-  /// </summary>
-  /// <param name="span">The span of characters to parse.</param>
-  /// <param name="provider">An optional format provider.</param>
-  /// <returns>The parsed <see cref="StepCollection"/>.</returns>
+  /// <returns>The parsed <see cref="List{Int32}"/>.</returns>
   /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
   /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
   /// <remarks>
@@ -162,155 +78,37 @@ public class StepCollection
   /// step character is recognized; it does not verify octave closure (steps summing to 12
   /// semitones). Use <see cref="ScaleFormulaBuilder"/> to obtain a validated scale formula.
   /// </remarks>
-  public static StepCollection Parse(
-    ReadOnlySpan<char> span,
-    IFormatProvider? provider )
+  public static List<int> Parse(
+    ReadOnlySpan<char> span )
   {
     if( span.IsEmpty )
     {
       throw new ArgumentException( "The value cannot be empty.", nameof( span ) );
     }
 
-    return TryParse( span, provider, out var steps )
+    return TryParse( span, out var steps )
       ? steps
       : throw new FormatException( "The value is not in a valid format." );
   }
 
   /// <summary>
-  /// Converts the step collection to its string representation using the standard format.
-  /// </summary>
-  /// <returns>The string representation of the step collection.</returns>
-  public override string ToString()
-  {
-    return ToString( STANDARD_TO_STRING_FORMAT, null );
-  }
-
-  /// <summary>
-  /// Converts the step collection to its string representation using the specified format and format provider.
-  /// </summary>
-  /// <param name="format">The format string.</param>
-  /// <returns>The string representation of the step collection.</returns>
-  /// <remarks>
-  ///
-  /// <para>Format specifiers:</para>
-  ///
-  /// <para>"N": Numeric pattern. e.g. "1-2-3".</para>
-  ///
-  /// <para>"S": Standard uppercase pattern. e.g. "W-W-H-W".</para>
-  ///
-  /// <para>"s": Standard lowercase pattern. e.g. "w-w-h-w".</para>
-  /// </remarks>
-  public string ToString(
-    string? format )
-  {
-    return ToString( format, null );
-  }
-
-  /// <summary>
-  /// Converts the step collection to its string representation using the specified format and format provider.
-  /// </summary>
-  /// <param name="format">The format string.</param>
-  /// <param name="formatProvider">The format provider.</param>
-  /// <returns>The string representation of the step collection.</returns>
-  /// <remarks>
-  ///
-  /// <para>Format specifiers:</para>
-  ///
-  /// <para>"N": Numeric pattern. e.g. "1-2-3".</para>
-  ///
-  /// <para>"S": Standard uppercase pattern. e.g. "W-W-H-W".</para>
-  ///
-  /// <para>"s": Standard lowercase pattern. e.g. "w-w-h-w".</para>
-  /// </remarks>
-  public string ToString(
-    string? format,
-    IFormatProvider? formatProvider )
-  {
-    format ??= STANDARD_TO_STRING_FORMAT;
-
-    var buf = new StringBuilder();
-
-    foreach( var c in format )
-    {
-      switch( c )
-      {
-        case 'N':
-          buf.Append( string.Join( STEP_SEPARATOR, _steps ) );
-          break;
-
-        case 'S':
-          buf.Append( string.Join( STEP_SEPARATOR, _steps.Select( ToUpperCase ) ) );
-          break;
-
-        case 's':
-          buf.Append( string.Join( STEP_SEPARATOR, _steps.Select( ToLowerCase ) ) );
-          break;
-
-        default:
-          buf.Append( c );
-          break;
-      }
-    }
-
-    return buf.ToString();
-
-    static char ToUpperCase(
-      int step )
-    {
-      return step switch
-      {
-        1 => 'H',
-        2 => 'W',
-        _ => (char) ( '0' + step )
-      };
-    }
-
-    static char ToLowerCase(
-      int step )
-    {
-      return step switch
-      {
-        1 => 'h',
-        2 => 'w',
-        _ => (char) ( '0' + step )
-      };
-    }
-  }
-
-  /// <summary>
-  /// Tries to parse a string into a <see cref="StepCollection"/>.
+  /// Tries to parse a string into a <see cref="List{Int32}"/>.
   /// </summary>
   /// <param name="s">The string to parse.</param>
-  /// <param name="steps">The resulting <see cref="StepCollection"/> if parsing is successful.</param>
+  /// <param name="steps">The resulting <see cref="List{Int32}"/> if parsing is successful.</param>
   /// <returns>True if parsing is successful; otherwise, false.</returns>
   public static bool TryParse(
     [NotNullWhen( true )] string? s,
-    [NotNullWhen( true )] out StepCollection? steps )
+    [NotNullWhen( true )] out List<int>? steps )
   {
-    return TryParse( s.AsSpan(), null, out steps );
+    return TryParse( s.AsSpan(), out steps );
   }
 
   /// <summary>
-  /// Tries to parse a string into a <see cref="StepCollection"/>.
-  /// </summary>
-  /// <param name="s">The string to parse.</param>
-  /// <param name="provider">An optional format provider.</param>
-  /// <param name="steps">The resulting <see cref="StepCollection"/> if parsing is successful.</param>
-  /// <returns>True if parsing is successful; otherwise, false.</returns>
-  public static bool TryParse(
-    [NotNullWhen( true )] string? s,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out StepCollection? steps )
-  {
-    return TryParse( s.AsSpan(), provider, out steps );
-  }
-
-  /// <summary>
-  /// Tries to parse a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="StepCollection"/>.
+  /// Tries to parse a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="List{Int32}"/>.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
-  /// <param name="provider">An optional format provider.</param>
-  /// <param name="steps">The resulting <see cref="StepCollection"/> if parsing is successful.</param>
+  /// <param name="steps">The resulting <see cref="List{Int32}"/> if parsing is successful.</param>
   /// <returns>True if parsing is successful; otherwise, false.</returns>
   /// <remarks>
   /// Parsing only validates that the number of steps is within the supported range and that each
@@ -319,8 +117,7 @@ public class StepCollection
   /// </remarks>
   public static bool TryParse(
     ReadOnlySpan<char> span,
-    IFormatProvider? provider,
-    [NotNullWhen( true )] out StepCollection? steps )
+    [NotNullWhen( true )] out List<int>? steps )
   {
     steps = null;
 
@@ -339,6 +136,7 @@ public class StepCollection
       STEP_SEPARATOR,
       StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
     );
+
     var tmp = new List<int>( rangeCount );
 
     for( var i = 0; i < rangeCount; i++ )
@@ -370,9 +168,7 @@ public class StepCollection
       tmp.Add( step );
     }
 
-    steps = new StepCollection( tmp );
+    steps = tmp;
     return true;
   }
-
-  #endregion
 }

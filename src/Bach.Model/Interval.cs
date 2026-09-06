@@ -27,7 +27,11 @@ using System.Text;
 
 namespace Bach.Model;
 
-/// <summary>An interval.</summary>
+/// <summary>
+///   Represents a musical interval, which is the distance between two pitches. The interval is defined by its quantity
+///   (e.g., unison, second, third, etc.), quality (e.g., perfect, major, minor, augmented, diminished), and alteration
+///   degree (for augmented and diminished intervals). The interval can be ascending or descending.
+/// </summary>
 public readonly struct Interval
   : IEquatable<Interval>,
     IComparable<Interval>,
@@ -36,7 +40,7 @@ public readonly struct Interval
 {
   #region Constants
 
-  private const string SYMBOL_QUANTITY_TO_STRING_FORMAT = "sq";
+  private const string SYMBOL_QUANTITY_TO_STRING_FORMAT = "Sq";
 
   private const int SHIFT_SEMITONES = 10;
   private const int SHIFT_QUANTITY = 6;
@@ -258,13 +262,14 @@ public readonly struct Interval
   public IntervalQuality Quality => (IntervalQuality) ( ( _value >> SHIFT_QUALITY ) & MASK_QUALITY );
 
   /// <summary>
-  ///   Gets the interval's alteration degree. This is the number of semitones the interval is altered from its base
-  ///   quality.
+  ///   Gets the interval's alteration degree. This is the number of augmentations or diminutions the interval has. For
+  ///   example, a double augmented interval has an alteration degree of 2, while a triple diminished interval has an
+  ///   alteration degree of -3.
   /// </summary>
   public int AlterationDegree => Quality switch
   {
-    IntervalQuality.Augmented  => Displacement,
-    IntervalQuality.Diminished => Quantity.IsPerfectBased ? -Displacement : -Displacement - 1,
+    IntervalQuality.Augmented  => ChromaticAlteration,
+    IntervalQuality.Diminished => Quantity.IsPerfectBased ? -ChromaticAlteration : -ChromaticAlteration - 1,
     _                          => 1
   };
 
@@ -274,7 +279,7 @@ public readonly struct Interval
   ///   (second, third, sixth, seventh), the base quality is major. The displacement can be negative (diminished) or
   ///   positive (augmented). Up to triple diminished or augmented intervals are supported, hence the range of -4 to +3.
   /// </summary>
-  private int Displacement => DecodeDisplacement( _value );
+  public int ChromaticAlteration => DecodeDisplacement( _value );
 
   /// <summary>Gets a value indicating whether the interval is ascending.</summary>
   /// <value>True if ascending, false if descending.</value>
@@ -323,7 +328,7 @@ public readonly struct Interval
   public bool Equals(
     Interval other )
   {
-    return other._value == _value;
+    return CompareTo( other ) == 0;
   }
 
   /// <inheritdoc/>
@@ -346,146 +351,44 @@ public readonly struct Interval
   }
 
   /// <summary>
-  ///   Gets the enharmonic equivalent of the interval in the specified direction.
+  ///   Gets the enharmonic equivalent of the interval.
   /// </summary>
-  /// <param name="direction">The preferred direction when searching for an enharmonic equivalent with a different quantity.</param>
   /// <returns>The enharmonic equivalent of the interval.</returns>
-  public Interval GetEnharmonicEquivalent(
-    EnharmonicDirection direction = EnharmonicDirection.Nearest )
+  /// <remarks>If the interval is descending, the enharmonic equivalent will have a smaller quantity; if ascending, a larger quantity.</remarks>
+  public Interval GetEnharmonicEquivalent()
   {
-    var semitones = Math.Abs( SemitoneCount );
-    var descending = IsDescending;
+    /*
+       +-----------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+       | Interval# |  ddd  |   dd  |    d  |    m  |    P  |    M  |    A  |   AA  |  AAA  |
+       +-----------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+       |     1     |   —   |   —   |   —   |   —   |   0   |   —   |   1   |   2   |   3   |
+       |     2     |   —   |   —   |   0   |   1   |   —   |   2   |   3   |   4   |   5   |
+       |     3     |   0   |   1   |   2   |   3   |   —   |   4   |   5   |   6   |   7   |
+       |     4     |   2   |   3   |   4   |   —   |   5   |   —   |   6   |   7   |   8   |
+       |     5     |   4   |   5   |   6   |   —   |   7   |   —   |   8   |   9   |  10   |
+       |     6     |   5   |   6   |   7   |   8   |   —   |   9   |  10   |  11   |  12   |
+       |     7     |   7   |   8   |   9   |  10   |   —   |  11   |  12   |  13   |  14   |
+       |     8     |   9   |  10   |  11   |   —   |  12   |   —   |  13   |  14   |  15   |
+       |     9     |  10   |  11   |  12   |  13   |   —   |  14   |  15   |  16   |  17   |
+       |    10     |  12   |  13   |  14   |  15   |   —   |  16   |  17   |  18   |  19   |
+       |    11     |  14   |  15   |  16   |   —   |  17   |   —   |  18   |  19   |  20   |
+       |    12     |  16   |  17   |  18   |   —   |  19   |   —   |  20   |  21   |  22   |
+       |    13     |  17   |  18   |  19   |  20   |   —   |  21   |  22   |  23   |  24   |
+       |    14     |  19   |  20   |  21   |  22   |   —   |  23   |  24   |  25   |  26   |
+       +-----------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+     */
 
-    Interval? best = null;
-    var bestAlterationDegree = int.MaxValue;
-    var bestDistance = int.MaxValue;
+    var offset = IsDescending ? -1 : 1;
+    var enharmonicQuantity = Quantity + offset;
+    var quality = CalcIntervalQuality( enharmonicQuantity, Math.Abs( SemitoneCount ), out var alterationDegree );
 
-    // Iterate through all possible interval quantities to find the best enharmonic equivalent.
-    for( var quantity = IntervalQuantity.Unison; quantity <= IntervalQuantity.Fourteenth; quantity++ )
-    {
-      // Skip candidates that are the same quantity as the original interval.
-      if( quantity == Quantity )
-      {
-        continue;
-      }
-
-      // Skip candidates that don't match the requested direction.
-      if( direction == EnharmonicDirection.SmallerQuantity && quantity > Quantity )
-      {
-        continue;
-      }
-
-      if( direction == EnharmonicDirection.LargerQuantity && quantity < Quantity )
-      {
-        continue;
-      }
-
-      // Calculate the semitone offset from the base semitone count for the candidate quantity.
-      var offset = semitones - s_quantitySemitones[(int) quantity - 1];
-
-      // Skip candidates that are outside the supported range of alterations.
-      if( offset < MIN_DISPLACEMENT || offset > MAX_DISPLACEMENT )
-      {
-        continue;
-      }
-
-      // Calculate the quality of the interval for the candidate quantity.
-      var quality = CalcIntervalQuality( quantity, semitones );
-
-      // Calculate the alteration degree of the interval for the candidate quantity.
-      var alterationDegree = quality switch
-      {
-        IntervalQuality.Augmented => offset, // Positive offset for augmented intervals
-        IntervalQuality.Diminished =>
-          quantity.IsPerfectBased ? -offset : -offset - 1, // Negative offset for diminished intervals
-        _ => 1 // Default alteration degree for perfect and major intervals
-      };
-
-      // Skip candidates that have an alteration degree outside the supported range.
-      if( alterationDegree is < 1 or > 3 )
-      {
-        continue;
-      }
-
-      var distance = Math.Abs( (int) quantity - (int) Quantity );
-
-      // Update the best candidate if this one is better.
-      // A better candidate is one with a smaller alteration degree, or if the alteration degree is the same,
-      // one with a smaller distance in quantity.
-      if( alterationDegree < bestAlterationDegree
-          || ( alterationDegree == bestAlterationDegree && distance < bestDistance ) )
-      {
-        bestAlterationDegree = alterationDegree;
-        bestDistance = distance;
-        best = new Interval( quantity, quality, alterationDegree, descending );
-      }
-    }
-
-    // Fall back to searching without a direction constraint if none was found in the preferred direction,
-    // so the method never silently returns `this` when a valid (opposite-direction) equivalent exists.
-    if( best is null && direction != EnharmonicDirection.Nearest )
-    {
-      return GetEnharmonicEquivalent();
-    }
-
-    // If no valid enharmonic equivalent was found, return the original interval.
-    return best ?? this;
+    return new Interval( enharmonicQuantity, quality, alterationDegree, IsDescending );
   }
 
   /// <inheritdoc/>
   public override int GetHashCode()
   {
     return _value;
-  }
-
-  /// <summary>
-  ///   Converts a semitone distance from the unison into the corresponding interval.
-  /// </summary>
-  /// <param name="semitones">The semitone distance from the unison.</param>
-  /// <returns>The interval represented by the semitone distance.</returns>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when the semitone distance is outside the supported range.</exception>
-  public static Interval FromSemitones(
-    int semitones )
-  {
-    if( semitones == 0 )
-    {
-      return Unison;
-    }
-
-    // If the semitone distance is negative, it indicates a descending interval.
-    if( semitones < 0 )
-    {
-      return FromSemitones( -semitones )
-        .FlipDirection();
-    }
-
-    // Iterate through the quantities to find the matching interval.
-    for( var quantityIndex = 1; quantityIndex < s_quantitySemitones.Length; quantityIndex++ )
-    {
-      var quantity = (IntervalQuantity) ( quantityIndex + 1 );
-      var quantitySemitones = s_quantitySemitones[quantityIndex];
-
-      // If the semitone distance matches the base semitone count for the quantity, we found a perfect or major interval
-      if( semitones == quantitySemitones )
-      {
-        return new Interval( quantity, quantity.IsPerfectBased ? IntervalQuality.Perfect : IntervalQuality.Major );
-      }
-
-      // If the semitone distance is less than the base semitone count for the quantity, we have a minor or augmented interval
-      if( semitones < quantitySemitones )
-      {
-        return quantity.IsPerfectBased
-          ? new Interval( quantity - 1, IntervalQuality.Augmented )
-          : new Interval( quantity, IntervalQuality.Minor );
-      }
-    }
-
-    // If we reach here, the semitone distance is outside the supported range of intervals.
-    throw new ArgumentOutOfRangeException(
-      nameof( semitones ),
-      semitones,
-      $"Semitone distance must be within the supported range of zero to {s_quantitySemitones[^1]}."
-    );
   }
 
   /// <summary>
@@ -542,21 +445,23 @@ public readonly struct Interval
   }
 
   /// <summary>
-  /// Returns a string representation of the value of this <see cref="Interval"/> instance, according to the provided
-  /// format specifier.
+  ///   Returns a string representation of the value of this <see cref="Interval"/> instance, according to the provided
+  ///   format specifier.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <returns>
-  /// A string representation of the value of the current <see cref="Interval"/> object as specified by
-  /// <paramref name="format"/>.
+  ///   A string representation of the value of the current <see cref="Interval"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
-  /// <para>"s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
-  /// <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  /// <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
-  /// <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
-  /// <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
-  /// <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+  ///   <para>
+  ///     "s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.
+  ///   </para>
+  ///   <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
+  ///   <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
+  ///   <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
+  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
   public string ToString(
     string format )
@@ -565,22 +470,24 @@ public readonly struct Interval
   }
 
   /// <summary>
-  /// Returns a string representation of the value of this <see cref="Interval"/> instance, according to the provided
-  /// format specifier and format provider.
+  ///   Returns a string representation of the value of this <see cref="Interval"/> instance, according to the provided
+  ///   format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. (Currently unused)</param>
   /// <returns>
-  /// A string representation of the value of the current <see cref="Interval"/> object as specified by
-  /// <paramref name="format"/>.
+  ///   A string representation of the value of the current <see cref="Interval"/> object as specified by
+  ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
-  /// <para>"s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.</para>
-  /// <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  /// <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
-  /// <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
-  /// <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
-  /// <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
+  ///   <para>
+  ///     "s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.
+  ///   </para>
+  ///   <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
+  ///   <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
+  ///   <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
+  ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
+  ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
   public string ToString(
     string? format,
@@ -591,6 +498,9 @@ public readonly struct Interval
       format = SYMBOL_QUANTITY_TO_STRING_FORMAT;
     }
 
+    // The number of quality symbols to display is determined by the alteration degree. For perfect and major intervals, we display one symbol.
+    // For augmented and diminished intervals, we display a number of symbols equal to the alteration degree.
+    var qualitySymbolCount = AlterationDegree == 0 ? 1 : AlterationDegree;
     var buf = new StringBuilder();
 
     foreach( var f in format )
@@ -601,26 +511,26 @@ public readonly struct Interval
         {
           if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
           {
-            buf.Append( Quality.ClassicalSymbol );
+            buf.Append( Quality.ClassicalSymbol, qualitySymbolCount );
           }
 
           break;
         }
 
         case 'S':
-          buf.Append( Quality.ClassicalSymbol );
+          buf.Append( Quality.ClassicalSymbol, qualitySymbolCount );
           break;
 
         case 'm':
           if( Quality != IntervalQuality.Perfect && Quality != IntervalQuality.Major )
           {
-            buf.Append( Quality.ModernSymbol );
+            buf.Append( Quality.ModernSymbol, qualitySymbolCount );
           }
 
           break;
 
         case 'M':
-          buf.Append( Quality.ModernSymbol );
+          buf.Append( Quality.ModernSymbol, qualitySymbolCount );
           break;
 
         case 'q':
@@ -738,13 +648,6 @@ public readonly struct Interval
 
     if( hasExplicitQuality )
     {
-      // Formulas use 'R' to indicate the unison interval
-      //if( tail[0] == 'R' )
-      //{
-      //  interval = Unison;
-      //  return true;
-      //}
-
       if( !IntervalQuality.TryParse( tail, null, out quality, out alterationDegree, out tail ) )
       {
         return false;
@@ -854,22 +757,38 @@ public readonly struct Interval
   /// </summary>
   /// <param name="quantity">The quantity of the interval.</param>
   /// <param name="displacement">The displacement of the interval in semitones.</param>
+  /// <param name="alterationDegree">The alteration degree of the interval.</param>
   /// <returns>The calculated interval quality.</returns>
   internal static IntervalQuality CalcIntervalQuality(
     IntervalQuantity quantity,
-    int displacement )
+    int displacement,
+    out int alterationDegree )
   {
+    if( quantity < IntervalQuantity.Unison || quantity > IntervalQuantity.Fourteenth )
+    {
+      throw new ArgumentOutOfRangeException( nameof( quantity ), $"{quantity} is not a valid interval quantity" );
+    }
+
     var semitones = s_quantitySemitones[(int) quantity - 1];
     var offset = displacement - semitones;
 
     var perfectBased = quantity.IsPerfectBased;
 
-    return offset switch
+    var quality = offset switch
     {
       0                     => perfectBased ? IntervalQuality.Perfect : IntervalQuality.Major,
       -1 when !perfectBased => IntervalQuality.Minor,
       _                     => offset > 0 ? IntervalQuality.Augmented : IntervalQuality.Diminished
     };
+
+    alterationDegree = quality switch
+    {
+      IntervalQuality.Augmented => offset, // Positive offset for augmented intervals
+      IntervalQuality.Diminished => quantity.IsPerfectBased ? -offset : -offset - 1, // Negative offset for diminished intervals
+      _ => 1 // Default alteration degree for perfect and major intervals
+    };
+
+    return quality;
   }
 
   private static int DecodeDisplacement(

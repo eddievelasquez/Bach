@@ -1,4 +1,4 @@
-// Module Name: PersistentScale.cs
+// Module Name: PersistentScaleDegreesJsonConverterFactory.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -22,29 +22,42 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Bach.Model.Serialization;
+namespace Bach.Model.Serialization.Json;
 
-internal sealed record PersistentScale(
-  string Id,
-  string Name,
-  PersistentScaleDegree[] AscendingDegrees,
-  PersistentScaleDegree[]? DescendingDegrees = null,
-  string? Alias = null,
-  string? Categories = null )
+/// <summary>
+///   Provides a factory for creating <see cref="PersistentScaleDegreesJsonConverter"/> instances for arrays of
+///   <see cref="PersistentScaleDegree"/>.
+/// </summary>
+internal class PersistentScaleDegreesJsonConverterFactory: JsonConverterFactory
 {
-}
+  #region Public Methods
 
-internal sealed record PersistentScaleDegree(
-  string Interval )
-{
-  #region Properties
+  /// <summary>
+  ///   Determines whether the converter can convert the specified type.
+  /// </summary>
+  /// <param name="typeToConvert">The type to convert.</param>
+  /// <returns><c>true</c> if the converter can convert the specified type; otherwise, <c>false</c>.</returns>
+  public override bool CanConvert(
+    Type typeToConvert )
+  {
+    return typeToConvert.IsArray && typeToConvert.GetElementType() == typeof( PersistentScaleDegree );
+  }
 
-  [JsonExtensionData]
-  public Dictionary<string, JsonElement>? Metadata { get; init; }
+  /// <summary>
+  ///   Creates a converter for the specified type.
+  /// </summary>
+  /// <param name="typeToConvert">The type to convert.</param>
+  /// <param name="options">The serializer options.</param>
+  /// <returns>A <see cref="JsonConverter"/> instance for the specified type.</returns>
+  public override JsonConverter? CreateConverter(
+    Type typeToConvert,
+    JsonSerializerOptions options )
+  {
+    return new PersistentScaleDegreesJsonConverter();
+  }
 
   #endregion
 }

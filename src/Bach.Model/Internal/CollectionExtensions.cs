@@ -24,15 +24,32 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Bach.Model.Internal;
 
 /// <summary>
-/// Provides extension methods for collections of intervals and steps.
+///   Provides extension methods for collections of intervals and steps.
 /// </summary>
 public static class CollectionExtensions
 {
+  private const char STEP_SEPARATOR = '-';
+  private const string STANDARD_TO_STRING_FORMAT = "S";
+
   #region Implementation
+
+  extension<T>(
+    IReadOnlyCollection<T> collection )
+  {
+    #region Properties
+
+    /// <summary>
+    ///   Gets a value indicating whether the collection is empty.
+    /// </summary>
+    public bool Empty => collection.Count == 0;
+
+    #endregion
+  }
 
   extension(
     IEnumerable<Interval> intervals )
@@ -40,18 +57,22 @@ public static class CollectionExtensions
     #region Public Methods
 
     /// <summary>
-    /// Converts a collection of intervals to a collection of steps.
+    ///   Converts a collection of intervals to a collection of steps.
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<int> ToSteps()
+    public IEnumerable<int> GetSemitoneSteps()
     {
       ArgumentNullException.ThrowIfNull( intervals );
 
       // Must call a core method to enable checking for null before the first yield
-      return intervals.ToStepsCore();
+      return intervals.GetSemitoneStepsCore();
     }
 
-    private IEnumerable<int> ToStepsCore()
+    #endregion
+
+    #region Implementation
+
+    private IEnumerable<int> GetSemitoneStepsCore()
     {
       var lastCount = 0;
 
@@ -72,54 +93,79 @@ public static class CollectionExtensions
     #endregion
   }
 
+  #endregion
+
   extension(
-    IEnumerable<int> steps )
+    IEnumerable<int> semitoneSteps )
   {
     /// <summary>
-    /// Converts a collection of steps to a collection of intervals.
+    /// Converts the step collection to its string representation using the specified format and format provider.
     /// </summary>
-    /// <returns>A collection of intervals.</returns>
-    public IEnumerable<Interval> ToIntervals()
+    /// <param name="format">The format string.</param>
+    /// <returns>The string representation of the step collection.</returns>
+    /// <remarks>
+    ///
+    /// <para>Format specifiers:</para>
+    ///
+    /// <para>"N": Numeric pattern. e.g. "1-2-3".</para>
+    ///
+    /// <para>"S": Standard uppercase pattern. e.g. "W-W-H-W".</para>
+    ///
+    /// <para>"s": Standard lowercase pattern. e.g. "w-w-h-w".</para>
+    /// </remarks>
+    public string ToString(
+      string? format )
     {
-      ArgumentNullException.ThrowIfNull(steps);
+      format ??= STANDARD_TO_STRING_FORMAT;
 
-      // Must call a core method to enable checking for null before the first yield
-      return steps.ToIntervalsCore();
-    }
+      var buf = new StringBuilder();
 
-    private IEnumerable<Interval> ToIntervalsCore()
-    {
-      // Unison is always the first interval
-      var previous = Interval.Unison;
-      yield return previous;
-
-      // Calculate the cumulative semitone count for each step and yield the corresponding interval
-      var semitones = 0;
-      foreach (var step in steps)
+      foreach( var c in format )
       {
-        semitones += step;
-        var interval = Interval.FromSemitones( semitones );
-
-        // If the interval is the same as the previous one, get its enharmonic equivalent
-        // to avoid duplicate interval quantities
-        if( interval.Quantity == previous.Quantity )
+        switch( c )
         {
-          interval = interval.GetEnharmonicEquivalent();
+          case 'N':
+            buf.Append( string.Join( STEP_SEPARATOR, semitoneSteps ) );
+            break;
+
+          case 'S':
+            buf.Append( string.Join( STEP_SEPARATOR, semitoneSteps.Select( ToUpperCase ) ) );
+            break;
+
+          case 's':
+            buf.Append( string.Join( STEP_SEPARATOR, semitoneSteps.Select( ToLowerCase ) ) );
+            break;
+
+          default:
+            buf.Append( c );
+            break;
         }
-
-        // If the interval is an octave or greater, stop yielding intervals
-        // because we only want intervals within a single octave
-        if( interval >= Interval.Octave )
-        {
-          yield break;
-        }
-
-        yield return interval;
-
-        previous = interval;
       }
+
+      return buf.ToString();
+
+      static char ToUpperCase(
+        int step )
+      {
+        return step switch
+        {
+          1 => 'H',
+          2 => 'W',
+          _ => (char) ( '0' + step )
+        };
+      }
+
+      static char ToLowerCase(
+        int step )
+      {
+        return step switch
+        {
+          1 => 'h',
+          2 => 'w',
+          _ => (char) ( '0' + step )
+        };
+      }
+
     }
   }
-
-  #endregion
 }

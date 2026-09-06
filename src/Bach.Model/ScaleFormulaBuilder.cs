@@ -1,20 +1,20 @@
 // Module Name: ScaleFormulaBuilder.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -34,9 +34,10 @@ public sealed class ScaleFormulaBuilder
 {
   #region Fields
 
-  private readonly List<int> _steps = [];
   private readonly HashSet<string> _aliases = new( Comparer.NameComparer );
   private readonly HashSet<string> _categories = new( Comparer.NameComparer );
+  private readonly List<Interval> _ascendingIntervals = [];
+  private readonly List<Interval> _descendingIntervals = [];
 
   private string? _id;
   private string? _name;
@@ -73,6 +74,108 @@ public sealed class ScaleFormulaBuilder
 
   #region Public Methods
 
+  /// <summary>Sets the scale formula's id.</summary>
+  /// <param name="id">The scale formula's identifier.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetId(
+    string id )
+  {
+    _id = RemoveWhitespace( id );
+    return this;
+  }
+
+  /// <summary>Sets the scale formula's name.</summary>
+  /// <param name="name">The name.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder SetName(
+    string name )
+  {
+    ArgumentNullException.ThrowIfNull( name );
+    _name = name.Trim();
+
+    return this;
+  }
+
+  /// <summary>
+  ///   Adds an ascending interval to the scale formula.
+  /// </summary>
+  /// <param name="interval">The interval to add.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder AddAscendingInterval(
+    Interval interval )
+  {
+    _ascendingIntervals.Add( interval );
+    return this;
+  }
+
+  /// <summary>
+  ///   Adds multiple ascending intervals to the scale formula.
+  /// </summary>
+  /// <param name="intervals">The intervals to add.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder AddAscendingIntervals(
+    IEnumerable<Interval> intervals )
+  {
+    ArgumentNullException.ThrowIfNull( intervals );
+    _ascendingIntervals.AddRange( intervals );
+    return this;
+  }
+
+  /// <summary>
+  ///   Sets the ascending intervals for the scale formula.
+  /// </summary>
+  /// <param name="intervals">The intervals to set.</param>
+  /// <returns>This instance.</returns>
+  /// <remarks>Clears any existing ascending intervals before setting the new ones.</remarks>
+  public ScaleFormulaBuilder SetAscendingIntervals(
+    IEnumerable<Interval> intervals )
+  {
+    ArgumentNullException.ThrowIfNull( intervals );
+    _ascendingIntervals.Clear();
+    _ascendingIntervals.AddRange( intervals );
+    return this;
+  }
+
+  /// <summary>
+  ///   Adds a descending interval to the scale formula.
+  /// </summary>
+  /// <param name="interval">The interval to add.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder AddDescendingInterval(
+    Interval interval )
+  {
+    _descendingIntervals.Add( interval );
+    return this;
+  }
+
+  /// <summary>
+  ///   Adds multiple descending intervals to the scale formula.
+  /// </summary>
+  /// <param name="intervals">The intervals to add.</param>
+  /// <returns>This instance.</returns>
+  public ScaleFormulaBuilder AddDescendingIntervals(
+    IEnumerable<Interval> intervals )
+  {
+    ArgumentNullException.ThrowIfNull( intervals );
+    _descendingIntervals.AddRange( intervals );
+    return this;
+  }
+
+  /// <summary>
+  ///   Sets the descending intervals for the scale formula.
+  /// </summary>
+  /// <param name="intervals">The intervals to set.</param>
+  /// <returns>This instance.</returns>
+  /// <remarks>Clears any existing descending intervals before setting the new ones.</remarks>
+  public ScaleFormulaBuilder SetDescendingIntervals(
+    IEnumerable<Interval> intervals )
+  {
+    ArgumentNullException.ThrowIfNull( intervals );
+    _descendingIntervals.Clear();
+    _descendingIntervals.AddRange( intervals );
+    return this;
+  }
+
   /// <summary>Adds one or more aliases for the scale formula; multiple aliases are separated by semicolons.</summary>
   /// <remarks>An alias is an alternative name by which the scale formula might be known as.</remarks>
   /// <param name="alias">The alias.</param>
@@ -98,39 +201,10 @@ public sealed class ScaleFormulaBuilder
   {
     ArgumentNullException.ThrowIfNull( aliases );
 
-    foreach( var alias in aliases )
+    foreach( var alias in aliases.Select( a => a.Trim() )
+                                 .Where( t => t.Length > 0 ) )
     {
-      var trimmed = alias.Trim();
-
-      if( trimmed.Length > 0 )
-      {
-        _aliases.Add( trimmed );
-      }
-    }
-
-    return this;
-  }
-
-  /// <summary>Adds one or more categories for the scale formula.</summary>
-  /// <remarks>
-  ///   A category is a user defined value that assists in the classification of a scale formula. e.g. Major, Diatonic,
-  ///   Pentatonic, etc.
-  /// </remarks>
-  /// <param name="categories">The categories.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder AddCategories(
-    IEnumerable<string> categories )
-  {
-    ArgumentNullException.ThrowIfNull( categories );
-
-    foreach( var category in categories )
-    {
-      var trimmed = category.Trim();
-
-      if( trimmed.Length > 0 )
-      {
-        _categories.Add( trimmed );
-      }
+      _aliases.Add( alias );
     }
 
     return this;
@@ -152,54 +226,24 @@ public sealed class ScaleFormulaBuilder
     return AddCategories( categories );
   }
 
-  /// <summary>Sets the scale formula's id.</summary>
-  /// <param name="id">The scale formula's identifier.</param>
+  /// <summary>Adds one or more categories for the scale formula.</summary>
+  /// <remarks>
+  ///   A category is a user defined value that assists in the classification of a scale formula. e.g. Major, Diatonic,
+  ///   Pentatonic, etc.
+  /// </remarks>
+  /// <param name="categories">The categories.</param>
   /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetId(
-    string id )
+  public ScaleFormulaBuilder AddCategories(
+    IEnumerable<string> categories )
   {
-    _id = RemoveWhitespace( id );
-    return this;
-  }
+    ArgumentNullException.ThrowIfNull( categories );
 
-  /// <summary>Sets the scale formula's name.</summary>
-  /// <param name="name">The name.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetName(
-    string name )
-  {
-    ArgumentNullException.ThrowIfNull( name );
-    _name = name.Trim();
+    foreach( var category in categories.Select( c => c.Trim() )
+                                       .Where( t => t.Length > 0 ) )
+    {
+      _categories.Add( category );
+    }
 
-    return this;
-  }
-
-  /// <summary>
-  ///   Sets the scale formula's steps, which represent the number of semitones between consecutive notes in the scale.
-  /// </summary>
-  /// <param name="steps">The steps.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetSteps(
-    IEnumerable<int> steps )
-  {
-    ArgumentNullException.ThrowIfNull( steps );
-
-    _steps.Clear();
-    _steps.AddRange( steps );
-
-    return this;
-  }
-
-  /// <summary>
-  ///   Sets the scale formula's steps, which represent the number of semitones between consecutive notes in the scale.
-  /// </summary>
-  /// <param name="steps">The steps.</param>
-  /// <returns>This instance.</returns>
-  public ScaleFormulaBuilder SetSteps(
-    string steps )
-  {
-    ArgumentNullException.ThrowIfNull( steps );
-    SetSteps( StepCollection.Parse( steps ) );
     return this;
   }
 
@@ -219,64 +263,106 @@ public sealed class ScaleFormulaBuilder
   /// </exception>
   public ScaleFormula Build()
   {
-    // Validate required values
     if( string.IsNullOrWhiteSpace( _name ) )
     {
       throw new InvalidOperationException( "Must provide a scale name" );
     }
 
+    if( _ascendingIntervals.Empty )
+    {
+      throw new InvalidOperationException( "Must provide ascending scale intervals" );
+    }
+
+    ValidateIntervals( _ascendingIntervals, "ascending" );
+
+    if( !_descendingIntervals.Empty )
+    {
+      if( _descendingIntervals.Count != _ascendingIntervals.Count )
+      {
+        throw new InvalidOperationException( "Ascending and descending degree collections must have the same count" );
+      }
+
+      ValidateIntervals( _descendingIntervals, "descending" );
+
+      // If descending intervals were provided, we will reverse them to ensure they are in descending order.
+      _descendingIntervals.Reverse();
+    }
+    else
+    {
+      // If no descending intervals were provided, we will automatically generate them by reversing the ascending intervals.
+      _descendingIntervals.AddRange( ( (IEnumerable<Interval>) _ascendingIntervals ).Reverse() );
+    }
+
     // Validate steps
 
-    // 1. Check that the number of steps is at least the minimum required for a scale (5 steps for a pentatonic scale)
-    if( _steps.Count < Constants.MinimumScaleStepCount )
+    // 1. Check that the number of intervals is at least the minimum allowed for a scale (5 steps for a pentatonic scale)
+    // No need to check the descending intervals because they must match the ascending intervals in count if provided.
+    if( _ascendingIntervals.Count < Constants.MinimumScaleStepCount )
     {
-      throw new InvalidOperationException(
-        $"A scale must contain at least {Constants.MinimumScaleStepCount} steps ({Constants.MinimumScaleStepCount - 1} intervals)"
-      );
+      throw new InvalidOperationException( $"A scale must contain at least {Constants.MinimumScaleStepCount} intervals" );
     }
 
-    // 2. Check that the number of steps does not exceed the maximum allowed for a scale (12 steps for a chromatic scale)
-    if( _steps.Count > Constants.MaximumScaleStepCount )
+    // 2. Check that the number of intervals does not exceed the maximum allowed for a scale (12 steps for a chromatic scale)
+    // No need to check the descending intervals because they must match the ascending intervals in count if provided.
+    if( _ascendingIntervals.Count > Constants.MaximumScaleStepCount )
     {
-      throw new InvalidOperationException(
-        $"A scale must contain at most {Constants.MaximumScaleStepCount} steps ({Constants.MaximumScaleStepCount - 1} intervals)"
-      );
-    }
-
-    // 3. Check that each step is within the valid range of semitones (1 to 4 semitones)
-    if( _steps.Any( step => step < Constants.MinimumScaleStepSize || step > Constants.MaximumScaleStepSize ) )
-    {
-      throw new InvalidOperationException(
-        $"A scale step must be between {Constants.MinimumScaleStepSize} and {Constants.MaximumScaleStepSize} semitones"
-      );
-    }
-
-    // 4. Check that the sum of the steps equals 12 semitones (the total number of semitones in an octave)
-    if( _steps.Sum() != Constants.OctaveSemitoneCount )
-    {
-      throw new InvalidOperationException( $"The sum of the scale steps must be {Constants.OctaveSemitoneCount} semitones" );
+      throw new InvalidOperationException( $"A scale must contain at most {Constants.MaximumScaleStepCount} intervals" );
     }
 
     // Add default values
     _id ??= RemoveWhitespace( _name );
 
-    var intervals = new SortedSet<Interval>( _steps.ToIntervals() );
-    Categorize( intervals );
+    Categorize( [.. _ascendingIntervals] );
+
+    // Calculate the formula's ascending and descending degrees using the position of each interval as the degree's ordinal
+    var ascendingDegrees = _ascendingIntervals.Select( (
+                                                         interval,
+                                                         index ) => new ScaleDegreeStep( index + 1, interval )
+                                              )
+                                              .ToList();
+
+    var descendingDegrees = _descendingIntervals.Select( (
+                                                           interval,
+                                                           index ) => new ScaleDegreeStep( index + 1, interval )
+                                                )
+                                                .ToList();
 
     var formula = new ScaleFormula(
       _id,
       _name,
-      _steps,
-      intervals,
+      ascendingDegrees,
+      descendingDegrees,
       _categories,
       _aliases
     );
+
     return formula;
   }
 
   #endregion
 
   #region Implementation
+
+  private static void ValidateIntervals(
+    IReadOnlyList<Interval> intervals,
+    string direction )
+  {
+    if( intervals[0] != Interval.Unison )
+    {
+      throw new InvalidOperationException( $"The first {direction} scale interval must be unison (P1)" );
+    }
+
+    for( var index = 1; index < intervals.Count; index++ )
+    {
+      var thisSemitoneCount = intervals[index].SemitoneCount;
+      var prevSemitoneCount = intervals[index - 1].SemitoneCount;
+
+      if( thisSemitoneCount <= prevSemitoneCount )
+      {
+        throw new InvalidOperationException( $"The {direction} scale intervals must be strictly ascending" );
+      }
+    }
+  }
 
   private void Categorize(
     SortedSet<Interval> intervals )
@@ -287,26 +373,19 @@ public sealed class ScaleFormulaBuilder
       _categories.Add( ScaleCategory.Diatonic );
     }
 
-    // Is the scale major or minor?
+    // A major scale contains a functional major third and a perfect fifth.
+    // A minor scale contains a functional minor third and a perfect fifth.
+    // A scale that contains both minor and major third intervals doesn't have
+    // a functional third so it's neither major nor minor.
     if( intervals.Contains( Interval.Fifth ) )
     {
-      // If the scale contains a perfect fifth, it can be either major or minor. We can determine which one it is
-      // by checking for the presence of a major third or minor third.
-      var isMajor = intervals.Contains( Interval.MajorThird );
-      var isMinor = intervals.Contains( Interval.MinorThird );
-
-      if( isMajor )
+      if( intervals.Contains( Interval.MajorThird ) && !intervals.Contains( Interval.MinorThird ) )
       {
         _categories.Add( ScaleCategory.Major );
       }
 
-      if( isMinor )
+      if( intervals.Contains( Interval.MinorThird ) && !intervals.Contains( Interval.MajorThird ) )
       {
-        if( isMajor )
-        {
-          throw new InvalidOperationException( "A scale cannot be both major and minor" );
-        }
-
         _categories.Add( ScaleCategory.Minor );
       }
     }
@@ -335,6 +414,7 @@ public sealed class ScaleFormulaBuilder
 
     bool IsDiatonic()
     {
+      // A diatonic scale is a heptatonic (7 step) scale that consists of five whole steps and two half steps
       if( intervals.Count != 7 )
       {
         return false;
@@ -342,20 +422,36 @@ public sealed class ScaleFormulaBuilder
 
       var wholeSteps = 0;
       var halfSteps = 0;
+      var lastStepSize = 0;
+      var totalSemitones = 0;
 
-      foreach( var step in _steps )
+      const int Whole = 2;
+      const int Half = 1;
+
+      foreach( var stepSize in _ascendingIntervals.GetSemitoneSteps() )
       {
-        if( step == 2 )
+        switch( stepSize )
         {
-          ++wholeSteps;
+          case Whole:
+            ++wholeSteps;
+            break;
+
+          // If the last step was a half step, then this is not a diatonic scale because
+          // the two half steps must be separated by at least one whole step.
+          case Half when lastStepSize == Half:
+            return false;
+
+          case Half:
+            ++halfSteps;
+            break;
         }
-        else if( step == 1 )
-        {
-          ++halfSteps;
-        }
+
+        lastStepSize = stepSize;
+        totalSemitones += stepSize;
       }
 
-      return wholeSteps == 5 && halfSteps == 2;
+      // A diatonic scale must have a total of 12 semitones, 5 whole steps and 2 half steps.
+      return totalSemitones == Constants.OctaveSemitoneCount && wholeSteps == 5 && halfSteps == 2;
     }
   }
 
@@ -368,10 +464,22 @@ public sealed class ScaleFormulaBuilder
       return null;
     }
 
-    return new string(
-      value.Where( c => !char.IsWhiteSpace( c ) )
-           .ToArray()
-    );
+    // Use stackalloc to allocate a buffer on the stack for performance, since we know the
+    // maximum size needed is the length of the input string.
+    Span<char> buffer = stackalloc char[value.Length];
+    var index = 0;
+
+    foreach( var c in value )
+    {
+      // Only copy non-whitespace characters to the buffer
+      if( !char.IsWhiteSpace( c ) )
+      {
+        buffer[index++] = c;
+      }
+    }
+
+    // Create a new string from the buffer up to the index of the last non-whitespace character
+    return new string( buffer[..index] );
   }
 
   #endregion
