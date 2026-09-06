@@ -1,6 +1,4 @@
-using Bach.Model.Analysis;
-
-namespace Bach.Model.Test.Analysis;
+namespace Bach.Model.Analysis.Test;
 
 public class ModalInterchangeTests
 {

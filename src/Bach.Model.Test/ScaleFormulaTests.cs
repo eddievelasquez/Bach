@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Linq;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Test;
 

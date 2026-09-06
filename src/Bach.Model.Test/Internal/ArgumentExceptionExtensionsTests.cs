@@ -22,9 +22,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Bach.Model.Internal;
-
-namespace Bach.Model.Test.Internal;
+namespace Bach.Model.Internal.Test;
 
 public sealed class ArgumentExceptionExtensionsTests
 {

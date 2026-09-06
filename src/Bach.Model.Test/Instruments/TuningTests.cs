@@ -23,9 +23,8 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Diagnostics.CodeAnalysis;
-using Bach.Model.Instruments;
 
-namespace Bach.Model.Test.Instruments;
+namespace Bach.Model.Instruments.Test;
 
 public sealed class TuningTests
 {

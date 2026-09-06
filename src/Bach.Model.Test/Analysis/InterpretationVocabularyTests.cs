@@ -22,9 +22,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Bach.Model.Analysis;
-
-namespace Bach.Model.Test.Analysis;
+namespace Bach.Model.Analysis.Test;
 
 public sealed class InterpretationVocabularyTests
 {

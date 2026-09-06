@@ -23,9 +23,8 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Linq;
-using Bach.Model.Analysis;
 
-namespace Bach.Model.Test.Analysis;
+namespace Bach.Model.Analysis.Test;
 
 public class RootlessJazzVoicingTests
 {

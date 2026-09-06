@@ -24,7 +24,7 @@
 
 using System.Linq;
 
-namespace Bach.Model.Test.Instruments;
+namespace Bach.Model.Instruments.Test;
 
 public sealed class TuningCollectionTests
 {
