@@ -474,7 +474,7 @@ public readonly struct Interval
   ///   format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
-  /// <param name="provider">The format provider. (Currently unused)</param>
+  /// <param name="provider">The format provider. Not used.</param>
   /// <returns>
   ///   A string representation of the value of the current <see cref="Interval"/> object as specified by
   ///   <paramref name="format"/>.

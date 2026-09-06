@@ -66,7 +66,7 @@ public static class Registry
 
     if( library is null )
     {
-      // NOTE: Throwing in a static ctor will cause the application to terminate
+      // NOTE: An exception in a static constructor stops the application.
       throw new InvalidOperationException( $"Could not load the library from {path}" );
     }
 

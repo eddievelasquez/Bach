@@ -75,7 +75,7 @@ public static class IntervalExtensions
         yield break;
       }
 
-      // The first pitch class is considered the root, and all subsequent intervals are calculated relative to this root.
+      // The first pitch class is the root. Calculate all later intervals relative to this root.
       var root = e.Current;
 
       // If there are no more pitch classes after the root, we cannot calculate any intervals, so we exit early.

@@ -39,10 +39,10 @@ namespace Bach.Model;
 /// character must map to a known step size, and (when parsing) the number of steps must fall
 /// within the supported range. It does <b>not</b> guarantee music-theory invariants such as
 /// octave closure (steps summing to 12 semitones) or a valid scale cardinality. The only
-/// supported way to obtain a <see cref="StepCollection"/> that is guaranteed to represent a
+/// supported way to get a <see cref="StepCollection"/> that is guaranteed to represent a
 /// valid scale is through <see cref="ScaleFormulaBuilder.Build"/>, which performs that
 /// validation before constructing the owning <see cref="ScaleFormula"/>. A <see cref="StepCollection"/>
-/// obtained directly from a constructor or a <c>Parse</c>/<c>TryParse</c> call should be treated
+/// returned directly from a constructor or a <c>Parse</c>/<c>TryParse</c> call should be treated
 /// as unverified until it has passed through <see cref="ScaleFormulaBuilder"/>.
 /// </remarks>
 public static class StepCollection
@@ -76,7 +76,7 @@ public static class StepCollection
   /// <remarks>
   /// Parsing only validates that the number of steps is within the supported range and that each
   /// step character is recognized; it does not verify octave closure (steps summing to 12
-  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to obtain a validated scale formula.
+  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to get a validated scale formula.
   /// </remarks>
   public static List<int> Parse(
     ReadOnlySpan<char> span )
@@ -113,7 +113,7 @@ public static class StepCollection
   /// <remarks>
   /// Parsing only validates that the number of steps is within the supported range and that each
   /// step character is recognized; it does not verify octave closure (steps summing to 12
-  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to obtain a validated scale formula.
+  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to get a validated scale formula.
   /// </remarks>
   public static bool TryParse(
     ReadOnlySpan<char> span,

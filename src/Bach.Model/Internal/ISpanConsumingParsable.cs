@@ -85,7 +85,7 @@ public interface ISpanConsumingParsable<TSelf>: ISpanParsable<TSelf>
   ///   <para>
   ///     Implementations should consume only the characters necessary to parse a valid
   ///     instance of <typeparamref name="TSelf"/>. The <paramref name="tail"/> parameter
-  ///     enables callers to perform additional parsing operations on the remaining span.
+  ///     lets callers parse the remaining span.
   ///   </para>
   ///   <para>
   ///     This method must not throw exceptions for invalid input. Instead, it should

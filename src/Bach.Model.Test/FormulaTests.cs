@@ -127,7 +127,7 @@ public sealed class FormulaTests
 
   #region Public Methods
 
-  // Additional tests added by automated test generator
+  // More tests added by the automated test generator.
 
   [Fact]
   public void Constructor_ShouldInitializeProperties_WhenArgumentsAreValid()

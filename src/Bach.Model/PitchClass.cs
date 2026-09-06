@@ -246,7 +246,7 @@ public readonly struct PitchClass
   ///   This ordering is spelling-sensitive, consistent with <see cref="Equals(PitchClass)"/>: it
   ///   orders first by note name (C, D, E, F, G, A, B) and then by accidental (double flat to double
   ///   sharp), so <c>CompareTo(other) == 0</c> if and only if <c>Equals(other) == true</c>. C♯ and D♭
-  ///   therefore do <b>not</b> compare as equal. Use <see cref="EnharmonicCompareTo"/> for an ordering
+  ///   so they do <b>not</b> compare as equal. Use <see cref="EnharmonicCompareTo"/> for an ordering
   ///   based on chromatic pitch height (enharmonic position) instead.
   /// </remarks>
   public int CompareTo(
@@ -305,7 +305,7 @@ public readonly struct PitchClass
     NoteName noteName,
     Accidental accidental )
   {
-    // This really doesn't create a PitchClass but returns one of the pre-created ones
+    // This does not create a PitchClass. It returns one of the pre-created instances.
     // from the enharmonics table.
 
     // First we determine the row in the enharmonics table that corresponds to the
@@ -513,7 +513,7 @@ public readonly struct PitchClass
   ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
-  /// <param name="provider">The format provider. (Currently unused)</param>
+  /// <param name="provider">The format provider. Not used.</param>
   /// <returns>
   ///   A string representation of the value of the current <see cref="Formula"/> object as specified by
   ///   <paramref name="format"/>.

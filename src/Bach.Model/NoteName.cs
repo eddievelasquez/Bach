@@ -258,7 +258,7 @@ public readonly struct NoteName
     IFormatProvider? provider,
     out NoteName noteName )
   {
-    // We want to make sure that the entire span is consumed, so we call the
+    // Check that the entire span is consumed by calling the
     // overload that returns the tail and check if it's empty.
     return TryParse( span, provider, out noteName, out var tail ) && tail.IsEmpty;
   }

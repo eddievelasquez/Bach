@@ -105,9 +105,9 @@ public sealed class Scale
   /// <summary>Determines if this scale is theoretical.</summary>
   /// <remarks>
   ///   A theoretical scale is one that contains at least one double flat or double sharp accidental.
-  ///   These scales exist in the musical theory realm but are not used in practice due to their complexity.
+  ///   These scales exist in music theory but are not used in practice because of their complexity.
   ///   There's always another practical scale that contains exactly the same enharmonic pitches in the same order.
-  ///   See <see cref="GetEnharmonicScale"/> for a way to obtain said scale.
+  ///   See <see cref="GetEnharmonicScale"/> to get that scale.
   /// </remarks>
   /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
   public bool Theoretical { get; }
@@ -340,7 +340,7 @@ public sealed class Scale
   ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
-  /// <param name="provider">The format provider. (Currently unused)</param>
+  /// <param name="provider">The format provider. Not used.</param>
   /// <returns>
   ///   A string representation of the value of the current <see cref="Scale"/> object as specified by
   ///   <paramref name="format"/>.
