@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Bach.Model.Internal;
 
@@ -92,7 +93,9 @@ public sealed class NamedObjectCollection<T>: IReadOnlyCollection<T>
         return item;
       }
 
-      throw new KeyNotFoundException( string.Format( $"Id or name not found: {idOrName}" ) );
+      throw new KeyNotFoundException(
+        string.Format( $"{Humanize( GetType() )} with id or name '{idOrName}' was not found." )
+      );
     }
   }
 
@@ -152,6 +155,36 @@ public sealed class NamedObjectCollection<T>: IReadOnlyCollection<T>
   IEnumerator IEnumerable.GetEnumerator()
   {
     return GetEnumerator();
+  }
+
+  #endregion
+
+  #region Implementation
+
+  private static string Humanize(
+    Type type )
+  {
+    if (!type.IsGenericType )
+    {
+      return Humanize( type.Name );
+    }
+
+    var gt = type.GetGenericArguments()
+                 .First();
+
+    return Humanize( gt.Name );
+  }
+
+  private static string Humanize(
+    string idOrName )
+  {
+    // Split a pascal-case or camel-case string into words and join them with spaces
+    var words = Regex.Matches( idOrName, @"[A-Z][a-z]*|[a-z]+|\d+" )
+                     .Select( m => m.Value )
+                     .ToArray();
+
+    var result = string.Join( " ", words );
+    return result;
   }
 
   #endregion

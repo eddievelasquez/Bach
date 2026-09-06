@@ -1,20 +1,20 @@
 // Module Name: KeyTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -28,12 +28,12 @@ public sealed class KeyTests
 {
   #region Properties
 
-  public static TheoryData<string, PitchClass, ModeType> ModeNames =>
+  public static TheoryData<string, PitchClass, ScaleDefinition> ModeNames =>
     new()
     {
-      { "Am", PitchClass.A, ModeType.Minor },
-      { "A", PitchClass.A, ModeType.Major },
-      { "AM", PitchClass.A, ModeType.Major }
+      { "Am", PitchClass.A, ScaleDefinition.NaturalMinor },
+      { "A", PitchClass.A, ScaleDefinition.Major },
+      { "AM", PitchClass.A, ScaleDefinition.Major }
     };
 
   #endregion
@@ -45,7 +45,7 @@ public sealed class KeyTests
   {
     // Arrange
     var pitchClass = PitchClass.BFlat;
-    var mode = ModeType.Major;
+    var mode = ScaleDefinition.Major;
 
     // Act
     var key = new Key( pitchClass, mode );
@@ -59,7 +59,7 @@ public sealed class KeyTests
   public void Constructor_ShouldCreateScaleWithMajorFormula_WhenModeIsMajor()
   {
     // Arrange & Act
-    var key = new Key( PitchClass.D, ModeType.Major );
+    var key = new Key( PitchClass.D, ScaleDefinition.Major );
 
     // Assert
     key.Scale.Formula.Name.Should()
@@ -70,7 +70,7 @@ public sealed class KeyTests
   public void Constructor_ShouldCreateScaleWithNaturalMinorFormula_WhenModeIsMinor()
   {
     // Arrange & Act
-    var key = new Key( PitchClass.D, ModeType.Minor );
+    var key = new Key( PitchClass.D, ScaleDefinition.NaturalMinor );
 
     // Assert
     key.Scale.Formula.Name.Should()
@@ -82,7 +82,7 @@ public sealed class KeyTests
   {
     // Arrange
     var pitchClass = PitchClass.E;
-    var mode = ModeType.Major;
+    var mode = ScaleDefinition.Major;
 
     // Act
     var key = new Key( pitchClass, mode );
@@ -91,7 +91,7 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( pitchClass );
 
-    key.Mode.Should()
+    key.ScaleDefinition.Should()
        .Be( mode );
 
     key.Scale.Should()
@@ -104,13 +104,13 @@ public sealed class KeyTests
   [Fact]
   public void Constructor_ShouldInitializeCorrectly_ForMajorKey()
   {
-    var key = new Key( PitchClass.G, ModeType.Major );
+    var key = new Key( PitchClass.G, ScaleDefinition.Major );
 
     key.Tonic.Should()
        .Be( PitchClass.G );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
 
     key.KeySignature.AccidentalCount.Should()
        .Be( 1 );
@@ -131,13 +131,13 @@ public sealed class KeyTests
   [Fact]
   public void Constructor_ShouldInitializeCorrectly_ForMinorKey()
   {
-    var key = new Key( PitchClass.E, ModeType.Minor );
+    var key = new Key( PitchClass.E, ScaleDefinition.NaturalMinor );
 
     key.Tonic.Should()
        .Be( PitchClass.E );
 
-    key.Mode.Should()
-       .Be( ModeType.Minor );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.NaturalMinor );
 
     key.KeySignature.AccidentalCount.Should()
        .Be( 1 );
@@ -154,7 +154,7 @@ public sealed class KeyTests
   {
     // Arrange
     var pitchClass = PitchClass.C;
-    var mode = ModeType.Major;
+    var mode = ScaleDefinition.Major;
 
     // Act
     var key = new Key( pitchClass, mode );
@@ -163,7 +163,7 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( pitchClass );
 
-    key.Mode.Should()
+    key.ScaleDefinition.Should()
        .Be( mode );
 
     key.Scale.Should()
@@ -181,7 +181,7 @@ public sealed class KeyTests
   {
     // Arrange
     var pitchClass = PitchClass.A;
-    var mode = ModeType.Minor;
+    var mode = ScaleDefinition.NaturalMinor;
 
     // Act
     var key = new Key( pitchClass, mode );
@@ -190,7 +190,7 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( pitchClass );
 
-    key.Mode.Should()
+    key.ScaleDefinition.Should()
        .Be( mode );
 
     key.Scale.Should()
@@ -207,9 +207,9 @@ public sealed class KeyTests
   public void Constructor_ShouldSetKeySignatureFromTable_WhenKeyIsInTable()
   {
     // Arrange & Act
-    var keyC = new Key( PitchClass.C, ModeType.Major );
-    var keyG = new Key( PitchClass.G, ModeType.Major );
-    var keyAm = new Key( PitchClass.A, ModeType.Minor );
+    var keyC = new Key( PitchClass.C, ScaleDefinition.Major );
+    var keyG = new Key( PitchClass.G, ScaleDefinition.Major );
+    var keyAm = new Key( PitchClass.A, ScaleDefinition.NaturalMinor );
 
     // Assert
     keyC.KeySignature.Should()
@@ -226,7 +226,7 @@ public sealed class KeyTests
   public void Constructor_ShouldSetKeySignatureFromTable_WhenKeyIsInTableDirectly()
   {
     // Arrange & Act
-    var key = new Key( PitchClass.DFlat, ModeType.Major );
+    var key = new Key( PitchClass.DFlat, ScaleDefinition.Major );
 
     // Assert
     key.KeySignature.Should()
@@ -240,7 +240,7 @@ public sealed class KeyTests
   public void Constructor_ShouldSetKeySignature_WhenKeyIsInTable()
   {
     // Arrange & Act
-    var key = new Key( PitchClass.G, ModeType.Major );
+    var key = new Key( PitchClass.G, ScaleDefinition.Major );
 
     // Assert
     key.KeySignature.Should()
@@ -263,8 +263,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.AFlat );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -283,8 +283,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.CSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -303,8 +303,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.F );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -323,8 +323,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.E );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -343,8 +343,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.E );
 
-    key.Mode.Should()
-       .Be( ModeType.Minor );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.NaturalMinor );
   }
 
   [Fact]
@@ -385,8 +385,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.EFlat );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -405,8 +405,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.GSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -425,8 +425,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.D );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -445,8 +445,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.D );
 
-    key.Mode.Should()
-       .Be( ModeType.Minor );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.NaturalMinor );
   }
 
   [Fact]
@@ -507,8 +507,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.FSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -527,8 +527,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.BFlat );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -547,8 +547,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.C );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -567,8 +567,8 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( PitchClass.D );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Theory]
@@ -576,7 +576,7 @@ public sealed class KeyTests
   public void Parse_ShouldReturnMinorKey_WhenValueEndsWithM(
     string value,
     PitchClass tonic,
-    ModeType mode )
+    ScaleDefinition mode )
   {
     // Act
     var key = Key.Parse( value );
@@ -588,7 +588,7 @@ public sealed class KeyTests
     key.Tonic.Should()
        .Be( tonic );
 
-    key.Mode.Should()
+    key.ScaleDefinition.Should()
        .Be( mode );
   }
 
@@ -637,7 +637,7 @@ public sealed class KeyTests
   [Fact]
   public void ToString_ShouldRenderTonicAndMode()
   {
-    var key = new Key( PitchClass.C, ModeType.Major );
+    var key = new Key( PitchClass.C, ScaleDefinition.Major );
 
     key.ToString()
        .Should()
@@ -648,7 +648,7 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenKeyHasFlatTonic()
   {
     // Arrange
-    var key = new Key( PitchClass.BFlat, ModeType.Major );
+    var key = new Key( PitchClass.BFlat, ScaleDefinition.Major );
 
     // Act
     var result = key.ToString();
@@ -662,7 +662,7 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenKeyIsMajor()
   {
     // Arrange
-    var key = new Key( PitchClass.G, ModeType.Major );
+    var key = new Key( PitchClass.G, ScaleDefinition.Major );
 
     // Act
     var result = key.ToString();
@@ -676,35 +676,35 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenKeyIsMinor()
   {
     // Arrange
-    var key = new Key( PitchClass.A, ModeType.Minor );
+    var key = new Key( PitchClass.A, ScaleDefinition.NaturalMinor );
 
     // Act
     var result = key.ToString();
 
     // Assert
     result.Should()
-          .Be( "A Minor" );
+           .Be( "A Natural Minor" );
   }
 
   [Fact]
   public void ToString_ShouldReturnFormattedString_WhenKeyIsMinorWithSharp()
   {
     // Arrange
-    var key = new Key( PitchClass.CSharp, ModeType.Minor );
+    var key = new Key( PitchClass.CSharp, ScaleDefinition.NaturalMinor );
 
     // Act
     var result = key.ToString();
 
     // Assert
     result.Should()
-          .Be( "C# Minor" );
+           .Be( "C# Natural Minor" );
   }
 
   [Fact]
   public void ToString_ShouldReturnFormattedString_WhenTonicHasAccidental()
   {
     // Arrange
-    var key = new Key( PitchClass.FSharp, ModeType.Major );
+    var key = new Key( PitchClass.FSharp, ScaleDefinition.Major );
 
     // Act
     var result = key.ToString();
@@ -835,8 +835,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.E );
 
-    key.Mode.Should()
-       .Be( ModeType.Minor );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.NaturalMinor );
   }
 
   [Fact]
@@ -858,8 +858,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.BFlat );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -881,8 +881,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.CSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -904,8 +904,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.F );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -927,8 +927,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.E );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -950,8 +950,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.DSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -973,8 +973,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.G );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -993,8 +993,8 @@ public sealed class KeyTests
     key.Should()
        .NotBeNull();
 
-    key!.Mode.Should()
-        .Be( ModeType.Major );
+    key!.ScaleDefinition.Should()
+        .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1016,8 +1016,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.EFlat );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1141,8 +1141,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.D );
 
-    key.Mode.Should()
-       .Be( ModeType.Minor );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.NaturalMinor );
   }
 
   [Fact]
@@ -1164,8 +1164,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.EFlat );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1187,8 +1187,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.G );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1210,8 +1210,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.D );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1233,8 +1233,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.ASharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1256,8 +1256,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.DSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1279,8 +1279,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.GSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1370,8 +1370,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.A );
 
-    key.Mode.Should()
-       .Be( ModeType.Minor );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.NaturalMinor );
   }
 
   [Fact]
@@ -1393,8 +1393,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.FSharp );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1416,8 +1416,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.BFlat );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   [Fact]
@@ -1439,8 +1439,8 @@ public sealed class KeyTests
     key!.Tonic.Should()
         .Be( PitchClass.C );
 
-    key.Mode.Should()
-       .Be( ModeType.Major );
+    key.ScaleDefinition.Should()
+       .Be( ScaleDefinition.Major );
   }
 
   #endregion

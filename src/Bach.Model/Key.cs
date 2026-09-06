@@ -1,20 +1,20 @@
 // Module Name: Key.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -24,6 +24,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using Bach.Model.Internal;
 
@@ -36,37 +37,37 @@ public sealed class Key
 {
   #region Constants
 
-  private static readonly Dictionary<(PitchClass Tonic, ModeType Mode), KeySignature> s_keySignatureTable =
+  private static readonly Dictionary<(PitchClass Tonic, bool IsMinor), KeySignature> s_keySignatureTable =
     new()
     {
-      [( PitchClass.C, ModeType.Major )] = KeySignature.CMajor,
-      [( PitchClass.G, ModeType.Major )] = KeySignature.GMajor,
-      [( PitchClass.D, ModeType.Major )] = KeySignature.DMajor,
-      [( PitchClass.A, ModeType.Major )] = KeySignature.AMajor,
-      [( PitchClass.E, ModeType.Major )] = KeySignature.EMajor,
-      [( PitchClass.B, ModeType.Major )] = KeySignature.BMajor,
-      [( PitchClass.FSharp, ModeType.Major )] = KeySignature.FSharpMajor,
-      [( PitchClass.F, ModeType.Major )] = KeySignature.FMajor,
-      [( PitchClass.BFlat, ModeType.Major )] = KeySignature.BFlatMajor,
-      [( PitchClass.EFlat, ModeType.Major )] = KeySignature.EFlatMajor,
-      [( PitchClass.AFlat, ModeType.Major )] = KeySignature.AFlatMajor,
-      [( PitchClass.DFlat, ModeType.Major )] = KeySignature.DFlatMajor,
-      [( PitchClass.GFlat, ModeType.Major )] = KeySignature.GFlatMajor,
-      [( PitchClass.B, ModeType.Major )] = KeySignature.CFlatMajor,
-      [( PitchClass.A, ModeType.Minor )] = KeySignature.AMinor,
-      [( PitchClass.E, ModeType.Minor )] = KeySignature.EMinor,
-      [( PitchClass.B, ModeType.Minor )] = KeySignature.BMinor,
-      [( PitchClass.FSharp, ModeType.Minor )] = KeySignature.FSharpMinor,
-      [( PitchClass.CSharp, ModeType.Minor )] = KeySignature.CSharpMinor,
-      [( PitchClass.GSharp, ModeType.Minor )] = KeySignature.GSharpMinor,
-      [( PitchClass.DSharp, ModeType.Minor )] = KeySignature.DSharpMinor,
-      [( PitchClass.D, ModeType.Minor )] = KeySignature.DMinor,
-      [( PitchClass.G, ModeType.Minor )] = KeySignature.GMinor,
-      [( PitchClass.C, ModeType.Minor )] = KeySignature.CMinor,
-      [( PitchClass.F, ModeType.Minor )] = KeySignature.FMinor,
-      [( PitchClass.BFlat, ModeType.Minor )] = KeySignature.BFlatMinor,
-      [( PitchClass.EFlat, ModeType.Minor )] = KeySignature.EFlatMinor,
-      [( PitchClass.AFlat, ModeType.Minor )] = KeySignature.AFlatMinor
+      [( PitchClass.C, false )] = KeySignature.CMajor,
+      [( PitchClass.G, false )] = KeySignature.GMajor,
+      [( PitchClass.D, false )] = KeySignature.DMajor,
+      [( PitchClass.A, false )] = KeySignature.AMajor,
+      [( PitchClass.E, false )] = KeySignature.EMajor,
+      [( PitchClass.B, false )] = KeySignature.BMajor,
+      [( PitchClass.FSharp, false )] = KeySignature.FSharpMajor,
+      [( PitchClass.F, false )] = KeySignature.FMajor,
+      [( PitchClass.BFlat, false )] = KeySignature.BFlatMajor,
+      [( PitchClass.EFlat, false )] = KeySignature.EFlatMajor,
+      [( PitchClass.AFlat, false )] = KeySignature.AFlatMajor,
+      [( PitchClass.DFlat, false )] = KeySignature.DFlatMajor,
+      [( PitchClass.GFlat, false )] = KeySignature.GFlatMajor,
+      [( PitchClass.B, false )] = KeySignature.CFlatMajor,
+      [( PitchClass.A, true )] = KeySignature.AMinor,
+      [( PitchClass.E, true )] = KeySignature.EMinor,
+      [( PitchClass.B, true )] = KeySignature.BMinor,
+      [( PitchClass.FSharp, true )] = KeySignature.FSharpMinor,
+      [( PitchClass.CSharp, true )] = KeySignature.CSharpMinor,
+      [( PitchClass.GSharp, true )] = KeySignature.GSharpMinor,
+      [( PitchClass.DSharp, true )] = KeySignature.DSharpMinor,
+      [( PitchClass.D, true )] = KeySignature.DMinor,
+      [( PitchClass.G, true )] = KeySignature.GMinor,
+      [( PitchClass.C, true )] = KeySignature.CMinor,
+      [( PitchClass.F, true )] = KeySignature.FMinor,
+      [( PitchClass.BFlat, true )] = KeySignature.BFlatMinor,
+      [( PitchClass.EFlat, true )] = KeySignature.EFlatMinor,
+      [( PitchClass.AFlat, true )] = KeySignature.AFlatMinor
     };
 
   #endregion
@@ -74,21 +75,32 @@ public sealed class Key
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="Key"/> class.
+  ///   Initializes a new instance of the <see cref="Key"/> class using a governing collection.
   /// </summary>
-  /// <param name="pitchClass">The name of the tonic note.</param>
-  /// <param name="mode">The mode of the key.</param>
+  /// <param name="pitchClass">The tonic pitch class.</param>
+  /// <param name="scaleDefinition">The governing scale collection.</param>
+  /// <param name="alterations">Optional local degree alterations.</param>
   public Key(
     PitchClass pitchClass,
-    ModeType mode )
+    ScaleDefinition scaleDefinition,
+    IEnumerable<DegreeAlteration>? alterations = null )
   {
     Tonic = pitchClass;
-    Mode = mode;
-    Scale = new Scale( Tonic, ResolveScaleFormula( mode ) );
+    ScaleDefinition = scaleDefinition ?? throw new ArgumentNullException( nameof( scaleDefinition ) );
 
-    KeySignature = s_keySignatureTable.TryGetValue( ( Tonic, Mode ), out var signature )
-      ? signature
-      : KeySignature.Empty;
+    var formula = ScaleDefinition.Formula;
+    Scale = new Scale( Tonic, formula );
+
+    if( s_keySignatureTable.TryGetValue( ( Tonic, ScaleDefinition.IsMinor ), out var signature ) )
+    {
+      KeySignature = signature;
+    }
+    else
+    {
+      KeySignature = KeySignature.Empty;
+    }
+
+    DegreeAlterations = ( alterations ?? [] ).ToArray();
   }
 
   #endregion
@@ -98,14 +110,17 @@ public sealed class Key
   /// <summary>Gets the tonic pitch class.</summary>
   public PitchClass Tonic { get; }
 
-  /// <summary>Gets the mode for the key.</summary>
-  public ModeType Mode { get; }
+  /// <summary>Gets the governing collection for the key (major, minor, mode, or custom).</summary>
+  public ScaleDefinition ScaleDefinition { get; }
 
   /// <summary>Gets the key signature for the key.</summary>
   public KeySignature KeySignature { get; }
 
   /// <summary>Gets the scale implied by the key.</summary>
   public Scale Scale { get; }
+
+  /// <summary>Gets any local degree alterations for the key.</summary>
+  public IReadOnlyList<DegreeAlteration> DegreeAlterations { get; }
 
   #endregion
 
@@ -149,13 +164,13 @@ public sealed class Key
     ReadOnlySpan<char> s,
     IFormatProvider? provider )
   {
-    return TryParse( s, provider, out var result ) ? result : throw new FormatException();
+    return TryParse( s, provider, out var result ) ? result : throw new FormatException( $"Invalid key format: '{s}'" );
   }
 
   /// <inheritdoc/>
   public override string ToString()
   {
-    return $"{Tonic} {Mode}";
+    return $"{Tonic} {ScaleDefinition.Name}";
   }
 
   /// <summary>
@@ -197,7 +212,7 @@ public sealed class Key
           break;
 
         case 'M':
-          buf.Append( Mode );
+          buf.Append( ScaleDefinition.Name );
           break;
 
         case 'S':
@@ -257,7 +272,7 @@ public sealed class Key
   public static bool TryParse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider,
-    [MaybeNullWhen( false )] out Key result )
+    [NotNullWhen( true )] out Key? result )
   {
     value = value.Trim();
 
@@ -267,7 +282,7 @@ public sealed class Key
       return false;
     }
 
-    var modeType = ModeType.Major;
+    var scaleDefinition = ScaleDefinition.Major;
     var pitchClassSpan = value;
 
     // Check if the last character indicates the mode (M for Major (optional), m for Minor)
@@ -276,12 +291,12 @@ public sealed class Key
       switch( value[^1] )
       {
         case Constants.MinorIntervalQualitySymbol:
-          modeType = ModeType.Minor;
+          scaleDefinition = ScaleDefinition.NaturalMinor;
           pitchClassSpan = value[..^1]; // Exclude the mode from the pitch class span
           break;
 
         case Constants.MajorIntervalQualitySymbol:
-          modeType = ModeType.Major;
+          scaleDefinition = ScaleDefinition.Major;
           pitchClassSpan = value[..^1]; // Exclude the mode from the pitch class span
           break;
       }
@@ -293,22 +308,8 @@ public sealed class Key
       return false;
     }
 
-    result = new Key( pitchClass, modeType );
+    result = new Key( pitchClass, scaleDefinition );
     return true;
-  }
-
-  #endregion
-
-  #region Implementation
-
-  private static string ResolveScaleFormula(
-    ModeType mode )
-  {
-    return mode switch
-    {
-      ModeType.Minor => "NaturalMinor",
-      _              => "Major"
-    };
   }
 
   #endregion

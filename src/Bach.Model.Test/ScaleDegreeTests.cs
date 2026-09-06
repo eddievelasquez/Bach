@@ -1,20 +1,20 @@
 // Module Name: ScaleDegreeTest.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -51,7 +51,7 @@ public sealed class ScaleDegreeTests
   public void ResolveDiatonicTriad_ShouldReturnExpectedQuality_ForMajorMode()
   {
     var degree = ScaleDegree.Tonic;
-    var key = new Key( PitchClass.C, ModeType.Major );
+    var key = new Key( PitchClass.C, ScaleDefinition.Major );
 
     var triad = degree.ResolveDiatonicTriad( key );
 
@@ -65,7 +65,7 @@ public sealed class ScaleDegreeTests
   [Fact]
   public void Resolve_ShouldReturnExpectedPitchClass_ForMinorKey()
   {
-    var key = new Key( PitchClass.A, ModeType.Minor );
+    var key = new Key( PitchClass.A, ScaleDefinition.NaturalMinor );
     var degree = ScaleDegree.Mediant;
 
     degree.Resolve( key )
@@ -76,7 +76,7 @@ public sealed class ScaleDegreeTests
   [Fact]
   public void Resolve_ShouldReturnTonicPitchClass_ForMajorKey()
   {
-    var key = new Key( PitchClass.C, ModeType.Major );
+    var key = new Key( PitchClass.C, ScaleDefinition.Major );
     var degree = ScaleDegree.Tonic;
 
     degree.Resolve( key )

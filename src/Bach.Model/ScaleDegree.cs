@@ -1,20 +1,20 @@
 // Module Name: ScaleDegree.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -67,6 +67,10 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     int degree,
     string symbol )
   {
+    Debug.Assert( !string.IsNullOrWhiteSpace(name) );
+    Debug.Assert( !string.IsNullOrWhiteSpace(symbol) );
+    Debug.Assert( degree is >= 1 and <= 7 );
+
     Name = name;
     Degree = degree;
     Symbol = symbol;
@@ -95,11 +99,6 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   public static bool IsNashville(
     string? value )
   {
-    if( string.IsNullOrWhiteSpace( value ) )
-    {
-      return false;
-    }
-
     return TryParseNashville( value.AsSpan(), out _ );
   }
 
@@ -109,11 +108,6 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   public static bool IsRomanNumeral(
     string? value )
   {
-    if( string.IsNullOrWhiteSpace( value ) )
-    {
-      return false;
-    }
-
     return TryParseRomanNumeral( value.AsSpan(), out _ );
   }
 
@@ -169,7 +163,7 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     ArgumentNullException.ThrowIfNull( key );
 
     var root = Resolve( key );
-    var quality = GetDiatonicTriadQuality( key.Mode );
+    var quality = GetDiatonicTriadQuality( key.ScaleDefinition );
     return new Triad( root, quality );
   }
 
@@ -200,12 +194,6 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     IFormatProvider? provider,
     out ScaleDegree scaleDegree )
   {
-    if( string.IsNullOrWhiteSpace( s ) )
-    {
-      scaleDegree = default;
-      return false;
-    }
-
     var trimmed = s.AsSpan()
                    .Trim();
 
@@ -232,14 +220,19 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     ReadOnlySpan<char> value,
     out ScaleDegree scaleDegree )
   {
-    Debug.Assert( !value.IsEmpty );
+    var trimmed = value.Trim();
 
-    scaleDegree = default;
+    if( trimmed.IsEmpty )
+    {
+      scaleDegree = default;
+      return false;
+    }
 
-    var parsed = ParseRoman( value );
+    var parsed = ParseRomanNumeral( trimmed );
 
     if( parsed == -1 )
     {
+      scaleDegree = default;
       return false;
     }
 
@@ -252,7 +245,7 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   /// </summary>
   /// <param name="s">The roman numeral string.</param>
   /// <returns>The corresponding scale degree number (1-7), or -1 if invalid.</returns>
-  private static int ParseRoman(
+  private static int ParseRomanNumeral(
     ReadOnlySpan<char> s )
   {
     return s.Length switch
@@ -291,7 +284,10 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     };
 
     static char ToUpperAscii(
-      char c ) => (char) ( c & ~0x20 ); // ASCII uppercase
+      char c )
+    {
+      return (char) ( c & ~0x20 );
+    }
   }
 
   /// <summary>Attempts to parse the supplied value as a Nashville number scale degree.</summary>
@@ -302,10 +298,11 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     ReadOnlySpan<char> value,
     out ScaleDegree scaleDegree )
   {
-    scaleDegree = default;
+    var trimmed = value.Trim();
 
-    if( !int.TryParse( value, out var parsed ) || parsed is < 1 or > 7 )
+    if( trimmed.IsEmpty || !int.TryParse( trimmed, out var parsed ) || parsed is < 1 or > 7 )
     {
+      scaleDegree = default;
       return false;
     }
 
@@ -314,40 +311,37 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   }
 
   /// <summary>
-  ///   Gets the diatonic triad quality for the scale degree in the specified mode.
+  ///   Gets the diatonic triad quality for the scale degree in the specified scaleDefinition.
   /// </summary>
-  /// <param name="mode">The mode to use for determining the triad quality.</param>
-  /// <returns>The diatonic triad quality for the scale degree in the specified mode.</returns>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when the mode or degree is invalid.</exception>
+  /// <param name="scaleDefinition">The scaleDefinition to use for determining the triad quality.</param>
+  /// <returns>The diatonic triad quality for the scale degree in the specified scaleDefinition.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the scaleDefinition or degree is invalid.</exception>
   private TriadQuality GetDiatonicTriadQuality(
-    ModeType mode )
+    ScaleDefinition scaleDefinition )
   {
-    return mode switch
+    if( scaleDefinition.IsMajor )
     {
-      ModeType.Major => Degree switch
+      return Degree switch
       {
-        1 => TriadQuality.Major,
-        2 => TriadQuality.Minor,
-        3 => TriadQuality.Minor,
-        4 => TriadQuality.Major,
-        5 => TriadQuality.Major,
-        6 => TriadQuality.Minor,
+        1 or 4 or 5 => TriadQuality.Major,
+        2 or 3 or 6 => TriadQuality.Minor,
         7 => TriadQuality.Diminished,
         _ => throw new ArgumentOutOfRangeException( nameof( Degree ), Degree, "Invalid scale degree." )
-      },
-      ModeType.Minor => Degree switch
+      };
+    }
+
+    if( scaleDefinition.IsMinor )
+    {
+      return Degree switch
       {
-        1 => TriadQuality.Minor,
-        2 => TriadQuality.Diminished,
-        3 => TriadQuality.Major,
-        4 => TriadQuality.Minor,
-        5 => TriadQuality.Minor,
-        6 => TriadQuality.Major,
-        7 => TriadQuality.Major,
-        _ => throw new ArgumentOutOfRangeException( nameof( Degree ), Degree, "Invalid scale degree." )
-      },
-      _ => throw new ArgumentOutOfRangeException( nameof( mode ), mode, "Unsupported mode." )
-    };
+        1 or 4 or 5 => TriadQuality.Minor,
+        2           => TriadQuality.Diminished,
+        3 or 6 or 7 => TriadQuality.Major,
+        _           => throw new ArgumentOutOfRangeException( nameof( Degree ), Degree, "Invalid scale degree." )
+      };
+    }
+
+    throw new ArgumentOutOfRangeException( nameof( scaleDefinition ), scaleDefinition, "Unsupported scaleDefinition." );
   }
 
   #endregion
