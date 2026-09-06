@@ -22,6 +22,7 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections.Generic;
 using System.Text;
 using Bach.Model.Internal;
 
@@ -160,7 +161,7 @@ public readonly struct Pitch
   /// <summary>
   ///   Gets the pitch classes contained in the event.
   /// </summary>
-  public PitchClass[] PitchClasses => [PitchClass];
+  public IEnumerable<PitchClass> PitchClasses => [PitchClass];
 
   /// <summary>Gets the pitch's octave.</summary>
   /// <value>The octave.</value>

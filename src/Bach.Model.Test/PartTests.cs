@@ -52,6 +52,43 @@ public sealed class PartTests
   }
 
   [Fact]
+  public void PitchClasses_ShouldReturnEmptyArray_WhenPartIsEmpty()
+  {
+    var part = new Part();
+
+    part.PitchClasses.Should()
+        .BeEmpty();
+  }
+
+  [Fact]
+  public void PitchClasses_ShouldPreserveEventAndChordOrderAndDuplicates()
+  {
+    var part = new Part
+    {
+      PitchClass.C[4],
+      PitchChord.Create( PitchClass.C, ChordFormula.Major, inversion: 1 ),
+      PitchClass.C[4]
+    };
+
+    part.PitchClasses.Should()
+        .Equal( PitchClass.C, PitchClass.E, PitchClass.G, PitchClass.C, PitchClass.C );
+  }
+
+  [Fact]
+  public void PitchClasses_ShouldReflectEventsAddedAfterThePreviousRead()
+  {
+    var part = new Part();
+
+    part.PitchClasses.Should()
+        .BeEmpty();
+
+    part.Add( PitchClass.D[4] );
+
+    part.PitchClasses.Should()
+        .Equal( PitchClass.D );
+  }
+
+  [Fact]
   public void Add_ShouldThrowArgumentNullException_WhenPartEventIsNull()
   {
     // Arrange
