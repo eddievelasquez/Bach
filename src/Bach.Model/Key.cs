@@ -75,10 +75,10 @@ public sealed class Key
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="Key"/> class using a governing collection.
+  ///   Initializes a new instance of the <see cref="Key"/> class using a governing scale or mode.
   /// </summary>
   /// <param name="pitchClass">The tonic pitch class.</param>
-  /// <param name="scaleDefinition">The governing scale collection.</param>
+  /// <param name="scaleDefinition">The governing scale or mode.</param>
   /// <param name="alterations">Optional local degree alterations.</param>
   public Key(
     PitchClass pitchClass,
@@ -115,7 +115,7 @@ public sealed class Key
   /// <summary>Gets the tonic pitch class.</summary>
   public PitchClass Tonic { get; }
 
-  /// <summary>Gets the governing collection for the key (major, minor, mode, or custom).</summary>
+  /// <summary>Gets the governing scale or mode for the key.</summary>
   public ScaleDefinition ScaleDefinition { get; }
 
   /// <summary>Gets the key signature for the key.</summary>

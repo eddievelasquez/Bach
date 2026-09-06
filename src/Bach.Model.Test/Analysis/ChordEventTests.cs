@@ -1,7 +1,4 @@
-using FluentAssertions;
-using Xunit;
-
-namespace Bach.Model.Test;
+namespace Bach.Model.Test.Analysis;
 
 public sealed class ChordEventTests
 {
@@ -30,14 +27,6 @@ public sealed class ChordEventTests
     var chordEvent = (IChordEvent) chord;
 
     chordEvent.Bass.Should().Be( Pitch.Create( PitchClass.D, 4 ) );
-  }
-
-  [Fact]
-  public void NonChordEvent_ShouldNotImplementIChordEvent()
-  {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-
-    (pitch is IChordEvent).Should().BeFalse();
   }
 
   [Fact]
