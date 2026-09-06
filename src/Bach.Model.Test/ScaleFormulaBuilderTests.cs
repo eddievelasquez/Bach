@@ -1,20 +1,20 @@
 // Module Name: ScaleFormulaBuilderTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -57,10 +57,10 @@ public sealed class ScaleFormulaBuilderTests
     formula.AscendingDegrees.Should()
            .HaveCount( s_pentatonicIntervals.Length );
 
-    formula.Categories.Should()
+    formula.Classification.Categories.Should()
            .Contain( ScaleCategory.Major );
 
-    formula.Categories.Should()
+    formula.Classification.Categories.Should()
            .Contain( ScaleCategory.Pentatonic );
 
     formula.Aliases.Should()
@@ -121,62 +121,55 @@ public sealed class ScaleFormulaBuilderTests
   }
 
   [Fact]
-  public void AddCategories_ShouldAddMultipleCategories_WhenGivenEnumerableOfStrings()
+  public void AddRepertoireTags_ShouldAddMultipleTags_WhenGivenEnumerableOfTags()
   {
-    string[] categories = ["Category1", "Category2"];
+    ScaleTag[] tags = [ScaleTag.Exotic, ScaleTag.Jazz];
 
-    var formula = CreateFormula( builder => builder.AddCategories( categories ) );
+    var formula = CreateFormula( builder => builder.Classify( classification => classification.AddRepertoireTags( tags ) ) );
 
-    formula.Categories.Should()
-           .Contain( ScaleCategory.Major );
+    formula.Classification.RepertoireTags.Should()
+           .Contain( ScaleTag.Exotic );
 
-    formula.Categories.Should()
-           .Contain( ScaleCategory.Pentatonic );
-
-    formula.Categories.Should()
-           .Contain( categories[0] );
+    formula.Classification.RepertoireTags.Should()
+           .Contain( ScaleTag.Jazz );
 
     formula.Categories.Should()
-           .Contain( categories[1] );
+           .Contain( nameof( ScaleTag.Exotic ) );
+
+    formula.Categories.Should()
+           .Contain( nameof( ScaleTag.Jazz ) );
   }
 
   [Fact]
-  public void AddCategory_ShouldAddCategory_WhenGivenValidString()
+  public void AddRepertoireTag_ShouldAddTag_WhenGivenValidTag()
   {
-    const string Category = "Category";
+    var formula =
+      CreateFormula( builder => builder.Classify( classification => classification.AddRepertoireTag( ScaleTag.Blues ) ) );
 
-    var formula = CreateFormula( builder => builder.AddCategory( Category ) );
-
-    formula.Categories.Should()
-           .Contain( Category );
+    formula.Classification.RepertoireTags.Should()
+           .Contain( ScaleTag.Blues );
   }
 
   [Fact]
-  public void AddCategory_ShouldAddMultipleCategories_WhenGivenSemicolonSeparatedString()
+  public void Build_ShouldDeriveCanonicalDegrees_WhenGivenAscendingIntervals()
   {
-    const string Categories = "Category1;Category2";
+    var formula = CreateFormula( builder => builder.Classify( classification => classification.SetParentScaleId( "Major" )
+                                                                .SetModalRotationIndex( 1 )
+                                                                .SetKeyCandidate( true )
+                                 )
+    );
 
-    var formula = CreateFormula( builder => builder.AddCategory( Categories ) );
+    formula.Classification.ParentScaleId.Should()
+           .Be( "Major" );
 
-    formula.Categories.Should()
-           .Contain( "Category1" );
+    formula.Classification.ModalRotationIndex.Should()
+           .Be( 1 );
 
-    formula.Categories.Should()
-           .Contain( "Category2" );
-  }
+    formula.Classification.CanonicalDegrees.Should()
+           .Equal( "1", "2", "3", "5", "6" );
 
-  [Fact]
-  public void AddCategory_ShouldAddTrimmedCategories_WhenGivenPaddedStrings()
-  {
-    const string Categories = "   Category1   ;  Category2  ";
-
-    var formula = CreateFormula( builder => builder.AddCategory( Categories ) );
-
-    formula.Categories.Should()
-           .Contain( "Category1" );
-
-    formula.Categories.Should()
-           .Contain( "Category2" );
+    formula.Classification.IsKeyCandidate.Should()
+           .BeTrue();
   }
 
   [Fact]
@@ -222,10 +215,10 @@ public sealed class ScaleFormulaBuilderTests
     formula.AscendingDegrees.Should()
            .HaveCount( minorPentatonic.Length );
 
-    formula.Categories.Should()
+    formula.Classification.Categories.Should()
            .Contain( ScaleCategory.Minor );
 
-    formula.Categories.Should()
+    formula.Classification.Categories.Should()
            .Contain( ScaleCategory.Pentatonic );
   }
 

@@ -1,4 +1,4 @@
-// Module Name: ScaleCategory.cs
+// Module Name: PersistentScaleClassification.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -22,45 +22,10 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model;
+namespace Bach.Model.Serialization;
 
-/// <summary>
-///   Calculated structural scale categories.
-/// </summary>
-public enum ScaleCategory
-{
-  /// <summary>
-  ///   The diatonic scale.
-  /// </summary>
-  Diatonic,
-
-  /// <summary>
-  ///   The major scale.
-  /// </summary>
-  Major,
-
-  /// <summary>
-  ///   The minor scale.
-  /// </summary>
-  Minor,
-
-  /// <summary>
-  ///   The pentatonic scale.
-  /// </summary>
-  Pentatonic,
-
-  /// <summary>
-  ///   The hexatonic scale.
-  /// </summary>
-  Hexatonic,
-
-  /// <summary>
-  ///   The heptatonic scale.
-  /// </summary>
-  Heptatonic,
-
-  /// <summary>
-  ///   The octatonic scale.
-  /// </summary>
-  Octatonic
-}
+internal sealed record PersistentScaleClassification(
+  string? RepertoireTags = null,
+  string? ParentScaleId = null,
+  int? ModalRotationIndex = null,
+  bool IsKeyCandidate = false );

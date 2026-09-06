@@ -82,16 +82,28 @@ public static class Registry
 
   #region Properties
 
-  /// <summary>Gets the collection of scale formulas.</summary>
-  /// <value>The scale formulas.</value>
+  /// <summary>
+  ///   Gets the collection of scale formulas.
+  /// </summary>
+  /// <value>
+  ///   The scale formulas.
+  /// </value>
   public static NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
 
-  /// <summary>Gets the collection of chord formulas.</summary>
-  /// <value>The chord formulas.</value>
+  /// <summary>
+  ///   Gets the collection of chord formulas.
+  /// </summary>
+  /// <value>
+  ///   The chord formulas.
+  /// </value>
   public static NamedObjectCollection<ChordFormula> ChordFormulas { get; }
 
-  /// <summary>Gets the collection of stringed instrument definitions.</summary>
-  /// <value>The stringed instrument definitions.</value>
+  /// <summary>
+  ///   Gets the collection of stringed instrument definitions.
+  /// </summary>
+  /// <value>
+  ///   The stringed instrument definitions.
+  /// </value>
   public static NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
 
   #endregion
@@ -101,12 +113,16 @@ public static class Registry
   /// <summary>
   ///   Tries to get a chord formula by ID or name.
   /// </summary>
-  /// <param name="idOrName">The ID or name of the chord formula.</param>
+  /// <param name="idOrName">
+  ///   The ID or name of the chord formula.
+  /// </param>
   /// <param name="result">
   ///   When this method returns, contains the chord formula associated with the specified ID or name, if found;
   ///   otherwise, null. This parameter is passed uninitialized.
   /// </param>
-  /// <returns>true if the chord formula is found; otherwise, false.</returns>
+  /// <returns>
+  ///   true if the chord formula is found; otherwise, false.
+  /// </returns>
   public static bool TryGetChordFormula(
     string idOrName,
     [MaybeNullWhen( false )] out ChordFormula result )
@@ -117,12 +133,16 @@ public static class Registry
   /// <summary>
   ///   Tries to get a chord formula by symbol.
   /// </summary>
-  /// <param name="symbol">The symbol of the chord formula.</param>
+  /// <param name="symbol">
+  ///   The symbol of the chord formula.
+  /// </param>
   /// <param name="result">
   ///   When this method returns, contains the chord formula associated with the specified symbol, if found;
   ///   otherwise, null. This parameter is passed uninitialized.
   /// </param>
-  /// <returns>true if the chord formula is found; otherwise, false.</returns>
+  /// <returns>
+  ///   true if the chord formula is found; otherwise, false.
+  /// </returns>
   public static bool TryGetChordFormulaBySymbol(
     string symbol,
     [MaybeNullWhen( false )] out ChordFormula result )
@@ -133,12 +153,16 @@ public static class Registry
   /// <summary>
   ///   Tries to get a chord formula by symbol.
   /// </summary>
-  /// <param name="symbol">The symbol of the chord formula.</param>
+  /// <param name="symbol">
+  ///   The symbol of the chord formula.
+  /// </param>
   /// <param name="result">
   ///   When this method returns, contains the chord formula associated with the specified symbol, if found;
   ///   otherwise, null. This parameter is passed uninitialized.
   /// </param>
-  /// <returns>true if the chord formula is found; otherwise, false.</returns>
+  /// <returns>
+  ///   true if the chord formula is found; otherwise, false.
+  /// </returns>
   public static bool TryGetChordFormulaBySymbol(
     ReadOnlySpan<char> symbol,
     [MaybeNullWhen( false )] out ChordFormula result )
@@ -149,12 +173,16 @@ public static class Registry
   /// <summary>
   ///   Tries to get a scale formula by ID or name.
   /// </summary>
-  /// <param name="idOrName">The ID or name of the scale formula.</param>
+  /// <param name="idOrName">
+  ///   The ID or name of the scale formula.
+  /// </param>
   /// <param name="result">
   ///   When this method returns, contains the scale formula associated with the specified ID or name, if found;
   ///   otherwise, null. This parameter is passed uninitialized.
   /// </param>
-  /// <returns>true if the scale formula is found; otherwise, false.</returns>
+  /// <returns>
+  ///   true if the scale formula is found; otherwise, false.
+  /// </returns>
   public static bool TryGetScaleFormula(
     string idOrName,
     [MaybeNullWhen( false )] out ScaleFormula result )
@@ -165,13 +193,17 @@ public static class Registry
   /// <summary>
   ///   Tries to get a stringed instrument definition by ID or name.
   /// </summary>
-  /// <param name="idOrName">The ID or name of the stringed instrument definition.</param>
+  /// <param name="idOrName">
+  ///   The ID or name of the stringed instrument definition.
+  /// </param>
   /// <param name="result">
   ///   When this method returns, contains the stringed instrument definition associated with the specified ID or name, if
   ///   found;
   ///   otherwise, null. This parameter is passed uninitialized.
   /// </param>
-  /// <returns>true if the stringed instrument definition is found; otherwise, false.</returns>
+  /// <returns>
+  ///   true if the stringed instrument definition is found; otherwise, false.
+  /// </returns>
   public static bool TryGetStringedInstrumentDefinition(
     string idOrName,
     [MaybeNullWhen( false )] out StringedInstrumentDefinition result )
@@ -238,9 +270,18 @@ public static class Registry
         builder.AddAlias( scale.Alias );
       }
 
-      if( scale.Categories is not null )
+      var classification = scale.Classification;
+
+      if( classification is not null )
       {
-        builder.AddCategory( scale.Categories );
+        builder.Classify( b =>
+          {
+            b.AddRepertoireTag( classification.RepertoireTags )
+             .SetParentScaleId( classification.ParentScaleId )
+             .SetModalRotationIndex( classification.ModalRotationIndex )
+             .SetKeyCandidate( classification.IsKeyCandidate );
+          }
+        );
       }
 
       var formula = builder.Build();

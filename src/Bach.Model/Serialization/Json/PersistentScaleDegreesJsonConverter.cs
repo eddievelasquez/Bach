@@ -88,20 +88,7 @@ internal sealed class PersistentScaleDegreesJsonConverter: JsonConverter<Persist
   {
     ArgumentNullException.ThrowIfNull( value );
 
-    if( value.All( degree => degree.Metadata is null || degree.Metadata.Empty ) )
-    {
-      writer.WriteStringValue( string.Join( ',', value.Select( degree => degree.Interval ) ) );
-      return;
-    }
-
-    writer.WriteStartArray();
-
-    foreach( var degree in value )
-    {
-      JsonSerializer.Serialize( writer, degree, options );
-    }
-
-    writer.WriteEndArray();
+    writer.WriteStringValue( string.Join( ',', value.Select( degree => degree.Interval ) ) );
   }
 
   #endregion

@@ -35,34 +35,59 @@ namespace Bach.Model;
 /// </summary>
 public class ScaleFormula: Formula
 {
+  #region Fields
+
+  private readonly Lazy<IReadOnlySet<string>> _categories;
+
+  #endregion
+
   #region Constructors
 
   /// <summary>
   ///   Initializes a new instance of the <see cref="ScaleFormula"/> class with the specified parameters.
   /// </summary>
-  /// <param name="id">The unique identifier of the scale formula.</param>
-  /// <param name="name">The name of the scale formula.</param>
-  /// <param name="ascendingDegrees">The ascending degrees of the scale formula.</param>
-  /// <param name="descendingDegrees">The descending degrees of the scale formula.</param>
-  /// <param name="categories">The categories of the scale formula.</param>
-  /// <param name="aliases">The aliases of the scale formula.</param>
+  /// <param name="id">
+  ///   The unique identifier of the scale formula.
+  /// </param>
+  /// <param name="name">
+  ///   The name of the scale formula.
+  /// </param>
+  /// <param name="ascendingDegrees">
+  ///   The ascending degrees of the scale formula.
+  /// </param>
+  /// <param name="descendingDegrees">
+  ///   The descending degrees of the scale formula.
+  /// </param>
+  /// <param name="classification">
+  ///   The classification of the scale formula.
+  /// </param>
+  /// <param name="aliases">
+  ///   The aliases of the scale formula.
+  /// </param>
   internal ScaleFormula(
     string id,
     string name,
     IReadOnlyList<ScaleDegreeStep> ascendingDegrees,
     IReadOnlyList<ScaleDegreeStep> descendingDegrees,
-    IEnumerable<string> categories,
+    ScaleClassification classification,
     IEnumerable<string> aliases )
     : base( id, name, [.. ascendingDegrees.Select( d => d.Interval )] )
   {
-    Debug.Assert( categories != null );
+    Debug.Assert( classification != null );
     Debug.Assert( aliases != null );
 
     AscendingDegrees = ascendingDegrees.ToArray();
     DescendingDegrees = descendingDegrees.ToArray();
-
-    Categories = categories.ToFrozenSet( StringComparer.OrdinalIgnoreCase );
+    Classification = classification;
     Aliases = aliases.ToFrozenSet( StringComparer.OrdinalIgnoreCase );
+
+    _categories = new Lazy<IReadOnlySet<string>>( () => classification.Categories.Select( category => category.ToString() )
+                                                                      .Concat(
+                                                                        classification.RepertoireTags
+                                                                          .Select( tag => tag.ToString() )
+                                                                      )
+                                                                      .ToFrozenSet( StringComparer.OrdinalIgnoreCase )
+    );
   }
 
   #endregion
@@ -80,9 +105,14 @@ public class ScaleFormula: Formula
   public IReadOnlyList<ScaleDegreeStep> DescendingDegrees { get; }
 
   /// <summary>
-  ///   Gets the optional categories for this scale formula.
+  ///   Gets the classification of this scale formula.
   /// </summary>
-  public IReadOnlySet<string> Categories { get; }
+  public ScaleClassification Classification { get; }
+
+  /// <summary>
+  ///   Gets the calculated and repertoire categories for this scale formula.
+  /// </summary>
+  public IReadOnlySet<string> Categories => _categories.Value;
 
   /// <summary>
   ///   Gets the optional aliases for this scale formula.
@@ -92,20 +122,26 @@ public class ScaleFormula: Formula
   /// <summary>
   ///   Gets a value indicating whether this instance is diatonic.
   /// </summary>
-  /// <value><c>true</c> if this instance is diatonic, <c>false</c> if not.</value>
-  public bool IsDiatonic => Categories.Contains( ScaleCategory.Diatonic );
+  /// <value>
+  ///   <c>true</c> if this instance is diatonic,   <c>false</c> if not.
+  /// </value>
+  public bool IsDiatonic => Classification.Categories.Contains( ScaleCategory.Diatonic );
 
   /// <summary>
   ///   Query if this instance is a major scale formula.
   /// </summary>
-  /// <value><c>true</c> if major; otherwise, <c>false</c>.</value>
-  public bool IsMajor => Categories.Contains( ScaleCategory.Major );
+  /// <value>
+  ///   <c>true</c> if this instance is major; otherwise, <c>false</c>.
+  /// </value>
+  public bool IsMajor => Classification.Categories.Contains( ScaleCategory.Major );
 
   /// <summary>
   ///   Query if this instance is a minor scale formula.
   /// </summary>
-  /// <value><c>true</c> if minor; otherwise, <c>false</c>.</value>
-  public bool IsMinor => Categories.Contains( ScaleCategory.Minor );
+  /// <value>
+  ///   <c>true</c> if this instance is minor; otherwise, <c>false</c>.
+  /// </value>
+  public bool IsMinor => Classification.Categories.Contains( ScaleCategory.Minor );
 
   #endregion
 
@@ -114,7 +150,9 @@ public class ScaleFormula: Formula
   /// <summary>
   ///   Gets the semitone separations between consecutive ascending degrees.
   /// </summary>
-  /// <returns>An enumerable of semitone steps.</returns>
+  /// <returns>
+  ///   An int enumerable of semitone steps.
+  /// </returns>
   public IEnumerable<int> GetSemitoneSteps()
   {
     return AscendingDegrees.Select( degree => degree.Interval )

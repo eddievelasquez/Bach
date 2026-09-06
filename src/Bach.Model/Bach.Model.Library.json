@@ -1,11 +1,16 @@
 {
-  "Version": "0.4",
+  "Version": "0.5",
   "Scales": [
     {
       "Id": "Arabian",
       "Name": "Arabian",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,P4,d5,A5,m7",
       "DescendingDegrees": null
     },
@@ -13,7 +18,12 @@
       "Id": "Augmented",
       "Name": "Augmented",
       "Alias": "Symmetrical Augmented",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m3,M3,P5,A5,M7",
       "DescendingDegrees": null
     },
@@ -21,7 +31,12 @@
       "Id": "Aeolian",
       "Name": "Aeolian",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": "Major",
+        "ModalRotationIndex": 5,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,m3,P4,P5,m6,m7",
       "DescendingDegrees": null
     },
@@ -29,7 +44,12 @@
       "Id": "Balinese",
       "Name": "Balinese",
       "Alias": "Balinese Pelog",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,P5,A5",
       "DescendingDegrees": null
     },
@@ -37,7 +57,12 @@
       "Id": "BebopDominant",
       "Name": "Bebop Dominant",
       "Alias": "",
-      "Categories": "Jazz",
+      "Classification": {
+        "RepertoireTags": "Jazz",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,P4,P5,M6,m7,M7",
       "DescendingDegrees": null
     },
@@ -45,7 +70,12 @@
       "Id": "BebopDorian",
       "Name": "Bebop Dorian",
       "Alias": "",
-      "Categories": "Jazz",
+      "Classification": {
+        "RepertoireTags": "Jazz",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,P4,P5,M6,m7,M7",
       "DescendingDegrees": null
     },
@@ -53,7 +83,12 @@
       "Id": "Byzantine",
       "Name": "Byzantine",
       "Alias": "Double Harmonic Mayamalavagowla;Bhairav Raga;Arabic;Gypsy Major",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,P4,d5,A5,M6,M7",
       "DescendingDegrees": null
     },
@@ -61,7 +96,12 @@
       "Id": "Diminished",
       "Name": "Diminished",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,M3,d5,P5,m6,m7",
       "DescendingDegrees": null
     },
@@ -69,7 +109,12 @@
       "Id": "Dorian",
       "Name": "Dorian",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": "Major",
+        "ModalRotationIndex": 1,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,m3,P4,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -77,7 +122,12 @@
       "Id": "Egyptian",
       "Name": "Egyptian",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,P4,P5,m7",
       "DescendingDegrees": null
     },
@@ -85,7 +135,12 @@
       "Id": "EnigmaticMajor",
       "Name": "Enigmatic Major",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,M3,A4,A5,A6,M7",
       "DescendingDegrees": null
     },
@@ -93,7 +148,12 @@
       "Id": "EnigmaticMinor",
       "Name": "Enigmatic Minor",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,A4,P5,A6,M7",
       "DescendingDegrees": null
     },
@@ -101,7 +161,12 @@
       "Id": "Geez",
       "Name": "Geez",
       "Alias": "Ethiopian;Ezel",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,A4,P5,A6,M7",
       "DescendingDegrees": null
     },
@@ -109,7 +174,12 @@
       "Id": "Gypsy",
       "Name": "Gypsy",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,M3,P4,P5,A5,M7",
       "DescendingDegrees": null
     },
@@ -117,7 +187,12 @@
       "Id": "GypsyMinor",
       "Name": "Gypsy Minor",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,d5,P5,A5,m7",
       "DescendingDegrees": null
     },
@@ -125,7 +200,12 @@
       "Id": "HarmonicMinor",
       "Name": "Harmonic Minor",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,m3,P4,P5,m6,M7",
       "DescendingDegrees": null
     },
@@ -133,7 +213,12 @@
       "Id": "Hindu",
       "Name": "Hindu",
       "Alias": "Aeolian Dominant",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,P4,P5,A5,m7",
       "DescendingDegrees": null
     },
@@ -141,7 +226,12 @@
       "Id": "Ionian",
       "Name": "Ionian",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": "Major",
+        "ModalRotationIndex": 0,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,M3,P4,P5,M6,M7",
       "DescendingDegrees": null
     },
@@ -149,7 +239,12 @@
       "Id": "Hirajoshi",
       "Name": "Hirajoshi",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,P5,A5",
       "DescendingDegrees": null
     },
@@ -157,7 +252,12 @@
       "Id": "HungarianFolk",
       "Name": "Hungarian Folk",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,M3,P5,m6,M7",
       "DescendingDegrees": null
     },
@@ -165,7 +265,12 @@
       "Id": "HungarianGypsy",
       "Name": "Hungarian Gypsy",
       "Alias": "Hungarian Minor",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,d5,P5,A5,M7",
       "DescendingDegrees": null
     },
@@ -173,7 +278,12 @@
       "Id": "HungarianMajor",
       "Name": "Hungarian Major",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m3,M3,d5,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -181,7 +291,12 @@
       "Id": "Iwato",
       "Name": "Iwato",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,P4,d5,m7",
       "DescendingDegrees": null
     },
@@ -189,7 +304,12 @@
       "Id": "Japanese",
       "Name": "Japanese",
       "Alias": "In Sen",
-      "Categories": "Exotic;Japanese",
+      "Classification": {
+        "RepertoireTags": "Exotic;Japanese",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,P4,P5,m7",
       "DescendingDegrees": null
     },
@@ -197,7 +317,12 @@
       "Id": "Javanese",
       "Name": "Javanese",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,P4,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -205,7 +330,12 @@
       "Id": "Kumoi",
       "Name": "Kumoi",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,P4,P5,A5",
       "DescendingDegrees": null
     },
@@ -213,7 +343,12 @@
       "Id": "LeadingTone",
       "Name": "Leading Tone",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,d5,A5,m7,M7",
       "DescendingDegrees": null
     },
@@ -221,7 +356,12 @@
       "Id": "Locrian",
       "Name": "Locrian",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": "Major",
+        "ModalRotationIndex": 6,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,m2,m3,P4,d5,m6,m7",
       "DescendingDegrees": null
     },
@@ -229,7 +369,12 @@
       "Id": "LydianDominant",
       "Name": "Lydian Dominant",
       "Alias": "Overtone;Acoustic;Lydian b7",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,d5,P5,A5,m7",
       "DescendingDegrees": null
     },
@@ -237,7 +382,12 @@
       "Id": "Lydian",
       "Name": "Lydian",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": "Major",
+        "ModalRotationIndex": 3,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,M3,A4,P5,M6,M7",
       "DescendingDegrees": null
     },
@@ -245,7 +395,12 @@
       "Id": "Major",
       "Name": "Major",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,M3,P4,P5,M6,M7",
       "DescendingDegrees": null
     },
@@ -253,7 +408,12 @@
       "Id": "MajorBebop",
       "Name": "Major Bebop",
       "Alias": "",
-      "Categories": "Jazz",
+      "Classification": {
+        "RepertoireTags": "Jazz",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,P4,P5,M6,m7,M7",
       "DescendingDegrees": null
     },
@@ -261,7 +421,12 @@
       "Id": "MajorBlues",
       "Name": "MajorBlues",
       "Alias": "",
-      "Categories": "Blues",
+      "Classification": {
+        "RepertoireTags": "Blues",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,M3,P5,M6",
       "DescendingDegrees": null
     },
@@ -269,7 +434,12 @@
       "Id": "Mixolydian",
       "Name": "Mixolydian",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": "Major",
+        "ModalRotationIndex": 4,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,M3,P4,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -277,7 +447,12 @@
       "Id": "MelodicMinor",
       "Name": "Melodic Minor",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,m3,P4,P5,M6,M7",
       "DescendingDegrees": "P1,M2,m3,P4,P5,m6,m7"
     },
@@ -285,7 +460,12 @@
       "Id": "MinorBebop",
       "Name": "Minor Bebop",
       "Alias": "",
-      "Categories": "Jazz",
+      "Classification": {
+        "RepertoireTags": "Jazz",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,M3,P4,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -293,7 +473,12 @@
       "Id": "MinorBlues",
       "Name": "Minor Blues",
       "Alias": "",
-      "Categories": "Blues",
+      "Classification": {
+        "RepertoireTags": "Blues",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m3,P4,d5,P5,m7",
       "DescendingDegrees": null
     },
@@ -301,7 +486,12 @@
       "Id": "MinorPentatonic",
       "Name": "Minor Pentatonic",
       "Alias": "",
-      "Categories": "Blues",
+      "Classification": {
+        "RepertoireTags": "Blues",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m3,P4,P5,m7",
       "DescendingDegrees": null
     },
@@ -309,7 +499,12 @@
       "Id": "Mongolian",
       "Name": "Mongolian",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,P5,M6",
       "DescendingDegrees": null
     },
@@ -317,7 +512,12 @@
       "Id": "Mystic",
       "Name": "Mystic",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,d5,M6,m7",
       "DescendingDegrees": null
     },
@@ -325,7 +525,12 @@
       "Id": "NaturalMinor",
       "Name": "Natural Minor",
       "Alias": "Minor",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,M2,m3,P4,P5,m6,m7",
       "DescendingDegrees": null
     },
@@ -333,7 +538,12 @@
       "Id": "NeapolitanMajor",
       "Name": "Neapolitan Major",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,P4,P5,M6,M7",
       "DescendingDegrees": null
     },
@@ -341,7 +551,12 @@
       "Id": "NeapolitanMinor",
       "Name": "Neapolitan Minor",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,P4,P5,A5,M7",
       "DescendingDegrees": null
     },
@@ -349,7 +564,12 @@
       "Id": "NineTone",
       "Name": "Nine Tone",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,M3,d5,P5,m6,M6,M7",
       "DescendingDegrees": null
     },
@@ -357,7 +577,12 @@
       "Id": "OctatonicHalfWhole",
       "Name": "Octatonic Half Whole",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,M3,d5,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -365,7 +590,12 @@
       "Id": "OctatonicWholeHalf",
       "Name": "Octatonic Whole Half",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,P4,d5,m6,M6,M7",
       "DescendingDegrees": null
     },
@@ -373,7 +603,12 @@
       "Id": "Oriental",
       "Name": "Oriental",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,M3,P4,d5,M6,m7",
       "DescendingDegrees": null
     },
@@ -381,7 +616,12 @@
       "Id": "Pelog",
       "Name": "Pelog",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,P4,P5,m7",
       "DescendingDegrees": null
     },
@@ -389,7 +629,12 @@
       "Id": "Pentatonic",
       "Name": "Pentatonic",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,P5,M6",
       "DescendingDegrees": null
     },
@@ -397,7 +642,12 @@
       "Id": "Phrygian",
       "Name": "Phrygian",
       "Alias": "",
-      "Categories": "",
+      "Classification": {
+        "RepertoireTags": "",
+        "ParentScaleId": "Major",
+        "ModalRotationIndex": 2,
+        "IsKeyCandidate": true
+      },
       "AscendingDegrees": "P1,m2,m3,P4,P5,m6,m7",
       "DescendingDegrees": null
     },
@@ -405,7 +655,12 @@
       "Id": "Persian",
       "Name": "Persian",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,M3,P4,d5,A5,M7",
       "DescendingDegrees": null
     },
@@ -413,7 +668,12 @@
       "Id": "Polytonal",
       "Name": "Polytonal",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,d4,A4,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -421,7 +681,12 @@
       "Id": "Romanian",
       "Name": "Romanian",
       "Alias": "Romanian Minor;Mela Hemavati;Dorian #4",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,m3,A4,P5,M6,m7",
       "DescendingDegrees": null
     },
@@ -429,7 +694,12 @@
       "Id": "Scottish",
       "Name": "Scottish",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,P4,P5,M6",
       "DescendingDegrees": null
     },
@@ -437,7 +707,12 @@
       "Id": "Spanish8Tone",
       "Name": "Spanish 8 Tone",
       "Alias": "",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,M3,P4,d5,d6,m7",
       "DescendingDegrees": null
     },
@@ -445,7 +720,12 @@
       "Id": "SpanishGypsy",
       "Name": "Spanish Gypsy",
       "Alias": "Phrygian Dominant;Spanish Phrygian",
-      "Categories": "Exotic",
+      "Classification": {
+        "RepertoireTags": "Exotic",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,M3,P4,P5,A5,m7",
       "DescendingDegrees": null
     },
@@ -453,7 +733,12 @@
       "Id": "SuperLocrian",
       "Name": "Super Locrian",
       "Alias": "Altered;Diminished Whole Tone",
-      "Categories": "Exotic;Jazz",
+      "Classification": {
+        "RepertoireTags": "Exotic;Jazz",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m2,m3,M3,d5,A5,m7",
       "DescendingDegrees": null
     },
@@ -461,7 +746,12 @@
       "Id": "WholeTone",
       "Name": "Whole Tone",
       "Alias": "",
-      "Categories": "Exotic;Symmetrical",
+      "Classification": {
+        "RepertoireTags": "Exotic;Symmetrical",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,M2,M3,A4,A5,A6",
       "DescendingDegrees": null
     },
@@ -469,7 +759,12 @@
       "Id": "Yo",
       "Name": "Yo",
       "Alias": "",
-      "Categories": "Exotic;Japanese",
+      "Classification": {
+        "RepertoireTags": "Exotic;Japanese",
+        "ParentScaleId": null,
+        "ModalRotationIndex": null,
+        "IsKeyCandidate": false
+      },
       "AscendingDegrees": "P1,m3,P4,P5,m7",
       "DescendingDegrees": null
     }

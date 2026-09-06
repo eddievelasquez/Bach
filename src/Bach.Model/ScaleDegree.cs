@@ -27,30 +27,46 @@ using System.Linq;
 
 namespace Bach.Model;
 
-/// <summary>Represents a scale degree and resolves it within a key.</summary>
+/// <summary>
+///   Represents a scale degree and resolves it within a key.
+/// </summary>
 public readonly struct ScaleDegree: IParsable<ScaleDegree>
 {
   #region Constants
 
-  /// <summary>Represents the tonic scale degree.</summary>
+  /// <summary>
+  ///   Represents the tonic scale degree.
+  /// </summary>
   public static readonly ScaleDegree Tonic = new( nameof( Tonic ), 1, "I" );
 
-  /// <summary>Represents the supertonic scale degree.</summary>
+  /// <summary>
+  ///   Represents the supertonic scale degree.
+  /// </summary>
   public static readonly ScaleDegree Supertonic = new( nameof( Supertonic ), 2, "ii" );
 
-  /// <summary>Represents the mediant scale degree.</summary>
+  /// <summary>
+  ///   Represents the mediant scale degree.
+  /// </summary>
   public static readonly ScaleDegree Mediant = new( nameof( Mediant ), 3, "iii" );
 
-  /// <summary>Represents the subdominant scale degree.</summary>
+  /// <summary>
+  ///   Represents the subdominant scale degree.
+  /// </summary>
   public static readonly ScaleDegree Subdominant = new( nameof( Subdominant ), 4, "IV" );
 
-  /// <summary>Represents the dominant scale degree.</summary>
+  /// <summary>
+  ///   Represents the dominant scale degree.
+  /// </summary>
   public static readonly ScaleDegree Dominant = new( nameof( Dominant ), 5, "V" );
 
-  /// <summary>Represents the submediant scale degree.</summary>
+  /// <summary>
+  ///   Represents the submediant scale degree.
+  /// </summary>
   public static readonly ScaleDegree Submediant = new( nameof( Submediant ), 6, "vi" );
 
-  /// <summary>Represents the leading-tone scale degree.</summary>
+  /// <summary>
+  ///   Represents the leading-tone scale degree.
+  /// </summary>
   public static readonly ScaleDegree LeadingTone = new( nameof( LeadingTone ), 7, "vii" );
 
   /// <summary>
@@ -67,8 +83,8 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     int degree,
     string symbol )
   {
-    Debug.Assert( !string.IsNullOrWhiteSpace(name) );
-    Debug.Assert( !string.IsNullOrWhiteSpace(symbol) );
+    Debug.Assert( !string.IsNullOrWhiteSpace( name ) );
+    Debug.Assert( !string.IsNullOrWhiteSpace( symbol ) );
     Debug.Assert( degree is >= 1 and <= 7 );
 
     Name = name;
@@ -80,54 +96,94 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
 
   #region Properties
 
-  /// <summary>Gets the name of the scale degree.</summary>
+  /// <summary>
+  ///   Gets the name of the scale degree.
+  /// </summary>
   public string Name { get; }
 
-  /// <summary>Gets the numeric degree.</summary>
+  /// <summary>
+  ///   Gets the numeric degree.
+  /// </summary>
   public int Degree { get; }
 
-  /// <summary>Gets the roman numeral symbol.</summary>
+  /// <summary>
+  ///   Gets the roman numeral symbol.
+  /// </summary>
   public string Symbol { get; }
 
   #endregion
 
   #region Public Methods
 
-  /// <summary>Determines whether the supplied value can be parsed as a Nashville number scale degree.</summary>
-  /// <param name="value">The candidate value.</param>
-  /// <returns>True when the value is a Nashville number scale degree; otherwise, false.</returns>
+  /// <summary>
+  ///   Determines whether the supplied value can be parsed as a Nashville number scale degree.
+  /// </summary>
+  /// <param name="value">
+  ///   The candidate value.
+  /// </param>
+  /// <returns>
+  ///   True when the value is a Nashville number scale degree; otherwise, false.
+  /// </returns>
   public static bool IsNashville(
     string? value )
   {
     return TryParseNashville( value.AsSpan(), out _ );
   }
 
-  /// <summary>Determines whether the supplied value can be parsed as a roman numeral scale degree.</summary>
-  /// <param name="value">The candidate value.</param>
-  /// <returns>True when the value is a roman numeral scale degree; otherwise, false.</returns>
+  /// <summary>
+  ///   Determines whether the supplied value can be parsed as a roman numeral scale degree.
+  /// </summary>
+  /// <param name="value">
+  ///   The candidate value.
+  /// </param>
+  /// <returns>
+  ///   True when the value is a roman numeral scale degree; otherwise, false.
+  /// </returns>
   public static bool IsRomanNumeral(
     string? value )
   {
     return TryParseRomanNumeral( value.AsSpan(), out _ );
   }
 
-  /// <summary>Parses a scale degree from the supplied string.</summary>
-  /// <param name="value">The scale degree value.</param>
-  /// <returns>The parsed scale degree.</returns>
-  /// <exception cref="ArgumentException">Thrown when the string is null, empty, or whitespace.</exception>
-  /// <exception cref="FormatException">Thrown when the string is not a valid scale degree.</exception>
+  /// <summary>
+  ///   Parses a scale degree from the supplied string.
+  /// </summary>
+  /// <param name="value">
+  ///   The scale degree value.
+  /// </param>
+  /// <returns>
+  ///   The parsed scale degree.
+  /// </returns>
+  /// <exception cref="ArgumentException">
+  ///   Thrown when the string is null, empty, or whitespace.
+  /// </exception>
+  /// <exception cref="FormatException">
+  ///   Thrown when the string is not a valid scale degree.
+  /// </exception>
   public static ScaleDegree Parse(
     string value )
   {
     return Parse( value, null );
   }
 
-  /// <summary>Parses a scale degree from the supplied string.</summary>
-  /// <param name="s">The scale degree value.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed scale degree.</returns>
-  /// <exception cref="ArgumentException">Thrown when the string is null, empty, or whitespace.</exception>
-  /// <exception cref="FormatException">Thrown when the string is not a valid scale degree.</exception>
+  /// <summary>
+  ///   Parses a scale degree from the supplied string.
+  /// </summary>
+  /// <param name="s">
+  ///   The scale degree value.
+  /// </param>
+  /// <param name="provider">
+  ///   The format provider.
+  /// </param>
+  /// <returns>
+  ///   The parsed scale degree.
+  /// </returns>
+  /// <exception cref="ArgumentException">
+  ///   Thrown when the string is null, empty, or whitespace.
+  /// </exception>
+  /// <exception cref="FormatException">
+  ///   Thrown when the string is not a valid scale degree.
+  /// </exception>
   public static ScaleDegree Parse(
     string s,
     IFormatProvider? provider )
@@ -139,9 +195,15 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
       : throw new FormatException( $"The value '{s}' is not a valid scale degree." );
   }
 
-  /// <summary>Resolves the degree to a pitch class in the supplied key.</summary>
-  /// <param name="key">The key to resolve against.</param>
-  /// <returns>The pitch class for the degree.</returns>
+  /// <summary>
+  ///   Resolves the degree to a pitch class in the supplied key.
+  /// </summary>
+  /// <param name="key">
+  ///   The key to resolve against.
+  /// </param>
+  /// <returns>
+  ///   The pitch class for the degree.
+  /// </returns>
   public PitchClass Resolve(
     Key key )
   {
@@ -154,22 +216,36 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     return scale[index % scale.Length];
   }
 
-  /// <summary>Resolves the degree to a diatonic triad in the supplied key.</summary>
-  /// <param name="key">The key to resolve against.</param>
-  /// <returns>The diatonic triad for the degree.</returns>
+  /// <summary>
+  ///   Resolves the degree to a diatonic triad in the supplied key.
+  /// </summary>
+  /// <param name="key">
+  ///   The key to resolve against.
+  /// </param>
+  /// <returns>
+  ///   The diatonic triad for the degree.
+  /// </returns>
   public Triad ResolveDiatonicTriad(
     Key key )
   {
     ArgumentNullException.ThrowIfNull( key );
 
     // Preserve existing behavior: use ascending collection as the default direction.
-    return ResolveDiatonicTriad( key, ascending: true );
+    return ResolveDiatonicTriad( key, true );
   }
 
-  /// <summary>Resolves the degree to a diatonic triad in the supplied key using the requested direction.</summary>
-  /// <param name="key">The key to resolve against.</param>
-  /// <param name="ascending">True to use the formula's ascending degrees; false to use descending degrees.</param>
-  /// <returns>The diatonic triad for the degree.</returns>
+  /// <summary>
+  ///   Resolves the degree to a diatonic triad in the supplied key using the requested direction.
+  /// </summary>
+  /// <param name="key">
+  ///   The key to resolve against.
+  /// </param>
+  /// <param name="ascending">
+  ///   True to use the formula's ascending degrees; false to use descending degrees.
+  /// </param>
+  /// <returns>
+  ///   The diatonic triad for the degree.
+  /// </returns>
   public Triad ResolveDiatonicTriad(
     Key key,
     bool ascending )
@@ -182,19 +258,25 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
 
     if( ascending )
     {
-      degreePitchClasses = key.Scale.GetAscending()
-                                .Take( degreeCount )
-                                .ToArray();
+      degreePitchClasses =
+      [
+        .. key.Scale.GetAscending()
+              .Take( degreeCount )
+      ];
     }
     else
     {
-      var desc = key.Scale.GetDescending()
-                        .Take( degreeCount )
-                        .ToArray();
+      PitchClass[] desc =
+      [
+        .. key.Scale.GetDescending()
+              .Take( degreeCount )
+      ];
 
       degreePitchClasses = new PitchClass[degreeCount];
+
       // tonic
       degreePitchClasses[0] = desc[0];
+
       // remaining degrees are in reverse order in the descending sequence
       for( var d = 2; d <= degreeCount; d++ )
       {
@@ -214,10 +296,18 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     return new Triad( root, quality );
   }
 
-  /// <summary>Resolves an applied dominant triad for a target degree in the supplied key.</summary>
-  /// <param name="key">The key containing the target degree.</param>
-  /// <param name="targetDegree">The degree that receives the applied dominant.</param>
-  /// <returns>The applied dominant triad.</returns>
+  /// <summary>
+  ///   Resolves an applied dominant triad for a target degree in the supplied key.
+  /// </summary>
+  /// <param name="key">
+  ///   The key containing the target degree.
+  /// </param>
+  /// <param name="targetDegree">
+  ///   The degree that receives the applied dominant.
+  /// </param>
+  /// <returns>
+  ///   The applied dominant triad.
+  /// </returns>
   public AppliedTriad ResolveAppliedDominant(
     Key key,
     ScaleDegree targetDegree )
@@ -230,10 +320,18 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     return new AppliedTriad( triad, targetDegree, AppliedTriadFunction.Dominant );
   }
 
-  /// <summary>Resolves an applied leading-tone triad for a target degree in the supplied key.</summary>
-  /// <param name="key">The key containing the target degree.</param>
-  /// <param name="targetDegree">The degree that receives the applied leading-tone triad.</param>
-  /// <returns>The applied leading-tone triad.</returns>
+  /// <summary>
+  ///   Resolves an applied leading-tone triad for a target degree in the supplied key.
+  /// </summary>
+  /// <param name="key">
+  ///   The key containing the target degree.
+  /// </param>
+  /// <param name="targetDegree">
+  ///   The degree that receives the applied leading-tone triad.
+  /// </param>
+  /// <returns>
+  ///   The applied leading-tone triad.
+  /// </returns>
   public AppliedTriad ResolveAppliedLeadingTone(
     Key key,
     ScaleDegree targetDegree )
@@ -252,10 +350,18 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     return Symbol;
   }
 
-  /// <summary>Attempts to parse a scale degree from the supplied string.</summary>
-  /// <param name="value">The scale degree value.</param>
-  /// <param name="scaleDegree">The parsed scale degree, if successful.</param>
-  /// <returns>True when the parse succeeds; otherwise, false.</returns>
+  /// <summary>
+  ///   Attempts to parse a scale degree from the supplied string.
+  /// </summary>
+  /// <param name="value">
+  ///   The scale degree value.
+  /// </param>
+  /// <param name="scaleDegree">
+  ///   The parsed scale degree, if successful.
+  /// </param>
+  /// <returns>
+  ///   True when the parse succeeds; otherwise, false.
+  /// </returns>
   public static bool TryParse(
     string? value,
     out ScaleDegree scaleDegree )
@@ -263,11 +369,21 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     return TryParse( value, null, out scaleDegree );
   }
 
-  /// <summary>Attempts to parse a scale degree from the supplied string.</summary>
-  /// <param name="s">The scale degree value.</param>
-  /// <param name="provider">The format provider.</param>
-  /// <param name="scaleDegree">The parsed scale degree, if successful.</param>
-  /// <returns>True when the parse succeeds; otherwise, false.</returns>
+  /// <summary>
+  ///   Attempts to parse a scale degree from the supplied string.
+  /// </summary>
+  /// <param name="s">
+  ///   The scale degree value.
+  /// </param>
+  /// <param name="provider">
+  ///   The format provider.
+  /// </param>
+  /// <param name="scaleDegree">
+  ///   The parsed scale degree, if successful.
+  /// </param>
+  /// <returns>
+  ///   True when the parse succeeds; otherwise, false.
+  /// </returns>
   public static bool TryParse(
     string? s,
     IFormatProvider? provider,
@@ -291,10 +407,18 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
 
   #region Implementation
 
-  /// <summary>Attempts to parse the supplied value as a roman numeral scale degree.</summary>
-  /// <param name="value">The candidate value.</param>
-  /// <param name="scaleDegree">The parsed scale degree, if successful.</param>
-  /// <returns>True when the parse succeeds; otherwise, false.</returns>
+  /// <summary>
+  ///   Attempts to parse the supplied value as a roman numeral scale degree.
+  /// </summary>
+  /// <param name="value">
+  ///   The candidate value.
+  /// </param>
+  /// <param name="scaleDegree">
+  ///   The parsed scale degree, if successful.
+  /// </param>
+  /// <returns>
+  ///   True when the parse succeeds; otherwise, false.
+  /// </returns>
   private static bool TryParseRomanNumeral(
     ReadOnlySpan<char> value,
     out ScaleDegree scaleDegree )
@@ -322,8 +446,12 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   /// <summary>
   ///   Parses a roman numeral string and returns the corresponding scale degree number (1-7).
   /// </summary>
-  /// <param name="s">The roman numeral string.</param>
-  /// <returns>The corresponding scale degree number (1-7), or -1 if invalid.</returns>
+  /// <param name="s">
+  ///   The roman numeral string.
+  /// </param>
+  /// <returns>
+  ///   The corresponding scale degree number (1-7), or -1 if invalid.
+  /// </returns>
   private static int ParseRomanNumeral(
     ReadOnlySpan<char> s )
   {
@@ -369,10 +497,18 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
     }
   }
 
-  /// <summary>Attempts to parse the supplied value as a Nashville number scale degree.</summary>
-  /// <param name="value">The candidate value.</param>
-  /// <param name="scaleDegree">The parsed scale degree, if successful.</param>
-  /// <returns>True when the parse succeeds; otherwise, false.</returns>
+  /// <summary>
+  ///   Attempts to parse the supplied value as a Nashville number scale degree.
+  /// </summary>
+  /// <param name="value">
+  ///   The candidate value.
+  /// </param>
+  /// <param name="scaleDegree">
+  ///   The parsed scale degree, if successful.
+  /// </param>
+  /// <returns>
+  ///   True when the parse succeeds; otherwise, false.
+  /// </returns>
   private static bool TryParseNashville(
     ReadOnlySpan<char> value,
     out ScaleDegree scaleDegree )
@@ -392,9 +528,18 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   /// <summary>
   ///   Gets the diatonic triad quality for the scale degree in the specified scaleDefinition.
   /// </summary>
-  /// <param name="scaleDefinition">The scaleDefinition to use for determining the triad quality.</param>
-  /// <returns>The diatonic triad quality for the scale degree in the specified scaleDefinition.</returns>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when the scaleDefinition or degree is invalid.</exception>
+  /// <param name="thirdInterval">
+  ///   The interval of the third.
+  /// </param>
+  /// <param name="fifthInterval">
+  ///   The interval of the fifth.
+  /// </param>
+  /// <returns>
+  ///   The diatonic triad quality for the scale degree in the specified scaleDefinition.
+  /// </returns>
+  /// <exception cref="ArgumentOutOfRangeException">
+  ///   Thrown when the scaleDefinition or degree is invalid.
+  /// </exception>
   private static TriadQuality ClassifyTriadQuality(
     Interval thirdInterval,
     Interval fifthInterval )

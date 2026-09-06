@@ -22,10 +22,6 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
 namespace Bach.Model.Serialization;
 
 internal sealed record PersistentScale(
@@ -34,17 +30,4 @@ internal sealed record PersistentScale(
   PersistentScaleDegree[] AscendingDegrees,
   PersistentScaleDegree[]? DescendingDegrees = null,
   string? Alias = null,
-  string? Categories = null )
-{
-}
-
-internal sealed record PersistentScaleDegree(
-  string Interval )
-{
-  #region Properties
-
-  [JsonExtensionData]
-  public Dictionary<string, JsonElement>? Metadata { get; init; }
-
-  #endregion
-}
+  PersistentScaleClassification? Classification = null );

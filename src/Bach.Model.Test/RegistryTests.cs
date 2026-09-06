@@ -53,6 +53,88 @@ public sealed class RegistryTests
   }
 
   [Fact]
+  public void ScaleFormula_ShouldLoadClassificationMetadata_WhenLoadedFromRegistry()
+  {
+    var dorian = Registry.ScaleFormulas["Dorian"];
+
+    dorian.Classification.ParentScaleId.Should()
+          .Be( "Major" );
+
+    dorian.Classification.ModalRotationIndex.Should()
+          .Be( 1 );
+
+    dorian.Classification.CanonicalDegrees.Should()
+          .Equal(
+            "1",
+            "2",
+            "b3",
+            "4",
+            "5",
+            "6",
+            "b7"
+          );
+
+    dorian.Classification.IsKeyCandidate.Should()
+          .BeTrue();
+  }
+
+  [Fact]
+  public void ScaleFormula_ShouldSeparateRepertoireTagsFromCalculatedCategories_WhenLoadedFromRegistry()
+  {
+    var blues = Registry.ScaleFormulas["MinorBlues"];
+
+    blues.Classification.RepertoireTags.Should()
+         .Contain( ScaleTag.Blues );
+
+    blues.Classification.Categories.Should()
+         .Contain( ScaleCategory.Hexatonic );
+
+    blues.Categories.Should()
+         .Contain( nameof( ScaleTag.Blues ) );
+  }
+
+  [Fact]
+  public void ScaleFormula_ShouldLoadCollectionAndRepertoireMetadata_WhenUsingRepresentativeEntries()
+  {
+    var major = Registry.ScaleFormulas["Major"];
+    var naturalMinor = Registry.ScaleFormulas["NaturalMinor"];
+    var harmonicMinor = Registry.ScaleFormulas["HarmonicMinor"];
+    var melodicMinor = Registry.ScaleFormulas["MelodicMinor"];
+    var jazz = Registry.ScaleFormulas["BebopDominant"];
+
+    major.Classification.IsKeyCandidate.Should()
+         .BeTrue();
+
+    naturalMinor.Classification.IsKeyCandidate.Should()
+                .BeTrue();
+
+    harmonicMinor.Classification.CanonicalDegrees.Should()
+                 .Equal(
+                   "1",
+                   "2",
+                   "b3",
+                   "4",
+                   "5",
+                   "b6",
+                   "7"
+                 );
+
+    melodicMinor.Classification.CanonicalDegrees.Should()
+                .Equal(
+                  "1",
+                  "2",
+                  "b3",
+                  "4",
+                  "5",
+                  "6",
+                  "7"
+                );
+
+    jazz.Classification.RepertoireTags.Should()
+        .Contain( ScaleTag.Jazz );
+  }
+
+  [Fact]
   public void ScaleFormulas_ShouldReturnExpectedValues_WhenAccessedById()
   {
     var scaleFormulas = Registry.ScaleFormulas.ToArray();

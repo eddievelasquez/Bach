@@ -1,4 +1,4 @@
-// Module Name: ScaleCategory.cs
+// Module Name: ScaleTag.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -25,42 +25,47 @@
 namespace Bach.Model;
 
 /// <summary>
-///   Calculated structural scale categories.
+///   Registry-supplied repertoire tags for a scale formula.
 /// </summary>
-public enum ScaleCategory
+public enum ScaleTag
 {
   /// <summary>
-  ///   The diatonic scale.
+  ///   An exotic scale.
   /// </summary>
-  Diatonic,
+  Exotic,
 
   /// <summary>
-  ///   The major scale.
+  ///   A blues scale.
   /// </summary>
-  Major,
+  Blues,
 
   /// <summary>
-  ///   The minor scale.
+  ///   A jazz scale.
   /// </summary>
-  Minor,
+  Jazz,
 
   /// <summary>
-  ///   The pentatonic scale.
+  ///   A modal scale.
   /// </summary>
-  Pentatonic,
+  Modal,
 
   /// <summary>
-  ///   The hexatonic scale.
+  ///   A tonal scale.
   /// </summary>
-  Hexatonic,
+  Tonal,
 
   /// <summary>
-  ///   The heptatonic scale.
+  ///   A common-practice scale.
   /// </summary>
-  Heptatonic,
+  CommonPractice,
 
   /// <summary>
-  ///   The octatonic scale.
+  ///   A Japanese scale.
   /// </summary>
-  Octatonic
+  Japanese,
+
+  /// <summary>
+  ///   A symmetrical scale.
+  /// </summary>
+  Symmetrical
 }
