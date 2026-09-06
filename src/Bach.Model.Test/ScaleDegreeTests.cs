@@ -38,6 +38,85 @@ public sealed class ScaleDegreeTests
   }
 
   [Fact]
+  public void ResolveDiatonicTriad_ShouldReturnAugmentedIII_ForAHarmonicMinor()
+  {
+    var degree = ScaleDegree.Mediant;
+    var key = new Key( PitchClass.A, ScaleDefinition.HarmonicMinor );
+
+    var triad = degree.ResolveDiatonicTriad( key );
+
+    triad.Root.Should()
+         .Be( PitchClass.C );
+
+    triad.Quality.Should()
+         .Be( TriadQuality.Augmented );
+  }
+
+  [Fact]
+  public void ResolveDiatonicTriad_ShouldReturnDiminishedVI_ForAMelodicMinorAscending()
+  {
+    var degree = ScaleDegree.Submediant; // degree 6
+    var key = new Key( PitchClass.A, ScaleDefinition.MelodicMinor );
+
+    var triad = degree.ResolveDiatonicTriad( key ); // default ascending
+
+    triad.Root.Should()
+         .Be( PitchClass.FSharp );
+
+    triad.Quality.Should()
+         .Be( TriadQuality.Diminished );
+  }
+
+  [Fact]
+  public void ResolveDiatonicTriad_ShouldReturnMajorVI_ForAMelodicMinorDescending()
+  {
+    var degree = ScaleDegree.Submediant; // degree 6
+    var key = new Key( PitchClass.A, ScaleDefinition.MelodicMinor );
+
+    var triad = degree.ResolveDiatonicTriad( key, ascending: false );
+
+    triad.Root.Should()
+         .Be( PitchClass.F );
+
+    triad.Quality.Should()
+         .Be( TriadQuality.Major );
+  }
+
+  [Fact]
+  public void ResolveAppliedDominant_ShouldReturnVOverV_ForCMajor()
+  {
+    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+
+    var applied = ScaleDegree.Dominant.ResolveAppliedDominant( key, ScaleDegree.Dominant );
+
+    applied.Triad.Root.Should()
+           .Be( PitchClass.D );
+    applied.Triad.Quality.Should()
+           .Be( TriadQuality.Major );
+    applied.TargetDegree.Should()
+           .Be( ScaleDegree.Dominant );
+    applied.Function.Should()
+           .Be( AppliedTriadFunction.Dominant );
+  }
+
+  [Fact]
+  public void ResolveAppliedLeadingTone_ShouldReturnLeadingToneOverV_ForCMajor()
+  {
+    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+
+    var applied = ScaleDegree.LeadingTone.ResolveAppliedLeadingTone( key, ScaleDegree.Dominant );
+
+    applied.Triad.Root.Should()
+           .Be( PitchClass.FSharp );
+    applied.Triad.Quality.Should()
+           .Be( TriadQuality.Diminished );
+    applied.TargetDegree.Should()
+           .Be( ScaleDegree.Dominant );
+    applied.Function.Should()
+           .Be( AppliedTriadFunction.LeadingTone );
+  }
+
+  [Fact]
   public void Parse_ShouldThrowFormatException_WhenValueIsInvalid()
   {
     var act = () => ScaleDegree.Parse( "X" );

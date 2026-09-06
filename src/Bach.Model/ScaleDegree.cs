@@ -162,9 +162,88 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   {
     ArgumentNullException.ThrowIfNull( key );
 
-    var root = Resolve( key );
-    var quality = GetDiatonicTriadQuality( key.ScaleDefinition );
+    // Preserve existing behavior: use ascending collection as the default direction.
+    return ResolveDiatonicTriad( key, ascending: true );
+  }
+
+  /// <summary>Resolves the degree to a diatonic triad in the supplied key using the requested direction.</summary>
+  /// <param name="key">The key to resolve against.</param>
+  /// <param name="ascending">True to use the formula's ascending degrees; false to use descending degrees.</param>
+  /// <returns>The diatonic triad for the degree.</returns>
+  public Triad ResolveDiatonicTriad(
+    Key key,
+    bool ascending )
+  {
+    ArgumentNullException.ThrowIfNull( key );
+
+    PitchClass[] degreePitchClasses;
+
+    var degreeCount = key.Scale.Formula.AscendingDegrees.Count;
+
+    if( ascending )
+    {
+      degreePitchClasses = key.Scale.GetAscending()
+                                .Take( degreeCount )
+                                .ToArray();
+    }
+    else
+    {
+      var desc = key.Scale.GetDescending()
+                        .Take( degreeCount )
+                        .ToArray();
+
+      degreePitchClasses = new PitchClass[degreeCount];
+      // tonic
+      degreePitchClasses[0] = desc[0];
+      // remaining degrees are in reverse order in the descending sequence
+      for( var d = 2; d <= degreeCount; d++ )
+      {
+        degreePitchClasses[d - 1] = desc[degreeCount - d + 1];
+      }
+    }
+
+    var index = Degree - 1;
+    var root = degreePitchClasses[index % degreePitchClasses.Length];
+    var third = degreePitchClasses[( index + 2 ) % degreePitchClasses.Length];
+    var fifth = degreePitchClasses[( index + 4 ) % degreePitchClasses.Length];
+
+    var thirdInterval = root.GetIntervalTo( third );
+    var fifthInterval = root.GetIntervalTo( fifth );
+
+    var quality = ClassifyTriadQuality( thirdInterval, fifthInterval );
     return new Triad( root, quality );
+  }
+
+  /// <summary>Resolves an applied dominant triad for a target degree in the supplied key.</summary>
+  /// <param name="key">The key containing the target degree.</param>
+  /// <param name="targetDegree">The degree that receives the applied dominant.</param>
+  /// <returns>The applied dominant triad.</returns>
+  public AppliedTriad ResolveAppliedDominant(
+    Key key,
+    ScaleDegree targetDegree )
+  {
+    ArgumentNullException.ThrowIfNull( key );
+    ValidateTargetDegree( targetDegree );
+
+    var target = targetDegree.Resolve( key );
+    var triad = new Triad( target + Interval.Fifth, TriadQuality.Major );
+    return new AppliedTriad( triad, targetDegree, AppliedTriadFunction.Dominant );
+  }
+
+  /// <summary>Resolves an applied leading-tone triad for a target degree in the supplied key.</summary>
+  /// <param name="key">The key containing the target degree.</param>
+  /// <param name="targetDegree">The degree that receives the applied leading-tone triad.</param>
+  /// <returns>The applied leading-tone triad.</returns>
+  public AppliedTriad ResolveAppliedLeadingTone(
+    Key key,
+    ScaleDegree targetDegree )
+  {
+    ArgumentNullException.ThrowIfNull( key );
+    ValidateTargetDegree( targetDegree );
+
+    var target = targetDegree.Resolve( key );
+    var triad = new Triad( target - Interval.MinorSecond, TriadQuality.Diminished );
+    return new AppliedTriad( triad, targetDegree, AppliedTriadFunction.LeadingTone );
   }
 
   /// <inheritdoc/>
@@ -316,32 +395,43 @@ public readonly struct ScaleDegree: IParsable<ScaleDegree>
   /// <param name="scaleDefinition">The scaleDefinition to use for determining the triad quality.</param>
   /// <returns>The diatonic triad quality for the scale degree in the specified scaleDefinition.</returns>
   /// <exception cref="ArgumentOutOfRangeException">Thrown when the scaleDefinition or degree is invalid.</exception>
-  private TriadQuality GetDiatonicTriadQuality(
-    ScaleDefinition scaleDefinition )
+  private static TriadQuality ClassifyTriadQuality(
+    Interval thirdInterval,
+    Interval fifthInterval )
   {
-    if( scaleDefinition.IsMajor )
+    // Determine quality primarily from the fifth, then third. This covers diminished and augmented fifths.
+    if( fifthInterval == Interval.DiminishedFifth )
     {
-      return Degree switch
-      {
-        1 or 4 or 5 => TriadQuality.Major,
-        2 or 3 or 6 => TriadQuality.Minor,
-        7 => TriadQuality.Diminished,
-        _ => throw new ArgumentOutOfRangeException( nameof( Degree ), Degree, "Invalid scale degree." )
-      };
+      return TriadQuality.Diminished;
     }
 
-    if( scaleDefinition.IsMinor )
+    if( fifthInterval == Interval.AugmentedFifth )
     {
-      return Degree switch
-      {
-        1 or 4 or 5 => TriadQuality.Minor,
-        2           => TriadQuality.Diminished,
-        3 or 6 or 7 => TriadQuality.Major,
-        _           => throw new ArgumentOutOfRangeException( nameof( Degree ), Degree, "Invalid scale degree." )
-      };
+      return TriadQuality.Augmented;
     }
 
-    throw new ArgumentOutOfRangeException( nameof( scaleDefinition ), scaleDefinition, "Unsupported scaleDefinition." );
+    // Perfect/normal fifth -> use third to decide major/minor
+    if( thirdInterval == Interval.MajorThird )
+    {
+      return TriadQuality.Major;
+    }
+
+    if( thirdInterval == Interval.MinorThird )
+    {
+      return TriadQuality.Minor;
+    }
+
+    // Fallback: if we reach here, the triad structure is unsupported by the enum.
+    throw new InvalidOperationException( $"Unsupported triad intervals: third={thirdInterval}, fifth={fifthInterval}." );
+  }
+
+  private static void ValidateTargetDegree(
+    ScaleDegree targetDegree )
+  {
+    if( targetDegree.Degree is < 1 or > 7 )
+    {
+      throw new ArgumentOutOfRangeException( nameof( targetDegree ), "The target degree must be between 1 and 7." );
+    }
   }
 
   #endregion
