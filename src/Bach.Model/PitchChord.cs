@@ -36,7 +36,7 @@ public class PitchChord
   : Chord<PitchChord, Pitch>,
     IChordFactory<PitchChord, Pitch>,
     IChordParser<PitchChord>,
-    IPartEvent
+    IChordEvent
 {
   #region Constructors
 
@@ -184,7 +184,7 @@ public class PitchChord
       return false;
     }
 
-    // If we have a chord formula, we can consume the characters corresponding to the formula's symbol from the tail.                                    5
+    // If we have a chord formula, we can consume the characters corresponding to the formula's symbol from the tail.
     tail = tail[chordFormula.Symbol.Length..];
 
     // Do we have a bass note?
