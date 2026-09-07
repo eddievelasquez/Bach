@@ -41,6 +41,23 @@ public enum EvidenceReasonCategory
   /// <summary>Evidence from the governing scale, mode, or key context.</summary>
   ScaleContext,
 
+  /// <summary>
+  ///   Evidence that supports a candidate as the tonal center (recurrence, emphasis, or motion).
+  /// </summary>
+  TonalCenter,
+
+  /// <summary>Evidence that the first event emphasizes the tonic.</summary>
+  TonalCenterOpeningEmphasis,
+
+  /// <summary>Evidence that the last event emphasizes the tonic.</summary>
+  TonalCenterClosingEmphasis,
+
+  /// <summary>Evidence for dominant-to-tonic motion in the ordered event sequence.</summary>
+  DominantToTonicMotion,
+
+  /// <summary>Evidence for leading-tone resolution to tonic in the ordered event sequence.</summary>
+  LeadingToneResolution,
+
   /// <summary>Evidence entered as a direct analyst observation.</summary>
   AnalystObservation
 }

@@ -170,9 +170,6 @@ public abstract class Formula
     return obj is Formula other && Equals( other );
   }
 
-  // TODO: Generate should take a direction: ascending or descending (Only makes sense for scale formulas, not chords
-  // Intervals should probably go in the concrete Scale or Chord Formulas.
-
   /// <summary>
   ///   Generates a sequence of pitches based on the formula's intervals, starting from the provided root pitch.
   /// </summary>

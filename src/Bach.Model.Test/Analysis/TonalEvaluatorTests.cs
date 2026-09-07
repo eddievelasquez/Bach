@@ -207,24 +207,17 @@ public class TonalEvaluatorTests
 
     var scope = new PartEventScope( part );
     var evaluator = new TonalEvaluator();
-    var resultSet = (TonalAnalysisResultSet) evaluator.Evaluate( scope, options: TonalEvaluationOptions.AllCandidates );
+    var resultSet = (TonalAnalysisResultSet) evaluator.Evaluate( scope );
 
-    var candidate = resultSet.Candidates.Should()
-                             .Contain( result => result.Tonic == PitchClass.C
-                                                 && result.Key.ScaleDefinition.FormulaId == ScaleDefinition.Major.FormulaId
-                             )
-                             .Which;
+    var first = resultSet.Candidates.First();
 
-    candidate.Tonic.Should()
-             .Be( PitchClass.C );
+    first.Tonic.Should().Be( PitchClass.C );
+    first.Key.ScaleDefinition.FormulaId.Should().Be( ScaleDefinition.Major.FormulaId );
 
-    candidate.Key.ScaleDefinition.FormulaId.Should()
-             .Be( ScaleDefinition.Major.FormulaId );
-
-    candidate.Confidence.Should()
+    first.Confidence.Should()
              .BeInRange( 0.0, 1.0 );
 
-    candidate.SupportingEvidence.Should()
+    first.SupportingEvidence.Should()
              .Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
                                    && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
              )
@@ -256,18 +249,15 @@ public class TonalEvaluatorTests
 
     var scope = new PartEventScope( part );
     var evaluator = new TonalEvaluator();
-    var resultSet = (TonalAnalysisResultSet) evaluator.Evaluate( scope, options: TonalEvaluationOptions.AllCandidates );
+    var resultSet = (TonalAnalysisResultSet) evaluator.Evaluate( scope );
 
-    var candidate = resultSet.Candidates.Should()
-                             .Contain( result => result.Tonic == PitchClass.C
-                                                 && result.Key.ScaleDefinition.FormulaId == ScaleDefinition.Major.FormulaId
-                             )
-                             .Which;
+    var first = resultSet.Candidates.First();
 
-    candidate.Confidence.Should()
-             .BeInRange( 0.0, 1.0 );
+    first.Tonic.Should().Be( PitchClass.C );
+    first.Key.ScaleDefinition.FormulaId.Should().Be( ScaleDefinition.Major.FormulaId );
+    first.Confidence.Should().BeInRange( 0.0, 1.0 );
 
-    candidate.SupportingEvidence.Should()
+    first.SupportingEvidence.Should()
              .Contain( evidence => evidence.Category == EvidenceReasonCategory.ScaleContext
                                    && evidence.Explanation.Contains( "scale degree", StringComparison.OrdinalIgnoreCase )
              )
@@ -310,7 +300,7 @@ public class TonalEvaluatorTests
   public void Evaluate_ShouldIncludeAdditionalKey_WhenFormulaIsNotARegistryCandidate()
   {
     var additionalKey = new Key( PitchClass.C, ScaleDefinition.FromFormulaId( "BebopDominant" ) );
-    var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
+    var scope = new PartEventScope( Part.Parse( "C4,E4,G4,C5" ) );
 
     var result = new TonalEvaluator().Evaluate( scope, [additionalKey], TonalEvaluationOptions.AllCandidates );
 
@@ -565,6 +555,113 @@ public class TonalEvaluatorTests
 
     ( (TonalAnalysisResultSet) result ).Candidates.Should()
                                        .HaveCountGreaterThan( 1 );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldIncludeTonalCenterRecurrenceAndEndpointEvidence()
+  {
+    var part = new Part(
+      [
+        PitchChord.Create( PitchClass.C, ChordFormula.Major ),
+        PitchChord.Create( PitchClass.G, ChordFormula.Major ),
+        PitchChord.Create( PitchClass.C, ChordFormula.Major )
+      ]
+    );
+    var scope = new PartEventScope( part );
+
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      [new Key( PitchClass.C, ScaleDefinition.Major )]
+    );
+    var candidate = result.Candidates.Single();
+
+    candidate.SupportingEvidence.Should()
+             .Contain( evidence => evidence.Category == EvidenceReasonCategory.TonalCenter
+                                   && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
+             )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.TonalCenter
+                                       && evidence.Explanation.Contains( "bass", StringComparison.OrdinalIgnoreCase )
+             )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.TonalCenterOpeningEmphasis )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.TonalCenterClosingEmphasis );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldIncludeDominantToTonicAndLeadingToneResolutionEvidence()
+  {
+    var scope = new PartEventScope(
+      new Part(
+        [
+          Pitch.Create( PitchClass.G, 4 ),
+          Pitch.Create( PitchClass.C, 5 ),
+          Pitch.Create( PitchClass.B, 4 ),
+          Pitch.Create( PitchClass.C, 5 )
+        ]
+      )
+    );
+
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      [new Key( PitchClass.C, ScaleDefinition.Major )]
+    );
+    var candidate = result.Candidates.Single();
+
+    candidate.SupportingEvidence.Should()
+             .Contain( evidence => evidence.Category == EvidenceReasonCategory.DominantToTonicMotion )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.LeadingToneResolution );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldUseConfiguredTonalCenterWeights()
+  {
+    var scope = new PartEventScope(
+      new Part(
+        [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 ), Pitch.Create( PitchClass.CSharp, 5 )]
+      )
+    );
+    var evaluator = new TonalEvaluator();
+    var candidate = new Key( PitchClass.C, ScaleDefinition.Major );
+
+    var weighted = (TonalAnalysisResultSet) evaluator.Evaluate( scope, [candidate] );
+    var unweighted = (TonalAnalysisResultSet) evaluator.Evaluate(
+      scope,
+      [candidate],
+      new TonalEvaluationOptions
+      {
+        TonicRootRecurrenceWeight = 0.0,
+        TonicBassRecurrenceWeight = 0.0,
+        OpeningEmphasisWeight = 0.0,
+        ClosingEmphasisWeight = 0.0,
+        DominantToTonicWeight = 0.0,
+        LeadingToneResolutionWeight = 0.0
+      }
+    );
+
+    weighted.Candidates.Single().Confidence.Should()
+            .BeGreaterThan( unweighted.Candidates.Single().Confidence );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldReturnCandidatesWithinConfiguredConfidenceMargin()
+  {
+    var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
+    var candidates = new[]
+    {
+      new Key( PitchClass.C, ScaleDefinition.Major ),
+      new Key( PitchClass.G, ScaleDefinition.Major )
+    };
+
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      candidates,
+      new TonalEvaluationOptions { ConfidenceDelta = 1.0, MaximumCandidates = 2 }
+    );
+
+    result.Candidates.Should().HaveCount( 2 );
+    result.Candidates.First().Tonic.Should().Be( PitchClass.C );
+    result.Candidates.Select( candidate => candidate.Rank )
+                     .Should()
+                     .Equal( 1, 2 );
   }
 
   [Fact]

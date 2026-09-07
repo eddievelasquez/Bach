@@ -116,7 +116,7 @@ public sealed class TonalEvaluator
     var candidates = TonalCandidateSource.GetDefaultCandidates( _profile )
                                          .Concat( additionalCandidates ?? Array.Empty<Key>() );
 
-    var scored = ScoreCandidates( scope, events, uniquePitchClasses, candidates )
+    var scored = ScoreCandidates( scope, events, uniquePitchClasses, candidates, evaluationOptions )
       .ToArray();
 
     if( scored.Length == 0 )
@@ -128,6 +128,7 @@ public sealed class TonalEvaluator
     var ordered = scored.OrderByDescending( s => s.Confidence )
                         .ThenByDescending( s => s.MatchedCount )
                         .ThenByDescending( s => s.HarmonicEvidenceCount )
+                        .ThenBy( s => s.Key.ScaleDefinition.FormulaId == ScaleDefinition.Major.FormulaId ? 0 : 1 )
                         .ThenBy( s => s.Key.Scale.Formula.Id, StringComparer.Ordinal )
                         .ThenBy( s => s.Key.Tonic )
                         .ToArray();
@@ -136,7 +137,8 @@ public sealed class TonalEvaluator
       scope,
       events,
       uniquePitchClasses,
-      SelectCandidates( ordered, evaluationOptions )
+      SelectCandidates( ordered, evaluationOptions ),
+      evaluationOptions
     );
   }
 
@@ -183,6 +185,7 @@ public sealed class TonalEvaluator
   /// <param name="events">The events to evaluate.</param>
   /// <param name="uniquePitchClasses">The unique pitch classes extracted from the events.</param>
   /// <param name="candidates">The candidate keys to score.</param>
+  /// <param name="options">Options that control which ranked candidates are returned.</param>
   /// <returns>
   ///   A <see cref="IEnumerable{CandidateScore}"/> representing the scores of the candidates.
   /// </returns>
@@ -190,9 +193,10 @@ public sealed class TonalEvaluator
     PartEventScope scope,
     IPartEvent[] events,
     PitchClass[] uniquePitchClasses,
-    IEnumerable<Key> candidates )
+    IEnumerable<Key> candidates,
+    TonalEvaluationOptions options )
   {
-    return candidates.Select( candidate => ScoreCandidate( candidate, scope, events, uniquePitchClasses ) )
+    return candidates.Select( candidate => ScoreCandidate( candidate, scope, events, uniquePitchClasses, options ) )
                      .OfType<CandidateScore>();
   }
 
@@ -203,6 +207,7 @@ public sealed class TonalEvaluator
   /// <param name="scope">The part event scope being evaluated.</param>
   /// <param name="events">The events to evaluate.</param>
   /// <param name="uniquePitchClasses">The unique pitch classes extracted from the events.</param>
+  /// <param name="options">Options that control which ranked candidates are returned.</param>
   /// <returns>
   ///   A <see cref="CandidateScore"/> representing the score of the candidate key, or null if no pitch classes match.
   /// </returns>
@@ -210,7 +215,8 @@ public sealed class TonalEvaluator
     Key candidateKey,
     PartEventScope scope,
     IPartEvent[] events,
-    PitchClass[] uniquePitchClasses )
+    PitchClass[] uniquePitchClasses,
+    TonalEvaluationOptions options )
   {
     var scale = candidateKey.Scale;
     var matched = uniquePitchClasses.Count( scale.Contains );
@@ -236,13 +242,23 @@ public sealed class TonalEvaluator
       AddAppliedFunctionEvidence( scale, appliedFunction, supportingHarmonicEvidence, conflictingHarmonicEvidence );
     }
 
+    // Analyze tonal-center signals from the ordered events using configured weights.
+    var (tonalCenterScore, tonalCenterReasons) = AnalyzeTonalCenter( candidateKey.Tonic, scale, events, options );
+
+    // Add tonal-center explanations to supporting evidence list so they influence evidence counts.
+    foreach( var reason in tonalCenterReasons )
+    {
+      supportingHarmonicEvidence.Add( reason.Explanation );
+    }
+
     // Calculate confidence based on matched pitch classes and harmonic evidence.
     var confidence = CalculateConfidence(
       candidateKey,
       matched,
       uniquePitchClasses.Length,
       supportingHarmonicEvidence.Count,
-      conflictingHarmonicEvidence.Count
+      conflictingHarmonicEvidence.Count,
+      tonalCenterScore
     );
 
     return new CandidateScore(
@@ -263,13 +279,15 @@ public sealed class TonalEvaluator
   /// <param name="uniquePitchClassCount">The total number of unique pitch classes in the events.</param>
   /// <param name="supportingEvidenceCount">The number of supporting harmonic evidence items.</param>
   /// <param name="conflictingEvidenceCount">The number of conflicting harmonic evidence items.</param>
+  /// <param name="tonalCenterScore">The score representing the strength of the tonal center.</param>
   /// <returns>A confidence score between 0.0 and 1.0.</returns>
   private double CalculateConfidence(
     Key candidateKey,
     int matchedCount,
     int uniquePitchClassCount,
     int supportingEvidenceCount,
-    int conflictingEvidenceCount )
+    int conflictingEvidenceCount,
+    double tonalCenterScore )
   {
     // Calculate the profile weight based on the candidate key's scale formula and the repertoire profile.
     // The profile weight is the maximum weight of the tags associated with the candidate key's scale formula.
@@ -281,7 +299,7 @@ public sealed class TonalEvaluator
     // Calculate the base confidence as the ratio of matched pitch classes to unique pitch classes.
     var baseConfidence = (double) matchedCount / uniquePitchClassCount;
 
-    // Adjust the confidence based on supporting and conflicting harmonic evidence.
+    // Adjust the confidence based on supporting harmonic evidence.
     var harmonicAdjustment = supportingEvidenceCount == 0
       ? 0.0
       : Math.Min( 0.2, supportingEvidenceCount * 0.025 );
@@ -290,9 +308,12 @@ public sealed class TonalEvaluator
     var conflictAdjustment = Math.Min( 0.2, conflictingEvidenceCount * 0.025 );
     var profileAdjustment = Math.Min( 0.1, profileWeight * 0.1 );
 
+    // Tonal-center adjustment is provided by the ordered-event analysis and is already bounded by the analyzer.
+    var tonalAdjustment = Math.Clamp( tonalCenterScore, 0.0, 0.35 );
+
     // Return the final confidence score, clamped between 0.0 and 1.0.
     return Math.Clamp(
-      baseConfidence + harmonicAdjustment + profileAdjustment - conflictAdjustment,
+      baseConfidence + harmonicAdjustment + profileAdjustment + tonalAdjustment - conflictAdjustment,
       0.0,
       1.0
     );
@@ -316,11 +337,25 @@ public sealed class TonalEvaluator
     var bassMatches = scale.Contains( new[] { chordEvent.Bass.PitchClass } );
     var chordMatches = chordEvent.PitchClasses.All( scale.Contains );
 
-    AddEvidence( rootMatches, $"Chord root {chordEvent.Root.PitchClass} is in the candidate scale.", $"Chord root {chordEvent.Root.PitchClass} is outside the candidate scale." );
-    AddEvidence( bassMatches, $"Chord bass {chordEvent.Bass.PitchClass} is in the candidate scale.", $"Chord bass {chordEvent.Bass.PitchClass} is outside the candidate scale." );
-    AddEvidence( chordMatches, $"Chord formula {chordEvent.Formula.Name} is contained by the candidate scale.", $"Chord formula {chordEvent.Formula.Name} has tones outside the candidate scale." );
+    AddEvidence(
+      rootMatches,
+      $"Chord root {chordEvent.Root.PitchClass} is in the candidate scale.",
+      $"Chord root {chordEvent.Root.PitchClass} is outside the candidate scale."
+    );
 
-    switch (chordEvent.Inversion)
+    AddEvidence(
+      bassMatches,
+      $"Chord bass {chordEvent.Bass.PitchClass} is in the candidate scale.",
+      $"Chord bass {chordEvent.Bass.PitchClass} is outside the candidate scale."
+    );
+
+    AddEvidence(
+      chordMatches,
+      $"Chord formula {chordEvent.Formula.Name} is contained by the candidate scale.",
+      $"Chord formula {chordEvent.Formula.Name} has tones outside the candidate scale."
+    );
+
+    switch( chordEvent.Inversion )
     {
       case 0 when chordEvent.Bass.PitchClass == chordEvent.Root.PitchClass:
         supportingEvidence.Add( "The chord is in root position." );
@@ -356,12 +391,14 @@ public sealed class TonalEvaluator
   /// <param name="events">The part events to analyze.</param>
   /// <param name="uniquePitchClasses">The unique pitch classes in the part events.</param>
   /// <param name="ordered">The scored candidate keys, ordered by confidence.</param>
+  /// <param name="options">Options that control which ranked candidates are returned.</param>
   /// <returns>A <see cref="TonalAnalysisResult"/> representing the analysis results.</returns>
   private static TonalAnalysisResult BuildResultSet(
     PartEventScope scope,
     IPartEvent[] events,
     PitchClass[] uniquePitchClasses,
-    IEnumerable<CandidateScore> ordered )
+    IEnumerable<CandidateScore> ordered,
+    TonalEvaluationOptions options )
   {
     var setBuilder = new TonalAnalysisResultSetBuilder( scope );
     var rank = 1;
@@ -392,6 +429,14 @@ public sealed class TonalEvaluator
         AddAppliedFunctionCandidateEvidence( item.Key.Scale, appliedFunction, supporting, conflicting );
       }
 
+      // Add tonal-center evidence from ordered events.
+      var (tonalScore, tonalReasons) = AnalyzeTonalCenter( item.Key.Tonic, item.Key.Scale, events, options );
+
+      foreach( var reason in tonalReasons )
+      {
+        AddEvidenceReason( supporting, reason.Category, reason.Explanation );
+      }
+
       // Create a ranked tonal candidate result with the accumulated evidence.
       var candidateRecord = new RankedTonalCandidateResult(
         rank,
@@ -411,7 +456,7 @@ public sealed class TonalEvaluator
   }
 
   /// <summary>
-  /// Selects candidates from the ordered list based on the provided evaluation options.
+  ///   Selects candidates from the ordered list based on the provided evaluation options.
   /// </summary>
   /// <param name="ordered">The ordered list of candidate scores.</param>
   /// <param name="options">The evaluation options to apply.</param>
@@ -457,6 +502,183 @@ public sealed class TonalEvaluator
   }
 
   /// <summary>
+  ///   Analyze ordered events for tonal-center signals and return a numeric score and descriptive reasons.
+  /// </summary>
+  private static (double score, List<EvidenceReason> reasons) AnalyzeTonalCenter(
+    PitchClass tonic,
+    Scale scale,
+    IPartEvent[] events,
+    TonalEvaluationOptions options )
+  {
+    var reasons = new List<EvidenceReason>();
+
+    var totalEvents = events.Length;
+
+    var chordEvents = events.OfType<IChordEvent>()
+                            .ToArray();
+    var chordCount = chordEvents.Length;
+
+    // Tonic occurrences in any event (spelling-sensitive)
+    var tonicOccurrences = events.Count( e => e.PitchClasses.Any( pc => pc == tonic ) );
+
+    if( tonicOccurrences > 0 )
+    {
+      reasons.Add(
+        new EvidenceReason( EvidenceReasonCategory.TonalCenter, $"Tonic {tonic} occurs {tonicOccurrences} times." )
+      );
+    }
+
+    // Root recurrence
+    if( chordCount > 0 )
+    {
+      var tonicRootOccurrences = chordEvents.Count( c => c.Root.PitchClass == tonic );
+
+      if( tonicRootOccurrences > 0 )
+      {
+        reasons.Add(
+          new EvidenceReason(
+            EvidenceReasonCategory.TonalCenter,
+            $"Tonic root {tonic} occurs {tonicRootOccurrences} times."
+          )
+        );
+      }
+
+      var tonicBassOccurrences = chordEvents.Count( c => c.Bass.PitchClass == tonic );
+
+      if( tonicBassOccurrences > 0 )
+      {
+        reasons.Add(
+          new EvidenceReason(
+            EvidenceReasonCategory.TonalCenter,
+            $"Tonic bass {tonic} occurs {tonicBassOccurrences} times."
+          )
+        );
+      }
+    }
+
+    // Opening/closing emphasis
+    if( totalEvents > 0 )
+    {
+      if( events[0]
+          .PitchClasses.Any( pc => pc == tonic ) )
+      {
+        reasons.Add(
+          new EvidenceReason( EvidenceReasonCategory.TonalCenterOpeningEmphasis, $"First event emphasizes tonic {tonic}." )
+        );
+      }
+
+      if( events[totalEvents - 1]
+          .PitchClasses.Any( pc => pc == tonic ) )
+      {
+        reasons.Add(
+          new EvidenceReason( EvidenceReasonCategory.TonalCenterClosingEmphasis, $"Last event emphasizes tonic {tonic}." )
+        );
+      }
+    }
+
+    // Adjacent-event motion: dominant-to-tonic and leading-tone resolution
+    var degrees = scale.GetAscending()
+                       .Take( scale.Formula.AscendingDegrees.Count )
+                       .ToArray();
+    PitchClass? dominant = null;
+    PitchClass? leading = null;
+
+    if( degrees.Length >= 5 )
+    {
+      dominant = degrees[4];
+    }
+
+    if( degrees.Length >= 7 )
+    {
+      leading = degrees[6];
+    }
+
+    var adjacentPairs = Math.Max( 0, totalEvents - 1 );
+    var dominantToTonic = 0;
+    var leadingToTonic = 0;
+
+    for( var i = 0; i + 1 < totalEvents; ++i )
+    {
+      var first = events[i];
+      var second = events[i + 1];
+
+      if( dominant is not null )
+      {
+        if( first.PitchClasses.Any( pc => pc == dominant ) && second.PitchClasses.Any( pc => pc == tonic ) )
+        {
+          ++dominantToTonic;
+        }
+      }
+
+      if( leading is not null )
+      {
+        if( first.PitchClasses.Any( pc => pc == leading ) && second.PitchClasses.Any( pc => pc == tonic ) )
+        {
+          ++leadingToTonic;
+        }
+      }
+    }
+
+    if( dominantToTonic > 0 )
+    {
+      reasons.Add(
+        new EvidenceReason(
+          EvidenceReasonCategory.DominantToTonicMotion,
+          $"Detected {dominantToTonic} dominant-to-tonic motion(s)."
+        )
+      );
+    }
+
+    if( leadingToTonic > 0 )
+    {
+      reasons.Add(
+        new EvidenceReason(
+          EvidenceReasonCategory.LeadingToneResolution,
+          $"Detected {leadingToTonic} leading-tone resolution(s) to tonic."
+        )
+      );
+    }
+
+    // Compute numeric score using options weights. Contributions are normalized per observation counts.
+    var score = 0.0;
+
+    if( chordCount > 0 )
+    {
+      var tonicRootOccurrences = chordEvents.Count( c => c.Root.PitchClass == tonic );
+      score += ( (double) tonicRootOccurrences / chordCount ) * options.TonicRootRecurrenceWeight;
+
+      var tonicBassOccurrences = chordEvents.Count( c => c.Bass.PitchClass == tonic );
+      score += ( (double) tonicBassOccurrences / chordCount ) * options.TonicBassRecurrenceWeight;
+    }
+
+    score += ( (double) tonicOccurrences / Math.Max( 1, totalEvents ) ) * ( options.TonicRootRecurrenceWeight * 0.5 );
+
+    if( events.Length > 0 )
+    {
+      if( events[0].PitchClasses.Any( pc => pc == tonic ) )
+      {
+        score += options.OpeningEmphasisWeight;
+      }
+
+      if( events[^1].PitchClasses.Any( pc => pc == tonic ) )
+      {
+        score += options.ClosingEmphasisWeight;
+      }
+    }
+
+    if( adjacentPairs > 0 )
+    {
+      score += ( (double) dominantToTonic / adjacentPairs ) * options.DominantToTonicWeight;
+      score += ( (double) leadingToTonic / adjacentPairs ) * options.LeadingToneResolutionWeight;
+    }
+
+    // Bound the tonal-center contribution to a sensible maximum to avoid overpowering other signals.
+    score = Math.Min( score, 0.35 );
+
+    return ( score, reasons );
+  }
+
+  /// <summary>
   ///   Adds result evidence for a supplied applied function.
   /// </summary>
   /// <param name="scale">The candidate scale.</param>
@@ -470,6 +692,7 @@ public sealed class TonalEvaluator
     List<EvidenceReason> conflicting )
   {
     var list = IsAppliedFunctionSupported( scale, appliedFunction ) ? supporting : conflicting;
+
     list.Add(
       new EvidenceReason(
         EvidenceReasonCategory.HarmonicContext,
@@ -489,8 +712,8 @@ public sealed class TonalEvaluator
     AppliedFunction appliedFunction )
   {
     var degrees = scale.GetAscending()
-                      .Take( scale.Formula.AscendingDegrees.Count )
-                      .ToArray();
+                       .Take( scale.Formula.AscendingDegrees.Count )
+                       .ToArray();
 
     var degreeIndex = appliedFunction.TargetDegree.Degree - 1;
 
@@ -577,8 +800,8 @@ public sealed class TonalEvaluator
   }
 
   /// <summary>
-  /// Adds evidence for the presence of pitch classes in a candidate scale, categorizing them as supporting or
-  /// conflicting.
+  ///   Adds evidence for the presence of pitch classes in a candidate scale, categorizing them as supporting or
+  ///   conflicting.
   /// </summary>
   /// <param name="scale">The candidate scale.</param>
   /// <param name="pitchClasses">The pitch classes to evaluate.</param>
@@ -618,7 +841,7 @@ public sealed class TonalEvaluator
   }
 
   /// <summary>
-  /// Adds an evidence reason to the specified list.
+  ///   Adds an evidence reason to the specified list.
   /// </summary>
   /// <param name="list">The list to which the evidence reason will be added.</param>
   /// <param name="category">The category of the evidence reason.</param>
