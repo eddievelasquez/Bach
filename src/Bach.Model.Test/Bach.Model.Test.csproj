@@ -22,4 +22,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Bach.Model\Bach.Model.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Fixtures\BachPreludeInCMajor-BWV846-Opening16Measures.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Fixtures\MozartSonataK545-OpeningMixedPitchesAndChords.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

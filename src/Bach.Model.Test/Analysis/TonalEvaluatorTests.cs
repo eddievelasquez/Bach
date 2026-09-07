@@ -1,20 +1,20 @@
 // Module Name: TonalEvaluatorTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -23,6 +23,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Bach.Model.Analysis.Test;
@@ -106,7 +107,8 @@ public class TonalEvaluatorTests
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
-      [new Key( PitchClass.C, ScaleDefinition.Major )]
+      [new Key( PitchClass.C, ScaleDefinition.Major )],
+      TonalEvaluationOptions.AllCandidates
     );
 
     result.Candidates.Should()
@@ -149,8 +151,8 @@ public class TonalEvaluatorTests
       new Key( PitchClass.C, ScaleDefinition.Major ), new Key( PitchClass.G, ScaleDefinition.Major )
     };
 
-    var first = evaluator.Evaluate( scope, candidates );
-    var second = evaluator.Evaluate( scope, candidates );
+    var first = evaluator.Evaluate( scope, candidates, TonalEvaluationOptions.AllCandidates );
+    var second = evaluator.Evaluate( scope, candidates, TonalEvaluationOptions.AllCandidates );
 
     var firstResult = (TonalAnalysisResultSet) first;
     var secondResult = (TonalAnalysisResultSet) second;
@@ -186,6 +188,97 @@ public class TonalEvaluatorTests
           .OnlyContain( candidate => candidate.Confidence >= 0.0 && candidate.Confidence <= 1.0 );
   }
 
+  /// <summary>
+  ///   Verifies the duration-free harmonic reduction of the opening 16 measures of J. S. Bach's
+  ///   Prelude in C major, BWV 846, from Book I of The Well-Tempered Clavier.
+  /// </summary>
+  /// <remarks>
+  ///   The fixture is a compact piano reduction. It contains one parsed chord event per measure.
+  ///   It does not represent duration, rhythm, or meter.
+  /// </remarks>
+  [Fact]
+  public void Evaluate_ShouldReturnCMajorForBachPreludeOpeningReduction()
+  {
+    var part = Part.Parse( LoadFixture( "BachPreludeInCMajor-BWV846-Opening16Measures.txt" ) );
+
+    part.Should()
+        .HaveCount( 16 )
+        .And.OnlyContain( partEvent => partEvent is IChordEvent );
+
+    var scope = new PartEventScope( part );
+    var evaluator = new TonalEvaluator();
+    var resultSet = (TonalAnalysisResultSet) evaluator.Evaluate( scope, options: TonalEvaluationOptions.AllCandidates );
+
+    var candidate = resultSet.Candidates.Should()
+                             .Contain( result => result.Tonic == PitchClass.C
+                                                 && result.Key.ScaleDefinition.FormulaId == ScaleDefinition.Major.FormulaId
+                             )
+                             .Which;
+
+    candidate.Tonic.Should()
+             .Be( PitchClass.C );
+
+    candidate.Key.ScaleDefinition.FormulaId.Should()
+             .Be( ScaleDefinition.Major.FormulaId );
+
+    candidate.Confidence.Should()
+             .BeInRange( 0.0, 1.0 );
+
+    candidate.SupportingEvidence.Should()
+             .Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                   && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
+             )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                       && evidence.Explanation.Contains( "bass", StringComparison.OrdinalIgnoreCase )
+             )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                       && evidence.Explanation.Contains( "formula", StringComparison.OrdinalIgnoreCase )
+             );
+  }
+
+  /// <summary>
+  ///   Verifies the duration-free mixed pitch and chord reduction of the opening of Mozart's
+  ///   Piano Sonata No. 16 in C major, K. 545, first movement.
+  /// </summary>
+  /// <remarks>
+  ///   The fixture contains sixteen representative pitch and chord events. It does not represent
+  ///   duration, rhythm, or meter.
+  /// </remarks>
+  [Fact]
+  public void Evaluate_ShouldReturnCMajorForMozartSonataOpeningReduction()
+  {
+    var part = Part.Parse( LoadFixture( "MozartSonataK545-OpeningMixedPitchesAndChords.txt" ) );
+
+    part.Should()
+        .HaveCount( 16 )
+        .And.Contain( partEvent => partEvent is Pitch )
+        .And.Contain( partEvent => partEvent is IChordEvent );
+
+    var scope = new PartEventScope( part );
+    var evaluator = new TonalEvaluator();
+    var resultSet = (TonalAnalysisResultSet) evaluator.Evaluate( scope, options: TonalEvaluationOptions.AllCandidates );
+
+    var candidate = resultSet.Candidates.Should()
+                             .Contain( result => result.Tonic == PitchClass.C
+                                                 && result.Key.ScaleDefinition.FormulaId == ScaleDefinition.Major.FormulaId
+                             )
+                             .Which;
+
+    candidate.Confidence.Should()
+             .BeInRange( 0.0, 1.0 );
+
+    candidate.SupportingEvidence.Should()
+             .Contain( evidence => evidence.Category == EvidenceReasonCategory.ScaleContext
+                                   && evidence.Explanation.Contains( "scale degree", StringComparison.OrdinalIgnoreCase )
+             )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                       && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
+             )
+             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                       && evidence.Explanation.Contains( "formula", StringComparison.OrdinalIgnoreCase )
+             );
+  }
+
   [Fact]
   public void Evaluate_NoEvents_ReturnsInconclusive()
   {
@@ -219,7 +312,7 @@ public class TonalEvaluatorTests
     var additionalKey = new Key( PitchClass.C, ScaleDefinition.FromFormulaId( "BebopDominant" ) );
     var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
 
-    var result = new TonalEvaluator().Evaluate( scope, [additionalKey] );
+    var result = new TonalEvaluator().Evaluate( scope, [additionalKey], TonalEvaluationOptions.AllCandidates );
 
     result.Should()
           .BeOfType<TonalAnalysisResultSet>();
@@ -242,7 +335,7 @@ public class TonalEvaluatorTests
       )
     );
 
-    var result = new TonalEvaluator().Evaluate( scope, [cSharp, dFlat] );
+    var result = new TonalEvaluator().Evaluate( scope, [cSharp, dFlat], TonalEvaluationOptions.AllCandidates );
 
     result.Should()
           .BeOfType<TonalAnalysisResultSet>();
@@ -257,7 +350,10 @@ public class TonalEvaluatorTests
   {
     var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
 
-    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate( scope );
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      options: TonalEvaluationOptions.AllCandidates
+    );
 
     var cMajor = result.Candidates.Should()
                        .Contain( candidate => candidate.Key.Tonic == PitchClass.C
@@ -279,7 +375,10 @@ public class TonalEvaluatorTests
   {
     var scope = new PartEventScope( new Part( [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.CSharp, 4 )] ) );
 
-    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate( scope );
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      options: TonalEvaluationOptions.AllCandidates
+    );
 
     var cMajor = result.Candidates.Should()
                        .Contain( candidate => candidate.Key.Tonic == PitchClass.C
@@ -314,7 +413,10 @@ public class TonalEvaluatorTests
     var chord = PitchChord.Create( PitchClass.C[4], ChordFormula.Major, 1 );
     var scope = new PartEventScope( new Part( [Pitch.Create( PitchClass.C, 4 ), chord] ) );
 
-    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate( scope );
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      options: TonalEvaluationOptions.AllCandidates
+    );
     var candidate = result.Candidates.First();
 
     candidate.SupportingEvidence.Should()
@@ -343,7 +445,10 @@ public class TonalEvaluatorTests
     var chord = PitchChord.Create( PitchClass.FSharp[4], ChordFormula.Major );
     var scope = new PartEventScope( new Part( [Pitch.Create( PitchClass.C, 4 ), chord] ) );
 
-    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate( scope );
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      options: TonalEvaluationOptions.AllCandidates
+    );
 
     var cMajor = result.Candidates.Should()
                        .Contain( candidate => candidate.Key.Tonic == PitchClass.C
@@ -377,7 +482,10 @@ public class TonalEvaluatorTests
     var chord = PitchChord.Create( PitchClass.C, ChordFormula.Major );
     var scope = new PartEventScope( new Part( new IPartEvent[] { chord } ) );
 
-    var result = new TonalEvaluator( RepertoireProfile.CommonPractice ).Evaluate( scope );
+    var result = new TonalEvaluator( RepertoireProfile.CommonPractice ).Evaluate(
+      scope,
+      options: TonalEvaluationOptions.AllCandidates
+    );
 
     result.Should()
           .BeOfType<TonalAnalysisResultSet>();
@@ -430,7 +538,7 @@ public class TonalEvaluatorTests
   }
 
   [Fact]
-  public void Evaluate_ShouldReturnMultipleCandidates_WhenInputIsAmbiguous()
+  public void Evaluate_ShouldReturnSingleBestCandidate_ByDefault()
   {
     var scope = new PartEventScope( Part.Parse( "C4" ) );
 
@@ -440,7 +548,58 @@ public class TonalEvaluatorTests
           .BeOfType<TonalAnalysisResultSet>();
 
     ( (TonalAnalysisResultSet) result ).Candidates.Should()
+                                       .ContainSingle()
+                                       .Which.Rank.Should()
+                                       .Be( 1 );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldReturnMultipleCandidates_WhenAllCandidatesAreRequested()
+  {
+    var scope = new PartEventScope( Part.Parse( "C4" ) );
+
+    var result = new TonalEvaluator().Evaluate( scope, options: TonalEvaluationOptions.AllCandidates );
+
+    result.Should()
+          .BeOfType<TonalAnalysisResultSet>();
+
+    ( (TonalAnalysisResultSet) result ).Candidates.Should()
                                        .HaveCountGreaterThan( 1 );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldWidenResults_ByMaximumCandidatesAndConfidenceDelta()
+  {
+    var scope = new PartEventScope( Part.Parse( "C4" ) );
+
+    var result = new TonalEvaluator().Evaluate(
+      scope,
+      options: new TonalEvaluationOptions
+      {
+        MaximumCandidates = 3,
+        ConfidenceDelta = 0.1
+      }
+    );
+
+    ( (TonalAnalysisResultSet) result ).Candidates.Should()
+                                       .HaveCount( 3 );
+  }
+
+  #endregion
+
+  #region Implementation
+
+  private static string LoadFixture(
+    string fixtureName )
+  {
+    var fixturePath = Path.Combine(
+      AppContext.BaseDirectory,
+      "Fixtures",
+      fixtureName
+    );
+
+    return File.ReadAllText( fixturePath )
+               .Trim();
   }
 
   #endregion

@@ -23,6 +23,7 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using Bach.Model.Internal;
 
 namespace Bach.Model.Analysis;
@@ -34,6 +35,7 @@ namespace Bach.Model.Analysis;
 ///   Rank is one-based and lower values indicate stronger candidates. Confidence is a value from
 ///   0.0 through 1.0. Evidence collections are copied during construction.
 /// </remarks>
+[DebuggerDisplay("{Rank} - {Key} ({Confidence})")]
 public sealed record RankedTonalCandidateResult: TonalAnalysisResult
 {
   #region Constructors
@@ -41,7 +43,7 @@ public sealed record RankedTonalCandidateResult: TonalAnalysisResult
   /// <summary>
   ///   Initializes a ranked tonal candidate result.
   /// </summary>
-  /// <param name="rank">The one-based candidate rank.</param>
+  /// <param name="rank">The one-based candidate rank. Lower values indicate stronger candidates.</param>
   /// <param name="tonic">The spelled candidate tonic.</param>
   /// <param name="key">The key represented by the candidate.</param>
   /// <param name="confidence">The confidence score from 0.0 through 1.0.</param>

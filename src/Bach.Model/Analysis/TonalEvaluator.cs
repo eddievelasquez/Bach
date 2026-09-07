@@ -85,12 +85,17 @@ public sealed class TonalEvaluator
   /// </summary>
   /// <param name="scope">The scope of events to evaluate.</param>
   /// <param name="additionalCandidates">Optional additional key candidates to consider.</param>
+  /// <param name="options">Options that control which ranked candidates are returned.</param>
   /// <returns>A <see cref="TonalAnalysisResult"/> containing the evaluation results.</returns>
   public TonalAnalysisResult Evaluate(
     PartEventScope scope,
-    IEnumerable<Key>? additionalCandidates = null )
+    IEnumerable<Key>? additionalCandidates = null,
+    TonalEvaluationOptions? options = null )
   {
     ArgumentNullException.ThrowIfNull( scope );
+
+    var evaluationOptions = options ?? TonalEvaluationOptions.Default;
+    evaluationOptions.Validate();
 
     var events = scope.Events.ToArray();
 
@@ -120,15 +125,18 @@ public sealed class TonalEvaluator
                                                     .Build();
     }
 
+    var ordered = scored.OrderByDescending( s => s.Confidence )
+                        .ThenByDescending( s => s.MatchedCount )
+                        .ThenByDescending( s => s.HarmonicEvidenceCount )
+                        .ThenBy( s => s.Key.Scale.Formula.Id, StringComparer.Ordinal )
+                        .ThenBy( s => s.Key.Tonic )
+                        .ToArray();
+
     return BuildResultSet(
       scope,
       events,
       uniquePitchClasses,
-      scored.OrderByDescending( s => s.Confidence )
-            .ThenByDescending( s => s.MatchedCount )
-            .ThenByDescending( s => s.HarmonicEvidenceCount )
-            .ThenBy( s => s.Key.Scale.Formula.Id, StringComparer.Ordinal )
-            .ThenBy( s => s.Key.Tonic )
+      SelectCandidates( ordered, evaluationOptions )
     );
   }
 
@@ -138,13 +146,15 @@ public sealed class TonalEvaluator
   /// <param name="source">The part to evaluate.</param>
   /// <param name="range">The range of the part to evaluate.</param>
   /// <param name="additionalCandidates">Optional additional key candidates to consider.</param>
+  /// <param name="options">Options that control which ranked candidates are returned.</param>
   /// <returns>A <see cref="TonalAnalysisResult"/> containing the evaluation results.</returns>
   public TonalAnalysisResult Evaluate(
     Part source,
     Range range,
-    IEnumerable<Key>? additionalCandidates = null )
+    IEnumerable<Key>? additionalCandidates = null,
+    TonalEvaluationOptions? options = null )
   {
-    return Evaluate( new PartEventScope( source, range ), additionalCandidates );
+    return Evaluate( new PartEventScope( source, range ), additionalCandidates, options );
   }
 
   #endregion
@@ -398,6 +408,27 @@ public sealed class TonalEvaluator
     }
 
     return setBuilder.Build();
+  }
+
+  /// <summary>
+  /// Selects candidates from the ordered list based on the provided evaluation options.
+  /// </summary>
+  /// <param name="ordered">The ordered list of candidate scores.</param>
+  /// <param name="options">The evaluation options to apply.</param>
+  /// <returns>The selected candidates based on the evaluation options.</returns>
+  private static IEnumerable<CandidateScore> SelectCandidates(
+    IReadOnlyList<CandidateScore> ordered,
+    TonalEvaluationOptions options )
+  {
+    if( options.IncludeAllCandidates )
+    {
+      return ordered;
+    }
+
+    var confidenceFloor = ordered[0].Confidence - options.ConfidenceDelta;
+
+    return ordered.Where( candidate => candidate.Confidence >= confidenceFloor )
+                  .Take( options.MaximumCandidates );
   }
 
   /// <summary>
