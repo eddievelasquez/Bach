@@ -1,5 +1,5 @@
-// Module Name: ArgumentExceptionExtensionsTest.cs
-// Project:     Bach.Model.Test
+// Module Name: TonalCandidateStatus.cs
+// Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
@@ -22,40 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal.Test;
+namespace Bach.Model.Analysis;
 
-public sealed class ArgumentExceptionExtensionsTests
+/// <summary>
+///   Describes the evaluation status of a tonal candidate result.
+/// </summary>
+public enum TonalCandidateStatus
 {
-  #region Public Methods
+  /// <summary>The candidate is currently accepted as the primary candidate.</summary>
+  Accepted,
 
-  [Fact]
-  public void ThrowIfNullOrEmpty_ShouldSucceed_WhenSourceContainsItems()
-  {
-    var act = () => ArgumentException.ThrowIfNullOrEmpty( new[] { 1, 2, 3 }, "source" );
+  /// <summary>The candidate was considered but rejected by the evaluator.</summary>
+  Rejected,
 
-    act.Should()
-       .NotThrow();
-  }
-
-  [Fact]
-  public void ThrowIfNullOrEmpty_ShouldThrowArgumentException_WhenSourceIsEmpty()
-  {
-    var act = () => ArgumentException.ThrowIfNullOrEmpty( Array.Empty<int>(), paramName: "source" );
-
-    act.Should()
-       .Throw<ArgumentException>()
-       .WithMessage( "*Sequence must not be empty.*" );
-  }
-
-  [Fact]
-  public void ThrowIfNullOrEmpty_ShouldThrowArgumentNullException_WhenSourceIsNull()
-  {
-    var act = () => ArgumentException.ThrowIfNullOrEmpty<int>( null, paramName: "source" );
-
-    act.Should()
-       .Throw<ArgumentNullException>()
-       .WithParameterName( "source" );
-  }
-
-  #endregion
+  /// <summary>The candidate is provisional and remains under consideration.</summary>
+  Provisional
 }

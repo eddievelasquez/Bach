@@ -243,7 +243,10 @@ public sealed class Scale
   /// </summary>
   /// <param name="notes">The pitchClasses.</param>
   /// <returns>
-  ///   An enumerator to all the scales that contain the pitchClasses.
+  ///   An enumerator to all the scales that contain the pitchClasses. NOTE: this method performs collection
+  ///   matching only. It is a discovery utility and does not perform tonal inference, scoring, or evidence
+  ///   aggregation. Use the tonal evaluator in <c>Bach.Model.Analysis</c> for evidence-based key/candidate
+  ///   evaluation.
   /// </returns>
   public static IEnumerable<Scale> ScalesContaining(
     IEnumerable<PitchClass> notes )

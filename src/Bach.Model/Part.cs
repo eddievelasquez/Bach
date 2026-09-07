@@ -30,14 +30,16 @@ using Bach.Model.Internal;
 
 namespace Bach.Model;
 
-/// <summary>A sequential collection of musical events that can contain either pitches or pitch chords.</summary>
+/// <summary>
+///   A sequential collection of musical events that can contain either pitches or pitch chords.
+/// </summary>
 public sealed class Part
-  : IList<IPartEvent>,
+  : IReadOnlyList<IPartEvent>,
     ISpanConsumingParsable<Part>
 {
   #region Fields
 
-  private readonly List<IPartEvent> _events;
+  private readonly IReadOnlyList<IPartEvent> _events;
 
   #endregion
 
@@ -48,7 +50,7 @@ public sealed class Part
   /// </summary>
   public Part()
   {
-    _events = [];
+    _events = Array.Empty<IPartEvent>();
   }
 
   /// <summary>
@@ -59,17 +61,16 @@ public sealed class Part
     IEnumerable<IPartEvent> events )
   {
     ArgumentNullException.ThrowIfNull( events );
-    _events = [.. events];
-  }
 
-  /// <summary>
-  ///   Initializes a new instance of the <see cref="Part"/> class with the specified initial capacity.
-  /// </summary>
-  /// <param name="capacity">The initial capacity of the part.</param>
-  public Part(
-    int capacity )
-  {
-    _events = new List<IPartEvent>( capacity );
+    // Convert the events to an array to avoid multiple enumerations and to ensure that the collection is not modified after initialization.
+    var eventArray = events.ToArray();
+
+    if( eventArray.Any( partEvent => partEvent is null ) )
+    {
+      throw new ArgumentException( "The event collection contains a null event.", nameof( eventArray ) );
+    }
+
+    _events = Array.AsReadOnly( eventArray );
   }
 
   #endregion
@@ -88,57 +89,12 @@ public sealed class Part
   public IEnumerable<PitchClass> PitchClasses => _events.SelectMany( partEvent => partEvent.PitchClasses );
 
   /// <inheritdoc/>
-  public bool IsReadOnly => false;
-
-  /// <inheritdoc/>
   public IPartEvent this[
-    int index ]
-  {
-    get => _events[index];
-    set
-    {
-      ArgumentNullException.ThrowIfNull( value );
-      _events[index] = value;
-    }
-  }
+    int index ] => _events[index];
 
   #endregion
 
   #region Public Methods
-
-  /// <summary>
-  ///   Adds a musical event to the part.
-  /// </summary>
-  /// <param name="partEvent">The musical event to add.</param>
-  public void Add(
-    IPartEvent partEvent )
-  {
-    ArgumentNullException.ThrowIfNull( partEvent );
-    _events.Add( partEvent );
-  }
-
-  /// <inheritdoc/>
-  public void Clear()
-  {
-    _events.Clear();
-  }
-
-  /// <inheritdoc/>
-  public bool Contains(
-    IPartEvent item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-    return _events.Contains( item );
-  }
-
-  /// <inheritdoc/>
-  public void CopyTo(
-    IPartEvent[] array,
-    int arrayIndex )
-  {
-    ArgumentNullException.ThrowIfNull( array );
-    _events.CopyTo( array, arrayIndex );
-  }
 
   /// <inheritdoc/>
   public IEnumerator<IPartEvent> GetEnumerator()
@@ -150,23 +106,6 @@ public sealed class Part
   IEnumerator IEnumerable.GetEnumerator()
   {
     return GetEnumerator();
-  }
-
-  /// <inheritdoc/>
-  public int IndexOf(
-    IPartEvent item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-    return _events.IndexOf( item );
-  }
-
-  /// <inheritdoc/>
-  public void Insert(
-    int index,
-    IPartEvent item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-    _events.Insert( index, item );
   }
 
   /// <summary>
@@ -196,21 +135,6 @@ public sealed class Part
     return TryParse( span, provider, out var part )
       ? part
       : throw new FormatException( $"{span} is not a valid part" );
-  }
-
-  /// <inheritdoc/>
-  public bool Remove(
-    IPartEvent item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-    return _events.Remove( item );
-  }
-
-  /// <inheritdoc/>
-  public void RemoveAt(
-    int index )
-  {
-    _events.RemoveAt( index );
   }
 
   /// <summary>
@@ -318,7 +242,7 @@ public sealed class Part
       tail = tail[ranges[rangeCount - 1].End..];
     }
 
-    part = [.. partEvents];
+    part = new Part( partEvents );
 
     return true;
   }

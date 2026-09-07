@@ -1,5 +1,5 @@
-// Module Name: ArgumentExceptionExtensionsTest.cs
-// Project:     Bach.Model.Test
+// Module Name: TonalAnalysisResult.cs
+// Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
@@ -22,40 +22,40 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal.Test;
+namespace Bach.Model.Analysis;
 
-public sealed class ArgumentExceptionExtensionsTests
+/// <summary>
+///   Base type for tonal analysis results.
+/// </summary>
+/// <remarks>
+///   Results use an ordered, duration-free <see cref="PartEventScope"/> as their analysis scope.
+/// </remarks>
+public abstract record TonalAnalysisResult
 {
-  #region Public Methods
+  #region Constructors
 
-  [Fact]
-  public void ThrowIfNullOrEmpty_ShouldSucceed_WhenSourceContainsItems()
+  /// <summary>
+  ///   Initializes a tonal analysis result with an ordered event scope.
+  /// </summary>
+  /// <param name="scope">The immutable part and range examined by the analysis.</param>
+  /// <exception cref="ArgumentNullException">Thrown when <paramref name="scope"/> is null.</exception>
+  protected TonalAnalysisResult(
+    PartEventScope scope )
   {
-    var act = () => ArgumentException.ThrowIfNullOrEmpty( new[] { 1, 2, 3 }, "source" );
-
-    act.Should()
-       .NotThrow();
+    Scope = scope ?? throw new ArgumentNullException( nameof( scope ) );
   }
 
-  [Fact]
-  public void ThrowIfNullOrEmpty_ShouldThrowArgumentException_WhenSourceIsEmpty()
-  {
-    var act = () => ArgumentException.ThrowIfNullOrEmpty( Array.Empty<int>(), paramName: "source" );
+  #endregion
 
-    act.Should()
-       .Throw<ArgumentException>()
-       .WithMessage( "*Sequence must not be empty.*" );
-  }
+  #region Properties
 
-  [Fact]
-  public void ThrowIfNullOrEmpty_ShouldThrowArgumentNullException_WhenSourceIsNull()
-  {
-    var act = () => ArgumentException.ThrowIfNullOrEmpty<int>( null, paramName: "source" );
-
-    act.Should()
-       .Throw<ArgumentNullException>()
-       .WithParameterName( "source" );
-  }
+  /// <summary>
+  ///   Gets the ordered scope used for the analysis.
+  /// </summary>
+  /// <remarks>
+  ///   The scope contains an immutable source part and a standard .NET event range.
+  /// </remarks>
+  public PartEventScope Scope { get; init; }
 
   #endregion
 }

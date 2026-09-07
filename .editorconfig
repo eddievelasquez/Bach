@@ -311,6 +311,10 @@ resharper_suggest_var_or_type_elsewhere_highlighting = hint
 resharper_suggest_var_or_type_simple_types_highlighting = hint
 resharper_unused_member_global_highlighting = hint
 
+# ReSharper properties
+resharper_max_array_initializer_elements_on_line = 3
+resharper_wrap_array_initializer_style = chop_if_long
+
 ############################################################
 # Analyzer Rule Severities for C#
 # Controls the severity of specific .NET analyzers for C# files
@@ -325,7 +329,7 @@ dotnet_diagnostic.ca1805.severity = suggestion
 dotnet_diagnostic.ca1811.severity = warning
 dotnet_diagnostic.ca1812.severity = none
 dotnet_diagnostic.ca1823.severity = warning
-dotnet_diagnostic.xUnit1044.severity = warning
+dotnet_diagnostic.xunit1044.severity = warning
 
 # ReSharper properties for C# files
 resharper_blank_lines_after_start_comment = 1

@@ -142,6 +142,25 @@ public sealed class ScaleDefinition
 
   #endregion
 
+  #region Public Methods
+
+  /// <summary>
+  ///   Creates a ScaleDefinition wrapper for an arbitrary registry formula id. This allows construction of Key objects
+  ///   for registry-provided formulas that do not have a built-in ScaleDefinition static instance.
+  /// </summary>
+  /// <param name="formulaId">The formula id to wrap.</param>
+  /// <param name="relativeMajorInterval">
+  ///   The interval from a modal tonic down to the tonic of its relative major collection.
+  /// </param>
+  public static ScaleDefinition FromFormulaId(
+    string formulaId,
+    Interval? relativeMajorInterval = null )
+  {
+    return new ScaleDefinition( formulaId, relativeMajorInterval );
+  }
+
+  #endregion
+
   #region Operators
 
   /// <summary>
