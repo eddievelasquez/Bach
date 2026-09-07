@@ -218,13 +218,20 @@ public sealed class Part
     {
       var currentSpan = tail[ranges[i]];
 
-      // Try to parse the current span as a PitchChord first, and if that fails, try to parse it as a Pitch.
-      if( PitchChord.TryParse( currentSpan, provider, out var pitchChord ) )
+      // If the current span starts with a '!', we attempt to parse it as an explicitly marked chord.
+      if( currentSpan.StartsWith( "!" ) )
       {
-        partEvents.Add( pitchChord );
-        continue;
+        if( TryParseExplicitChord( currentSpan[1..], provider, out var explicitChord ) )
+        {
+          partEvents.Add( explicitChord );
+          continue;
+        }
+
+        part = null;
+        return false;
       }
 
+      // If the current span does not start with a '!', we attempt to parse it as a PitchChord.
       if( Pitch.TryParse( currentSpan, provider, out var pitch ) )
       {
         partEvents.Add( pitch );
@@ -244,6 +251,83 @@ public sealed class Part
 
     part = new Part( partEvents );
 
+    return true;
+  }
+
+  /// <summary>
+  ///   Attempts to parse an explicitly marked chord token without the leading marker.
+  /// </summary>
+  /// <param name="span">The chord token without its leading marker.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="chord">The parsed chord, if successful.</param>
+  /// <returns>true when the token is a valid chord; otherwise, false.</returns>
+  private static bool TryParseExplicitChord(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out PitchChord? chord )
+  {
+    // If the span is empty, we cannot parse a chord.
+    if( span.IsEmpty )
+    {
+      chord = null;
+      return false;
+    }
+
+    // Attempt to parse the span as a PitchChord. If successful and the tail is empty, we have a valid chord.
+    if( PitchChord.TryParse( span, provider, out chord, out var tail ) && tail.IsEmpty )
+    {
+      return true;
+    }
+
+    // If the span does not represent a valid PitchChord, we attempt to parse it as a root note followed by an optional bass note.
+    if( !PitchClass.TryParse( span, provider, out var root, out tail ) )
+    {
+      chord = null;
+      return false;
+    }
+
+    // If the tail is empty, we assume a default major chord for the root note.
+    if( tail.IsEmpty )
+    {
+      chord = PitchChord.Create( root, ChordFormula.Major );
+      return true;
+    }
+
+    // If the tail does not start with a '/', we cannot parse a valid chord with a bass note.
+    if( tail[0] != '/' )
+    {
+      chord = null;
+      return false;
+    }
+
+    // Attempt to parse the bass note from the tail. If successful and the tail is empty, we have a valid chord with a bass note.
+    var bassSpan = tail[1..];
+    if( !Pitch.TryParse( bassSpan, provider, out var bass, out var bassTail ) )
+    {
+      if( !PitchClass.TryParse( bassSpan, provider, out var bassClass, out bassTail ) || !bassTail.IsEmpty )
+      {
+        chord = null;
+        return false;
+      }
+
+      bass = Pitch.Create( bassClass, 4 );
+    }
+    else if( !bassTail.IsEmpty )
+    {
+      chord = null;
+      return false;
+    }
+
+    // If we have a valid root and bass note, we create a chord with the root note and determine the inversion based on the bass note.
+    var rootPosition = Chord.Create( root, ChordFormula.Major );
+    var inversion = rootPosition.IndexOf( bass.PitchClass );
+    if( inversion < 0 )
+    {
+      chord = null;
+      return false;
+    }
+
+    chord = PitchChord.Create( root, ChordFormula.Major, bass.Octave, inversion );
     return true;
   }
 

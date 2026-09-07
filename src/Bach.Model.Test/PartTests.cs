@@ -34,7 +34,7 @@ public sealed class PartTests
   [Fact]
   public void AddAndEnumerate_ShouldStoreEventsAndPreserveChordsAsSingleEvents()
   {
-    var part = Part.Parse( "C4,C" );
+    var part = Part.Parse( "C4,!C" );
 
     var events = part.ToArray();
 
@@ -138,7 +138,7 @@ public sealed class PartTests
   [Fact]
   public void Parse_ShouldCreateImmutablePart()
   {
-    var part = Part.Parse( "C4,C" );
+    var part = Part.Parse( "C4,!C" );
 
     part.Should()
         .HaveCount( 2 );
@@ -162,6 +162,87 @@ public sealed class PartTests
   }
 
   [Fact]
+  public void Parse_ShouldParseExplicitMajorChord()
+  {
+    var part = Part.Parse( "!C" );
+
+    part.Should()
+        .ContainSingle()
+        .Which.Should()
+        .Be( PitchChord.Parse( "C" ) );
+  }
+
+  [Fact]
+  public void Parse_ShouldParseExplicitSymbolicChord()
+  {
+    var part = Part.Parse( "!Dm7" );
+
+    part.Should()
+        .ContainSingle()
+        .Which.Should()
+        .Be( PitchChord.Parse( "Dm7" ) );
+  }
+
+  [Fact]
+  public void Parse_ShouldParseExplicitChordBassAndInversion()
+  {
+    var part = Part.Parse( "!G7/B3" );
+
+    part.Should()
+        .ContainSingle()
+        .Which.Should()
+        .Be( PitchChord.Parse( "G7/B3" ) );
+  }
+
+  [Theory]
+  [InlineData( "!C" )]
+  [InlineData( "!Dm7" )]
+  [InlineData( "!G7" )]
+  [InlineData( "!A7" )]
+  [InlineData( "!F" )]
+  [InlineData( "!Em7" )]
+  public void Parse_ShouldParseEachExplicitChordToken(
+    string input )
+  {
+    Part.Parse( input ).Should()
+             .ContainSingle()
+             .Which.Should()
+             .BeAssignableTo<IChordEvent>();
+  }
+
+  [Fact]
+  public void Parse_ShouldParseExplicitChordSequence()
+  {
+    var part = Part.Parse( "!C,!Dm7,!G7,!C,!A7,!Dm7,!G7,!C,!F,!G7,!Em7,!A7,!Dm7,!G7,!C,!C" );
+
+    part.Should()
+        .HaveCount( 16 )
+        .And.OnlyContain( partEvent => partEvent is IChordEvent );
+  }
+
+  [Theory]
+  [InlineData( "!" )]
+  [InlineData( "!not-a-chord" )]
+  [InlineData( "!C/H3" )]
+  public void Parse_ShouldRejectMalformedExplicitChord(
+    string input )
+  {
+    Action action = () => Part.Parse( input );
+
+    action.Should()
+          .Throw<FormatException>();
+  }
+
+  [Fact]
+  public void Parse_ShouldKeepUnmarkedPitchSyntax()
+  {
+    var part = Part.Parse( "C4,E4,G4" );
+
+    part.Should()
+        .OnlyContain( partEvent => partEvent is Pitch );
+  }
+
+  [Fact]
   public void PitchClasses_ShouldPreserveEventAndChordOrderAndDuplicates()
   {
     var part = new PartBuilder()
@@ -177,8 +258,8 @@ public sealed class PartTests
   [Theory]
   [InlineData( "C4", 1, "" )]
   [InlineData( "C4, E4, G4", 3, "" )]
-  [InlineData( "Cmaj7", 1, "" )]
-  [InlineData( "C4, Am, G5", 3, "" )]
+  [InlineData( "!Cmaj7", 1, "" )]
+  [InlineData( "C4, !Am, G5", 3, "" )]
   [InlineData( "", 0, "" )]
   [InlineData( "  ", 0, "" )]
   [InlineData( " C4 , E4 ", 2, " " )]

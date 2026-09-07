@@ -67,7 +67,7 @@ public sealed class ChordEventTests
   [Fact]
   public void Part_ShouldAllowPatternMatching_ForChordEvents()
   {
-    var part = Part.Parse( "C4,C" );
+    var part = Part.Parse( "C4,!C" );
 
     IChordEvent? found = null;
 
