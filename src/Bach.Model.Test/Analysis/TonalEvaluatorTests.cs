@@ -45,6 +45,148 @@ public class TonalEvaluatorTests
   #region Public Methods
 
   [Fact]
+  public void PartEventScope_ShouldStoreAppliedFunctionsImmutably()
+  {
+    var part = new Part( [Pitch.Create( PitchClass.D, 4 )] );
+    var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The target is tonicized." );
+
+    var appliedFunction = new AppliedFunction(
+      AnalysisTarget.ForEvent( part[0] ),
+      ScaleDegree.Dominant,
+      AppliedTriadFunction.Dominant,
+      evidence
+    );
+    var input = new List<AppliedFunction> { appliedFunction };
+
+    var scope = new PartEventScope( part, .., input );
+    input.Clear();
+
+    scope.AppliedFunctions.Should()
+         .ContainSingle()
+         .Which.Should()
+         .Be( appliedFunction );
+  }
+
+  [Fact]
+  public void PartEventScope_ShouldRejectAppliedFunctionTargetOutsideScope()
+  {
+    var part = new Part( [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.D, 4 )] );
+
+    var appliedFunction = new AppliedFunction(
+      AnalysisTarget.ForEvent( part[1] ),
+      ScaleDegree.Dominant,
+      AppliedTriadFunction.Dominant,
+      new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The target is tonicized." )
+    );
+
+    Action action = () => new PartEventScope( part, ..1, [appliedFunction] );
+
+    action.Should()
+          .Throw<ArgumentException>()
+          .WithMessage( "*target must belong*" );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldPreserveAppliedDominantEvidence()
+  {
+    var part = new Part( [Pitch.Create( PitchClass.D, 4 )] );
+
+    var scope = new PartEventScope(
+      part,
+      ..,
+      [
+        new AppliedFunction(
+          AnalysisTarget.ForEvent( part[0] ),
+          ScaleDegree.Dominant,
+          AppliedTriadFunction.Dominant,
+          new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The dominant tonicizes V." )
+        )
+      ]
+    );
+
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      scope,
+      [new Key( PitchClass.C, ScaleDefinition.Major )]
+    );
+
+    result.Candidates.Should()
+          .Contain( candidate => candidate.SupportingEvidence.Any( evidence =>
+                                                                     evidence.Category
+                                                                     == EvidenceReasonCategory.HarmonicContext
+                                                                     && evidence.Explanation.Contains(
+                                                                       "V/V",
+                                                                       StringComparison.Ordinal
+                                                                     )
+                                                                     && evidence.Explanation.Contains(
+                                                                       "The dominant tonicizes V.",
+                                                                       StringComparison.Ordinal
+                                                                     )
+                    )
+          );
+  }
+
+  [Fact]
+  public void Evaluate_ShouldPreserveAppliedLeadingToneEvidenceAndRankDeterministically()
+  {
+    var part = new Part( [Pitch.Create( PitchClass.D, 4 )] );
+
+    var scope = new PartEventScope(
+      part,
+      ..,
+      [
+        new AppliedFunction(
+          AnalysisTarget.ForEvent( part[0] ),
+          ScaleDegree.Dominant,
+          AppliedTriadFunction.LeadingTone,
+          new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The leading-tone triad tonicizes V." )
+        )
+      ]
+    );
+    var evaluator = new TonalEvaluator();
+
+    var candidates = new[]
+    {
+      new Key( PitchClass.C, ScaleDefinition.Major ), new Key( PitchClass.G, ScaleDefinition.Major )
+    };
+
+    var first = evaluator.Evaluate( scope, candidates );
+    var second = evaluator.Evaluate( scope, candidates );
+
+    var firstResult = (TonalAnalysisResultSet) first;
+    var secondResult = (TonalAnalysisResultSet) second;
+
+    firstResult.Candidates.Select( candidate =>
+                                     $"{candidate.Rank}:{candidate.Tonic}:{candidate.Key.ScaleDefinition.FormulaId}:{candidate.Confidence:R}"
+               )
+               .Should()
+               .Equal(
+                 secondResult.Candidates.Select( candidate =>
+                                                   $"{candidate.Rank}:{candidate.Tonic}:{candidate.Key.ScaleDefinition.FormulaId}:{candidate.Confidence:R}"
+                 )
+               );
+
+    var result = firstResult;
+
+    result.Candidates.Should()
+          .Contain( candidate => candidate.SupportingEvidence.Any( evidence =>
+                                                                     evidence.Category
+                                                                     == EvidenceReasonCategory.HarmonicContext
+                                                                     && evidence.Explanation.Contains(
+                                                                       "vii°/V",
+                                                                       StringComparison.Ordinal
+                                                                     )
+                                                                     && evidence.Explanation.Contains(
+                                                                       "The leading-tone triad tonicizes V.",
+                                                                       StringComparison.Ordinal
+                                                                     )
+                    )
+          );
+
+    result.Candidates.Should()
+          .OnlyContain( candidate => candidate.Confidence >= 0.0 && candidate.Confidence <= 1.0 );
+  }
+
+  [Fact]
   public void Evaluate_NoEvents_ReturnsInconclusive()
   {
     var part = new Part();

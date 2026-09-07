@@ -111,7 +111,7 @@ public sealed class TonalEvaluator
     var candidates = TonalCandidateSource.GetDefaultCandidates( _profile )
                                          .Concat( additionalCandidates ?? Array.Empty<Key>() );
 
-    var scored = ScoreCandidates( events, uniquePitchClasses, candidates )
+    var scored = ScoreCandidates( scope, events, uniquePitchClasses, candidates )
       .ToArray();
 
     if( scored.Length == 0 )
@@ -169,6 +169,7 @@ public sealed class TonalEvaluator
   /// <summary>
   ///   Scores the candidate keys against the provided events and unique pitch classes.
   /// </summary>
+  /// <param name="scope">The part event scope being evaluated.</param>
   /// <param name="events">The events to evaluate.</param>
   /// <param name="uniquePitchClasses">The unique pitch classes extracted from the events.</param>
   /// <param name="candidates">The candidate keys to score.</param>
@@ -176,11 +177,12 @@ public sealed class TonalEvaluator
   ///   A <see cref="IEnumerable{CandidateScore}"/> representing the scores of the candidates.
   /// </returns>
   private IEnumerable<CandidateScore> ScoreCandidates(
+    PartEventScope scope,
     IPartEvent[] events,
     PitchClass[] uniquePitchClasses,
     IEnumerable<Key> candidates )
   {
-    return candidates.Select( candidate => ScoreCandidate( candidate, events, uniquePitchClasses ) )
+    return candidates.Select( candidate => ScoreCandidate( candidate, scope, events, uniquePitchClasses ) )
                      .OfType<CandidateScore>();
   }
 
@@ -188,6 +190,7 @@ public sealed class TonalEvaluator
   ///   Scores a single candidate key against the provided events and unique pitch classes.
   /// </summary>
   /// <param name="candidateKey">The candidate key to score.</param>
+  /// <param name="scope">The part event scope being evaluated.</param>
   /// <param name="events">The events to evaluate.</param>
   /// <param name="uniquePitchClasses">The unique pitch classes extracted from the events.</param>
   /// <returns>
@@ -195,6 +198,7 @@ public sealed class TonalEvaluator
   /// </returns>
   private CandidateScore? ScoreCandidate(
     Key candidateKey,
+    PartEventScope scope,
     IPartEvent[] events,
     PitchClass[] uniquePitchClasses )
   {
@@ -214,6 +218,12 @@ public sealed class TonalEvaluator
     foreach( var chordEvent in events.OfType<IChordEvent>() )
     {
       AddHarmonicEvidence( scale, chordEvent, supportingHarmonicEvidence, conflictingHarmonicEvidence );
+    }
+
+    // Evaluate harmonic evidence from applied functions.
+    foreach( var appliedFunction in scope.AppliedFunctions )
+    {
+      AddAppliedFunctionEvidence( scale, appliedFunction, supportingHarmonicEvidence, conflictingHarmonicEvidence );
     }
 
     // Calculate confidence based on matched pitch classes and harmonic evidence.
@@ -367,6 +377,11 @@ public sealed class TonalEvaluator
         AddChordCandidateEvidence( item.Key.Scale, chordEvent, supporting, conflicting );
       }
 
+      foreach( var appliedFunction in scope.AppliedFunctions )
+      {
+        AddAppliedFunctionCandidateEvidence( item.Key.Scale, appliedFunction, supporting, conflicting );
+      }
+
       // Create a ranked tonal candidate result with the accumulated evidence.
       var candidateRecord = new RankedTonalCandidateResult(
         rank,
@@ -383,6 +398,74 @@ public sealed class TonalEvaluator
     }
 
     return setBuilder.Build();
+  }
+
+  /// <summary>
+  ///   Adds scoring evidence for a supplied applied function.
+  /// </summary>
+  /// <param name="scale">The candidate scale.</param>
+  /// <param name="appliedFunction">The supplied applied function.</param>
+  /// <param name="supportingEvidence">A list to which supporting evidence strings will be added.</param>
+  /// <param name="conflictingEvidence">A list to which conflicting evidence strings will be added.</param>
+  private static void AddAppliedFunctionEvidence(
+    Scale scale,
+    AppliedFunction appliedFunction,
+    List<string> supportingEvidence,
+    List<string> conflictingEvidence )
+  {
+    var evidence = $"{appliedFunction.Label}: {appliedFunction.Evidence.Explanation}";
+
+    if( IsAppliedFunctionSupported( scale, appliedFunction ) )
+    {
+      supportingEvidence.Add( evidence );
+    }
+    else
+    {
+      conflictingEvidence.Add( evidence );
+    }
+  }
+
+  /// <summary>
+  ///   Adds result evidence for a supplied applied function.
+  /// </summary>
+  /// <param name="scale">The candidate scale.</param>
+  /// <param name="appliedFunction">The supplied applied function.</param>
+  /// <param name="supporting">The list to which supporting evidence will be added.</param>
+  /// <param name="conflicting">The list to which conflicting evidence will be added.</param>
+  private static void AddAppliedFunctionCandidateEvidence(
+    Scale scale,
+    AppliedFunction appliedFunction,
+    List<EvidenceReason> supporting,
+    List<EvidenceReason> conflicting )
+  {
+    var list = IsAppliedFunctionSupported( scale, appliedFunction ) ? supporting : conflicting;
+    list.Add(
+      new EvidenceReason(
+        EvidenceReasonCategory.HarmonicContext,
+        $"{appliedFunction.Label}: {appliedFunction.Evidence.Explanation}"
+      )
+    );
+  }
+
+  /// <summary>
+  ///   Determines whether an applied function's target agrees with the candidate's spelled degree.
+  /// </summary>
+  /// <param name="scale">The candidate scale.</param>
+  /// <param name="appliedFunction">The supplied applied function.</param>
+  /// <returns>true when the target contains the candidate's target degree; otherwise, false.</returns>
+  private static bool IsAppliedFunctionSupported(
+    Scale scale,
+    AppliedFunction appliedFunction )
+  {
+    var degrees = scale.GetAscending()
+                      .Take( scale.Formula.AscendingDegrees.Count )
+                      .ToArray();
+
+    var degreeIndex = appliedFunction.TargetDegree.Degree - 1;
+
+    // Check if the degree index is within bounds and if the target's pitch classes contain the corresponding scale degree.
+    return degreeIndex < degrees.Length
+           && appliedFunction.Target.PartEvent.PitchClasses.Any( pitchClass => pitchClass == degrees[degreeIndex] );
   }
 
   /// <summary>

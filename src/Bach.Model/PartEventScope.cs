@@ -23,6 +23,9 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
+using Bach.Model.Analysis;
+using Bach.Model.Internal;
 
 namespace Bach.Model;
 
@@ -53,17 +56,42 @@ public sealed class PartEventScope
   /// </summary>
   /// <param name="source">The immutable source part.</param>
   /// <param name="range">The start-inclusive and end-exclusive event range.</param>
+  /// <param name="appliedFunctions">The immutable applied-function annotations assigned to events in this scope.</param>
   /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
   /// <exception cref="ArgumentOutOfRangeException">Thrown when the range cannot be resolved against the source count.</exception>
   public PartEventScope(
     Part source,
-    Range range )
+    Range range,
+    IEnumerable<AppliedFunction>? appliedFunctions = null )
   {
     Source = source ?? throw new ArgumentNullException( nameof( source ) );
     Range = range;
 
     // Validate the range against the source count.
-    _ = range.GetOffsetAndLength( source.Count );
+    var (offset, length) = range.GetOffsetAndLength( source.Count );
+
+    var scopedEvents = source.Skip( offset )
+                             .Take( length )
+                             .ToArray();
+    var annotations = ( appliedFunctions ?? Array.Empty<AppliedFunction>() ).ToArray();
+
+    ArgumentException.ThrowIfContainsNulls(
+      annotations,
+      "The applied-function collection contains a null annotation.",
+      nameof( appliedFunctions )
+    );
+
+    if( annotations.Any( appliedFunction =>
+                           !scopedEvents.Any( partEvent => ReferenceEquals( partEvent, appliedFunction.Target.PartEvent ) )
+       ) )
+    {
+      throw new ArgumentException(
+        "Each applied-function target must belong to the event scope.",
+        nameof( appliedFunctions )
+      );
+    }
+
+    AppliedFunctions = Array.AsReadOnly( annotations );
   }
 
   #endregion
@@ -79,6 +107,11 @@ public sealed class PartEventScope
   ///   Gets the event range represented by this scope.
   /// </summary>
   public Range Range { get; }
+
+  /// <summary>
+  ///   Gets the immutable applied-function annotations assigned to events in this scope.
+  /// </summary>
+  public IReadOnlyList<AppliedFunction> AppliedFunctions { get; }
 
   /// <summary>
   ///   Gets the events selected by <see cref="Range"/> from <see cref="Source"/>.
