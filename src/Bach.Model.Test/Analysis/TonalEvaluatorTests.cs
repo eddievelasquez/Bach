@@ -1,20 +1,20 @@
 // Module Name: TonalEvaluatorTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -25,6 +25,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Bach.Model.Analysis.EvidenceEvaluators;
 
 namespace Bach.Model.Analysis.Test;
 
@@ -39,11 +40,116 @@ public class TonalEvaluatorTests
     public IEnumerable<PitchClass> PitchClasses => Array.Empty<PitchClass>();
 
     #endregion
+
+    #region Public Methods
+
+    public bool Any(
+      PitchClass pitchClass ) => false;
+
+    #endregion
+  }
+
+  private sealed class TestEvidenceEvaluator(
+    int priority,
+    bool supports,
+    double scoreContribution = 0.0 ): ITonalEvidenceEvaluator
+  {
+    #region Properties
+
+    public int Priority { get; } = priority;
+
+    public bool Supports { get; } = supports;
+
+    public double ScoreContribution { get; } = scoreContribution;
+
+    #endregion
+
+    #region Public Methods
+
+    public IEnumerable<TonalEvidence> Evaluate(
+      TonalEvidenceContext context )
+    {
+      yield return new TonalEvidence(
+        new EvidenceReason(
+          EvidenceReasonCategory.AnalystObservation,
+          $"Test provider {Priority} was evaluated."
+        ),
+        Supports,
+        ScoreContribution
+      );
+    }
+
+    #endregion
   }
 
   #endregion
 
   #region Public Methods
+
+  [Fact]
+  public void Evaluate_ShouldRunCustomProvidersInPriorityOrderAndAggregateConflicts()
+  {
+    var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
+
+    ITonalEvidenceEvaluator[] providers =
+    [
+      new TestEvidenceEvaluator( 10, false ),
+      new TestEvidenceEvaluator( 20, true, 0.1 )
+    ];
+
+    var result = (TonalAnalysisResultSet) new TonalEvaluator(
+      evidenceProvider: new TonalEvidenceEvaluatorProvider( providers )
+    ).Evaluate(
+      scope,
+      [new Key( PitchClass.C, ScaleDefinition.Major )]
+    );
+
+    var candidate = result.Candidates.Single();
+
+    candidate.SupportingEvidence.Should()
+             .Contain( evidence => evidence.Explanation == "Test provider 20 was evaluated." );
+
+    candidate.ConflictingEvidence.Should()
+             .Contain( evidence => evidence.Explanation == "Test provider 10 was evaluated." );
+
+    candidate.SupportingEvidence.Select( evidence => evidence.Explanation )
+             .Should()
+             .ContainInOrder( "Matches 3 of 3 pitch classes.", "Test provider 20 was evaluated." );
+  }
+
+  [Fact]
+  public void TonalCenterEvidenceProvider_Evaluate_ShouldTrackOpeningAndClosingEmphasisAndCapScore()
+  {
+    var part = new Part(
+      [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 )]
+    );
+    var scope = new PartEventScope( part );
+    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+
+    var context = new TonalEvidenceContext(
+      key,
+      scope,
+      scope.Events,
+      [
+        .. part.SelectMany( e => e.PitchClasses )
+               .Distinct()
+      ],
+      TonalEvaluationOptions.Default
+    );
+
+    var evidence = new TonalCenterEvidenceEvaluator().Evaluate( context )
+                                                     .ToArray();
+
+    evidence.Should()
+            .Contain( item => item.Reason.Category == EvidenceReasonCategory.TonalCenterOpeningEmphasis );
+
+    evidence.Should()
+            .Contain( item => item.Reason.Category == EvidenceReasonCategory.TonalCenterClosingEmphasis );
+
+    evidence.First()
+            .ScoreContribution.Should()
+            .BeLessThanOrEqualTo( 0.35 );
+  }
 
   [Fact]
   public void PartEventScope_ShouldStoreAppliedFunctionsImmutably()
@@ -211,22 +317,25 @@ public class TonalEvaluatorTests
 
     var first = resultSet.Candidates.First();
 
-    first.Tonic.Should().Be( PitchClass.C );
-    first.Key.ScaleDefinition.FormulaId.Should().Be( ScaleDefinition.Major.FormulaId );
+    first.Tonic.Should()
+         .Be( PitchClass.C );
+
+    first.Key.ScaleDefinition.FormulaId.Should()
+         .Be( ScaleDefinition.Major.FormulaId );
 
     first.Confidence.Should()
-             .BeInRange( 0.0, 1.0 );
+         .BeInRange( 0.0, 1.0 );
 
     first.SupportingEvidence.Should()
-             .Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
-                                   && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
-             )
-             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
-                                       && evidence.Explanation.Contains( "bass", StringComparison.OrdinalIgnoreCase )
-             )
-             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
-                                       && evidence.Explanation.Contains( "formula", StringComparison.OrdinalIgnoreCase )
-             );
+         .Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                               && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
+         )
+         .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                   && evidence.Explanation.Contains( "bass", StringComparison.OrdinalIgnoreCase )
+         )
+         .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                   && evidence.Explanation.Contains( "formula", StringComparison.OrdinalIgnoreCase )
+         );
   }
 
   /// <summary>
@@ -253,20 +362,25 @@ public class TonalEvaluatorTests
 
     var first = resultSet.Candidates.First();
 
-    first.Tonic.Should().Be( PitchClass.C );
-    first.Key.ScaleDefinition.FormulaId.Should().Be( ScaleDefinition.Major.FormulaId );
-    first.Confidence.Should().BeInRange( 0.0, 1.0 );
+    first.Tonic.Should()
+         .Be( PitchClass.C );
+
+    first.Key.ScaleDefinition.FormulaId.Should()
+         .Be( ScaleDefinition.Major.FormulaId );
+
+    first.Confidence.Should()
+         .BeInRange( 0.0, 1.0 );
 
     first.SupportingEvidence.Should()
-             .Contain( evidence => evidence.Category == EvidenceReasonCategory.ScaleContext
-                                   && evidence.Explanation.Contains( "scale degree", StringComparison.OrdinalIgnoreCase )
-             )
-             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
-                                       && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
-             )
-             .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
-                                       && evidence.Explanation.Contains( "formula", StringComparison.OrdinalIgnoreCase )
-             );
+         .Contain( evidence => evidence.Category == EvidenceReasonCategory.ScaleContext
+                               && evidence.Explanation.Contains( "scale degree", StringComparison.OrdinalIgnoreCase )
+         )
+         .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                   && evidence.Explanation.Contains( "root", StringComparison.OrdinalIgnoreCase )
+         )
+         .And.Contain( evidence => evidence.Category == EvidenceReasonCategory.HarmonicContext
+                                   && evidence.Explanation.Contains( "formula", StringComparison.OrdinalIgnoreCase )
+         );
   }
 
   [Fact]
@@ -562,8 +676,7 @@ public class TonalEvaluatorTests
   {
     var part = new Part(
       [
-        PitchChord.Create( PitchClass.C, ChordFormula.Major ),
-        PitchChord.Create( PitchClass.G, ChordFormula.Major ),
+        PitchChord.Create( PitchClass.C, ChordFormula.Major ), PitchChord.Create( PitchClass.G, ChordFormula.Major ),
         PitchChord.Create( PitchClass.C, ChordFormula.Major )
       ]
     );
@@ -592,9 +705,7 @@ public class TonalEvaluatorTests
     var scope = new PartEventScope(
       new Part(
         [
-          Pitch.Create( PitchClass.G, 4 ),
-          Pitch.Create( PitchClass.C, 5 ),
-          Pitch.Create( PitchClass.B, 4 ),
+          Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 ), Pitch.Create( PitchClass.B, 4 ),
           Pitch.Create( PitchClass.C, 5 )
         ]
       )
@@ -616,13 +727,17 @@ public class TonalEvaluatorTests
   {
     var scope = new PartEventScope(
       new Part(
-        [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 ), Pitch.Create( PitchClass.CSharp, 5 )]
+        [
+          Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 ),
+          Pitch.Create( PitchClass.CSharp, 5 )
+        ]
       )
     );
     var evaluator = new TonalEvaluator();
     var candidate = new Key( PitchClass.C, ScaleDefinition.Major );
 
     var weighted = (TonalAnalysisResultSet) evaluator.Evaluate( scope, [candidate] );
+
     var unweighted = (TonalAnalysisResultSet) evaluator.Evaluate(
       scope,
       [candidate],
@@ -637,31 +752,44 @@ public class TonalEvaluatorTests
       }
     );
 
-    weighted.Candidates.Single().Confidence.Should()
-            .BeGreaterThan( unweighted.Candidates.Single().Confidence );
+    weighted.Candidates.Single()
+            .Confidence.Should()
+            .BeGreaterThan(
+              unweighted.Candidates.Single()
+                        .Confidence
+            );
   }
 
   [Fact]
   public void Evaluate_ShouldReturnCandidatesWithinConfiguredConfidenceMargin()
   {
     var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
+
     var candidates = new[]
     {
-      new Key( PitchClass.C, ScaleDefinition.Major ),
-      new Key( PitchClass.G, ScaleDefinition.Major )
+      new Key( PitchClass.C, ScaleDefinition.Major ), new Key( PitchClass.G, ScaleDefinition.Major )
     };
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
       candidates,
-      new TonalEvaluationOptions { ConfidenceDelta = 1.0, MaximumCandidates = 2 }
+      new TonalEvaluationOptions
+      {
+        ConfidenceDelta = 1.0,
+        MaximumCandidates = 2
+      }
     );
 
-    result.Candidates.Should().HaveCount( 2 );
-    result.Candidates.First().Tonic.Should().Be( PitchClass.C );
+    result.Candidates.Should()
+          .HaveCount( 2 );
+
+    result.Candidates.First()
+          .Tonic.Should()
+          .Be( PitchClass.C );
+
     result.Candidates.Select( candidate => candidate.Rank )
-                     .Should()
-                     .Equal( 1, 2 );
+          .Should()
+          .Equal( 1, 2 );
   }
 
   [Fact]

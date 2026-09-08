@@ -1,4 +1,4 @@
-// Module Name: IPartEvent.cs
+// Module Name: ITonalEvidenceEvaluatorProvider.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -24,31 +24,20 @@
 
 using System.Collections.Generic;
 
-namespace Bach.Model;
+namespace Bach.Model.Analysis.EvidenceEvaluators;
 
-/// <summary>Marks a musical event that may be stored in a <see cref="Part"/>.</summary>
-public interface IPartEvent
+/// <summary>
+///   Provides a collection of <see cref="ITonalEvidenceEvaluator"/> instances for use in tonal evaluation.
+/// </summary>
+public interface ITonalEvidenceEvaluatorProvider
 {
-  #region Properties
-
-  /// <summary>
-  ///   Gets the pitch classes contained in the event.
-  /// </summary>
-  IEnumerable<PitchClass> PitchClasses { get; }
-
-  #endregion
-
   #region Public Methods
 
   /// <summary>
-  ///   Determines whether the event contains any of the specified pitch class.
+  ///   Gets the collection of <see cref="ITonalEvidenceEvaluator"/> instances.
   /// </summary>
-  /// <param name="pitchClass">The pitch class to check for.</param>
-  /// <returns>
-  ///   <c>true</c> if the event contains the specified pitch class; otherwise, <c>false</c>.
-  /// </returns>
-  bool Any(
-    PitchClass pitchClass );
+  /// <returns>The collection of <see cref="ITonalEvidenceEvaluator"/> instances.</returns>
+  IReadOnlyList<ITonalEvidenceEvaluator> GetEvaluators();
 
   #endregion
 }

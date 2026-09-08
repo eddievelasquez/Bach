@@ -1,4 +1,4 @@
-// Module Name: IPartEvent.cs
+// Module Name: TonalEvidenceEvaluator.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -23,32 +23,61 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Bach.Model;
+namespace Bach.Model.Analysis.EvidenceEvaluators;
 
-/// <summary>Marks a musical event that may be stored in a <see cref="Part"/>.</summary>
-public interface IPartEvent
+/// <summary>
+///   Provides a base class for tonal evidence providers that evaluate pitch classes against a candidate scale.
+/// </summary>
+public abstract class TonalEvidenceEvaluator: ITonalEvidenceEvaluator
 {
-  #region Properties
+  #region Constructors
 
   /// <summary>
-  ///   Gets the pitch classes contained in the event.
+  ///   Initializes a new instance of the <see cref="TonalEvidenceEvaluator"/> class with the specified priority.
   /// </summary>
-  IEnumerable<PitchClass> PitchClasses { get; }
+  /// <param name="priority">The priority of the evidence provider.</param>
+  protected TonalEvidenceEvaluator(
+    int priority )
+  {
+    ArgumentOutOfRangeException.ThrowIfLessThan( priority, 1 );
+    Priority = priority;
+  }
+
+  #endregion
+
+  #region Properties
+
+  /// <inheritdoc/>
+  public int Priority { get; }
 
   #endregion
 
   #region Public Methods
 
+  /// <inheritdoc/>
+  public abstract IEnumerable<TonalEvidence> Evaluate(
+    TonalEvidenceContext context );
+
+  #endregion
+
+  #region Implementation
+
   /// <summary>
-  ///   Determines whether the event contains any of the specified pitch class.
+  ///   Returns the scale degrees of the given scale as an array of pitch classes.
   /// </summary>
-  /// <param name="pitchClass">The pitch class to check for.</param>
-  /// <returns>
-  ///   <c>true</c> if the event contains the specified pitch class; otherwise, <c>false</c>.
-  /// </returns>
-  bool Any(
-    PitchClass pitchClass );
+  /// <param name="scale">The scale to get the degrees from.</param>
+  /// <returns>An array of pitch classes representing the scale degrees.</returns>
+  protected static PitchClass[] GetDegrees(
+    Scale scale )
+  {
+    return
+    [
+      .. scale.GetAscending()
+              .Take( scale.Formula.AscendingDegrees.Count )
+    ];
+  }
 
   #endregion
 }

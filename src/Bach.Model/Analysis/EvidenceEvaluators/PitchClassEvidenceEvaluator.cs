@@ -1,4 +1,4 @@
-// Module Name: IPartEvent.cs
+// Module Name: PitchClassEvidenceEvaluator.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -24,31 +24,49 @@
 
 using System.Collections.Generic;
 
-namespace Bach.Model;
+namespace Bach.Model.Analysis.EvidenceEvaluators;
 
-/// <summary>Marks a musical event that may be stored in a <see cref="Part"/>.</summary>
-public interface IPartEvent
+/// <summary>
+///   Provides scale-membership evidence for observed pitch classes.
+/// </summary>
+public sealed class PitchClassEvidenceEvaluator: TonalEvidenceEvaluator
 {
-  #region Properties
+  #region Constructors
 
   /// <summary>
-  ///   Gets the pitch classes contained in the event.
+  ///   Initializes the provider with the default scale-evidence priority.
   /// </summary>
-  IEnumerable<PitchClass> PitchClasses { get; }
+  internal PitchClassEvidenceEvaluator(
+    int priority = 10 )
+    : base( priority )
+  {
+  }
 
   #endregion
 
   #region Public Methods
 
-  /// <summary>
-  ///   Determines whether the event contains any of the specified pitch class.
-  /// </summary>
-  /// <param name="pitchClass">The pitch class to check for.</param>
-  /// <returns>
-  ///   <c>true</c> if the event contains the specified pitch class; otherwise, <c>false</c>.
-  /// </returns>
-  bool Any(
-    PitchClass pitchClass );
+  /// <inheritdoc/>
+  public override IEnumerable<TonalEvidence> Evaluate(
+    TonalEvidenceContext context )
+  {
+    ArgumentNullException.ThrowIfNull( context );
+
+    var degrees = GetDegrees( context.CandidateKey.Scale );
+
+    foreach( var pitchClass in context.UniquePitchClasses )
+    {
+      var degree = Array.IndexOf( degrees, pitchClass );
+
+      yield return new TonalEvidence(
+        EvidenceReasonCategory.ScaleContext,
+        degree >= 0
+          ? $"Pitch class {pitchClass} is scale degree {degree + 1} in the candidate scale."
+          : $"Pitch class {pitchClass} is outside the candidate scale.",
+        degree >= 0
+      );
+    }
+  }
 
   #endregion
 }

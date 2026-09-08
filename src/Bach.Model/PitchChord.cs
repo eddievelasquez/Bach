@@ -61,12 +61,18 @@ public class PitchChord
   /// <summary>
   ///   Gets the pitch classes of the chord.
   /// </summary>
-  public IEnumerable<PitchClass> PitchClasses => this.Select( p => p.PitchClass )
-                                                     .ToArray();
+  public IEnumerable<PitchClass> PitchClasses => this.Select( p => p.PitchClass );
 
   #endregion
 
   #region Public Methods
+
+  /// <inheritdoc/>
+  public bool Any(
+    PitchClass pitchClass )
+  {
+    return this.Any( p => p.PitchClass == pitchClass );
+  }
 
   /// <summary>
   ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula, and inversion.

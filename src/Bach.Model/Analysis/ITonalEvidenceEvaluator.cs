@@ -1,4 +1,4 @@
-// Module Name: IPartEvent.cs
+// Module Name: ITonalEvidenceEvaluator.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -24,31 +24,35 @@
 
 using System.Collections.Generic;
 
-namespace Bach.Model;
+namespace Bach.Model.Analysis;
 
-/// <summary>Marks a musical event that may be stored in a <see cref="Part"/>.</summary>
-public interface IPartEvent
+/// <summary>
+///   Evaluates tonal evidence for a candidate key during tonal evaluation.
+/// </summary>
+/// <remarks>
+///   Evaluators are evaluated in descending <see cref="Priority"/> order. Priority does not suppress
+///   lower-priority evaluators; it establishes deterministic evidence order and precedence for aggregation.
+/// </remarks>
+public interface ITonalEvidenceEvaluator
 {
   #region Properties
 
   /// <summary>
-  ///   Gets the pitch classes contained in the event.
+  ///   Gets the evaluator   priority. Higher values run first.
   /// </summary>
-  IEnumerable<PitchClass> PitchClasses { get; }
+  int Priority { get; }
 
   #endregion
 
   #region Public Methods
 
   /// <summary>
-  ///   Determines whether the event contains any of the specified pitch class.
+  ///   Evaluates one candidate and returns its evidence.
   /// </summary>
-  /// <param name="pitchClass">The pitch class to check for.</param>
-  /// <returns>
-  ///   <c>true</c> if the event contains the specified pitch class; otherwise, <c>false</c>.
-  /// </returns>
-  bool Any(
-    PitchClass pitchClass );
+  /// <param name="context">The immutable candidate evaluation context.</param>
+  /// <returns>The evidence discovered by this provider.</returns>
+  IEnumerable<TonalEvidence> Evaluate(
+    TonalEvidenceContext context );
 
   #endregion
 }
