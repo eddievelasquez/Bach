@@ -5,7 +5,7 @@ public class ModalInterchangeTests
   [Fact]
   public void Ctor_Should_CreateRecord()
   {
-    var target = AnalysisTarget.ForPitch( Pitch.Create( PitchClass.EFlat, 4 ) );
+    var target = AnalysisTarget.ForPitch( Pitch.Parse( "Eb4" ) );
     var degree = ScaleDegree.Mediant;
     var evidence = new EvidenceReason( EvidenceReasonCategory.ScaleContext, "borrowed mediant" );
 
@@ -20,7 +20,7 @@ public class ModalInterchangeTests
   [Fact]
   public void Ctor_Throws_OnInvalidSourceId()
   {
-    var target = AnalysisTarget.ForPitch( Pitch.Create( PitchClass.EFlat, 4 ) );
+    var target = AnalysisTarget.ForPitch( Pitch.Parse( "Eb4" ) );
     var degree = ScaleDegree.Mediant;
     var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "x" );
 

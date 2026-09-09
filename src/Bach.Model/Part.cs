@@ -31,15 +31,15 @@ using Bach.Model.Internal;
 namespace Bach.Model;
 
 /// <summary>
-///   A sequential collection of musical events that can contain either pitches or pitch chords.
+///   An immutable sequential collection of measures containing pitches or pitch chords.
 /// </summary>
 public sealed class Part
-  : IReadOnlyList<IPartEvent>,
+  : IReadOnlyList<Measure>,
     ISpanConsumingParsable<Part>
 {
   #region Fields
 
-  private readonly IReadOnlyList<IPartEvent> _events;
+  private readonly IReadOnlyList<Measure> _measures;
 
   #endregion
 
@@ -50,27 +50,26 @@ public sealed class Part
   /// </summary>
   public Part()
   {
-    _events = Array.Empty<IPartEvent>();
+    _measures = Array.Empty<Measure>();
   }
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="Part"/> class with the specified collection of part events.
+  ///   Initializes a new instance of the <see cref="Part"/> class with the specified measures.
   /// </summary>
-  /// <param name="events">The collection of part events to initialize the part with.</param>
+  /// <param name="measures">The measures to initialize the part with.</param>
   public Part(
-    IEnumerable<IPartEvent> events )
+    IEnumerable<Measure> measures )
   {
-    ArgumentNullException.ThrowIfNull( events );
+    ArgumentNullException.ThrowIfNull( measures );
 
-    // Convert the events to an array to avoid multiple enumerations and to ensure that the collection is not modified after initialization.
-    var eventArray = events.ToArray();
+    var measureArray = measures.ToArray();
 
-    if( eventArray.Any( partEvent => partEvent is null ) )
+    if( measureArray.Any( measure => measure is null ) )
     {
-      throw new ArgumentException( "The event collection contains a null event.", nameof( eventArray ) );
+      throw new ArgumentException( "The measure collection contains a null measure.", nameof( measures ) );
     }
 
-    _events = Array.AsReadOnly( eventArray );
+    _measures = Array.AsReadOnly( measureArray );
   }
 
   #endregion
@@ -78,7 +77,27 @@ public sealed class Part
   #region Properties
 
   /// <inheritdoc/>
-  public int Count => _events.Count;
+  public int Count => _measures.Count;
+
+  /// <summary>
+  ///   Gets the events contained in the part, in measure and event order.
+  /// </summary>
+  public IEnumerable<IPartEvent> Events => _measures.SelectMany( measure => measure );
+
+  /// <summary>
+  ///   Gets each event with its measure and event location.
+  /// </summary>
+  internal IEnumerable<(PartEventLocation Location, IPartEvent Event)> MeasuresWithLocations()
+  {
+    for( var measureIndex = 0; measureIndex < _measures.Count; measureIndex++ )
+    {
+      var measure = _measures[measureIndex];
+      for( var eventIndex = 0; eventIndex < measure.Count; eventIndex++ )
+      {
+        yield return (new PartEventLocation( measureIndex, eventIndex ), measure[eventIndex]);
+      }
+    }
+  }
 
   /// <summary>
   ///   Gets the pitch classes contained in the part, in event order.
@@ -86,20 +105,20 @@ public sealed class Part
   /// <remarks>
   ///   The result preserves duplicate pitch classes and the order of pitch classes within each event.
   /// </remarks>
-  public IEnumerable<PitchClass> PitchClasses => _events.SelectMany( partEvent => partEvent.PitchClasses );
+  public IEnumerable<PitchClass> PitchClasses => _measures.SelectMany( measure => measure.PitchClasses );
 
   /// <inheritdoc/>
-  public IPartEvent this[
-    int index ] => _events[index];
+  public Measure this[
+    int index ] => _measures[index];
 
   #endregion
 
   #region Public Methods
 
   /// <inheritdoc/>
-  public IEnumerator<IPartEvent> GetEnumerator()
+  public IEnumerator<Measure> GetEnumerator()
   {
-    return _events.GetEnumerator();
+    return _measures.GetEnumerator();
   }
 
   /// <inheritdoc/>
@@ -196,61 +215,69 @@ public sealed class Part
     [NotNullWhen( true )] out Part? part,
     out ReadOnlySpan<char> tail )
   {
-    tail = span.TrimStart();
+    tail = ReadOnlySpan<char>.Empty;
+    var text = span.Trim().ToString();
 
-    // If the span is empty after trimming, we return an empty part
-    if( tail.IsEmpty )
+    if (text.Length == 0)
     {
-      part = [];
+      part = new Part();
       return true;
     }
 
-    // Count the number of commas in the span to determine how many parts we have.
-    var sepCount = span.Count( ',' );
+    var partBuilder = new PartBuilder();
+    var measureTexts = text.Split('|');
 
-    // Allocate a stack-allocated array of ranges to hold the start and end indices of each pitch in the span.
-    Span<Range> ranges = stackalloc Range[sepCount + 1];
-    var rangeCount = tail.Split( ranges, ',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries );
-    var partEvents = new List<IPartEvent>( rangeCount );
-
-    // Parse each pitch or PitchChord in the span and add it to the part events list.
-    for( var i = 0; i < rangeCount; i++ )
+    try
     {
-      var currentSpan = tail[ranges[i]];
-
-      // If the current span starts with a '!', we attempt to parse it as an explicitly marked chord.
-      if( currentSpan.StartsWith( "!" ) )
+      foreach (var measureText in measureTexts)
       {
-        if( TryParseExplicitChord( currentSpan[1..], provider, out var explicitChord ) )
+        if (string.IsNullOrWhiteSpace(measureText))
         {
-          partEvents.Add( explicitChord );
-          continue;
+          part = null;
+          return false;
         }
 
-        part = null;
-        return false;
-      }
+        var eventTexts = measureText.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        if (eventTexts.Length == 0)
+        {
+          part = null;
+          return false;
+        }
 
-      // If the current span does not start with a '!', we attempt to parse it as a PitchChord.
-      if( Pitch.TryParse( currentSpan, provider, out var pitch ) )
-      {
-        partEvents.Add( pitch );
-        continue;
-      }
+        partBuilder.AddMeasure(measureBuilder =>
+        {
+          foreach (var eventText in eventTexts)
+          {
+            var eventSpan = eventText.AsSpan();
 
-      // If neither parsing attempt succeeded, we return false to indicate that the parsing failed.
+            if (eventSpan.StartsWith("!"))
+            {
+              if (!TryParseExplicitChord(eventSpan[1..], provider, out var explicitChord))
+              {
+                throw new FormatException($"{eventText} is not a valid part event");
+              }
+
+              measureBuilder.Add(explicitChord);
+            }
+            else if (Pitch.TryParse(eventSpan, provider, out var pitch))
+            {
+              measureBuilder.Add(pitch);
+            }
+            else
+            {
+              throw new FormatException($"{eventText} is not a valid part event");
+            }
+          }
+        });
+      }
+    }
+    catch (FormatException)
+    {
       part = null;
       return false;
     }
 
-    // Update the tail to point to the remaining unparsed portion of the span after the last Pitch or PitchChord.
-    if( rangeCount > 0 )
-    {
-      tail = tail[ranges[rangeCount - 1].End..];
-    }
-
-    part = new Part( partEvents );
-
+    part = partBuilder.Build();
     return true;
   }
 

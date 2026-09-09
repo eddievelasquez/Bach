@@ -1,4 +1,4 @@
-// Module Name: PartBuilder.cs
+// Module Name: MeasureBuilder.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -27,91 +27,90 @@ using System.Collections.Generic;
 namespace Bach.Model;
 
 /// <summary>
-///   Builds immutable <see cref="Part"/> instances from ordered measures.
+///   Builds immutable <see cref="Measure"/> instances.
 /// </summary>
-public sealed class PartBuilder
+public sealed class MeasureBuilder
 {
   #region Fields
 
-  private readonly List<Measure> _measures;
+  private readonly List<IPartEvent> _events;
 
   #endregion
 
   #region Constructors
 
   /// <summary>
-  ///   Initializes an empty part builder.
+  ///   Initializes an empty measure builder.
   /// </summary>
-  public PartBuilder()
+  public MeasureBuilder()
   {
-    _measures = [];
+    _events = [];
   }
 
   /// <summary>
-  ///   Initializes a part builder with the specified initial capacity.
+  ///   Initializes a measure builder with the specified initial capacity.
   /// </summary>
-  /// <param name="capacity">The initial measure capacity.</param>
-  public PartBuilder(
+  /// <param name="capacity">The initial capacity.</param>
+  public MeasureBuilder(
     int capacity )
   {
-    _measures = new List<Measure>( capacity );
+    _events = new List<IPartEvent>( capacity );
   }
+
+  /// <summary>
+  ///   Initializes a measure builder with the specified events.
+  /// </summary>
+  /// <param name="events">The initial events.</param>
+  public MeasureBuilder(
+    IEnumerable<IPartEvent> events )
+  {
+    ArgumentNullException.ThrowIfNull( events );
+    _events = [.. events];
+  }
+
+  #endregion
+
+  #region Properties
+
+  internal int Count => _events.Count;
 
   #endregion
 
   #region Public Methods
 
   /// <summary>
-  ///   Adds a configured measure to the part.
+  ///   Adds one event to the measure.
   /// </summary>
-  /// <param name="configureMeasure">The action that configures the measure builder.</param>
-  /// <returns>This builder.</returns>
-  public PartBuilder AddMeasure(
-    Action<MeasureBuilder> configureMeasure )
+  public MeasureBuilder Add(
+    IPartEvent partEvent )
   {
-    ArgumentNullException.ThrowIfNull( configureMeasure );
-
-    var measureBuilder = new MeasureBuilder();
-    configureMeasure( measureBuilder );
-    _measures.Add( measureBuilder.Build() );
+    ArgumentNullException.ThrowIfNull( partEvent );
+    _events.Add( partEvent );
     return this;
   }
 
   /// <summary>
-  ///   Adds a completed <see cref="Measure"/> to the part.
+  ///   Adds multiple events to the measure.
   /// </summary>
-  /// <param name="measure">The measure to add.</param>
-  /// <returns>This builder.</returns>
-  public PartBuilder AddMeasure(
-    Measure measure )
+  public MeasureBuilder AddRange(
+    IEnumerable<IPartEvent> events )
   {
-    ArgumentNullException.ThrowIfNull( measure );
-    _measures.Add( measure );
-    return this;
-  }
+    ArgumentNullException.ThrowIfNull( events );
 
-  /// <summary>
-  ///   Adds a collection of completed <see cref="Measure"/> instances to the part.
-  /// </summary>
-  /// <param name="measures">The measures to add.</param>
-  /// <returns>This builder.</returns>
-  public PartBuilder AddMeasures(
-    params ReadOnlySpan<Measure> measures )
-  {
-    foreach( var measure in measures )
+    foreach( var e in events )
     {
-      AddMeasure( measure );
+      Add( e );
     }
 
     return this;
   }
 
   /// <summary>
-  ///   Creates an immutable part from the measures currently in the builder.
+  ///   Builds an immutable <see cref="Measure"/>.
   /// </summary>
-  public Part Build()
+  public Measure Build()
   {
-    return new Part( _measures );
+    return new Measure( _events );
   }
 
   #endregion

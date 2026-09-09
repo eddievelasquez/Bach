@@ -34,17 +34,19 @@ public sealed class PitchClassEvidenceEvaluator: TonalEvidenceEvaluator
   #region Constructors
 
   /// <summary>
-  ///   Initializes the provider with the default scale-evidence priority.
+  ///   Initializes a new instance of the <see cref="PitchClassEvidenceEvaluator"/> class.
   /// </summary>
-  internal PitchClassEvidenceEvaluator(
-    int priority = 10 )
-    : base( priority )
+  public PitchClassEvidenceEvaluator()
   {
   }
 
   #endregion
 
   #region Public Methods
+
+
+  /// <inheritdoc/>
+  public override int Priority => 10;
 
   /// <inheritdoc/>
   public override IEnumerable<TonalEvidence> Evaluate(

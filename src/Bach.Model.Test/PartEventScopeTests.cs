@@ -22,6 +22,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Linq;
+
 namespace Bach.Model.Test;
 
 public class PartEventScopeTests
@@ -31,11 +33,7 @@ public class PartEventScopeTests
   [Fact]
   public void Events_Should_CalculateSelectedRange()
   {
-    var part = new PartBuilder()
-               .Add( PitchClass.C[4] )
-               .Add( PitchClass.D[4] )
-               .Add( PitchClass.E[4] )
-               .Build();
+    var part = Part.Parse( "C4,D4,E4" );
 
     var scope = new PartEventScope( part, 1..3 );
 
@@ -44,47 +42,53 @@ public class PartEventScopeTests
       .BeTrue();
 
     scope.Events.Should()
-         .Equal( PitchClass.D[4], PitchClass.E[4] );
+         .Equal( Pitch.Parse( "D4" ), Pitch.Parse( "E4" ) );
   }
 
   [Fact]
   public void Events_Should_SupportFromEndRange()
   {
-    var part = new PartBuilder()
-               .Add( PitchClass.C[4] )
-               .Add( PitchClass.D[4] )
-               .Add( PitchClass.E[4] )
-               .Build();
+    var part = Part.Parse( "C4,D4,E4" );
 
     var scope = new PartEventScope( part, ^2.. );
 
     scope.Events.Should()
-         .Equal( PitchClass.D[4], PitchClass.E[4] );
+         .Equal( Pitch.Parse( "D4" ), Pitch.Parse( "E4" ) );
   }
 
   [Fact]
   public void Scope_Should_DefaultToWholePart()
   {
-    var part = new PartBuilder()
-               .Add( PitchClass.C[4] )
-               .Add( PitchClass.D[4] )
-               .Build();
+    var part = Part.Parse( "C4,D4" );
 
     var scope = new PartEventScope( part );
 
     scope.Events.Should()
-         .Equal( part );
+         .Equal( part.Events );
   }
 
   [Fact]
   public void Scope_Should_RejectInvalidRange()
   {
-    var part = new Part( new IPartEvent[] { PitchClass.C[4] } );
+    var part = Part.Parse( "C4" );
 
     Action action = () => new PartEventScope( part, ..2 );
 
     action.Should()
           .Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Fact]
+  public void Locations_Should_IdentifyMeasureAndEventIndexes()
+  {
+    var part = Part.Parse( "C4,D4|E4" );
+
+    var locations = new PartEventScope(part).Locations;
+
+    locations.Should().Equal(
+      new PartEventLocation(0, 0),
+      new PartEventLocation(0, 1),
+      new PartEventLocation(1, 0));
   }
 
   #endregion

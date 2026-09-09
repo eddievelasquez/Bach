@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Bach.Model.Test;
 
@@ -32,199 +31,103 @@ public sealed class PartTests
   #region Public Methods
 
   [Fact]
-  public void AddAndEnumerate_ShouldStoreEventsAndPreserveChordsAsSingleEvents()
+  public void MeasureBuilder_ShouldBuildImmutableMeasure()
   {
-    var part = Part.Parse( "C4,!C" );
+    var builder = new MeasureBuilder().Add( PitchClass.C[4] );
+    var first = builder.Build();
+    builder.Add( PitchClass.E[4] );
 
-    var events = part.ToArray();
+    first.Should()
+         .ContainSingle()
+         .Which.Should()
+         .Be( PitchClass.C[4] );
 
-    events.Should()
-          .HaveCount( 2 );
-
-    events[0]
-      .Should()
-      .Be( PitchClass.C[4] );
-
-    events[1]
-      .Should()
-      .Be( PitchChord.Parse( "C" ) );
+    builder.Build()
+           .Should()
+           .HaveCount( 2 );
   }
 
   [Fact]
-  public void Constructor_Should_CopyEventsAndPreserveOrder()
+  public void PartBuilder_AddMeasure_ShouldPreserveMeasureAndEventOrder()
   {
-    var source = new List<IPartEvent>
-    {
-      PitchClass.C[4],
-      PitchChord.Parse( "C" )
-    };
-    var part = new Part( source );
-
-    source.Clear();
+    var part = new PartBuilder()
+               .AddMeasure( measure => measure.Add( PitchClass.C[4] )
+                                              .Add( PitchClass.E[4] )
+               )
+               .AddMeasure( measure => measure.Add( PitchChord.Parse( "G7" ) ) )
+               .Build();
 
     part.Should()
         .HaveCount( 2 );
 
     part[0]
       .Should()
-      .Be( PitchClass.C[4] );
+      .HaveCount( 2 );
 
     part[1]
       .Should()
-      .Be( PitchChord.Parse( "C" ) );
+      .ContainSingle()
+      .Which.Should()
+      .Be( PitchChord.Parse( "G7" ) );
+
+    part.Events.Should()
+        .Equal( PitchClass.C[4], PitchClass.E[4], PitchChord.Parse( "G7" ) );
   }
 
   [Fact]
-  public void EmptyPart_ShouldHaveNoEvents()
+  public void PartBuilder_AddMeasure_ShouldRejectNullCallback()
   {
-    new Part().Should()
-              .BeEmpty();
-  }
-
-  [Fact]
-  public void Part_Should_ImplementReadOnlyList()
-  {
-    var part = new Part( new IPartEvent[] { PitchClass.C[4] } );
-
-    part.Should()
-        .BeAssignableTo<IReadOnlyList<IPartEvent>>();
-
-    part.Count.Should()
-        .Be( 1 );
-  }
-
-  [Fact]
-  public void PartBuilder_Should_BuildImmutablePart()
-  {
-    var builder = new PartBuilder()
-                  .Add( PitchClass.C[4] )
-                  .Add( PitchClass.E[4] )
-                  .Insert( 1, PitchClass.D[4] );
-
-    var part = builder.Build();
-
-    part.Select( partEvent => partEvent )
-        .Should()
-        .Equal( PitchClass.C[4], PitchClass.D[4], PitchClass.E[4] );
-  }
-
-  [Fact]
-  public void PartBuilder_Should_RejectNullEvents()
-  {
-    var builder = new PartBuilder();
-
-    Action action = () => builder.Add( null! );
+    Action action = () => new PartBuilder().AddMeasure( (Action<MeasureBuilder>) null! );
 
     action.Should()
           .Throw<ArgumentNullException>();
   }
 
   [Fact]
-  public void PartBuilder_Should_CopyEventsOnBuild()
+  public void EmptyMeasure_ShouldBeRejected()
   {
-    var builder = new PartBuilder().Add( PitchClass.C[4] );
-    var first = builder.Build();
+    Action action = () => new MeasureBuilder().Build();
 
-    builder.Add( PitchClass.D[4] );
-    var second = builder.Build();
-
-    first.Should()
-         .HaveCount( 1 );
-
-    second.Should()
-          .HaveCount( 2 );
+    action.Should()
+          .Throw<InvalidOperationException>();
   }
 
   [Fact]
-  public void Parse_ShouldCreateImmutablePart()
+  public void Part_Parse_ShouldCreateMeasuresFromPipeSeparators()
   {
-    var part = Part.Parse( "C4,!C" );
+    var part = Part.Parse( "C4,E4|!G7|C4" );
 
     part.Should()
-        .HaveCount( 2 );
+        .HaveCount( 3 );
 
     part[0]
       .Should()
-      .Be( PitchClass.C[4] );
+      .HaveCount( 2 );
 
     part[1]
       .Should()
-      .Be( PitchChord.Parse( "C" ) );
-  }
+      .ContainSingle()
+      .Which.Should()
+      .Be( PitchChord.Parse( "G7" ) );
 
-  [Fact]
-  public void Parse_ShouldThrowFormatExceptionForInvalidInput()
-  {
-    Action action = () => Part.Parse( "invalid" );
-
-    action.Should()
-          .Throw<FormatException>();
-  }
-
-  [Fact]
-  public void Parse_ShouldParseExplicitMajorChord()
-  {
-    var part = Part.Parse( "!C" );
-
-    part.Should()
-        .ContainSingle()
-        .Which.Should()
-        .Be( PitchChord.Parse( "C" ) );
-  }
-
-  [Fact]
-  public void Parse_ShouldParseExplicitSymbolicChord()
-  {
-    var part = Part.Parse( "!Dm7" );
-
-    part.Should()
-        .ContainSingle()
-        .Which.Should()
-        .Be( PitchChord.Parse( "Dm7" ) );
-  }
-
-  [Fact]
-  public void Parse_ShouldParseExplicitChordBassAndInversion()
-  {
-    var part = Part.Parse( "!G7/B3" );
-
-    part.Should()
-        .ContainSingle()
-        .Which.Should()
-        .Be( PitchChord.Parse( "G7/B3" ) );
+    part.PitchClasses.Should()
+        .Equal(
+          PitchClass.C,
+          PitchClass.E,
+          PitchClass.G,
+          PitchClass.B,
+          PitchClass.D,
+          PitchClass.F,
+          PitchClass.C
+        );
   }
 
   [Theory]
-  [InlineData( "!C" )]
-  [InlineData( "!Dm7" )]
-  [InlineData( "!G7" )]
-  [InlineData( "!A7" )]
-  [InlineData( "!F" )]
-  [InlineData( "!Em7" )]
-  public void Parse_ShouldParseEachExplicitChordToken(
-    string input )
-  {
-    Part.Parse( input ).Should()
-             .ContainSingle()
-             .Which.Should()
-             .BeAssignableTo<IChordEvent>();
-  }
-
-  [Fact]
-  public void Parse_ShouldParseExplicitChordSequence()
-  {
-    var part = Part.Parse( "!C,!Dm7,!G7,!C,!A7,!Dm7,!G7,!C,!F,!G7,!Em7,!A7,!Dm7,!G7,!C,!C" );
-
-    part.Should()
-        .HaveCount( 16 )
-        .And.OnlyContain( partEvent => partEvent is IChordEvent );
-  }
-
-  [Theory]
-  [InlineData( "!" )]
-  [InlineData( "!not-a-chord" )]
-  [InlineData( "!C/H3" )]
-  public void Parse_ShouldRejectMalformedExplicitChord(
+  [InlineData( "|C4" )]
+  [InlineData( "C4|" )]
+  [InlineData( "C4||E4" )]
+  [InlineData( "invalid" )]
+  public void Part_Parse_ShouldRejectMalformedInput(
     string input )
   {
     Action action = () => Part.Parse( input );
@@ -234,86 +137,16 @@ public sealed class PartTests
   }
 
   [Fact]
-  public void Parse_ShouldKeepUnmarkedPitchSyntax()
+  public void Part_ShouldImplementReadOnlyMeasureList()
   {
-    var part = Part.Parse( "C4,E4,G4" );
+    var part = new PartBuilder().AddMeasure( measure => measure.Add( PitchClass.C[4] ) )
+                                .Build();
 
     part.Should()
-        .OnlyContain( partEvent => partEvent is Pitch );
-  }
+        .BeAssignableTo<IReadOnlyList<Measure>>();
 
-  [Fact]
-  public void PitchClasses_ShouldPreserveEventAndChordOrderAndDuplicates()
-  {
-    var part = new PartBuilder()
-               .Add( PitchClass.C[4] )
-               .Add( PitchChord.Create( PitchClass.C, ChordFormula.Major, inversion: 1 ) )
-               .Add( PitchClass.C[4] )
-               .Build();
-
-    part.PitchClasses.Should()
-        .Equal( PitchClass.C, PitchClass.E, PitchClass.G, PitchClass.C, PitchClass.C );
-  }
-
-  [Theory]
-  [InlineData( "C4", 1, "" )]
-  [InlineData( "C4, E4, G4", 3, "" )]
-  [InlineData( "!Cmaj7", 1, "" )]
-  [InlineData( "C4, !Am, G5", 3, "" )]
-  [InlineData( "", 0, "" )]
-  [InlineData( "  ", 0, "" )]
-  [InlineData( " C4 , E4 ", 2, " " )]
-  [InlineData( "C4,,E4", 2, "" )]
-  [InlineData( "C4, E4, ", 2, ", " )]
-  public void TryParse_ShouldParseValidInputs(
-    string input,
-    int expectedCount,
-    string expectedTail )
-  {
-    var result = Part.TryParse( input.AsSpan(), null, out var part, out var tail );
-
-    result.Should()
-          .BeTrue();
-
-    part.Should()
-        .NotBeNull();
-
-    part!.Count.Should()
-         .Be( expectedCount );
-
-    tail.ToString()
-        .Should()
-        .Be( expectedTail );
-  }
-
-  [Theory]
-  [InlineData( "invalid" )]
-  [InlineData( "C4, invalid" )]
-  public void TryParse_ShouldReturnFalseForInvalidInputs(
-    string input )
-  {
-    var result = Part.TryParse( input.AsSpan(), null, out var part, out var tail );
-
-    result.Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void TryParse_WithOnlyCommas_ShouldReturnTrueAndEmptyPart()
-  {
-    var input = ", , ,".AsSpan();
-    var result = Part.TryParse( input, null, out var part, out var tail );
-
-    result.Should()
-          .BeTrue();
-
-    part.Should()
-        .BeEmpty();
-
-    // Since no events were parsed, tail should be the trimmed input.
-    tail.ToString()
-        .Should()
-        .Be( ", , ," );
+    part.Count.Should()
+        .Be( 1 );
   }
 
   #endregion

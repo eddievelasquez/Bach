@@ -85,7 +85,7 @@ public sealed class ScaleDegreeTests
   [Fact]
   public void ResolveAppliedDominant_ShouldReturnVOverV_ForCMajor()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var applied = ScaleDegree.Dominant.ResolveAppliedDominant( key, ScaleDegree.Dominant );
 
@@ -102,7 +102,7 @@ public sealed class ScaleDegreeTests
   [Fact]
   public void ResolveAppliedLeadingTone_ShouldReturnLeadingToneOverV_ForCMajor()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var applied = ScaleDegree.LeadingTone.ResolveAppliedLeadingTone( key, ScaleDegree.Dominant );
 
@@ -130,7 +130,7 @@ public sealed class ScaleDegreeTests
   public void ResolveDiatonicTriad_ShouldReturnExpectedQuality_ForMajorMode()
   {
     var degree = ScaleDegree.Tonic;
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var triad = degree.ResolveDiatonicTriad( key );
 
@@ -144,7 +144,7 @@ public sealed class ScaleDegreeTests
   [Fact]
   public void Resolve_ShouldReturnExpectedPitchClass_ForMinorKey()
   {
-    var key = new Key( PitchClass.A, ScaleDefinition.NaturalMinor );
+    var key = Key.Parse( "Am" );
     var degree = ScaleDegree.Mediant;
 
     degree.Resolve( key )
@@ -155,7 +155,7 @@ public sealed class ScaleDegreeTests
   [Fact]
   public void Resolve_ShouldReturnTonicPitchClass_ForMajorKey()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
     var degree = ScaleDegree.Tonic;
 
     degree.Resolve( key )

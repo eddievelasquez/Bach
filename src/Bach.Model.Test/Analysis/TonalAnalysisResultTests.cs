@@ -31,10 +31,9 @@ public class TonalAnalysisResultTests
   [Fact]
   public void RankedCtor_Should_CreateRecord()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
+    var part = Part.Parse( "C4" );
     var scope = new PartEventScope( part );
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
     var supporting = new[] { new EvidenceReason( EvidenceReasonCategory.ScaleContext, "matches scale degrees" ) };
     var conflicting = new[] { new EvidenceReason( EvidenceReasonCategory.HarmonicContext, "contradicting chord" ) };
 
@@ -54,7 +53,7 @@ public class TonalAnalysisResultTests
     record.Scope.Events.Should()
           .ContainSingle()
           .Which.Should()
-          .Be( pitch );
+           .Be( part[0][0] );
 
     record.Rank.Should()
           .Be( 1 );
@@ -77,9 +76,8 @@ public class TonalAnalysisResultTests
   [Fact]
   public void RankedCtor_Validates_Arguments()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var scope = new PartEventScope( new Part( new IPartEvent[] { pitch } ) );
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var scope = new PartEventScope( Part.Parse( "C4" ) );
+    var key = Key.Parse( "C" );
 
     Action a1 = () => new RankedTonalCandidateResult(
       0,
@@ -124,8 +122,7 @@ public class TonalAnalysisResultTests
   [Fact]
   public void InconclusiveCtor_Should_CreateRecord()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var scope = new PartEventScope( new Part( new IPartEvent[] { pitch } ) );
+    var scope = new PartEventScope( Part.Parse( "C4" ) );
     var conflicting = new[] { new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "ambiguous set" ) };
 
     var record = new InconclusiveTonalAnalysisResult( scope, "insufficient evidence", conflicting );

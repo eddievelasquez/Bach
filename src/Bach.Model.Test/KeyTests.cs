@@ -686,7 +686,7 @@ public sealed class KeyTests
   [Fact]
   public void ToString_ShouldRenderTonicAndMode()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     key.ToString()
        .Should()
@@ -697,7 +697,7 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenKeyHasFlatTonic()
   {
     // Arrange
-    var key = new Key( PitchClass.BFlat, ScaleDefinition.Major );
+    var key = Key.Parse( "Bb" );
 
     // Act
     var result = key.ToString();
@@ -711,7 +711,7 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenKeyIsMajor()
   {
     // Arrange
-    var key = new Key( PitchClass.G, ScaleDefinition.Major );
+    var key = Key.Parse( "G" );
 
     // Act
     var result = key.ToString();
@@ -725,7 +725,7 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenKeyIsMinor()
   {
     // Arrange
-    var key = new Key( PitchClass.A, ScaleDefinition.NaturalMinor );
+    var key = Key.Parse( "Am" );
 
     // Act
     var result = key.ToString();
@@ -739,7 +739,7 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenKeyIsMinorWithSharp()
   {
     // Arrange
-    var key = new Key( PitchClass.CSharp, ScaleDefinition.NaturalMinor );
+    var key = Key.Parse( "C#m" );
 
     // Act
     var result = key.ToString();
@@ -753,7 +753,7 @@ public sealed class KeyTests
   public void ToString_ShouldReturnFormattedString_WhenTonicHasAccidental()
   {
     // Arrange
-    var key = new Key( PitchClass.FSharp, ScaleDefinition.Major );
+    var key = Key.Parse( "F#" );
 
     // Act
     var result = key.ToString();

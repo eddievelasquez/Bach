@@ -27,13 +27,7 @@ namespace Bach.Model.Analysis;
 /// <summary>
 ///   Represents one supporting or conflicting observation produced by a tonal evidence provider.
 /// </summary>
-/// <param name="Reason">The explanation for the observation.</param>
-/// <param name="Supports">Whether the observation supports the candidate.</param>
-/// <param name="ScoreContribution">An optional score contribution before provider-priority weighting.</param>
-public sealed record TonalEvidence(
-  EvidenceReason Reason,
-  bool Supports,
-  double ScoreContribution = 0.0 )
+public sealed record TonalEvidence
 {
   #region Constructors
 
@@ -54,21 +48,60 @@ public sealed record TonalEvidence(
   {
   }
 
+  /// <summary>
+  ///   Represents one supporting or conflicting observation produced by a tonal evidence provider.
+  /// </summary>
+  /// <param name="reason">The explanation for the observation.</param>
+  /// <param name="supports">Whether the observation supports the candidate.</param>
+  /// <param name="scoreContribution">An optional score contribution before provider-priority weighting.</param>
+  public TonalEvidence(
+    EvidenceReason reason,
+    bool supports,
+    double scoreContribution = 0.0 )
+  {
+    ArgumentNullException.ThrowIfNull( reason );
+
+    if( double.IsNaN( scoreContribution ) || double.IsInfinity( scoreContribution ) )
+    {
+      throw new ArgumentOutOfRangeException( nameof( scoreContribution ), "The score contribution must be finite." );
+    }
+
+    Reason = reason;
+    Supports = supports;
+    ScoreContribution = scoreContribution;
+  }
+
+  #endregion
+
+  #region Properties
+
+  /// <summary>The explanation for the observation.</summary>
+  public EvidenceReason Reason { get; init; }
+
+  /// <summary>Whether the observation supports the candidate.</summary>
+  public bool Supports { get; init; }
+
+  /// <summary>An optional score contribution before provider-priority weighting.</summary>
+  public double ScoreContribution { get; init; }
+
   #endregion
 
   #region Public Methods
 
   /// <summary>
-  ///   Validates the evidence value and its optional score contribution.
+  ///   Deconstructs the <see cref="TonalEvidence"/> record into its constituent properties.
   /// </summary>
-  public void Validate()
+  /// <param name="reason">The explanation for the observation.</param>
+  /// <param name="supports">Whether the observation supports the candidate.</param>
+  /// <param name="scoreContribution">An optional score contribution before provider-priority weighting.</param>
+  public void Deconstruct(
+    out EvidenceReason reason,
+    out bool supports,
+    out double scoreContribution )
   {
-    ArgumentNullException.ThrowIfNull( Reason );
-
-    if( double.IsNaN( ScoreContribution ) || double.IsInfinity( ScoreContribution ) )
-    {
-      throw new ArgumentOutOfRangeException( nameof( ScoreContribution ), "The score contribution must be finite." );
-    }
+    reason = Reason;
+    supports = Supports;
+    scoreContribution = ScoreContribution;
   }
 
   #endregion

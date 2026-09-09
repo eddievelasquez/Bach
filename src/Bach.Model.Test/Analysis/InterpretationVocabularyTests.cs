@@ -55,9 +55,9 @@ public sealed class InterpretationVocabularyTests
   [Fact]
   public void AnalysisTarget_ShouldReferencePartEventOrPitch()
   {
-    var chord = PitchChord.Create( PitchClass.C, ChordFormula.Major );
+    var chord = PitchChord.Parse( "C" );
     var eventTarget = AnalysisTarget.ForEvent( chord );
-    var pitch = PitchClass.E[4];
+    var pitch = Pitch.Parse( "E4" );
     var pitchTarget = AnalysisTarget.ForPitch( pitch );
 
     eventTarget.PartEvent.Should()
@@ -85,10 +85,10 @@ public sealed class InterpretationVocabularyTests
   [Fact]
   public void NonChordToneTypes_ShouldStoreTheirMusicalRelationships()
   {
-    var target = AnalysisTarget.ForPitch( PitchClass.F[4] );
-    var preparation = AnalysisTarget.ForPitch( PitchClass.F[4] );
-    var resolution = AnalysisTarget.ForPitch( PitchClass.E[4] );
-    var anticipatedTarget = AnalysisTarget.ForPitch( PitchClass.F[4] );
+    var target = AnalysisTarget.ForPitch( Pitch.Parse( "F4" ) );
+    var preparation = AnalysisTarget.ForPitch( Pitch.Parse( "F4" ) );
+    var resolution = AnalysisTarget.ForPitch( Pitch.Parse( "E4" ) );
+    var anticipatedTarget = AnalysisTarget.ForPitch( Pitch.Parse( "F4" ) );
     var evidence = new EvidenceReason( EvidenceReasonCategory.Resolution, "The tone resolves by step." );
 
     var passing = new PassingTone( target, MelodicDirection.Ascending, evidence );
@@ -125,7 +125,7 @@ public sealed class InterpretationVocabularyTests
   [Fact]
   public void AlteredDegree_ShouldPreserveSpelledAlterationAndKind()
   {
-    var target = AnalysisTarget.ForPitch( PitchClass.B[4] );
+    var target = AnalysisTarget.ForPitch( Pitch.Parse( "B4" ) );
     var alteration = new DegreeAlteration( ScaleDegree.LeadingTone, Interval.MajorSeventh );
 
     var evidence = new EvidenceReason(
@@ -154,7 +154,7 @@ public sealed class InterpretationVocabularyTests
   [Fact]
   public void AppliedFunction_ShouldFormatTypedFunctionAsConventionalLabel()
   {
-    var target = AnalysisTarget.ForEvent( PitchChord.Create( PitchClass.D, ChordFormula.Major ) );
+    var target = AnalysisTarget.ForEvent( PitchChord.Parse( "D" ) );
     var evidence = new EvidenceReason( EvidenceReasonCategory.HarmonicContext, "The chord resolves to the dominant." );
 
     var dominant = new AppliedFunction( target, ScaleDegree.Dominant, AppliedTriadFunction.Dominant, evidence );

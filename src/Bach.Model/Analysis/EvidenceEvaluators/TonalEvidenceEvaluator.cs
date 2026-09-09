@@ -32,25 +32,10 @@ namespace Bach.Model.Analysis.EvidenceEvaluators;
 /// </summary>
 public abstract class TonalEvidenceEvaluator: ITonalEvidenceEvaluator
 {
-  #region Constructors
-
-  /// <summary>
-  ///   Initializes a new instance of the <see cref="TonalEvidenceEvaluator"/> class with the specified priority.
-  /// </summary>
-  /// <param name="priority">The priority of the evidence provider.</param>
-  protected TonalEvidenceEvaluator(
-    int priority )
-  {
-    ArgumentOutOfRangeException.ThrowIfLessThan( priority, 1 );
-    Priority = priority;
-  }
-
-  #endregion
-
   #region Properties
 
   /// <inheritdoc/>
-  public int Priority { get; }
+  public abstract int Priority { get; }
 
   #endregion
 

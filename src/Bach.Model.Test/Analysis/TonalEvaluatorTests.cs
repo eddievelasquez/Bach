@@ -91,17 +91,14 @@ public class TonalEvaluatorTests
   {
     var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
 
-    ITonalEvidenceEvaluator[] providers =
-    [
-      new TestEvidenceEvaluator( 10, false ),
-      new TestEvidenceEvaluator( 20, true, 0.1 )
-    ];
-
     var result = (TonalAnalysisResultSet) new TonalEvaluator(
-      evidenceProvider: new TonalEvidenceEvaluatorProvider( providers )
+      pipeline: new TonalEvidenceEvaluatorPipelineBuilder()
+                .AddEvaluator( new TestEvidenceEvaluator( 10, false ) )
+                .AddEvaluator( new TestEvidenceEvaluator( 20, true, 0.1 ) )
+                .Build()
     ).Evaluate(
       scope,
-      [new Key( PitchClass.C, ScaleDefinition.Major )]
+      [Key.Parse( "C" )]
     );
 
     var candidate = result.Candidates.Single();
@@ -120,11 +117,9 @@ public class TonalEvaluatorTests
   [Fact]
   public void TonalCenterEvidenceProvider_Evaluate_ShouldTrackOpeningAndClosingEmphasisAndCapScore()
   {
-    var part = new Part(
-      [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 )]
-    );
+    var part = Part.Parse( "C4,G4,C5" );
     var scope = new PartEventScope( part );
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var context = new TonalEvidenceContext(
       key,
@@ -154,11 +149,11 @@ public class TonalEvaluatorTests
   [Fact]
   public void PartEventScope_ShouldStoreAppliedFunctionsImmutably()
   {
-    var part = new Part( [Pitch.Create( PitchClass.D, 4 )] );
+    var part = Part.Parse( "D4" );
     var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The target is tonicized." );
 
     var appliedFunction = new AppliedFunction(
-      AnalysisTarget.ForEvent( part[0] ),
+      AnalysisTarget.ForEvent( part.Events.First() ),
       ScaleDegree.Dominant,
       AppliedTriadFunction.Dominant,
       evidence
@@ -177,10 +172,13 @@ public class TonalEvaluatorTests
   [Fact]
   public void PartEventScope_ShouldRejectAppliedFunctionTargetOutsideScope()
   {
-    var part = new Part( [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.D, 4 )] );
+    var part = Part.Parse( "C4,D4" );
 
     var appliedFunction = new AppliedFunction(
-      AnalysisTarget.ForEvent( part[1] ),
+      AnalysisTarget.ForEvent(
+        part.Events.Skip( 1 )
+            .First()
+      ),
       ScaleDegree.Dominant,
       AppliedTriadFunction.Dominant,
       new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The target is tonicized." )
@@ -196,14 +194,14 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldPreserveAppliedDominantEvidence()
   {
-    var part = new Part( [Pitch.Create( PitchClass.D, 4 )] );
+    var part = Part.Parse( "D4" );
 
     var scope = new PartEventScope(
       part,
       ..,
       [
         new AppliedFunction(
-          AnalysisTarget.ForEvent( part[0] ),
+          AnalysisTarget.ForEvent( part.Events.First() ),
           ScaleDegree.Dominant,
           AppliedTriadFunction.Dominant,
           new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The dominant tonicizes V." )
@@ -213,7 +211,7 @@ public class TonalEvaluatorTests
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
-      [new Key( PitchClass.C, ScaleDefinition.Major )],
+      [Key.Parse( "C" )],
       TonalEvaluationOptions.AllCandidates
     );
 
@@ -236,14 +234,14 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldPreserveAppliedLeadingToneEvidenceAndRankDeterministically()
   {
-    var part = new Part( [Pitch.Create( PitchClass.D, 4 )] );
+    var part = Part.Parse( "D4" );
 
     var scope = new PartEventScope(
       part,
       ..,
       [
         new AppliedFunction(
-          AnalysisTarget.ForEvent( part[0] ),
+          AnalysisTarget.ForEvent( part.Events.First() ),
           ScaleDegree.Dominant,
           AppliedTriadFunction.LeadingTone,
           new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "The leading-tone triad tonicizes V." )
@@ -252,10 +250,7 @@ public class TonalEvaluatorTests
     );
     var evaluator = new TonalEvaluator();
 
-    var candidates = new[]
-    {
-      new Key( PitchClass.C, ScaleDefinition.Major ), new Key( PitchClass.G, ScaleDefinition.Major )
-    };
+    var candidates = new[] { Key.Parse( "C" ), Key.Parse( "G" ) };
 
     var first = evaluator.Evaluate( scope, candidates, TonalEvaluationOptions.AllCandidates );
     var second = evaluator.Evaluate( scope, candidates, TonalEvaluationOptions.AllCandidates );
@@ -309,7 +304,7 @@ public class TonalEvaluatorTests
 
     part.Should()
         .HaveCount( 16 )
-        .And.OnlyContain( partEvent => partEvent is IChordEvent );
+        .And.OnlyContain( measure => measure.Count == 1 && measure[0] is IChordEvent );
 
     var scope = new PartEventScope( part );
     var evaluator = new TonalEvaluator();
@@ -353,8 +348,8 @@ public class TonalEvaluatorTests
 
     part.Should()
         .HaveCount( 16 )
-        .And.Contain( partEvent => partEvent is Pitch )
-        .And.Contain( partEvent => partEvent is IChordEvent );
+        .And.Contain( measure => measure.Any( partEvent => partEvent is Pitch ) )
+        .And.Contain( measure => measure.Any( partEvent => partEvent is IChordEvent ) );
 
     var scope = new PartEventScope( part );
     var evaluator = new TonalEvaluator();
@@ -386,7 +381,7 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_NoEvents_ReturnsInconclusive()
   {
-    var part = new Part();
+    var part = Part.Parse( "" );
     var scope = new PartEventScope( part );
     var evaluator = new TonalEvaluator();
 
@@ -399,7 +394,7 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldReturnInconclusive_WhenEventsContainNoPitchClasses()
   {
-    var scope = new PartEventScope( new Part( [new EmptyEvent()] ) );
+    var scope = new PartEventScope( new Part( [new Measure( [new EmptyEvent()] )] ) );
 
     var result = new TonalEvaluator().Evaluate( scope );
 
@@ -430,14 +425,10 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldPreserveSpellingSensitiveAdditionalCandidates()
   {
-    var cSharp = new Key( PitchClass.CSharp, ScaleDefinition.Major );
-    var dFlat = new Key( PitchClass.DFlat, ScaleDefinition.Major );
+    var cSharp = Key.Parse( "C#" );
+    var dFlat = Key.Parse( "Db" );
 
-    var scope = new PartEventScope(
-      new Part(
-        [Pitch.Create( PitchClass.CSharp, 4 ), Pitch.Create( PitchClass.F, 4 ), Pitch.Create( PitchClass.GSharp, 4 )]
-      )
-    );
+    var scope = new PartEventScope( Part.Parse( "C#4,F4,G#4" ) );
 
     var result = new TonalEvaluator().Evaluate( scope, [cSharp, dFlat], TonalEvaluationOptions.AllCandidates );
 
@@ -477,7 +468,7 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldIncludeConflictingScaleEvidence_WhenPitchClassIsOutsideCandidateScale()
   {
-    var scope = new PartEventScope( new Part( [Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.CSharp, 4 )] ) );
+    var scope = new PartEventScope( Part.Parse( "C4,C#4" ) );
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
@@ -514,8 +505,7 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_InvertedChord_ShouldExposeRootBassInversionAndFormulaEvidence()
   {
-    var chord = PitchChord.Create( PitchClass.C[4], ChordFormula.Major, 1 );
-    var scope = new PartEventScope( new Part( [Pitch.Create( PitchClass.C, 4 ), chord] ) );
+    var scope = new PartEventScope( Part.Parse( "C4,!C/E4" ) );
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
@@ -546,8 +536,7 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldIncludeConflictingHarmonicEvidence_WhenChordToneIsOutsideCandidateScale()
   {
-    var chord = PitchChord.Create( PitchClass.FSharp[4], ChordFormula.Major );
-    var scope = new PartEventScope( new Part( [Pitch.Create( PitchClass.C, 4 ), chord] ) );
+    var scope = new PartEventScope( Part.Parse( "C4,!F#" ) );
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
@@ -583,8 +572,7 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ChordEvent_IncludesHarmonicEvidence()
   {
-    var chord = PitchChord.Create( PitchClass.C, ChordFormula.Major );
-    var scope = new PartEventScope( new Part( new IPartEvent[] { chord } ) );
+    var scope = new PartEventScope( Part.Parse( "!C" ) );
 
     var result = new TonalEvaluator( RepertoireProfile.CommonPractice ).Evaluate(
       scope,
@@ -604,8 +592,7 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ChordEvent_KeepsConfidenceInRange()
   {
-    var chord = PitchChord.Create( PitchClass.C, ChordFormula.Major, inversion: 1 );
-    var scope = new PartEventScope( new Part( new IPartEvent[] { chord } ) );
+    var scope = new PartEventScope( Part.Parse( "!C/E4" ) );
 
     var result = new TonalEvaluator().Evaluate( scope );
 
@@ -674,17 +661,12 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldIncludeTonalCenterRecurrenceAndEndpointEvidence()
   {
-    var part = new Part(
-      [
-        PitchChord.Create( PitchClass.C, ChordFormula.Major ), PitchChord.Create( PitchClass.G, ChordFormula.Major ),
-        PitchChord.Create( PitchClass.C, ChordFormula.Major )
-      ]
-    );
+    var part = Part.Parse( "!C,!G,!C" );
     var scope = new PartEventScope( part );
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
-      [new Key( PitchClass.C, ScaleDefinition.Major )]
+      [Key.Parse( "C" )]
     );
     var candidate = result.Candidates.Single();
 
@@ -702,18 +684,11 @@ public class TonalEvaluatorTests
   [Fact]
   public void Evaluate_ShouldIncludeDominantToTonicAndLeadingToneResolutionEvidence()
   {
-    var scope = new PartEventScope(
-      new Part(
-        [
-          Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 ), Pitch.Create( PitchClass.B, 4 ),
-          Pitch.Create( PitchClass.C, 5 )
-        ]
-      )
-    );
+    var scope = new PartEventScope( Part.Parse( "G4,C5,B4,C5" ) );
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,
-      [new Key( PitchClass.C, ScaleDefinition.Major )]
+      [Key.Parse( "C" )]
     );
     var candidate = result.Candidates.Single();
 
@@ -723,18 +698,28 @@ public class TonalEvaluatorTests
   }
 
   [Fact]
+  public void Evaluate_ShouldReportDominantToTonicMotionAcrossMeasureBoundary()
+  {
+    var part = Part.Parse( "G4|C5" );
+
+    var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
+      new PartEventScope( part ),
+      [Key.Parse( "C" )]
+    );
+
+    result.Candidates.Single()
+          .SupportingEvidence.Should()
+          .Contain( evidence => evidence.Category == EvidenceReasonCategory.DominantToTonicMotion
+                                && evidence.Explanation.Contains( "measure boundaries", StringComparison.OrdinalIgnoreCase )
+          );
+  }
+
+  [Fact]
   public void Evaluate_ShouldUseConfiguredTonalCenterWeights()
   {
-    var scope = new PartEventScope(
-      new Part(
-        [
-          Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 ),
-          Pitch.Create( PitchClass.CSharp, 5 )
-        ]
-      )
-    );
+    var scope = new PartEventScope( Part.Parse( "C4,G4,C5,C#5" ) );
     var evaluator = new TonalEvaluator();
-    var candidate = new Key( PitchClass.C, ScaleDefinition.Major );
+    var candidate = Key.Parse( "C" );
 
     var weighted = (TonalAnalysisResultSet) evaluator.Evaluate( scope, [candidate] );
 
@@ -765,10 +750,7 @@ public class TonalEvaluatorTests
   {
     var scope = new PartEventScope( Part.Parse( "C4,E4,G4" ) );
 
-    var candidates = new[]
-    {
-      new Key( PitchClass.C, ScaleDefinition.Major ), new Key( PitchClass.G, ScaleDefinition.Major )
-    };
+    var candidates = new[] { Key.Parse( "C" ), Key.Parse( "G" ) };
 
     var result = (TonalAnalysisResultSet) new TonalEvaluator().Evaluate(
       scope,

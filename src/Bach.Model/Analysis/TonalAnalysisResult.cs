@@ -28,7 +28,7 @@ namespace Bach.Model.Analysis;
 ///   Base type for tonal analysis results.
 /// </summary>
 /// <remarks>
-///   Results use an ordered, duration-free <see cref="PartEventScope"/> as their analysis scope.
+///   Results use an ordered, duration-free <see cref="PartEventScope"/> that retains measure locations.
 /// </remarks>
 public abstract record TonalAnalysisResult
 {

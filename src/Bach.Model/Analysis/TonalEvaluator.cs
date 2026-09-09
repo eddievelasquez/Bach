@@ -63,7 +63,7 @@ public sealed class TonalEvaluator
   #region Fields
 
   private readonly RepertoireProfile _profile;
-  private readonly IReadOnlyList<ITonalEvidenceEvaluator> _evidenceEvaluators;
+  private readonly TonalEvidenceEvaluatorPipeline _evaluatorPipeline;
 
   #endregion
 
@@ -73,13 +73,13 @@ public sealed class TonalEvaluator
   ///   Initializes a new evaluator with an optional repertoire profile and evidence providers.
   /// </summary>
   /// <param name="profile">The repertoire profile used to filter registry candidates.</param>
-  /// <param name="evidenceProvider">The provider of tonal evidence evaluators.</param>
+  /// <param name="pipeline">The pipeline of tonal evidence evaluators.</param>
   public TonalEvaluator(
     RepertoireProfile? profile = null,
-    ITonalEvidenceEvaluatorProvider? evidenceProvider = null )
+    TonalEvidenceEvaluatorPipeline? pipeline = null )
   {
     _profile = profile ?? RepertoireProfile.Default;
-    _evidenceEvaluators = ( evidenceProvider ?? TonalEvidenceEvaluatorProvider.Default ).GetEvaluators();
+    _evaluatorPipeline = pipeline ?? new TonalEvidenceEvaluatorPipelineBuilder().AddDefaultEvaluators().Build();
   }
 
   #endregion
@@ -205,30 +205,29 @@ public sealed class TonalEvaluator
     IEnumerable<Key> candidates,
     TonalEvaluationOptions options )
   {
-    return candidates.Select( candidate => ScoreCandidate( candidate, scope, events, uniquePitchClasses, options ) )
+    return candidates.Select( candidate => ScoreCandidate(
+                                new TonalEvidenceContext(
+                                  candidate,
+                                  scope,
+                                  events,
+                                  uniquePitchClasses,
+                                  options
+                                )
+                              ) )
                      .OfType<CandidateScore>();
   }
 
   /// <summary>
   ///   Scores a single candidate key against the provided events and unique pitch classes.
   /// </summary>
-  /// <param name="candidateKey">The candidate key to score.</param>
-  /// <param name="scope">The part event scope being evaluated.</param>
-  /// <param name="events">The events to evaluate.</param>
-  /// <param name="uniquePitchClasses">The unique pitch classes extracted from the events.</param>
-  /// <param name="options">Options that control which ranked candidates are returned.</param>
+  /// <param name="context">The immutable context for the candidate key.</param>
   /// <returns>
   ///   A <see cref="CandidateScore"/> representing the score of the candidate key, or null if no pitch classes match.
   /// </returns>
   private CandidateScore? ScoreCandidate(
-    Key candidateKey,
-    PartEventScope scope,
-    IPartEvent[] events,
-    PitchClass[] uniquePitchClasses,
-    TonalEvaluationOptions options )
+    TonalEvidenceContext context )
   {
-    var scale = candidateKey.Scale;
-    var matched = uniquePitchClasses.Count( scale.Contains );
+    var matched = context.UniquePitchClasses.Count( context.CandidateKey.Scale.Contains );
 
     // If no pitch classes match the candidate scale, we can skip further evaluation.
     if( matched == 0 )
@@ -236,73 +235,62 @@ public sealed class TonalEvaluator
       return null;
     }
 
-    var context = new TonalEvidenceContext( candidateKey, scope, events, uniquePitchClasses, options );
-    var maximumPriority = _evidenceEvaluators.Max( provider => provider.Priority );
-    var evidence = new List<TonalEvidence>();
+    var evidences = new List<TonalEvidence>();
     var tonalCenterScore = 0.0;
 
-    foreach( var provider in _evidenceEvaluators )
+    // Evaluate the candidate key against the events and unique pitch classes using the evidence evaluators.
+    foreach( var (evidence, weightedScore) in _evaluatorPipeline.Evaluate( context))
     {
-      foreach( var item in provider.Evaluate( context )
-                           ?? throw new InvalidOperationException(
-                             $"Evidence provider '{provider.GetType().Name}' returned null."
-                           ) )
-      {
-        item.Validate();
-        evidence.Add( item );
-        tonalCenterScore += item.ScoreContribution * provider.Priority / maximumPriority;
-      }
+      evidences.Add( evidence );
+      tonalCenterScore += weightedScore;
     }
 
-    var supportingEvidenceCount = evidence.Count( item => item.Supports );
-    var conflictingEvidenceCount = evidence.Count( item => !item.Supports );
+    var supportingEvidenceCount = evidences.Count( evidence => evidence.Supports );
+    var conflictingEvidenceCount = evidences.Count( evidence => !evidence.Supports );
 
     // Calculate confidence based on matched pitch classes and harmonic evidence.
     var confidence = CalculateConfidence(
-      candidateKey,
+      context,
       matched,
-      uniquePitchClasses.Length,
       supportingEvidenceCount,
       conflictingEvidenceCount,
       tonalCenterScore
     );
 
     return new CandidateScore(
-      candidateKey,
+      context.CandidateKey,
       confidence,
       matched,
       supportingEvidenceCount,
-      evidence
+      evidences
     );
   }
 
   /// <summary>
   ///   Calculates a confidence score for a candidate key based on matched pitch classes and harmonic evidence.
   /// </summary>
-  /// <param name="candidateKey">The candidate key to evaluate.</param>
+  /// <param name="context">The immutable context for the candidate key.</param>
   /// <param name="matchedCount">The number of pitch classes that match the candidate scale.</param>
-  /// <param name="uniquePitchClassCount">The total number of unique pitch classes in the events.</param>
   /// <param name="supportingEvidenceCount">The number of supporting harmonic evidence items.</param>
   /// <param name="conflictingEvidenceCount">The number of conflicting harmonic evidence items.</param>
   /// <param name="tonalCenterScore">The score representing the strength of the tonal center.</param>
   /// <returns>A confidence score between 0.0 and 1.0.</returns>
   private double CalculateConfidence(
-    Key candidateKey,
+    TonalEvidenceContext context,
     int matchedCount,
-    int uniquePitchClassCount,
     int supportingEvidenceCount,
     int conflictingEvidenceCount,
     double tonalCenterScore )
   {
     // Calculate the profile weight based on the candidate key's scale formula and the repertoire profile.
     // The profile weight is the maximum weight of the tags associated with the candidate key's scale formula.
-    var profileWeight = candidateKey.Scale.Formula.Classification.RepertoireTags
+    var profileWeight = context.CandidateKey.Scale.Formula.Classification.RepertoireTags
                                     .Select( _profile.GetWeight )
                                     .DefaultIfEmpty( 0.0 )
                                     .Max();
 
     // Calculate the base confidence as the ratio of matched pitch classes to unique pitch classes.
-    var baseConfidence = (double) matchedCount / uniquePitchClassCount;
+    var baseConfidence = (double) matchedCount / context.UniquePitchClasses.Count;
 
     // Adjust the confidence based on supporting harmonic evidence.
     var harmonicAdjustment = supportingEvidenceCount == 0

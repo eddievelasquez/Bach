@@ -487,7 +487,7 @@ public sealed class FormulaTests
   {
     // Arrange: use F9 so that adding a major second yields G9 (MaxValue)
     var formula = new TestFormula( "f", "name", _majorSecond );
-    var root = Pitch.Create( PitchClass.F, Pitch.MaxOctave );
+    var root = Pitch.Parse( "F9" );
 
     // Act
     var seq = formula.Generate( root )

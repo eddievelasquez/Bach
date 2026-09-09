@@ -34,12 +34,17 @@ internal sealed class ChordEvidenceEvaluator: TonalEvidenceEvaluator
 {
   #region Constructors
 
-  /// <summary>Initializes the provider with the default chord-evidence priority.</summary>
-  public ChordEvidenceEvaluator(
-    int priority = 20 )
-    : base( priority )
+  /// <summary>Initializes a new instance of the <see cref="ChordEvidenceEvaluator"/> class.</summary>
+  public ChordEvidenceEvaluator()
   {
   }
+
+  #endregion
+
+  #region Properties
+
+  /// <inheritdoc/>
+  public override int Priority => 20;
 
   #endregion
 

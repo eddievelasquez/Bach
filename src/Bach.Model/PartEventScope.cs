@@ -30,7 +30,7 @@ using Bach.Model.Internal;
 namespace Bach.Model;
 
 /// <summary>
-///   Identifies a range of events in an immutable <see cref="Part"/>.
+///   Identifies a range of flattened events in an immutable, measure-based <see cref="Part"/>.
 /// </summary>
 /// <remarks>
 ///   The range is start-inclusive and end-exclusive. From-end indexes use the standard .NET
@@ -68,9 +68,10 @@ public sealed class PartEventScope
     Range = range;
 
     // Validate the range against the source count.
-    var (offset, length) = range.GetOffsetAndLength( source.Count );
+    var events = source.Events.ToArray();
+    var (offset, length) = range.GetOffsetAndLength( events.Length );
 
-    var scopedEvents = source.Skip( offset )
+    var scopedEvents = events.Skip( offset )
                              .Take( length )
                              .ToArray();
     var annotations = ( appliedFunctions ?? Array.Empty<AppliedFunction>() ).ToArray();
@@ -120,11 +121,29 @@ public sealed class PartEventScope
   {
     get
     {
-      var (offset, length) = Range.GetOffsetAndLength( Source.Count );
+      var events = Source.Events.ToArray();
+      var (offset, length) = Range.GetOffsetAndLength( events.Length );
 
       for( var index = 0; index < length; index++ )
       {
-        yield return Source[offset + index];
+        yield return events[offset + index];
+      }
+    }
+  }
+
+  /// <summary>
+  ///   Gets the measure and event location for each event in the scope.
+  /// </summary>
+  public IEnumerable<PartEventLocation> Locations
+  {
+    get
+    {
+      var locations = Source.MeasuresWithLocations().ToArray();
+      var (offset, length) = Range.GetOffsetAndLength( locations.Length );
+
+      for( var index = 0; index < length; index++ )
+      {
+        yield return locations[offset + index].Location;
       }
     }
   }

@@ -1,4 +1,4 @@
-// Module Name: AppliedFunctionEvidenceEvaluator.cs
+// Module Name: Measure.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -22,58 +22,76 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Bach.Model.Analysis.EvidenceEvaluators;
+namespace Bach.Model;
 
 /// <summary>
-///   Provides evidence from annotated applied harmonic functions.
+///   An ordered immutable collection of <see cref="IPartEvent"/> values representing one measure.
 /// </summary>
-internal sealed class AppliedFunctionEvidenceEvaluator: TonalEvidenceEvaluator
+public sealed class Measure: IReadOnlyList<IPartEvent>
 {
+  #region Fields
+
+  private readonly IReadOnlyList<IPartEvent> _events;
+
+  #endregion
+
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="AppliedFunctionEvidenceEvaluator"/> class.
+  ///   Initializes a new instance of the <see cref="Measure"/> class.
   /// </summary>
-  public AppliedFunctionEvidenceEvaluator()
+  /// <param name="events">The events belonging to the measure.</param>
+  public Measure(
+    IEnumerable<IPartEvent> events )
   {
+    ArgumentNullException.ThrowIfNull( events );
+
+    var array = events.ToArray();
+
+    if( array.Length == 0 )
+    {
+      throw new InvalidOperationException( "A measure must contain at least one event." );
+    }
+
+    if( array.Any( e => e is null ) )
+    {
+      throw new ArgumentException( "The event collection contains a null event.", nameof( events ) );
+    }
+
+    _events = Array.AsReadOnly( array );
   }
 
   #endregion
 
   #region Properties
 
+  /// <summary>
+  ///   Gets the number of events in the measure.
+  /// </summary>
+  public int Count => _events.Count;
+
+  /// <summary>
+  ///   Gets the pitch classes contained in the measure, in event order.
+  /// </summary>
+  public IEnumerable<PitchClass> PitchClasses => _events.SelectMany( e => e.PitchClasses );
+
   /// <inheritdoc/>
-  public override int Priority => 30;
+  public IPartEvent this[
+    int index ] => _events[index];
 
   #endregion
 
   #region Public Methods
 
   /// <inheritdoc/>
-  public override IEnumerable<TonalEvidence> Evaluate(
-    TonalEvidenceContext context )
-  {
-    ArgumentNullException.ThrowIfNull( context );
-    var scale = context.CandidateKey.Scale;
+  public IEnumerator<IPartEvent> GetEnumerator() => _events.GetEnumerator();
 
-    foreach( var appliedFunction in context.Scope.AppliedFunctions )
-    {
-      var degrees = GetDegrees( scale );
-      var degreeIndex = appliedFunction.TargetDegree.Degree - 1;
-
-      var supported = degreeIndex >= 0
-                      && degreeIndex < degrees.Length
-                      && appliedFunction.Target.PartEvent.Any( degrees[degreeIndex] );
-
-      yield return new TonalEvidence(
-        EvidenceReasonCategory.HarmonicContext,
-        $"{appliedFunction.Label}: {appliedFunction.Evidence.Explanation}",
-        supported
-      );
-    }
-  }
+  /// <inheritdoc/>
+  IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
   #endregion
 }

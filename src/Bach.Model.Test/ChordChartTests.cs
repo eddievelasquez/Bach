@@ -33,7 +33,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldInitializePropertiesAndResolveChords_ForMajorKeyProgression()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var progression = new ChordProgression(
       ScaleDegree.Tonic,
@@ -61,7 +61,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldInitializePropertiesAndResolveChords_ForProgressionString()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var chart = new ChordChart( key, "I-IV-V-I" );
 
@@ -80,7 +80,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldInitializePropertiesAndResolveChords_ForScaleDegrees()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var chart = new ChordChart(
       key,
@@ -104,7 +104,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldPreserveKey_WhenScaleDegreesAreSuppliedForMinorKey()
   {
-    var key = new Key( PitchClass.E, ScaleDefinition.NaturalMinor );
+    var key = Key.Parse( "Em" );
 
     var chart = new ChordChart( key, ScaleDegree.Tonic, ScaleDegree.Subdominant, ScaleDegree.Dominant );
 
@@ -121,7 +121,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldResolveModeSpecificTriads_ForMinorKeyProgression()
   {
-    var key = new Key( PitchClass.A, ScaleDefinition.NaturalMinor );
+    var key = Key.Parse( "Am" );
 
     var progression = new ChordProgression(
       ScaleDegree.Tonic,
@@ -142,7 +142,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldResolveModeSpecificTriads_ForMinorProgressionString()
   {
-    var key = new Key( PitchClass.A, ScaleDefinition.NaturalMinor );
+    var key = Key.Parse( "Am" );
 
     var chart = new ChordChart( key, "i-III-V" );
 
@@ -157,7 +157,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldThrowArgumentException_WhenNoScaleDegreesAreProvided()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var act = () => new ChordChart( key );
 
@@ -172,7 +172,7 @@ public sealed class ChordChartTests
   public void Constructor_ShouldThrowArgumentException_WhenProgressionStringIsNullOrWhitespace(
     string? progression )
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var act = () => new ChordChart( key, progression! );
 
@@ -212,7 +212,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldThrowArgumentNullException_WhenProgressionIsNull()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var act = () => new ChordChart( key, (ChordProgression) null! );
 
@@ -223,7 +223,7 @@ public sealed class ChordChartTests
   [Fact]
   public void Constructor_ShouldThrowFormatException_WhenProgressionStringIsInvalid()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var act = () => new ChordChart( key, "I-INVALID-V-I" );
 
@@ -234,7 +234,7 @@ public sealed class ChordChartTests
   [Fact]
   public void ToString_ShouldJoinChordNamesWithHyphens()
   {
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var progression = new ChordProgression(
       ScaleDegree.Tonic,

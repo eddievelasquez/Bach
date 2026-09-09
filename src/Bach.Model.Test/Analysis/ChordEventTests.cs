@@ -31,8 +31,8 @@ public sealed class ChordEventTests
   [Fact]
   public void PitchChord_ShouldExposeChordMetadata_ViaIChordEvent()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var root = Pitch.Parse( "C4" );
+    var chord = PitchChord.Parse( "C/E" );
 
     ( chord as IChordEvent ).Should()
                             .NotBeNull();
@@ -55,13 +55,13 @@ public sealed class ChordEventTests
   [Fact]
   public void InvertedChord_ShouldReportDistinctBass()
   {
-    var root = Pitch.Create( PitchClass.G, 3 );
+    var root = Pitch.Parse( "G3" );
     var chord = PitchChord.Create( root, ChordFormula.Major, 2 );
 
     var chordEvent = (IChordEvent) chord;
 
     chordEvent.Bass.Should()
-              .Be( Pitch.Create( PitchClass.D, 4 ) );
+              .Be( Pitch.Parse( "D4" ) );
   }
 
   [Fact]
@@ -71,7 +71,7 @@ public sealed class ChordEventTests
 
     IChordEvent? found = null;
 
-    foreach( var ev in part )
+    foreach( var ev in part.Events )
     {
       if( ev is IChordEvent ce )
       {

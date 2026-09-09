@@ -121,7 +121,7 @@ public sealed class ChordOfTTests
       "X",
       "X",
       Interval.Unison,
-      new Interval( IntervalQuantity.Ninth, IntervalQuality.Major )
+      Interval.Parse( "M9" )
     );
 
     // Act

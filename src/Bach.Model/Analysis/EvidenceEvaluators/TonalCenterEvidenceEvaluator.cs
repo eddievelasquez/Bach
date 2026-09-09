@@ -34,12 +34,19 @@ internal sealed class TonalCenterEvidenceEvaluator: TonalEvidenceEvaluator
 {
   #region Constructors
 
-  /// <summary>Initializes the provider with the default tonal-center priority.</summary>
-  public TonalCenterEvidenceEvaluator(
-    int priority = 40 )
-    : base( priority )
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="TonalCenterEvidenceEvaluator"/> class.
+  /// </summary>
+  public TonalCenterEvidenceEvaluator()
   {
   }
+
+  #endregion
+
+  #region Properties
+
+  /// <inheritdoc/>
+  public override int Priority => 40;
 
   #endregion
 
@@ -110,7 +117,9 @@ internal sealed class TonalCenterEvidenceEvaluator: TonalEvidenceEvaluator
     var dominant = degrees.Length >= 5 ? degrees[4] : (PitchClass?) null;
     var leading = degrees.Length >= 7 ? degrees[6] : (PitchClass?) null;
     var dominantToTonic = 0;
+    var measureBoundaryDominantToTonic = 0;
     var leadingToTonic = 0;
+    var locations = context.Scope.Locations.ToArray();
 
     // Count dominant-to-tonic and leading-tone-to-tonic motions
     for( var index = 0; index + 1 < totalEvents; ++index )
@@ -121,6 +130,11 @@ internal sealed class TonalCenterEvidenceEvaluator: TonalEvidenceEvaluator
       if( dominant is not null && currentEvent.Any( dominant.Value ) && nextEvent.Any( tonic ) )
       {
         ++dominantToTonic;
+
+        if( locations[index].MeasureIndex != locations[index + 1].MeasureIndex )
+        {
+          ++measureBoundaryDominantToTonic;
+        }
       }
 
       if( leading is not null && currentEvent.Any( leading.Value ) && nextEvent.Any( tonic ) )
@@ -134,6 +148,12 @@ internal sealed class TonalCenterEvidenceEvaluator: TonalEvidenceEvaluator
       dominantToTonic,
       EvidenceReasonCategory.DominantToTonicMotion,
       $"Detected {dominantToTonic} dominant-to-tonic motion(s)."
+    );
+
+    AddReasonIfPositive(
+      measureBoundaryDominantToTonic,
+      EvidenceReasonCategory.DominantToTonicMotion,
+      $"Detected {measureBoundaryDominantToTonic} dominant-to-tonic motion(s) across measure boundaries."
     );
 
     AddReasonIfPositive(
@@ -171,6 +191,7 @@ internal sealed class TonalCenterEvidenceEvaluator: TonalEvidenceEvaluator
     if( totalEvents > 1 )
     {
       score += (double) dominantToTonic / ( totalEvents - 1 ) * context.Options.DominantToTonicWeight;
+      score += (double) measureBoundaryDominantToTonic / ( totalEvents - 1 ) * context.Options.DominantToTonicWeight * 0.5;
       score += (double) leadingToTonic / ( totalEvents - 1 ) * context.Options.LeadingToneResolutionWeight;
     }
 

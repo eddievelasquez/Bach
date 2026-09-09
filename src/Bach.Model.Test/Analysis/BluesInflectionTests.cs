@@ -31,7 +31,7 @@ public class BluesInflectionTests
   [Fact]
   public void Ctor_Should_CreateRecord()
   {
-    var target = AnalysisTarget.ForPitch( Pitch.Create( PitchClass.E, 4 ) );
+    var target = AnalysisTarget.ForPitch( Pitch.Parse( "E4" ) );
     var alteration = new DegreeAlteration( ScaleDegree.Mediant, Interval.MinorThird );
     var evidence = new EvidenceReason( EvidenceReasonCategory.AnalystObservation, "blue third" );
 

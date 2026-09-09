@@ -31,7 +31,7 @@ public class CadentialPatternTests
   [Fact]
   public void Ctor_Should_CreateRecord()
   {
-    var target = AnalysisTarget.ForPitch( Pitch.Create( PitchClass.C, 4 ) );
+    var target = AnalysisTarget.ForPitch( Pitch.Parse( "C4" ) );
     var evidence = new EvidenceReason( EvidenceReasonCategory.Resolution, "descending step to tonic" );
 
     var record = new CadentialPattern( target, InterpretationKinds.CadenceKind.Authentic, evidence );

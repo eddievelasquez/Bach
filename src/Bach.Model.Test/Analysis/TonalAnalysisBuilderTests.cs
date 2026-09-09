@@ -31,9 +31,8 @@ public class TonalAnalysisBuilderTests
   [Fact]
   public void Builder_Should_BuildRankedCandidate()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var part = Part.Parse( "C4" );
+    var key = Key.Parse( "C" );
     var evidence = new EvidenceReason( EvidenceReasonCategory.ScaleContext, "matches C major" );
 
     var result = new TonalAnalysisResultBuilder( part, .. )
@@ -69,8 +68,7 @@ public class TonalAnalysisBuilderTests
   [Fact]
   public void Builder_Should_BuildInconclusiveResult()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
+    var part = Part.Parse( "C4" );
 
     var result = new TonalAnalysisResultBuilder( part, ..1 )
                  .Inconclusive( "The evidence is ambiguous." )
@@ -86,9 +84,8 @@ public class TonalAnalysisBuilderTests
   [Fact]
   public void ResultSetBuilder_Should_AddCandidatesThroughCallback()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var part = Part.Parse( "C4" );
+    var key = Key.Parse( "C" );
 
     var result = new TonalAnalysisResultSetBuilder( part, .. )
                  .AddCandidate( candidate => candidate
@@ -109,9 +106,8 @@ public class TonalAnalysisBuilderTests
   [Fact]
   public void ResultSetBuilder_Should_RejectUnorderedRanks()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var part = Part.Parse( "C4" );
+    var key = Key.Parse( "C" );
 
     var builder = new TonalAnalysisResultSetBuilder( part, .. )
       .AddCandidate( candidate => candidate
@@ -133,8 +129,7 @@ public class TonalAnalysisBuilderTests
   [Fact]
   public void ResultSetBuilder_Should_BuildInconclusiveResult()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
+    var part = Part.Parse( "C4" );
 
     var result = new TonalAnalysisResultSetBuilder( part, .. )
       .BuildInconclusive( "No candidate reached the threshold." );
@@ -146,8 +141,7 @@ public class TonalAnalysisBuilderTests
   [Fact]
   public void Builders_Should_RejectNullCallbacks()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
+    var part = Part.Parse( "C4" );
     var builder = new TonalAnalysisResultSetBuilder( part, .. );
 
     Action action = () => builder.AddCandidate( (Action<TonalAnalysisResultBuilder>) null! );
@@ -159,10 +153,9 @@ public class TonalAnalysisBuilderTests
   [Fact]
   public void ResultSet_Should_AddExistingCandidate()
   {
-    var pitch = Pitch.Create( PitchClass.C, 4 );
-    var part = new Part( new IPartEvent[] { pitch } );
+    var part = Part.Parse( "C4" );
     var scope = new PartEventScope( part );
-    var key = new Key( PitchClass.C, ScaleDefinition.Major );
+    var key = Key.Parse( "C" );
 
     var candidate = new RankedTonalCandidateResult(
       1,
