@@ -40,3 +40,18 @@ Bach is a .NET 10 library for Western tonal music theory. The solution contains 
 - Write prose, documentation, comments, and commit messages in ASD-STE100 Simplified Technical English.
 - Scoped rules for C#, tests, and README API references live in .github/instructions/.
 - Use the bach-test-engineer agent when focused test design or test changes are needed.
+
+## Music-theory references
+
+- Use Kostka, Payne, and Almén, *Tonal Harmony*, as a reference for tonal function,
+  harmonic progression, applied functions, mixture, and cadential practice.
+- Use Aldwell and Schachter, *Harmony and Voice Leading*, as a reference for harmonic
+  analysis, voice leading, non-chord tones, and chromatic harmony.
+- Use Laitz, *The Complete Musician*, as a reference for scale spelling, diatonic
+  structure, modal practice, and notational analysis.
+- Use Temperley, *The Cognition of Basic Musical Structures*, as a reference for
+  computational and cognitive assumptions about tonal inference.
+- Use Krumhansl, *Cognitive Foundations of Musical Pitch*, as a reference for pitch
+  hierarchy and tonal-center evidence.
+- Use these works as conceptual references and sources for test-case design. Cite
+  bibliographic facts only. Do not copy source text.
