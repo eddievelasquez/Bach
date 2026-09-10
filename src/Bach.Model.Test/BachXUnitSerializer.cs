@@ -53,12 +53,12 @@ internal class BachXUnitSerializer: IXunitSerializer
     return type switch
     {
       not null when type == typeof( Accidental )      => (Accidental) int.Parse( serializedValue ),
-      not null when type == typeof( NoteName )        => (NoteName) int.Parse( serializedValue ),
-      not null when type == typeof( Pitch )           => (Pitch) int.Parse( serializedValue ),
-      not null when type == typeof( PitchClass )      => (PitchClass) int.Parse( serializedValue ),
-      not null when type == typeof( Interval )        => (Interval) int.Parse( serializedValue ),
+      not null when type == typeof( NoteName )        => NoteName.Parse( serializedValue ),
+      not null when type == typeof( Pitch )           => Pitch.Parse( serializedValue ),
+      not null when type == typeof( PitchClass )      => PitchClass.Parse( serializedValue ),
+      not null when type == typeof( Interval )        => Interval.Parse( serializedValue ),
       not null when type == typeof( ModeFormula )     => (ModeFormula) int.Parse( serializedValue ),
-      not null when type == typeof( ScaleDegree )     => ScaleDegree.ScaleDegrees[int.Parse( serializedValue ) - 1],
+      not null when type == typeof( ScaleDegree )     => ScaleDegree.Parse( serializedValue ),
       not null when type == typeof( ScaleDefinition ) => (ScaleDefinition) int.Parse( serializedValue ),
       _                                               => throw new NotSupportedException( $"Type {type} is not supported." )
     };
@@ -86,14 +86,14 @@ internal class BachXUnitSerializer: IXunitSerializer
   {
     return value switch
     {
-      Accidental accidental           => ( (int) accidental ).ToString(),
-      NoteName noteName               => ( (int) noteName ).ToString(),
-      Pitch pitch                     => ( (int) pitch ).ToString(),
-      PitchClass pitchClass           => ( (int) pitchClass ).ToString(),
-      Interval interval               => ( (int) interval ).ToString(),
-      ModeFormula modeFormula         => ( (int) modeFormula ).ToString(),
-      ScaleDefinition scaleDefinition => ( (int) scaleDefinition ).ToString(),
-      ScaleDegree scaleDegree         => scaleDegree.Degree.ToString(),
+      Accidental accidental           => ( (int) accidental ).ToString( "D" ),
+      NoteName noteName               => noteName.ToString(),
+      Pitch pitch                     => pitch.ToString( "NO" ),
+      PitchClass pitchClass           => pitchClass.ToString( "NS" ),
+      Interval interval               => interval.ToString( "Sq" ),
+      ModeFormula modeFormula         => ( (int) modeFormula ).ToString( "D" ),
+      ScaleDefinition scaleDefinition => ( (int) scaleDefinition ).ToString( "D" ),
+      ScaleDegree scaleDegree         => scaleDegree.ToString(),
       _                               => throw new NotSupportedException( $"Type {value.GetType()} is not supported." )
     };
   }
