@@ -23,7 +23,15 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.CommandLine;
-using Bach.Model;
+using Bach.Model.Analysis;
+using Bach.Model.Harmony;
+using Bach.Model.Instruments;
+using Bach.Model.Intervals;
+using Bach.Model.Library;
+using Bach.Model.Pitches;
+using Bach.Model.Scales;
+using Bach.Model.Serialization;
+using Bach.Model.Structure;
 
 namespace Bach.Cli;
 

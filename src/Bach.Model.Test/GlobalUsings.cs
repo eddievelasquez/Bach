@@ -23,5 +23,17 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 global using System;
+global using Bach.Model.Analysis;
+global using Bach.Model.Analysis.Internal;
+global using Bach.Model.Harmony;
+global using Bach.Model.Instruments;
+global using Bach.Model.Intervals;
+global using Bach.Model.Internal;
+global using Bach.Model.Library;
+global using Bach.Model.Pitches;
+global using Bach.Model.Scales;
+global using Bach.Model.Serialization;
+global using Bach.Model.Serialization.Internal;
+global using Bach.Model.Structure;
 global using FluentAssertions;
 global using Xunit;

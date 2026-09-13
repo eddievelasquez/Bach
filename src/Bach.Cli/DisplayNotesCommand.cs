@@ -1,4 +1,4 @@
-﻿// Module Name: DisplayNotesCommand.cs
+// Module Name: DisplayNotesCommand.cs
 // Project:     Bach.Cli
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 // 
@@ -25,7 +25,15 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
-using Bach.Model;
+using Bach.Model.Analysis;
+using Bach.Model.Harmony;
+using Bach.Model.Instruments;
+using Bach.Model.Intervals;
+using Bach.Model.Library;
+using Bach.Model.Pitches;
+using Bach.Model.Scales;
+using Bach.Model.Serialization;
+using Bach.Model.Structure;
 
 namespace Bach.Cli;
 

@@ -21,6 +21,11 @@ Bach is a .NET 10 library for Western tonal music theory. The solution contains 
 - Use existing validation and error-handling patterns. Do not hide errors with broad catches or silent fallback values.
 - Keep directional scale data on `ScaleFormula.AscendingDegrees` and `ScaleFormula.DescendingDegrees`. Use the existing formula degree lists for scale direction; do not add separate ascending and descending formula references to `Scale`.
 
+## Namespace Design
+
+- Prefer plural domain namespaces such as Bach.Model.Pitches, Bach.Model.Intervals, and Bach.Model.Scales to avoid namespaces that repeat a type name.
+- Avoid creating a very small Bach.Model.Tonal namespace; place key and related tonal-context types in a broader domain based on dependency analysis.
+
 ## MIDI Pitch Representation
 
 - For the proposed MIDI-based Pitch representation limited to C0-G9, `default(Pitch)` has `_absoluteValue == 0` and should be treated as an invalid sentinel because valid MIDI values start at 12.

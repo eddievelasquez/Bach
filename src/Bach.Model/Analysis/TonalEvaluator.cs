@@ -24,7 +24,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Bach.Model.Analysis.EvidenceEvaluators;
+using Bach.Model.Analysis.Internal;
 using Bach.Model.Internal;
 
 namespace Bach.Model.Analysis;
