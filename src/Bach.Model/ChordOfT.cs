@@ -1,20 +1,20 @@
 // Module Name: ChordOfT.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -55,7 +55,7 @@ public abstract class Chord<TSelf, TPitch>
     TPitch root,
     ChordFormula formula,
     int inversion )
-    : base( CreatePitchClasses( root, formula, inversion ) )
+    : base( CreatePitches( root, formula, inversion ) )
   {
     Root = root;
     Formula = formula;
@@ -66,28 +66,6 @@ public abstract class Chord<TSelf, TPitch>
   #endregion
 
   #region Properties
-
-  /// <summary>Gets the root pitch for the chord.</summary>
-  /// <value>The root.</value>
-  public TPitch Root { get; }
-
-  /// <summary>
-  ///   Gets the bass pitch class for the chord. The Bass pitch differs from the root for chord inversions.
-  /// </summary>
-  /// <value>The bass.</value>
-  public TPitch Bass => this[0];
-
-  /// <summary>Gets the inversion number of the current instance.</summary>
-  /// <value>The inversion.</value>
-  public int Inversion { get; }
-
-  /// <summary>Gets the chord's name.</summary>
-  /// <value>The name.</value>
-  public string Name { get; }
-
-  /// <summary>Gets the chord's formula.</summary>
-  /// <value>The formula.</value>
-  public ChordFormula Formula { get; }
 
   /// <summary>An extended chord uses intervals whose quantity extends beyond the octave.</summary>
   /// <value>True if this instance is an extended chord, false if not.</value>
@@ -108,7 +86,9 @@ public abstract class Chord<TSelf, TPitch>
   ///   Determines whether the specified chord is equal to the current chord.
   /// </summary>
   /// <param name="other">The chord to compare with the current chord.</param>
-  /// <returns><c>true</c> if the specified chord is equal to the current chord; otherwise, <c>false</c>.</returns>
+  /// <returns>
+  ///   <c>true</c> if the specified chord is equal to the current chord; otherwise, <c>false</c>.
+  /// </returns>
   public bool Equals(
     TSelf? other )
   {
@@ -131,7 +111,9 @@ public abstract class Chord<TSelf, TPitch>
   ///   Determines whether the specified object is equal to the current chord.
   /// </summary>
   /// <param name="obj">The object to compare with the current chord.</param>
-  /// <returns><c>true</c> if the specified object is equal to the current chord; otherwise, <c>false</c>.</returns>
+  /// <returns>
+  ///   <c>true</c> if the specified object is equal to the current chord; otherwise, <c>false</c>.
+  /// </returns>
   public override bool Equals(
     object? obj )
   {
@@ -167,7 +149,7 @@ public abstract class Chord<TSelf, TPitch>
   /// </summary>
   /// <param name="inversion">The inversion to generate.</param>
   /// <returns>A new chord instance with the specified inversion.</returns>
-  public TSelf GetInversion(
+  public virtual TSelf GetInversion(
     int inversion )
   {
     return TSelf.Create( Root, Formula, inversion );
@@ -222,13 +204,14 @@ public abstract class Chord<TSelf, TPitch>
   }
 
   /// <summary>
-  ///   Renders the chord at the specified octave.
+  ///   Gets the pitches of the chord at the specified octave.
   /// </summary>
-  /// <param name="octave">The octave to render at.</param>
-  /// <returns>The rendered pitches.</returns>
-  public IEnumerable<Pitch> Render(
+  /// <param name="octave">The octave to get the pitches at.</param>
+  /// <returns>The pitches of the chord.</returns>
+  public IEnumerable<Pitch> GetPitches(
     int octave )
   {
+    // If the chord is inverted, we need to include the bass pitch in the output.
     if( Inversion != 0 )
     {
       yield return new Pitch( Bass.PitchClass, octave );
@@ -295,9 +278,42 @@ public abstract class Chord<TSelf, TPitch>
 
   #endregion
 
+  #region IChord<TSelf,TPitch> Implementation
+
+  /// <summary>Gets the root pitch for the chord.</summary>
+  /// <value>The root.</value>
+  public TPitch Root { get; }
+
+  /// <summary>
+  ///   Gets the bass pitch class for the chord. The Bass pitch differs from the root for chord inversions.
+  /// </summary>
+  /// <value>The bass.</value>
+  public TPitch Bass => this[0];
+
+  /// <summary>Gets the inversion number of the current instance.</summary>
+  /// <value>The inversion.</value>
+  public int Inversion { get; }
+
+  /// <summary>Gets the chord's name.</summary>
+  /// <value>The name.</value>
+  public string Name { get; }
+
+  /// <summary>Gets the chord's formula.</summary>
+  /// <value>The formula.</value>
+  public ChordFormula Formula { get; }
+
+  #endregion
+
   #region Implementation
 
-  private static IEnumerable<TPitch> CreatePitchClasses(
+  /// <summary>
+  ///   Creates the pitches for the chord based on the root, formula, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formula">The chord formula.</param>
+  /// <param name="inversion">The inversion of the chord.</param>
+  /// <returns>The pitches of the chord.</returns>
+  private static IEnumerable<TPitch> CreatePitches(
     TPitch root,
     ChordFormula formula,
     int inversion )
@@ -311,6 +327,13 @@ public abstract class Chord<TSelf, TPitch>
                   .Take( formula.Intervals.Count );
   }
 
+  /// <summary>
+  ///   Generates the name of the chord based on the root, formula, and bass pitch.
+  /// </summary>
+  /// <param name="root"></param>
+  /// <param name="formula"></param>
+  /// <param name="bass"></param>
+  /// <returns></returns>
   private static string GenerateName(
     TPitch root,
     ChordFormula formula,

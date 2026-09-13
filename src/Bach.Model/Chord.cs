@@ -1,20 +1,20 @@
 // Module Name: Chord.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -159,16 +159,13 @@ public class Chord
 
   #region Constructors
 
-  /// <summary>Specialized constructor for use only by derived classes.</summary>
-  /// <exception cref="ArgumentNullException">Thrown when formula is null.</exception>
-  /// <exception cref="ArgumentOutOfRangeException">
-  ///   Thrown when the inversion is less than zero or greater than the number of
-  ///   intervals in the chord's formula.
-  /// </exception>
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="Chord"/> class.
+  /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
   /// <param name="inversion">The inversion.</param>
-  protected Chord(
+  public Chord(
     PitchClass root,
     ChordFormula formula,
     int inversion = 0 )
@@ -176,39 +173,23 @@ public class Chord
   {
   }
 
-  #endregion
-
-  #region Public Methods
-
   /// <summary>
-  ///   Creates a new chord instance with the specified root, formula, and inversion.
+  ///   Initializes a new instance of the <see cref="Chord"/> class.
   /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
-  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="formulaIdOrName">The identifier or name of the formula used to generate the chord.</param>
   /// <param name="inversion">The inversion.</param>
-  /// <returns>A new chord instance with the specified parameters.</returns>
-  public static Chord Create(
-    PitchClass root,
-    ChordFormula formula,
-    int inversion = 0 )
-  {
-    return new Chord( root, formula, inversion );
-  }
-
-  /// <summary>
-  ///   Creates a new chord instance with the specified root, formula ID or name, and inversion.
-  /// </summary>
-  /// <param name="root">The root pitch class of the chord.</param>
-  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  /// <param name="inversion">The inversion.</param>
-  /// <returns>A new chord instance with the specified parameters.</returns>
-  public static Chord Create(
+  public Chord(
     PitchClass root,
     string formulaIdOrName,
     int inversion = 0 )
+    : base( root, Registry.ChordFormulas[formulaIdOrName], inversion )
   {
-    return new Chord( root, Registry.ChordFormulas[formulaIdOrName], inversion );
   }
+
+  #endregion
+
+  #region Public Methods
 
   /// <summary>
   ///   Attempts to parse a string representation of a chord and returns the corresponding Chord object, along with any
@@ -261,7 +242,7 @@ public class Chord
     // No bass note, so we can create the chord with the root and formula.
     if( bassSeparatorPos == -1 )
     {
-      chord = Create( root, chordFormula );
+      chord = new Chord( root, chordFormula );
       return true;
     }
 
@@ -273,7 +254,7 @@ public class Chord
     }
 
     // Determine the inversion before creating the chord. If the bass pitch is not part of the chord, return false.
-    var rootPosition = Create( root, chordFormula );
+    var rootPosition = new Chord( root, chordFormula );
     var inversion = rootPosition.IndexOf( bass.PitchClass );
 
     // If the bass pitch is not part of the chord, return false.
@@ -283,8 +264,27 @@ public class Chord
       return false;
     }
 
-    chord = Create( root, chordFormula, inversion );
+    chord = new Chord( root, chordFormula, inversion );
     return true;
+  }
+
+  #endregion
+
+  #region IChordFactory<Chord,PitchClass> Implementation
+
+  /// <summary>
+  ///   Creates a new chord instance with the specified root, formula, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch class of the chord.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="inversion">The inversion.</param>
+  /// <returns>A new chord instance with the specified parameters.</returns>
+  static Chord IChordFactory<Chord, PitchClass>.Create(
+    PitchClass root,
+    ChordFormula formula,
+    int inversion )
+  {
+    return new Chord( root, formula, inversion );
   }
 
   #endregion

@@ -139,6 +139,32 @@ public sealed class TriadTests
       .Be( PitchClass.G );
   }
 
+  [Theory]
+  [InlineData( TriadQuality.Minor )]
+  [InlineData( TriadQuality.Diminished )]
+  [InlineData( TriadQuality.Augmented )]
+  public void GetInversion_ShouldPreserveQuality_WhenTriadIsInverted(
+    TriadQuality quality )
+  {
+    var triad = new Triad( PitchClass.C, quality );
+
+    var inversion = triad.GetInversion( 1 );
+
+    inversion.Quality.Should()
+             .Be( quality );
+  }
+
+  [Fact]
+  public void GetInversion_ShouldPreserveTriadType_WhenCalledThroughChordReference()
+  {
+    Chord chord = new Triad( PitchClass.C, TriadQuality.Minor );
+
+    var inversion = chord.GetInversion( 1 );
+
+    inversion.Should()
+             .BeOfType<Triad>();
+  }
+
   [Fact]
   public void InvertThrowsWithInvalidInversionNumberTest()
   {

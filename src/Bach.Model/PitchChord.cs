@@ -178,7 +178,7 @@ public class PitchChord
     }
 
     // Determine the inversion before creating the chord. If the bass pitch is not part of the chord, return false.
-    var rootPosition = Chord.Create( rootPitchClass, chordFormula );
+    var rootPosition = new Chord( rootPitchClass, chordFormula );
     var inversion = rootPosition.IndexOf( bassPitch.PitchClass );
 
     // If the bass pitch is not part of the chord, return false.
@@ -234,21 +234,6 @@ public class PitchChord
     int inversion )
   {
     return new PitchChord( root, formula, inversion );
-  }
-
-  /// <summary>
-  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula ID or name, and inversion.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
-  static PitchChord IChordFactory<PitchChord, Pitch>.Create(
-    Pitch root,
-    string formulaIdOrName,
-    int inversion )
-  {
-    return new PitchChord( root, formulaIdOrName, inversion );
   }
 
   #endregion

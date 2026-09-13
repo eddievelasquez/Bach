@@ -346,7 +346,7 @@ public sealed class Part
     }
 
     // If we have a valid root and bass note, we create a chord with the root note and determine the inversion based on the bass note.
-    var rootPosition = Chord.Create( root, ChordFormula.Major );
+    var rootPosition = new Chord( root, ChordFormula.Major, 0 );
     var inversion = rootPosition.IndexOf( bass.PitchClass );
     if( inversion < 0 )
     {

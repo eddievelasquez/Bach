@@ -1,20 +1,20 @@
 // Module Name: ChordOfTTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -32,7 +32,7 @@ public sealed class ChordOfTTests
   public void Bass_ShouldReturnFirstElement_WhenInversionIsNonZero()
   {
     // Arrange
-    var chord = Chord.Create( PitchClass.C, "Major" )
+    var chord = new Chord( PitchClass.C, "Major" )
                      .GetInversion( 1 );
 
     // Act
@@ -50,7 +50,7 @@ public sealed class ChordOfTTests
     var formula = Registry.ChordFormulas["Major"];
 
     // Act
-    var chord = Chord.Create( PitchClass.C, formula, 1 );
+    var chord = new Chord( PitchClass.C, formula, 1 );
 
     // Assert
     chord.Root.Should()
@@ -73,7 +73,7 @@ public sealed class ChordOfTTests
   public void Equals_GenericEquals_ShouldReturnFalse_WhenOtherIsNull()
   {
     // Arrange
-    var chord = Chord.Create( PitchClass.C, "Major" );
+    var chord = new Chord( PitchClass.C, "Major" );
 
     // Act
     var result = chord.Equals( null );
@@ -87,7 +87,7 @@ public sealed class ChordOfTTests
   public void Equals_GenericEquals_ShouldReturnTrue_WhenSameReference()
   {
     // Arrange
-    var chord = Chord.Create( PitchClass.C, "Major" );
+    var chord = new Chord( PitchClass.C, "Major" );
 
     // Act
     var result = chord.Equals( chord );
@@ -102,7 +102,7 @@ public sealed class ChordOfTTests
   {
     // Arrange
     object obj = int.MinValue;
-    var chord = Chord.Create( PitchClass.C, "Major" );
+    var chord = new Chord( PitchClass.C, "Major" );
 
     // Act
     var result = chord.Equals( obj );
@@ -125,7 +125,7 @@ public sealed class ChordOfTTests
     );
 
     // Act
-    var chord = Chord.Create( PitchClass.C, custom );
+    var chord = new Chord( PitchClass.C, custom, 0 );
 
     // Assert
     chord.IsExtended.Should()

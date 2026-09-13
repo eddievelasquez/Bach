@@ -213,7 +213,7 @@ public sealed class StringedInstrument
 
     // Materialize every chord pitch from the starting pitch through the highest string's pitch at the
     // end of the requested position span.
-    var pitches = chord.Render( startPitch.Octave )
+    var pitches = chord.GetPitches( startPitch.Octave )
                        .ToArray();
     var pitchIndex = 0;
 

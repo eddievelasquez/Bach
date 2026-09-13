@@ -255,7 +255,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 0, 4 )
       .Should()
@@ -267,7 +268,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 12, 4 )
       .Should()
@@ -279,7 +281,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 3, 4 )
       .Should()
@@ -291,7 +294,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 5, 4 )
       .Should()
@@ -303,7 +307,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 8, 4 )
       .Should()
@@ -315,7 +320,9 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] )
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+
+    var chord = new Chord( PitchClass.C, formula, 0 )
                      .GetInversion( 1 );
 
     RenderChord( instrument, chord, 0, 4 )
@@ -328,7 +335,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 12, 4 )
       .Should()
@@ -340,7 +348,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 3, 4 )
       .Should()
@@ -352,7 +361,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 5, 4 )
       .Should()
@@ -364,7 +374,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.C, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 8, 4 )
       .Should()
@@ -376,7 +387,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 0, 4 )
       .Should()
@@ -388,7 +400,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 12, 4 )
       .Should()
@@ -400,7 +413,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 5, 4 )
       .Should()
@@ -412,7 +426,8 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    var chord = Chord.Create( PitchClass.D, Registry.ChordFormulas["Major"] );
+    ChordFormula formula = Registry.ChordFormulas["Major"];
+    var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 7, 4 )
       .Should()
