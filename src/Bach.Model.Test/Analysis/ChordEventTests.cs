@@ -56,7 +56,7 @@ public sealed class ChordEventTests
   public void InvertedChord_ShouldReportDistinctBass()
   {
     var root = Pitch.Parse( "G3" );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 2 );
+    var chord = new PitchChord( root, ChordFormula.Major, 2 );
 
     var chordEvent = (IChordEvent) chord;
 

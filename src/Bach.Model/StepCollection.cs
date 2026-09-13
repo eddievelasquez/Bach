@@ -123,7 +123,7 @@ public static class StepCollection
 
     var sepCount = span.Count( STEP_SEPARATOR );
 
-    if( sepCount < Constants.MinimumScaleStepCount - 1 || sepCount > Constants.MaximumScaleStepCount - 1 )
+    if( sepCount < Constants.MinimumScaleIntervalCount - 1 || sepCount > Constants.MaximumScaleIntervalCount - 1 )
     {
       return false;
     }

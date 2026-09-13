@@ -46,97 +46,65 @@ public class PitchChord
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
   /// <param name="inversion">The inversion.</param>
-  private PitchChord(
+  public PitchChord(
     Pitch root,
     ChordFormula formula,
-    int inversion )
+    int inversion = 0 )
     : base( root, formula, inversion )
   {
   }
 
-  #endregion
-
-  #region Properties
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="PitchChord"/> class.
+  /// </summary>
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
+  /// <param name="inversion">The inversion.</param>
+  public PitchChord(
+    Pitch root,
+    string formulaIdOrName,
+    int inversion = 0 )
+    : this( root, Registry.ChordFormulas[formulaIdOrName], inversion )
+  {
+  }
 
   /// <summary>
-  ///   Gets the pitch classes of the chord.
+  ///   Initializes a new instance of the <see cref="PitchChord"/> class using a root pitch class, formula, octave, and
+  ///   inversion.
   /// </summary>
-  public IEnumerable<PitchClass> PitchClasses => this.Select( p => p.PitchClass );
+  /// <param name="root">The root pitch class of the chord.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="octave">The octave of the root pitch.</param>
+  /// <param name="inversion">The inversion.</param>
+  public PitchChord(
+    PitchClass root,
+    ChordFormula formula,
+    int octave = 4,
+    int inversion = 0 )
+    : this( new Pitch( root, octave ), formula, inversion )
+  {
+  }
+
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="PitchChord"/> class using a root pitch class, formula ID or name,
+  ///   octave, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch class of the chord.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
+  /// <param name="octave">The octave of the root pitch.</param>
+  /// <param name="inversion">The inversion.</param>
+  public PitchChord(
+    PitchClass root,
+    string formulaIdOrName,
+    int octave = 4,
+    int inversion = 0 )
+    : this( root, Registry.ChordFormulas[formulaIdOrName], octave, inversion )
+  {
+  }
 
   #endregion
 
   #region Public Methods
-
-  /// <inheritdoc/>
-  public bool Any(
-    PitchClass pitchClass )
-  {
-    return this.Any( p => p.PitchClass == pitchClass );
-  }
-
-  /// <summary>
-  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula, and inversion.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
-  public static PitchChord Create(
-    Pitch root,
-    ChordFormula formula,
-    int inversion = 0 )
-  {
-    return new PitchChord( root, formula, inversion );
-  }
-
-  /// <summary>
-  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula ID or name, and inversion.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  /// <param name="octave">The octave of the root pitch.</param>
-  /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
-  public static PitchChord Create(
-    PitchClass root,
-    string formulaIdOrName,
-    int octave = 4,
-    int inversion = 0 )
-  {
-    return Create( root, Registry.ChordFormulas[formulaIdOrName], octave, inversion );
-  }
-
-  /// <summary>
-  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula, and inversion.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="octave">The octave of the root pitch.</param>
-  /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
-  public static PitchChord Create(
-    PitchClass root,
-    ChordFormula formula,
-    int octave = 4,
-    int inversion = 0 )
-  {
-    return Create( Pitch.Create( root, octave ), formula, inversion );
-  }
-
-  /// <summary>
-  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula ID or name, and inversion.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  /// <param name="inversion">The inversion.</param>
-  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
-  public static PitchChord Create(
-    Pitch root,
-    string formulaIdOrName,
-    int inversion = 0 )
-  {
-    return new PitchChord( root, Registry.ChordFormulas[formulaIdOrName], inversion );
-  }
 
   /// <summary>
   ///   Creates an inversion of the current chord.
@@ -198,7 +166,7 @@ public class PitchChord
 
     if( bassSeparatorPos == -1 )
     {
-      chord = Create( Pitch.Create( rootPitchClass, 4 ), chordFormula );
+      chord = new PitchChord( rootPitchClass, chordFormula );
       return true;
     }
 
@@ -220,7 +188,7 @@ public class PitchChord
       return false;
     }
 
-    chord = Create( rootPitchClass, chordFormula, bassPitch.Octave, inversion );
+    chord = new PitchChord( rootPitchClass, chordFormula, bassPitch.Octave, inversion );
     return true;
 
     static bool TryParseBassPitch(
@@ -239,7 +207,7 @@ public class PitchChord
       // If that fails, try to parse it as a pitch class and assume octave 4.
       if( PitchClass.TryParse( span, provider, out var pitchClass, out tmpTail ) )
       {
-        pitch = Pitch.Create( pitchClass, 4 );
+        pitch = new Pitch( pitchClass, 4 );
         tail = tmpTail;
         return true;
       }
@@ -247,6 +215,54 @@ public class PitchChord
       tail = tmpTail;
       return false;
     }
+  }
+
+  #endregion
+
+  #region IChordFactory<PitchChord,Pitch> Implementation
+
+  /// <summary>
+  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="inversion">The inversion.</param>
+  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
+  static PitchChord IChordFactory<PitchChord, Pitch>.Create(
+    Pitch root,
+    ChordFormula formula,
+    int inversion )
+  {
+    return new PitchChord( root, formula, inversion );
+  }
+
+  /// <summary>
+  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula ID or name, and inversion.
+  /// </summary>
+  /// <param name="root">The root pitch of the chord.</param>
+  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
+  /// <param name="inversion">The inversion.</param>
+  /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
+  static PitchChord IChordFactory<PitchChord, Pitch>.Create(
+    Pitch root,
+    string formulaIdOrName,
+    int inversion )
+  {
+    return new PitchChord( root, formulaIdOrName, inversion );
+  }
+
+  #endregion
+
+  #region IPartEvent Implementation
+
+  /// <inheritdoc/>
+  IEnumerable<PitchClass> IPartEvent.PitchClasses => this.Select( p => p.PitchClass );
+
+  /// <inheritdoc/>
+  bool IPartEvent.Any(
+    PitchClass pitchClass )
+  {
+    return this.Any( p => p.PitchClass == pitchClass );
   }
 
   #endregion

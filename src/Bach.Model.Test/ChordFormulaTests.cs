@@ -195,11 +195,17 @@ public sealed class ChordFormulaTests
     using var pitches = formula.Generate( Pitch.MinValue )
                                .GetEnumerator();
     var count = 0;
+    var prev = Pitch.MinValue;
 
     while( pitches.MoveNext() )
     {
-      ( pitches.Current <= Pitch.MaxValue ).Should()
-                                           .BeTrue();
+      pitches.Current.Should()
+             .BeGreaterThanOrEqualTo( prev );
+
+      pitches.Current.Should()
+             .BeLessThanOrEqualTo( Pitch.MaxValue );
+
+      prev = pitches.Current;
       ++count;
     }
 

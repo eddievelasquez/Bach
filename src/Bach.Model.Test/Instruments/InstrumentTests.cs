@@ -33,8 +33,8 @@ public sealed class InstrumentTests
     #region Constructors
 
     public TestInstrument(
-      InstrumentDefinition? definition )
-      : base( definition! )
+      InstrumentDefinition? instrumentDefinition )
+      : base( instrumentDefinition! )
     {
     }
 
@@ -59,9 +59,9 @@ public sealed class InstrumentTests
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
 
-    object x = StringedInstrument.Create( definition, 22 );
-    object y = StringedInstrument.Create( definition, 22 );
-    object z = StringedInstrument.Create( definition, 22 );
+    object x = new StringedInstrument( definition, 22, (Tuning?)null );
+    object y = new StringedInstrument( definition, 22, (Tuning?)null );
+    object z = new StringedInstrument( definition, 22, (Tuning?)null );
 
     // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
@@ -93,8 +93,8 @@ public sealed class InstrumentTests
   public void EqualsFailsWithDifferentTypeTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    object a = StringedInstrument.Create( definition, 22 );
-    object b = StringedInstrument.Create( Registry.StringedInstrumentDefinitions["bass"], 22 );
+    object a = new StringedInstrument( definition, 22, (Tuning?)null );
+    object b = new StringedInstrument( Registry.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
 
     a.Equals( b )
      .Should()
@@ -117,7 +117,7 @@ public sealed class InstrumentTests
   public void EqualsFailsWithNullTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    object actual = StringedInstrument.Create( definition, 22 );
+    object actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( null )
           .Should()
@@ -128,7 +128,7 @@ public sealed class InstrumentTests
   public void EqualsSucceedsWithSameObjectTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Instrument actual = StringedInstrument.Create( definition, 22 );
+    Instrument actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( actual )
           .Should()
@@ -139,8 +139,8 @@ public sealed class InstrumentTests
   public void GetHashcodeTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Instrument actual = StringedInstrument.Create( definition, 22 );
-    Instrument expected = StringedInstrument.Create( definition, 22 );
+    Instrument actual = new StringedInstrument( definition, 22, (Tuning?)null );
+    Instrument expected = new StringedInstrument( definition, 22, (Tuning?)null );
 
     expected.Equals( actual )
             .Should()
@@ -156,9 +156,9 @@ public sealed class InstrumentTests
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
 
-    Instrument x = StringedInstrument.Create( definition, 22 );
-    Instrument y = StringedInstrument.Create( definition, 22 );
-    Instrument z = StringedInstrument.Create( definition, 22 );
+    Instrument x = new StringedInstrument( definition, 22, (Tuning?)null );
+    Instrument y = new StringedInstrument( definition, 22, (Tuning?)null );
+    Instrument z = new StringedInstrument( definition, 22, (Tuning?)null );
 
     x.Equals( x )
      .Should()
@@ -189,8 +189,8 @@ public sealed class InstrumentTests
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Instrument a = StringedInstrument.Create( definition, 22 );
-    Instrument b = StringedInstrument.Create( Registry.StringedInstrumentDefinitions["bass"], 22 );
+    Instrument a = new StringedInstrument( definition, 22, (Tuning?)null );
+    Instrument b = new StringedInstrument( Registry.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
 
     a.Equals( b )
      .Should()
@@ -213,7 +213,7 @@ public sealed class InstrumentTests
   public void TypeSafeEqualsFailsWithNullTest()
   {
     var definition = Registry.StringedInstrumentDefinitions["guitar"];
-    Instrument actual = StringedInstrument.Create( definition, 22 );
+    Instrument actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( null )
           .Should()

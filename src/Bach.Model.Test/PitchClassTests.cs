@@ -112,7 +112,7 @@ public sealed class PitchClassTests
   public static TheoryData<PitchClass, object?, bool> EqualsTestData =>
     new()
     {
-      { PitchClass.C, PitchClass.Create( NoteName.C ), true },
+      { PitchClass.C, new PitchClass( NoteName.C ), true },
       { PitchClass.C, null, false },
       { PitchClass.CSharp, PitchClass.DFlat, false }
     };
@@ -182,9 +182,9 @@ public sealed class PitchClassTests
       { PitchClass.ASharp, PitchClass.B, null },
       { PitchClass.BFlat, PitchClass.B, null },
       { PitchClass.B, PitchClass.C, null },
-      { PitchClass.Create( NoteName.C, Accidental.DoubleSharp ), PitchClass.DSharp, PitchClass.EFlat },
-      { PitchClass.Create( NoteName.E, Accidental.DoubleSharp ), PitchClass.G, null },
-      { PitchClass.Create( NoteName.B, Accidental.DoubleSharp ), PitchClass.D, null }
+      { new PitchClass( NoteName.C, Accidental.DoubleSharp ), PitchClass.DSharp, PitchClass.EFlat },
+      { new PitchClass( NoteName.E, Accidental.DoubleSharp ), PitchClass.G, null },
+      { new PitchClass( NoteName.B, Accidental.DoubleSharp ), PitchClass.D, null }
     };
 
   public static TheoryData<PitchClass, Interval, PitchClass> AddIntervals =>
@@ -203,8 +203,8 @@ public sealed class PitchClassTests
       { PitchClass.A, Interval.Fifth, PitchClass.E },
       { PitchClass.AFlat, Interval.Fifth, PitchClass.EFlat },
       { PitchClass.GSharp, Interval.DiminishedSixth, PitchClass.EFlat },
-      { PitchClass.FSharp, Interval.AugmentedFourth, PitchClass.Create( NoteName.B, Accidental.Sharp ) },
-      { PitchClass.GFlat, Interval.DiminishedFifth, PitchClass.Create( NoteName.D, Accidental.DoubleFlat ) },
+      { PitchClass.FSharp, Interval.AugmentedFourth, new PitchClass( NoteName.B, Accidental.Sharp ) },
+      { PitchClass.GFlat, Interval.DiminishedFifth, new PitchClass( NoteName.D, Accidental.DoubleFlat ) },
       { PitchClass.C, Interval.AugmentedSecond, PitchClass.DSharp },
       { PitchClass.C, Interval.DiminishedFifth, PitchClass.GFlat },
       { PitchClass.C, Interval.AugmentedFourth, PitchClass.FSharp },
@@ -233,8 +233,8 @@ public sealed class PitchClassTests
       { PitchClass.C, Interval.AugmentedFourth, PitchClass.GFlat },
       { PitchClass.C, Interval.DiminishedFifth, PitchClass.FSharp },
       { PitchClass.DSharp, Interval.AugmentedSecond, PitchClass.C },
-      { PitchClass.FSharp, Interval.DiminishedFifth, PitchClass.Create( NoteName.B, Accidental.Sharp ) },
-      { PitchClass.GFlat, Interval.AugmentedFourth, PitchClass.Create( NoteName.D, Accidental.DoubleFlat ) },
+      { PitchClass.FSharp, Interval.DiminishedFifth, new PitchClass( NoteName.B, Accidental.Sharp ) },
+      { PitchClass.GFlat, Interval.AugmentedFourth, new PitchClass( NoteName.D, Accidental.DoubleFlat ) },
       { PitchClass.C, Interval.DiminishedSeventh, PitchClass.DSharp },
       { PitchClass.F, Interval.DiminishedThird, PitchClass.DSharp },
       { PitchClass.GSharp, Interval.DiminishedFourth, PitchClass.Parse( "D##" ) }
@@ -262,8 +262,8 @@ public sealed class PitchClassTests
       { PitchClass.FSharp, PitchClass.C, Interval.DiminishedFifth },
       { PitchClass.GFlat, PitchClass.C, Interval.AugmentedFourth },
       { PitchClass.DSharp, PitchClass.C, Interval.DiminishedSeventh },
-      { PitchClass.C, PitchClass.Create( NoteName.E, Accidental.DoubleFlat ), Interval.DiminishedThird },
-      { PitchClass.Create( NoteName.D, Accidental.DoubleSharp ), PitchClass.GSharp, Interval.DiminishedFourth }
+      { PitchClass.C, new PitchClass( NoteName.E, Accidental.DoubleFlat ), Interval.DiminishedThird },
+      { new PitchClass( NoteName.D, Accidental.DoubleSharp ), PitchClass.GSharp, Interval.DiminishedFourth }
     };
 
   public static TheoryData<string, Type> InvalidPitchClassStrings =>
@@ -283,6 +283,15 @@ public sealed class PitchClassTests
       { "C", NoteName.C, Accidental.Natural },
       { "c#", NoteName.C, Accidental.Sharp },
       { "c##", NoteName.C, Accidental.DoubleSharp }
+    };
+
+  public static TheoryData<string, NoteName, Accidental> ParseEdgeCaseTestData =>
+    new()
+    {
+      { " C", NoteName.C, Accidental.Natural },
+      { "C♮", NoteName.C, Accidental.Natural },
+      { "C𝄫", NoteName.C, Accidental.DoubleFlat },
+      { "C𝄪", NoteName.C, Accidental.DoubleSharp }
     };
 
   public static TheoryData<PitchClass, NoteName, Accidental> NoteNamesAndAccidentals =>
@@ -349,13 +358,13 @@ public sealed class PitchClassTests
     {
       { "C", PitchClass.C },
       { "C#", PitchClass.CSharp },
-      { "C##", PitchClass.Create( NoteName.C, Accidental.DoubleSharp ) },
-      { "Cb", PitchClass.Create( NoteName.C, Accidental.Flat ) },
-      { "Cbb", PitchClass.Create( NoteName.C, Accidental.DoubleFlat ) },
-      { "B#", PitchClass.Create( NoteName.B, Accidental.Sharp ) },
-      { "B##", PitchClass.Create( NoteName.B, Accidental.DoubleSharp ) },
+      { "C##", new PitchClass( NoteName.C, Accidental.DoubleSharp ) },
+      { "Cb", new PitchClass( NoteName.C, Accidental.Flat ) },
+      { "Cbb", new PitchClass( NoteName.C, Accidental.DoubleFlat ) },
+      { "B#", new PitchClass( NoteName.B, Accidental.Sharp ) },
+      { "B##", new PitchClass( NoteName.B, Accidental.DoubleSharp ) },
       { "Bb", PitchClass.BFlat },
-      { "Bbb", PitchClass.Create( NoteName.B, Accidental.DoubleFlat ) }
+      { "Bbb", new PitchClass( NoteName.B, Accidental.DoubleFlat ) }
     };
 
   public static TheoryData<PitchClass, int, PitchClass> AdditionOperatorTestData => new()
@@ -409,9 +418,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Flat );
 
-    ( (int) result ).Should()
-                    .Be( 24 );
-
     result.ToString()
           .Should()
           .Be( "Ab" );
@@ -430,9 +436,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Sharp );
 
-    ( (int) result ).Should()
-                    .Be( 31 );
-
     result.ToString()
           .Should()
           .Be( "A#" );
@@ -450,9 +453,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Natural );
-
-    ( (int) result ).Should()
-                    .Be( 27 );
 
     result.ToString()
           .Should()
@@ -494,9 +494,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Flat );
 
-    ( (int) result ).Should()
-                    .Be( 30 );
-
     result.ToString()
           .Should()
           .Be( "Bb" );
@@ -514,9 +511,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Natural );
-
-    ( (int) result ).Should()
-                    .Be( 33 );
 
     result.ToString()
           .Should()
@@ -536,9 +530,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Sharp );
 
-    ( (int) result ).Should()
-                    .Be( 4 );
-
     result.ToString()
           .Should()
           .Be( "C#" );
@@ -556,9 +547,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Natural );
-
-    ( (int) result ).Should()
-                    .Be( 1 );
 
     result.ToString()
           .Should()
@@ -627,6 +615,47 @@ public sealed class PitchClassTests
   }
 
   [Fact]
+  public void IntegerConversion_ShouldRoundTripAllSpellingOrderValues()
+  {
+    for( var value = -2; value <= 32; ++value )
+    {
+      var pitchClass = (PitchClass) value;
+
+      ( (int) pitchClass ).Should()
+                          .Be( value );
+    }
+  }
+
+  [Fact]
+  public void IntegerConversion_ShouldFollowSpellingOrder()
+  {
+    ( (int) PitchClass.C ).Should()
+                          .Be( 0 );
+
+    ( (int) PitchClass.C ).Should()
+                          .BeLessThan( (int) PitchClass.F );
+
+    ( (int) PitchClass.CSharp ).Should()
+                               .BeLessThan( (int) PitchClass.DFlat );
+
+    ( (int) PitchClass.DFlat ).Should()
+                              .BeLessThan( (int) PitchClass.D );
+  }
+
+  [Fact]
+  public void IntegerConversion_ShouldRejectValuesOutsideSpellingRange()
+  {
+    var belowRange = () => (PitchClass) ( -3 );
+    var aboveRange = () => (PitchClass) 33;
+
+    belowRange.Should()
+              .Throw<ArgumentOutOfRangeException>();
+
+    aboveRange.Should()
+              .Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Fact]
   public void EnharmonicCompareTo_ShouldOrderByChromaticPitchHeight_WhenPitchClassesDiffer()
   {
     // Within a single octave's chromatic ordering, C (height 0) sounds lower than B (height 11),
@@ -647,11 +676,11 @@ public sealed class PitchClassTests
 
   [Theory]
   [MemberData( nameof( ConstructorTestData ) )]
-  public void Create_ShouldReturnExpectedPitchClass_WhenGivenNoteNameAndAccidental(
+  public void Constructor_ShouldReturnExpectedPitchClass_WhenGivenNoteNameAndAccidental(
     NoteName noteName,
     Accidental accidental )
   {
-    var note = PitchClass.Create( noteName, accidental );
+    var note = new PitchClass( noteName, accidental );
 
     note.NoteName.Should()
         .Be( noteName );
@@ -661,10 +690,10 @@ public sealed class PitchClassTests
   }
 
   [Fact]
-  public void Create_ShouldReturnNaturalPitchClass_WhenGivenNoteName()
+  public void Constructor_ShouldReturnNaturalPitchClass_WhenGivenNoteName()
   {
     // Arrange & Act
-    var result = PitchClass.Create( NoteName.F );
+    var result = new PitchClass( NoteName.F );
 
     // Assert
     result.NoteName.Should()
@@ -675,6 +704,22 @@ public sealed class PitchClassTests
 
     result.Should()
           .Be( PitchClass.F );
+  }
+
+  [Fact]
+  public void DefaultPitchClass_ShouldDeriveChromaticIdentityFromItsSpelling()
+  {
+    var pitchClass = default( PitchClass );
+
+    pitchClass.NoteName.Should()
+              .Be( NoteName.C );
+
+    pitchClass.Accidental.Should()
+              .Be( Accidental.Natural );
+
+    pitchClass.EnharmonicEquals( PitchClass.C )
+              .Should()
+              .BeTrue();
   }
 
   [Fact]
@@ -689,9 +734,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Flat );
-
-    ( (int) result ).Should()
-                    .Be( 3 );
 
     result.ToString()
           .Should()
@@ -711,9 +753,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Sharp );
 
-    ( (int) result ).Should()
-                    .Be( 11 );
-
     result.ToString()
           .Should()
           .Be( "D#" );
@@ -731,9 +770,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Natural );
-
-    ( (int) result ).Should()
-                    .Be( 7 );
 
     result.ToString()
           .Should()
@@ -772,9 +808,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Flat );
 
-    ( (int) result ).Should()
-                    .Be( 10 );
-
     result.ToString()
           .Should()
           .Be( "Eb" );
@@ -792,9 +825,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Natural );
-
-    ( (int) result ).Should()
-                    .Be( 13 );
 
     result.ToString()
           .Should()
@@ -826,9 +856,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Sharp );
 
-    ( (int) result ).Should()
-                    .Be( 19 );
-
     result.ToString()
           .Should()
           .Be( "F#" );
@@ -846,9 +873,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Natural );
-
-    ( (int) result ).Should()
-                    .Be( 16 );
 
     result.ToString()
           .Should()
@@ -868,9 +892,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Flat );
 
-    ( (int) result ).Should()
-                    .Be( 18 );
-
     result.ToString()
           .Should()
           .Be( "Gb" );
@@ -889,9 +910,6 @@ public sealed class PitchClassTests
     result.Accidental.Should()
           .Be( Accidental.Sharp );
 
-    ( (int) result ).Should()
-                    .Be( 25 );
-
     result.ToString()
           .Should()
           .Be( "G#" );
@@ -909,9 +927,6 @@ public sealed class PitchClassTests
 
     result.Accidental.Should()
           .Be( Accidental.Natural );
-
-    ( (int) result ).Should()
-                    .Be( 22 );
 
     result.ToString()
           .Should()
@@ -944,7 +959,7 @@ public sealed class PitchClassTests
                 .Should()
                 .BeNull();
 
-      ++startInclusive;
+      startInclusive = startInclusive.Add( 1 );
     }
   }
 
@@ -1052,7 +1067,7 @@ public sealed class PitchClassTests
     NoteName noteName,
     Accidental accidental )
   {
-    var expected = PitchClass.Create( noteName, accidental );
+    var expected = new PitchClass( noteName, accidental );
 
     PitchClass.Parse( value )
               .Should()
@@ -1070,6 +1085,36 @@ public sealed class PitchClassTests
     act.Should()
        .Throw<Exception>()
        .Where( e => e.GetType() == exceptionType );
+  }
+
+  [Theory]
+  [MemberData( nameof( ParseEdgeCaseTestData ) )]
+  public void TryParse_ShouldReturnExpectedPitchClass_WhenGivenLeadingWhitespaceOrUnicodeAccidental(
+    string value,
+    NoteName noteName,
+    Accidental accidental )
+  {
+    PitchClass.TryParse( value, out var result )
+              .Should()
+              .BeTrue();
+
+    result.Should()
+          .Be( new PitchClass( noteName, accidental ) );
+  }
+
+  [Fact]
+  public void TryParse_ShouldReturnPartialPitchClassAndTail_WhenInputContainsSuffix()
+  {
+    PitchClass.TryParse( "C#suffix".AsSpan(), null, out var result, out var tail )
+              .Should()
+              .BeTrue();
+
+    result.Should()
+          .Be( PitchClass.CSharp );
+
+    tail.ToString()
+        .Should()
+        .Be( "suffix" );
   }
 
   [Fact]
@@ -1109,12 +1154,12 @@ public sealed class PitchClassTests
   [Fact]
   public void RelationalOperators_ShouldReturnTrue_WhenComparingPitchClasses()
   {
-    ( PitchClass.C == PitchClass.Create( NoteName.C ) ).Should()
+    ( PitchClass.C == new PitchClass( NoteName.C ) ).Should()
                                                         .BeTrue();
 
     // C and B# sound identical but are spelled differently, so == (spelling-sensitive) is false
     // even though they compare as equal in chromatic pitch height.
-    ( PitchClass.C != PitchClass.Create( NoteName.B, Accidental.Sharp ) ).Should()
+    ( PitchClass.C != new PitchClass( NoteName.B, Accidental.Sharp ) ).Should()
                                                                          .BeTrue();
 
     ( PitchClass.C != PitchClass.B ).Should()
@@ -1180,7 +1225,7 @@ public sealed class PitchClassTests
     Accidental accidental,
     string expected )
   {
-    var pitchClass = PitchClass.Create( noteName, accidental );
+    var pitchClass = new PitchClass( noteName, accidental );
 
     pitchClass.ToString()
               .Should()
@@ -1195,7 +1240,7 @@ public sealed class PitchClassTests
     string? format,
     string expected )
   {
-    var pitchClass = PitchClass.Create( noteName, accidental );
+    var pitchClass = new PitchClass( noteName, accidental );
 
     pitchClass.ToString( format! )
               .Should()

@@ -34,7 +34,7 @@ public sealed class BachXUnitSerializerTests
   [
     (typeof( Accidental ), Accidental.DoubleSharp),
     (typeof( NoteName ), NoteName.G),
-    (typeof( Pitch ), Pitch.Create( PitchClass.CSharp, 4 )),
+    (typeof( Pitch ), new Pitch( PitchClass.CSharp, 4 )),
     (typeof( PitchClass ), PitchClass.EFlat),
     (typeof( Interval ), Interval.MajorThird),
     (typeof( ModeFormula ), ModeFormula.Dorian),

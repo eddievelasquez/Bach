@@ -76,6 +76,9 @@ public class ScaleFormula: Formula
     Debug.Assert( classification != null );
     Debug.Assert( aliases != null );
 
+    ValidateIntervalCounts( ascendingDegrees, name, nameof( ascendingDegrees ) );
+    ValidateIntervalCounts( descendingDegrees, name, nameof( descendingDegrees ) );
+
     AscendingDegrees = ascendingDegrees.ToArray();
     DescendingDegrees = descendingDegrees.ToArray();
     Classification = classification;
@@ -88,6 +91,22 @@ public class ScaleFormula: Formula
                                                                       )
                                                                       .ToFrozenSet( StringComparer.OrdinalIgnoreCase )
     );
+
+    return;
+
+    static void ValidateIntervalCounts(
+      IReadOnlyList<ScaleDegreeStep> intervals,
+      string name,
+      string paramName )
+    {
+      if( intervals.Count < Constants.MinimumScaleIntervalCount || intervals.Count > Constants.MaximumScaleIntervalCount )
+      {
+        throw new ArgumentOutOfRangeException(
+          paramName,
+          $"{name}: A scale must contain between {Constants.MinimumScaleIntervalCount} and {Constants.MaximumScaleIntervalCount} intervals"
+        );
+      }
+    }
   }
 
   #endregion

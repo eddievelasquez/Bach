@@ -22,9 +22,8 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using Bach.Model.Internal;
 
@@ -47,104 +46,86 @@ namespace Bach.Model;
 ///   <see cref="HashSet{T}"/> used in pitch-class-set operations).
 /// </remarks>
 public readonly struct PitchClass
-  : IPitch<PitchClass>
+  : IPitch<PitchClass>,
+    IComparisonOperators<PitchClass, PitchClass, bool>
 {
+  #region Nested Types
+
+  // Compares PitchClass values by enharmonic equivalence (sounding pitch class) rather than by
+  // spelling. Backs the public EnharmonicComparer property.
+  private sealed class EnharmonicEqualityComparer: IEqualityComparer<PitchClass>
+  {
+    #region Public Methods
+
+    public bool Equals(
+      PitchClass x,
+      PitchClass y )
+    {
+      return x.EnharmonicEquals( y );
+    }
+
+    public int GetHashCode(
+      PitchClass obj )
+    {
+      return obj.EnharmonicIndex;
+    }
+
+    #endregion
+  }
+
+  #endregion
+
   #region Constants
 
-  private const int ENHARMONIC_COUNT = 5; // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
   private const string NOTE_NAME_SYMBOL_TO_STRING_FORMAT = "NS";
+  private const int ACCIDENTAL_COUNT = 5;
+  private const int ACCIDENTAL_OFFSET = 2;
+  private const int MIN_INTEGER_VALUE = -ACCIDENTAL_OFFSET;
+  private const int MAX_INTEGER_VALUE = ( Constants.NoteNameCount - 1 ) * ACCIDENTAL_COUNT + ACCIDENTAL_OFFSET;
 
-  private static readonly PitchClass[] s_pitchClasses =
+  private static readonly int[] s_naturalSemitones =
   [
-    new( 0, 0, NoteName.D, Accidental.DoubleFlat ),
-    new( 1, 0, NoteName.C, Accidental.Natural ),
-    new( 2, 0, NoteName.B, Accidental.Sharp ),
-    new( 3, 1, NoteName.D, Accidental.Flat ),
-    new( 4, 1, NoteName.C, Accidental.Sharp ),
-    new( 5, 1, NoteName.B, Accidental.DoubleSharp ),
-    new( 6, 2, NoteName.E, Accidental.DoubleFlat ),
-    new( 7, 2, NoteName.D, Accidental.Natural ),
-    new( 8, 2, NoteName.C, Accidental.DoubleSharp ),
-    new( 9, 3, NoteName.F, Accidental.DoubleFlat ),
-    new( 10, 3, NoteName.E, Accidental.Flat ),
-    new( 11, 3, NoteName.D, Accidental.Sharp ),
-    new( 12, 4, NoteName.F, Accidental.Flat ),
-    new( 13, 4, NoteName.E, Accidental.Natural ),
-    new( 14, 4, NoteName.D, Accidental.DoubleSharp ),
-    new( 15, 5, NoteName.G, Accidental.DoubleFlat ),
-    new( 16, 5, NoteName.F, Accidental.Natural ),
-    new( 17, 5, NoteName.E, Accidental.Sharp ),
-    new( 18, 6, NoteName.G, Accidental.Flat ),
-    new( 19, 6, NoteName.F, Accidental.Sharp ),
-    new( 20, 6, NoteName.E, Accidental.DoubleSharp ),
-    new( 21, 7, NoteName.A, Accidental.DoubleFlat ),
-    new( 22, 7, NoteName.G, Accidental.Natural ),
-    new( 23, 7, NoteName.F, Accidental.DoubleSharp ),
-    new( 24, 8, NoteName.A, Accidental.Flat ),
-    new( 25, 8, NoteName.G, Accidental.Sharp ),
-    new( 26, 9, NoteName.B, Accidental.DoubleFlat ),
-    new( 27, 9, NoteName.A, Accidental.Natural ),
-    new( 28, 9, NoteName.G, Accidental.DoubleSharp ),
-    new( 29, 10, NoteName.C, Accidental.DoubleFlat ),
-    new( 30, 10, NoteName.B, Accidental.Flat ),
-    new( 31, 10, NoteName.A, Accidental.Sharp ),
-    new( 32, 11, NoteName.C, Accidental.Flat ),
-    new( 33, 11, NoteName.B, Accidental.Natural ),
-    new( 34, 11, NoteName.A, Accidental.DoubleSharp )
+    0, 2, 4,
+    5, 7, 9,
+    11
   ];
 
-  private static readonly int[] s_noteNameIndices =
+  private static readonly byte[] s_preferredSpellings =
   [
-    1, // NoteName.C
-    7, // NoteName.D
-    13, // NoteName.E
-    16, // NoteName.F
-    22, // NoteName.G
-    27, // NoteName.A
-    33 // NoteName.B
+    2, 3, 7,
+    8, 12, 17,
+    18, 22, 23,
+    27, 28, 32
   ];
-
-  // DoubleFlat, Flat, Natural, Sharp, DoubleSharp
-  private static readonly int[,] s_enharmonics =
-  {
-    { 0, -1, 1, 2, -1 }, // Dbb, C, B#
-    { -1, 3, -1, 4, 5 }, // Db, C#, B##
-    { 6, -1, 7, -1, 8 }, // Ebb, D, C##
-    { 9, 10, -1, 11, -1 }, // Fbb, Eb, D#
-    { -1, 12, 13, -1, 14 }, // Fb, E, D##
-    { 15, -1, 16, 17, -1 }, // Gbb, F, E#
-    { -1, 18, -1, 19, 20 }, // Gb, F#, E##
-    { 21, -1, 22, -1, 23 }, // Abb, G, F##
-    { -1, 24, -1, 25, -1 }, // Ab, G#
-    { 26, -1, 27, -1, 28 }, // Bbb, A, G##
-    { 29, 30, -1, 31, -1 }, // Cbb, Bb, A#
-    { -1, 32, 33, -1, 34 } // Cb, B, A##
-  };
 
   #endregion
 
   #region Fields
 
-  private readonly sbyte _accidental;
-  private readonly byte _enharmonicIndex;
-  private readonly byte _noteIndex;
   private readonly byte _noteName;
+  private readonly sbyte _accidental;
 
   #endregion
 
   #region Constructors
 
-  private PitchClass(
-    int pitchClassIndex,
-    int enharmonicIndex,
+  /// <summary>
+  ///   Creates a pitch class from a note name and optional accidental.
+  /// </summary>
+  /// <param name="noteName">The name of the pitch class.</param>
+  /// <param name="accidental">The accidental. The default value is Natural.</param>
+  /// <exception cref="ArgumentOutOfRangeException">
+  ///   Thrown when one or more arguments are outside the required range.
+  /// </exception>
+  public PitchClass(
     NoteName noteName,
-    Accidental accidental )
+    Accidental accidental = default )
   {
-    Debug.Assert( pitchClassIndex is >= 0 and <= 34 );
-    Debug.Assert( enharmonicIndex is >= 0 and <= 11 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( (int) noteName, 0, nameof( noteName ) );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) noteName, Constants.NoteNameCount - 1, nameof( noteName ) );
+    ArgumentOutOfRangeException.ThrowIfLessThan( (int) accidental, -ACCIDENTAL_OFFSET, nameof( accidental ) );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( (int) accidental, ACCIDENTAL_OFFSET, nameof( accidental ) );
 
-    _noteIndex = (byte) pitchClassIndex;
-    _enharmonicIndex = (byte) enharmonicIndex;
     _noteName = (byte) noteName;
     _accidental = (sbyte) accidental;
   }
@@ -153,56 +134,69 @@ public readonly struct PitchClass
 
   #region Properties
 
+  /// <summary>
+  ///   Gets the enharmonic index of the pitch class, which is the number of semitones above C in the
+  ///   octave.
+  /// </summary>
+  private int EnharmonicIndex =>
+    SemitoneOffset.Wrap( Constants.OctaveSemitoneCount );
+
+  /// <summary>
+  ///   Gets the semitone offset of the pitch class, which is the number of semitones above C in the
+  ///   octave.
+  /// </summary>
+  internal int SemitoneOffset => s_naturalSemitones[_noteName] + _accidental;
+
   /// <summary>C pitch class.</summary>
-  public static PitchClass C => s_pitchClasses[1];
+  public static PitchClass C => new( NoteName.C );
 
   /// <summary>C♯ pitch class.</summary>
-  public static PitchClass CSharp => s_pitchClasses[4];
+  public static PitchClass CSharp => new( NoteName.C, Accidental.Sharp );
 
   /// <summary>D♭ pitch class.</summary>
-  public static PitchClass DFlat => s_pitchClasses[3];
+  public static PitchClass DFlat => new( NoteName.D, Accidental.Flat );
 
   /// <summary>D pitch class.</summary>
-  public static PitchClass D => s_pitchClasses[7];
+  public static PitchClass D => new( NoteName.D );
 
   /// <summary>D♯ pitch class.</summary>
-  public static PitchClass DSharp => s_pitchClasses[11];
+  public static PitchClass DSharp => new( NoteName.D, Accidental.Sharp );
 
   /// <summary>E♭ pitch class.</summary>
-  public static PitchClass EFlat => s_pitchClasses[10];
+  public static PitchClass EFlat => new( NoteName.E, Accidental.Flat );
 
   /// <summary>E pitch class.</summary>
-  public static PitchClass E => s_pitchClasses[13];
+  public static PitchClass E => new( NoteName.E );
 
   /// <summary>F pitch class.</summary>
-  public static PitchClass F => s_pitchClasses[16];
+  public static PitchClass F => new( NoteName.F );
 
   /// <summary>F♯ pitch class.</summary>
-  public static PitchClass FSharp => s_pitchClasses[19];
+  public static PitchClass FSharp => new( NoteName.F, Accidental.Sharp );
 
   /// <summary>G♭ pitch class.</summary>
-  public static PitchClass GFlat => s_pitchClasses[18];
+  public static PitchClass GFlat => new( NoteName.G, Accidental.Flat );
 
   /// <summary>G pitch class.</summary>
-  public static PitchClass G => s_pitchClasses[22];
+  public static PitchClass G => new( NoteName.G );
 
   /// <summary>G♯ pitch class.</summary>
-  public static PitchClass GSharp => s_pitchClasses[25];
+  public static PitchClass GSharp => new( NoteName.G, Accidental.Sharp );
 
   /// <summary>A♭ pitch class.</summary>
-  public static PitchClass AFlat => s_pitchClasses[24];
+  public static PitchClass AFlat => new( NoteName.A, Accidental.Flat );
 
   /// <summary>A pitch class.</summary>
-  public static PitchClass A => s_pitchClasses[27];
+  public static PitchClass A => new( NoteName.A );
 
   /// <summary>A♯ pitch class.</summary>
-  public static PitchClass ASharp => s_pitchClasses[31];
+  public static PitchClass ASharp => new( NoteName.A, Accidental.Sharp );
 
   /// <summary>B♭ pitch class.</summary>
-  public static PitchClass BFlat => s_pitchClasses[30];
+  public static PitchClass BFlat => new( NoteName.B, Accidental.Flat );
 
   /// <summary>B pitch class.</summary>
-  public static PitchClass B => s_pitchClasses[33];
+  public static PitchClass B => new( NoteName.B );
 
   /// <summary>
   ///   Gets an <see cref="IEqualityComparer{T}"/> that compares <see cref="PitchClass"/> values by
@@ -235,7 +229,7 @@ public readonly struct PitchClass
   /// <param name="octave">The octave.</param>
   /// <returns>The pitch.</returns>
   public Pitch this[
-    int octave ] => Pitch.Create( this, octave );
+    int octave ] => new( this, octave );
 
   #endregion
 
@@ -273,63 +267,10 @@ public readonly struct PitchClass
   ///   <see cref="EnharmonicEquals"/> for equality only) when chromatic pitch height matters,
   ///   e.g., determining octave rollover when rendering a pitch sequence.
   /// </remarks>
-  [Pure]
   public int EnharmonicCompareTo(
     PitchClass other )
   {
-    return _enharmonicIndex - other._enharmonicIndex;
-  }
-
-  /// <summary>Creates a new PitchClass.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">
-  ///   Thrown when one or more arguments are outside the
-  ///   required range.
-  /// </exception>
-  /// <param name="noteName">The name of the pitch class.</param>
-  /// <returns>A PitchClass.</returns>
-  public static PitchClass Create(
-    NoteName noteName )
-  {
-    return Create( noteName, Accidental.Natural );
-  }
-
-  /// <summary>Creates a new PitchClass.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">
-  ///   Thrown when one or more arguments are outside the
-  ///   required range.
-  /// </exception>
-  /// <param name="noteName">The name of the pitch class.</param>
-  /// <param name="accidental">(Optional) The accidental.</param>
-  /// <returns>A PitchClass.</returns>
-  public static PitchClass Create(
-    NoteName noteName,
-    Accidental accidental )
-  {
-    // This does not create a PitchClass. It returns one of the pre-created instances.
-    // from the enharmonics table.
-
-    // First we determine the row in the enharmonics table that corresponds to the
-    // pitch class name.
-    var noteIndex = s_noteNameIndices[(int) noteName];
-    var pitchClass = s_pitchClasses[noteIndex];
-
-    if( accidental == Accidental.Natural )
-    {
-      return pitchClass;
-    }
-
-    int enharmonicIndex = pitchClass._enharmonicIndex;
-
-    // Next we ensure that the enharmonic index wraps around when added to the accidental (-2 .. 2)
-    enharmonicIndex = s_enharmonics.WrapIndex( 0, enharmonicIndex + (int) accidental );
-
-    // Next we determine the index of the pitch class in the pitch class table (Offset by DoubleFlat, so 0..3)
-    var accidentalIndex = (int) accidental + Math.Abs( (int) Accidental.DoubleFlat );
-    noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
-    Debug.Assert( noteIndex != -1 );
-
-    pitchClass = s_pitchClasses[noteIndex];
-    return pitchClass;
+    return EnharmonicIndex - other.EnharmonicIndex;
   }
 
   /// <inheritdoc/>
@@ -342,7 +283,7 @@ public readonly struct PitchClass
   public bool Equals(
     PitchClass other )
   {
-    return _noteIndex == other._noteIndex;
+    return _noteName == other._noteName && _accidental == other._accidental;
   }
 
   /// <summary>
@@ -359,14 +300,19 @@ public readonly struct PitchClass
   ///   membership or key-signature-agnostic comparisons. See also <see cref="EnharmonicComparer"/> for an
   ///   <see cref="IEqualityComparer{T}"/> with this behavior.
   /// </remarks>
-  [Pure]
   public bool EnharmonicEquals(
     PitchClass other )
   {
-    return _enharmonicIndex == other._enharmonicIndex;
+    return EnharmonicIndex == other.EnharmonicIndex;
   }
 
-  /// <inheritdoc/>
+  /// <summary>
+  ///   Determines whether this instance and a specified object are equal.
+  /// </summary>
+  /// <param name="obj">The object to compare with the current instance.</param>
+  /// <returns>
+  ///   True if the specified object is a <see cref="PitchClass"/> and is equal to the current instance; otherwise, false.
+  /// </returns>
   public override bool Equals(
     object? obj )
   {
@@ -376,32 +322,10 @@ public readonly struct PitchClass
   /// <summary>Gets the enharmonic pitch class for this instance or null if none exists.</summary>
   /// <param name="noteName">The name of the enharmonic pitch class.</param>
   /// <returns>The enharmonic.</returns>
-  [Pure]
   public PitchClass? GetEnharmonic(
     NoteName noteName )
   {
-    var accidentalOffset = Math.Abs( (int) Accidental.DoubleFlat );
-    int enharmonicIndex = _enharmonicIndex;
-
-    for( var accidental = (int) Accidental.DoubleFlat; accidental <= (int) Accidental.DoubleSharp; ++accidental )
-    {
-      var accidentalIndex = accidental + accidentalOffset;
-      var noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
-
-      if( noteIndex == -1 )
-      {
-        continue;
-      }
-
-      var pitchClass = s_pitchClasses[noteIndex];
-
-      if( pitchClass.NoteName == noteName )
-      {
-        return pitchClass;
-      }
-    }
-
-    return null;
+    return GetEnharmonicCore( noteName, EnharmonicIndex );
   }
 
   /// <inheritdoc/>
@@ -411,7 +335,7 @@ public readonly struct PitchClass
   /// </remarks>
   public override int GetHashCode()
   {
-    return _noteIndex;
+    return HashCode.Combine( _noteName, _accidental );
   }
 
   /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
@@ -421,10 +345,12 @@ public readonly struct PitchClass
     PitchClass pitchClass )
   {
     // First we determine the interval quantity. We must add one because the interval quantity is 1-based (unison = 1, second = 2, etc.)
-    var quantity = (IntervalQuantity) ( ( pitchClass.NoteName - NoteName ).Wrap( Constants.NoteNameCount ) + 1 );
+    var quantity = (IntervalQuantity) ( pitchClass.NoteName.Subtract( NoteName )
+                                                  .Wrap( Constants.NoteNameCount )
+                                        + 1 );
 
     // Then we determine the semitone displacement from the enharmonic index, wrapping around the 12 semitones in an octave
-    var semitoneDisplacement = ( pitchClass._enharmonicIndex - _enharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
+    var semitoneDisplacement = ( pitchClass.EnharmonicIndex - EnharmonicIndex ).Wrap( Constants.OctaveSemitoneCount );
     var quality = Interval.CalcIntervalQuality( quantity, semitoneDisplacement, out var alterationDegree );
     var interval = new Interval( quantity, quality, alterationDegree );
     return interval;
@@ -489,18 +415,18 @@ public readonly struct PitchClass
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Formula"/> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="PitchClass"/> instance, according to the
   ///   provided format specifier.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Formula"/> object as specified by
+  ///   A string representation of the value of the current <see cref="PitchClass"/> object as specified by
   ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
   ///   <para>Format specifiers:</para>
-  ///   <para>"N": Name pattern. e.g. "Major".</para>
-  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  ///   <para>"N": Note name pattern. e.g. "C".</para>
+  ///   <para>"S": Accidental symbol pattern. e.g. "#".</para>
   /// </remarks>
   public string ToString(
     string format )
@@ -509,13 +435,13 @@ public readonly struct PitchClass
   }
 
   /// <summary>
-  ///   Returns a string representation of the value of this <see cref="Formula"/> instance, according to the
+  ///   Returns a string representation of the value of this <see cref="PitchClass"/> instance, according to the
   ///   provided format specifier and format provider.
   /// </summary>
   /// <param name="format">A custom format string.</param>
   /// <param name="provider">The format provider. Not used.</param>
   /// <returns>
-  ///   A string representation of the value of the current <see cref="Formula"/> object as specified by
+  ///   A string representation of the value of the current <see cref="PitchClass"/> object as specified by
   ///   <paramref name="format"/>.
   /// </returns>
   /// <remarks>
@@ -566,7 +492,7 @@ public readonly struct PitchClass
   public PitchClass Transpose(
     int semitoneCount )
   {
-    var enharmonicIndex = s_enharmonics.WrapIndex( 0, _enharmonicIndex + semitoneCount );
+    var enharmonicIndex = ( EnharmonicIndex + semitoneCount ).Wrap( Constants.OctaveSemitoneCount );
     return LookupPitchClass( enharmonicIndex );
   }
 
@@ -582,29 +508,13 @@ public readonly struct PitchClass
     var expectedNoteName = (NoteName) noteIndex.Wrap( Constants.NoteNameCount );
 
     // Next we calculate the new enharmonic index, wrapping around the 12 semitones in an octave
-    var semitoneCount = ( _enharmonicIndex + interval.SemitoneCount ).Wrap( Constants.OctaveSemitoneCount );
+    var semitoneCount = ( EnharmonicIndex + interval.SemitoneCount ).Wrap( Constants.OctaveSemitoneCount );
 
     // Now we look for a pitch class that matches the calculated note name and the enharmonic index
-    for( var i = 0; i < ENHARMONIC_COUNT; i++ )
-    {
-      var enharmonicIndex = s_enharmonics[semitoneCount, i];
-
-      // If the enharmonic index is -1, it means that there is no pitch class for this combination of enharmonic index and accidental
-      if( enharmonicIndex == -1 )
-      {
-        continue;
-      }
-
-      var pitchClass = s_pitchClasses[enharmonicIndex];
-
-      // If the pitch class has the same note name as the calculated note name, we return it
-      if( pitchClass.NoteName == expectedNoteName )
-      {
-        return pitchClass;
-      }
-    }
-
-    throw new InvalidOperationException( "No pitch class found for the calculated note name and enharmonic index." );
+    return GetEnharmonicCore( expectedNoteName, semitoneCount )
+           ?? throw new InvalidOperationException(
+             "No pitch class found for the calculated note name and enharmonic index."
+           );
   }
 
   /// <summary>Attempts to parse a PitchClass from the given string.</summary>
@@ -663,7 +573,14 @@ public readonly struct PitchClass
     return TryParse( value, provider, out pitchClass, out var tail ) && tail.IsEmpty;
   }
 
-  /// <inheritdoc/>
+  /// <summary>
+  /// Attempts to parse a PitchClass from the given string, returning any unparsed characters in the tail.
+  /// </summary>
+  /// <param name="value">The string representation of the pitch class.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitchClass">[out] The parsed pitch class.</param>
+  /// <param name="tail">[out] The unparsed characters.</param>
+  /// <returns>True if parsing was successful; otherwise, false.</returns>
   public static bool TryParse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider,
@@ -688,14 +605,14 @@ public readonly struct PitchClass
 
     var accidental = Accidental.Natural;
 
-    if( value.Length > 1 )
+    if( !tail.IsEmpty )
     {
       // Could be an accidental or some other character; use any partial match and
       // leave the tail to be processed by the caller
       Accidental.TryParse( tail, provider, out accidental, out tail );
     }
 
-    pitchClass = Create( noteName, accidental );
+    pitchClass = new PitchClass( noteName, accidental );
     return true;
   }
 
@@ -703,66 +620,71 @@ public readonly struct PitchClass
 
   #region Implementation
 
+  /// <summary>
+  ///   Gets the enharmonic equivalent of a pitch class for a given note name and enharmonic index.
+  /// </summary>
+  /// <param name="noteName">The note name.</param>
+  /// <param name="enharmonicIndex">The enharmonic index.</param>
+  /// <returns>The enharmonic pitch class if it exists; otherwise, null.</returns>
+  private static PitchClass? GetEnharmonicCore(
+    NoteName noteName,
+    int enharmonicIndex )
+  {
+    // We calculate the accidental that would be required to spell the enharmonic index with the given note name.
+    var accidental = ( enharmonicIndex - s_naturalSemitones[(int) noteName] ).Wrap( Constants.OctaveSemitoneCount );
+
+    // If the accidental is greater than half an octave, we can subtract an octave to get a negative accidental.
+    if( accidental > Constants.OctaveSemitoneCount / 2 )
+    {
+      accidental -= Constants.OctaveSemitoneCount;
+    }
+
+    // If the accidental is within the range of -2 to 2, we can create a new pitch class with the given note name and accidental.
+    return accidental is >= -ACCIDENTAL_OFFSET and <= ACCIDENTAL_OFFSET
+      ? new PitchClass( noteName, (Accidental) accidental )
+      : null;
+  }
+
   // Finds a pitch class that corresponds to the provided enharmonic index,
   // attempting to match the desired accidental mode
   internal static PitchClass LookupPitchClass(
     int enharmonicIndex )
   {
-    // Preferred order: Natural, then Sharp, then Flat, then DoubleSharp, then DoubleFlat
-    int[] preferred = [2, 3, 1, 4, 0];
-
-    foreach( var accidentalIndex in preferred )
-    {
-      var noteIndex = s_enharmonics[enharmonicIndex, accidentalIndex];
-
-      if( noteIndex != -1 )
-      {
-        return s_pitchClasses[noteIndex];
-      }
-    }
-
-    Trace.Assert( false, "Internal error! Must always find a pitch class" );
-    return C;
-  }
-
-  // Compares PitchClass values by enharmonic equivalence (sounding pitch class) rather than by
-  // spelling. Backs the public EnharmonicComparer property.
-  private sealed class EnharmonicEqualityComparer: IEqualityComparer<PitchClass>
-  {
-    public bool Equals(
-      PitchClass x,
-      PitchClass y )
-    {
-      return x.EnharmonicEquals( y );
-    }
-
-    public int GetHashCode(
-      PitchClass obj )
-    {
-      return obj._enharmonicIndex;
-    }
+    var spelling = s_preferredSpellings[enharmonicIndex.Wrap( Constants.OctaveSemitoneCount )];
+    var noteName = (NoteName) ( spelling / ACCIDENTAL_COUNT );
+    var accidental = (Accidental) ( spelling % ACCIDENTAL_COUNT - ACCIDENTAL_OFFSET );
+    return new PitchClass( noteName, accidental );
   }
 
   #endregion
 
   #region Operators
 
-  /// <summary>Explicit cast that converts the given pitch class to an int.</summary>
+  /// <summary>Explicitly converts a pitch class to its spelling-order integer value.</summary>
   /// <param name="pitchClass">The pitch class.</param>
-  /// <returns>The result of the operation.</returns>
+  /// <returns>An integer from -2 through 32, ordered by note name and then accidental.</returns>
   public static explicit operator int(
     PitchClass pitchClass )
   {
-    return pitchClass._noteIndex;
+    return ( (int) pitchClass.NoteName * ACCIDENTAL_COUNT )
+           + (int) pitchClass.Accidental;
   }
 
-  /// <summary>Explicit cast that converts the given int to a PitchClass.</summary>
-  /// <param name="value">The value.</param>
-  /// <returns>The result of the operation.</returns>
+  /// <summary>Explicitly converts a spelling-order integer value to a pitch class.</summary>
+  /// <param name="value">An integer from -2 through 32.</param>
+  /// <returns>The pitch class represented by <paramref name="value"/>.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">
+  ///   Thrown when <paramref name="value"/> is outside the range -2 through 32.
+  /// </exception>
   public static explicit operator PitchClass(
     int value )
   {
-    return s_pitchClasses[value];
+    ArgumentOutOfRangeException.ThrowIfLessThan( value, MIN_INTEGER_VALUE );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( value, MAX_INTEGER_VALUE );
+
+    var noteName = (NoteName) ( ( value + ACCIDENTAL_OFFSET ) / ACCIDENTAL_COUNT );
+    var accidental = (Accidental) ( value - ( (int) noteName * ACCIDENTAL_COUNT ) );
+    return new PitchClass( noteName, accidental );
   }
 
   /// <summary>Equality operator.</summary>

@@ -76,7 +76,7 @@ public sealed class InterpretationVocabularyTests
   [Fact]
   public void AnalysisTarget_ShouldRejectInvalidPitch()
   {
-    var act = () => AnalysisTarget.ForPitch( Pitch.Empty );
+    var act = () => AnalysisTarget.ForPitch( default( Pitch ) );
 
     act.Should()
        .Throw<ArgumentException>();

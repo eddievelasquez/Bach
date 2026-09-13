@@ -235,7 +235,7 @@ public sealed class Scale
   public IEnumerable<Pitch> Render(
     int octave )
   {
-    return Formula.Generate( Pitch.Create( Root, octave ) );
+    return Formula.Generate( new Pitch( Root, octave ) );
   }
 
   /// <summary>

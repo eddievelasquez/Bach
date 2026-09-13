@@ -27,24 +27,59 @@ using System.Linq;
 
 namespace Bach.Model.Instruments;
 
-/// <summary>Represents a stringed instrument, such as guitars, basses, ukeleles, etc.</summary>
+/// <summary>
+///   Represents a stringed instrument, such as guitars, basses, ukuleles, etc.
+/// </summary>
 public sealed class StringedInstrument
   : Instrument,
     IEquatable<StringedInstrument>
 {
   #region Constructors
 
-  private StringedInstrument(
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="StringedInstrument"/> class.
+  /// </summary>
+  /// <param name="definition">The stringed instrument definition.</param>
+  /// <param name="positionCount">The number of positions for a string.</param>
+  /// <param name="tuning">The stringed instrument's tuning.</param>
+  public StringedInstrument(
     StringedInstrumentDefinition definition,
-    Tuning tuning,
-    int positionCount )
+    int positionCount,
+    Tuning? tuning = null )
     : base( definition )
   {
-    ArgumentNullException.ThrowIfNull( tuning );
     ArgumentOutOfRangeException.ThrowIfLessThan( positionCount, 1 );
 
-    Tuning = tuning;
+    Tuning = tuning ?? definition.Tunings.Standard;
     PositionCount = positionCount;
+  }
+
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="StringedInstrument"/> class.
+  /// </summary>
+  /// <param name="instrumentDefinition">The stringed instrument definition.</param>
+  /// <param name="positionCount">The number of positions for a string.</param>
+  /// <param name="tuningId">The tuning ID.</param>
+  public StringedInstrument(
+    StringedInstrumentDefinition instrumentDefinition,
+    int positionCount,
+    string? tuningId = null )
+    : this( instrumentDefinition, positionCount, tuningId != null ? instrumentDefinition.Tunings[tuningId] : null )
+  {
+  }
+
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="StringedInstrument"/> class.
+  /// </summary>
+  /// <param name="instrumentDefinitionId">The stringed instrument definition ID.</param>
+  /// <param name="positionCount">The number of positions for a string.</param>
+  /// <param name="tuningId">The tuning ID.</param>
+  public StringedInstrument(
+    string instrumentDefinitionId,
+    int positionCount,
+    string? tuningId = null )
+    : this( Registry.StringedInstrumentDefinitions[instrumentDefinitionId], positionCount, tuningId )
+  {
   }
 
   #endregion
@@ -67,43 +102,37 @@ public sealed class StringedInstrument
 
   #region Public Methods
 
-  /// <summary>Creates a new StringedInstrument.</summary>
-  /// <param name="definition">The stringed instruments definition.</param>
-  /// <param name="positionCount">The number of positions per string.</param>
-  /// <param name="tuning">(Optional) The tuning of the instrument. If null, the standard tuning for the instrument is used.</param>
-  /// <exception cref="ArgumentNullException">Thrown when instrument definition is null.</exception>
-  /// <returns>A StringedInstrument.</returns>
-  public static StringedInstrument Create(
-    StringedInstrumentDefinition definition,
-    int positionCount,
-    Tuning? tuning = null )
+  /// <summary>
+  ///   Creates a new <see cref="Fingering"/> for the specified string number and position.
+  /// </summary>
+  /// <param name="stringNumber">The string number.</param>
+  /// <param name="position">The position.</param>
+  /// <returns>A new <see cref="Fingering"/>.</returns>
+  public Fingering CreateFingering(
+    int stringNumber,
+    int position )
   {
-    ArgumentNullException.ThrowIfNull( definition );
-
-    return new StringedInstrument( definition, tuning ?? definition.Tunings.Standard, positionCount );
+    return new Fingering( this, stringNumber, position );
   }
 
-  /// <summary>Creates a new StringedInstrument.</summary>
-  /// <param name="instrumentKey">The instruments language-neutral key.</param>
-  /// <param name="positionCount">The number of positions per string.</param>
-  /// <param name="tuningName">(Optional) Name of the tuning. If null, the standard tuning for the instrument is used.</param>
-  /// <returns>A StringedInstrument.</returns>
-  public static StringedInstrument Create(
-    string instrumentKey,
-    int positionCount,
-    string? tuningName = null )
+  /// <summary>
+  ///   Creates a new muted <see cref="Fingering"/> for the specified string number.
+  /// </summary>
+  /// <param name="stringNumber">The string number.</param>
+  /// <returns>A new muted <see cref="Fingering"/>.</returns>
+  public Fingering CreateMutedFingering(
+    int stringNumber )
   {
-    var definition = Registry.StringedInstrumentDefinitions[instrumentKey];
-
-    if( string.IsNullOrEmpty( tuningName ) )
-    {
-      tuningName = "Standard";
-    }
-
-    return new StringedInstrument( definition, definition.Tunings[tuningName], positionCount );
+    return new Fingering( this, stringNumber );
   }
 
-  /// <inheritdoc/>
+  /// <summary>
+  ///   Indicates whether the current object is equal to another object of the same type.
+  /// </summary>
+  /// <param name="other">The other <see cref="StringedInstrument"/> to compare.</param>
+  /// <returns>
+  ///   <c>true</c> if the current object is equal to the other object; otherwise, <c>false</c>.
+  /// </returns>
   public bool Equals(
     StringedInstrument? other )
   {
@@ -120,7 +149,13 @@ public sealed class StringedInstrument
     return base.Equals( other ) && Equals( Tuning, other.Tuning ) && PositionCount == other.PositionCount;
   }
 
-  /// <inheritdoc/>
+  /// <summary>
+  ///   Indicates whether the current object is equal to another object.
+  /// </summary>
+  /// <param name="obj">The other object to compare.</param>
+  /// <returns>
+  ///   <c>true</c> if the current object is equal to the other object; otherwise, <c>false</c>.
+  /// </returns>
   public override bool Equals(
     object? obj )
   {
@@ -132,13 +167,16 @@ public sealed class StringedInstrument
     return obj is StringedInstrument other && Equals( other );
   }
 
-  /// <inheritdoc/>
+  /// <summary>
+  ///   Returns a hash code for the current object.
+  /// </summary>
+  /// <returns>A hash code for the current object.</returns>
   public override int GetHashCode()
   {
     return HashCode.Combine( base.GetHashCode(), Tuning, PositionCount );
   }
 
-  /// <summary>Render a chord in the starting position with an optional position span.</summary>
+  /// <summary>Get a chord fingering in the starting position with an optional position span.</summary>
   /// <param name="chord">The chord.</param>
   /// <param name="startPosition">The starting position.</param>
   /// <param name="positionSpan">(Optional) The position span.</param>
@@ -148,7 +186,7 @@ public sealed class StringedInstrument
   ///   a string.
   /// </exception>
   /// <returns>An enumerator for a fingering sequence for the chord.</returns>
-  public IEnumerable<Fingering> Render(
+  public IEnumerable<Fingering> GetFingering(
     Chord chord,
     int startPosition,
     int positionSpan = 4 )
@@ -160,36 +198,70 @@ public sealed class StringedInstrument
     // Always start at the lowest string
     var startString = Definition.StringCount;
 
+    // Find the chord pitch that is closest to starting string and position
     var startPitch = Tuning[startString] + startPosition;
-    var octave = startPitch.Octave;
+
+    // Adjust the octave if necessary. Use chromatic pitch height (not spelling) since the goal is to
+    // detect whether the starting pitch class sounds lower than the chord's bass.
 
     // Use chromatic pitch height (not spelling) since the goal is to detect whether the starting
     // pitch class sounds higher than the chord's bass.
     if( startPitch.PitchClass.EnharmonicCompareTo( chord.Bass ) > 0 )
     {
-      ++octave;
+      startPitch = startPitch.Transpose( Interval.Octave );
     }
 
-    var notes = chord.Render( octave )
-                     .GetEnumerator();
-    notes.MoveNext();
+    // Materialize every chord pitch from the starting pitch through the highest string's pitch at the
+    // end of the requested position span.
+    var pitches = chord.Render( startPitch.Octave )
+                       .ToArray();
+    var pitchIndex = 0;
 
     // Go through all the strings
     for( var currentString = startString; currentString >= 1; --currentString )
     {
-      var fingering = GetChordFingering( notes, currentString, startPosition, positionSpan );
+      // Get the fingering for the current string. This will either be a pitch in the chord or a muted string.
+      var fingering = GetChordFingering( currentString );
       yield return fingering;
 
-      // Only go to the next pitch in the chord if a pitch
-      // is to be played in the current string
-      if( fingering.Position >= 0 )
+      // If the string is not muted, then move to the next pitch in the chord for the next string.
+      // If the string is muted, then keep the same pitch for the next string.
+      if( !fingering.IsMuted && pitchIndex < pitches.Length - 1 )
       {
-        notes.MoveNext();
+        ++pitchIndex;
       }
+    }
+
+    yield break;
+
+    Fingering GetChordFingering(
+      int stringNumber )
+    {
+      // Look for all the string pitches that are within the string's span
+      var low = GetPitchAt( stringNumber, startPosition );
+      var high = low + positionSpan;
+
+      // Find the first pitch in the chord that is within the string's span
+      while( pitchIndex < pitches.Length - 1 && pitches[pitchIndex] < low )
+      {
+        ++pitchIndex;
+      }
+
+      var current = pitches[pitchIndex];
+
+      // If the current pitch is higher than the high end of the span, then mute the string
+      if( current > high )
+      {
+        return CreateMutedFingering( stringNumber );
+      }
+
+      // Otherwise, return the fingering for the current pitch
+      var position = current - low + startPosition;
+      return CreateFingering( stringNumber, position );
     }
   }
 
-  /// <summary>Render a scale in the starting position with an optional position span.</summary>
+  /// <summary>Get a scale fingering in the starting position with an optional position span.</summary>
   /// <param name="scale">The scale.</param>
   /// <param name="startPosition">The starting position.</param>
   /// <param name="positionSpan">(Optional) The position span.</param>
@@ -199,7 +271,7 @@ public sealed class StringedInstrument
   ///   a string.
   /// </exception>
   /// <returns>An enumerator for a fingering sequence for the scale.</returns>
-  public IEnumerable<Fingering> Render(
+  public IEnumerable<Fingering> GetFingering(
     Scale scale,
     int startPosition,
     int positionSpan = 4 )
@@ -223,44 +295,50 @@ public sealed class StringedInstrument
       --octave;
     }
 
-    var scaleEnumerator = scale.Render( octave )
-                               .SkipWhile( pitch => pitch < startPitch )
-                               .GetEnumerator();
+    // Fingering proceeds from the lowest string to the highest string. Therefore, the final pitch
+    // that can be used is the highest string's pitch at the end of the requested position span.
+    // Materialize every scale pitch from the starting pitch through that endpoint so the loop can
+    // advance across the gaps between adjacent strings. Those gaps depend on the tuning, so the
+    // required array length cannot be calculated from string count and position span alone.
+    var endPitch = GetPitchAt( 1, startPosition + positionSpan );
 
-    try
+    var pitches = scale.Render( octave )
+                       .SkipWhile( pitch => pitch < startPitch )
+                       .TakeWhile( pitch => pitch.EnharmonicCompareTo( endPitch ) <= 0 )
+                       .ToArray();
+    var pitchIndex = 0;
+
+    // Go through all the strings
+    for( var currentString = startString; currentString >= 1; --currentString )
     {
-      scaleEnumerator.MoveNext();
+      // The lowest pitch that can be used on this string is the pitch at the starting position
+      var low = GetPitchAt( currentString, startPosition );
 
-      // Go through all the strings
-      for( var currentString = startString; currentString >= 1; --currentString )
+      // Keep each pitch within this string's position span. When the next string starts within
+      // that span, stop one pitch below its starting pitch so that the next string owns that pitch.
+      // For the highest string, GetPitchAt returns Pitch.MaxValue because there is no next string.
+      var highThisString = low + positionSpan;
+      var lowNextString = GetPitchAt( currentString - 1, startPosition ) - 1;
+      var high = highThisString <= lowNextString ? highThisString : lowNextString;
+
+      while( pitchIndex < pitches.Length )
       {
-        var low = GetPitchAt( currentString, startPosition );
+        var current = pitches[pitchIndex];
 
-        // The maximum value that we will use for this string is the minimum
-        // between the position span on this string and the value of the pitch
-        // before the start of the next string
-        var high = Pitch.Min( low + positionSpan, GetPitchAt( currentString - 1, startPosition ) - 1 );
-
-        while( true )
+        // If the current pitch is higher than the high end of the span, then we will move on to
+        // the next string. Stop processing this string.
+        if( current.EnharmonicCompareTo( high ) > 0 )
         {
-          var current = scaleEnumerator.Current;
-
-          if( current > high )
-          {
-            break;
-          }
-
-          var position = current - low + startPosition;
-          var fingering = Fingering.Create( this, currentString, position );
-          yield return fingering;
-
-          scaleEnumerator.MoveNext(); // Will never return false.
+          break;
         }
+
+        // Otherwise, return the fingering for the current pitch
+        var position = current - low + startPosition;
+        var fingering = CreateFingering( currentString, position );
+        yield return fingering;
+
+        ++pitchIndex;
       }
-    }
-    finally
-    {
-      scaleEnumerator.Dispose();
     }
   }
 
@@ -268,41 +346,13 @@ public sealed class StringedInstrument
 
   #region Implementation
 
-  private Fingering GetChordFingering(
-    IEnumerator<Pitch> notes,
-    int stringNumber,
-    int startPosition,
-    int positionSpan )
-  {
-    var low = GetPitchAt( stringNumber, startPosition );
-    var high = low + positionSpan;
-    var current = notes.Current;
-
-    while( current < low )
-    {
-      notes.MoveNext();
-      current = notes.Current;
-    }
-
-    Fingering fingering;
-
-    if( current <= high )
-    {
-      var position = current - low + startPosition;
-      fingering = Fingering.Create( this, stringNumber, position );
-    }
-    else
-    {
-      fingering = Fingering.Create( this, stringNumber );
-    }
-
-    return fingering;
-  }
-
   private Pitch GetPitchAt(
     int @string,
     int position )
   {
+    // If the string number is out of range, return Pitch.MaxValue to indicate
+    // that there is no pitch for that string. Using Pitch.MaxValue ensures that
+    // the loop behaves correctly even when the string number is out of range.
     if( @string < 1 || @string > Definition.StringCount )
     {
       return Pitch.MaxValue;

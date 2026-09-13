@@ -1,20 +1,20 @@
-// Module Name: PitchTest.cs
+// Module Name: PitchTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -31,14 +31,15 @@ public sealed class PitchTests
   public static TheoryData<Pitch, Pitch, int> CompareToTestData =>
     new()
     {
-      { Pitch.Create( NoteName.A, Accidental.Natural, 1 ), Pitch.Create( NoteName.A, Accidental.Natural, 1 ), 0 },
-      { Pitch.Create( NoteName.A, Accidental.Natural, 1 ), Pitch.Create( NoteName.A, Accidental.Sharp, 1 ), -1 },
-      { Pitch.Create( NoteName.A, Accidental.Natural, 1 ), Pitch.Create( NoteName.A, Accidental.Flat, 1 ), 1 },
-      { Pitch.Create( NoteName.A, Accidental.Natural, 1 ), Pitch.Create( NoteName.A, Accidental.Natural, 2 ), -1 },
-      { Pitch.Create( NoteName.A, Accidental.Natural, 1 ), Pitch.Create( NoteName.A, Accidental.Flat, 2 ), -1 },
-      { Pitch.Create( NoteName.A, Accidental.Natural, 1 ), Pitch.Create( NoteName.A, Accidental.Sharp, 2 ), -1 },
-      { Pitch.Create( NoteName.A, Accidental.Natural, 1 ), Pitch.Create( NoteName.C, Accidental.Natural, 1 ), 1 },
-      { Pitch.Create( NoteName.C, Accidental.Natural, 1 ), Pitch.Create( NoteName.A, Accidental.Natural, 1 ), -1 }
+      { new Pitch( NoteName.B, Accidental.Sharp, 4 ), new Pitch( NoteName.C, Accidental.Flat, 5 ), 1 },
+      { new Pitch( NoteName.A, Accidental.Natural, 1 ), new Pitch( NoteName.A, Accidental.Natural, 1 ), 0 },
+      { new Pitch( NoteName.A, Accidental.Natural, 1 ), new Pitch( NoteName.A, Accidental.Sharp, 1 ), -1 },
+      { new Pitch( NoteName.A, Accidental.Natural, 1 ), new Pitch( NoteName.A, Accidental.Flat, 1 ), 1 },
+      { new Pitch( NoteName.A, Accidental.Natural, 1 ), new Pitch( NoteName.A, Accidental.Natural, 2 ), -1 },
+      { new Pitch( NoteName.A, Accidental.Natural, 1 ), new Pitch( NoteName.A, Accidental.Flat, 2 ), -1 },
+      { new Pitch( NoteName.A, Accidental.Natural, 1 ), new Pitch( NoteName.A, Accidental.Sharp, 2 ), -1 },
+      { new Pitch( NoteName.A, Accidental.Natural, 1 ), new Pitch( NoteName.C, Accidental.Natural, 1 ), 1 },
+      { new Pitch( NoteName.C, Accidental.Natural, 1 ), new Pitch( NoteName.A, Accidental.Natural, 1 ), -1 }
     };
 
   public static TheoryData<NoteName, Accidental, int> OutOfRangePitches => new()
@@ -100,11 +101,11 @@ public sealed class PitchTests
       { "A4", Interval.Fifth, "E5" },
       { "Ab4", Interval.Fifth, "Eb5" },
       { "G#4", Interval.DiminishedSixth, "Eb5" },
-      { "F#4", Interval.AugmentedFourth, "C5" },
-      { "Gb4", Interval.DiminishedFifth, "C5" },
+      { "F#4", Interval.AugmentedFourth, "B#4" },
+      { "Gb4", Interval.DiminishedFifth, "Dbb5" },
       { "C4", Interval.AugmentedSecond, "D#4" },
-      { "C4", Interval.DiminishedFifth, "F#4" },
-      { "C4", Interval.AugmentedFourth, "Gb4" },
+      { "C4", Interval.DiminishedFifth, "Gb4" },
+      { "C4", Interval.AugmentedFourth, "F#4" },
       { "D#4", Interval.DiminishedSeventh, "C5" },
       { "D#4", Interval.DiminishedThird, "F4" },
       { "D##4", Interval.DiminishedFourth, "G#4" }
@@ -152,12 +153,12 @@ public sealed class PitchTests
   public static TheoryData<Pitch, string, string> ToStringWithFormatData =>
     new()
     {
-      { Pitch.Create( NoteName.C, Accidental.Natural, 4 ), "N", "C" },
-      { Pitch.Create( NoteName.C, Accidental.Sharp, 4 ), "N", "C#" },
-      { Pitch.Create( NoteName.C, Accidental.Natural, 4 ), "O", "4" },
-      { Pitch.Create( NoteName.C, Accidental.Natural, 4 ), "M", "60" },
-      { Pitch.Create( NoteName.C, Accidental.Natural, 4 ), "NO", "C4" },
-      { Pitch.Create( NoteName.A, Accidental.Natural, 4 ), "N (O)", "A (4)" }
+      { new Pitch( NoteName.C, Accidental.Natural, 4 ), "N", "C" },
+      { new Pitch( NoteName.C, Accidental.Sharp, 4 ), "N", "C#" },
+      { new Pitch( NoteName.C, Accidental.Natural, 4 ), "O", "4" },
+      { new Pitch( NoteName.C, Accidental.Natural, 4 ), "M", "60" },
+      { new Pitch( NoteName.C, Accidental.Natural, 4 ), "NO", "C4" },
+      { new Pitch( NoteName.A, Accidental.Natural, 4 ), "N (O)", "A (4)" }
     };
 
   #endregion
@@ -168,7 +169,7 @@ public sealed class PitchTests
   public void Accidental_ShouldReturnPitchClassAccidental_WhenAccessed()
   {
     // Arrange
-    var pitch = Pitch.Create( PitchClass.AFlat, 2 );
+    var pitch = new Pitch( PitchClass.AFlat, 2 );
 
     // Act
     var result = pitch.Accidental;
@@ -184,19 +185,19 @@ public sealed class PitchTests
   [Fact]
   public void AdditionOperator_ShouldReturnExpectedValue_WhenAddingPitchAndInt()
   {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+    var c2 = new Pitch( NoteName.C, Accidental.Natural, 2 );
 
     ( c2 + 1 ).Should()
-              .Be( Pitch.Create( NoteName.C, Accidental.Sharp, 2 ) );
+              .Be( new Pitch( NoteName.C, Accidental.Sharp, 2 ) );
 
     ( c2 + -1 ).Should()
-               .Be( Pitch.Create( NoteName.B, Accidental.Natural, 1 ) );
+               .Be( new Pitch( NoteName.B, Accidental.Natural, 1 ) );
 
     ( c2 + 2 ).Should()
-              .Be( Pitch.Create( NoteName.D, Accidental.Natural, 2 ) );
+              .Be( new Pitch( NoteName.D, Accidental.Natural, 2 ) );
 
     ( c2 + -2 ).Should()
-               .Be( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ) );
+               .Be( new Pitch( NoteName.A, Accidental.Sharp, 1 ) );
   }
 
   [Theory]
@@ -226,13 +227,13 @@ public sealed class PitchTests
   public void CompareTo_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
     {
-      var a = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+      var a = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
       a.CompareTo( a )
        .Should()
        .Be( 0 );
 
-      var b = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+      var b = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
       a.CompareTo( b )
        .Should()
@@ -242,7 +243,7 @@ public sealed class PitchTests
        .Should()
        .Be( 0 );
 
-      var c = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+      var c = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
       b.CompareTo( c )
        .Should()
@@ -254,13 +255,13 @@ public sealed class PitchTests
     }
 
     {
-      var a = Pitch.Create( NoteName.C, Accidental.Natural, 1 );
-      var b = Pitch.Create( NoteName.D, Accidental.Natural, 1 );
+      var a = new Pitch( NoteName.C, Accidental.Natural, 1 );
+      var b = new Pitch( NoteName.D, Accidental.Natural, 1 );
 
       ( -b.CompareTo( a ) ).Should()
                            .Be( a.CompareTo( b ) );
 
-      var c = Pitch.Create( NoteName.E, Accidental.Natural, 1 );
+      var c = new Pitch( NoteName.E, Accidental.Natural, 1 );
 
       a.CompareTo( b )
        .Should()
@@ -279,8 +280,8 @@ public sealed class PitchTests
   [Fact]
   public void ComparisonOperators_ShouldReturnExpectedValue_WhenComparingPitches()
   {
-    var a = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var b = Pitch.Create( NoteName.B, Accidental.Natural, 1 );
+    var a = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var b = new Pitch( NoteName.B, Accidental.Natural, 1 );
 
     ( b > a ).Should()
              .BeTrue();
@@ -295,6 +296,43 @@ public sealed class PitchTests
               .BeFalse();
   }
 
+  [Fact]
+  public void Equality_ShouldBeSpellingSensitive_WhenPitchesAreEnharmonic()
+  {
+    var sharp = new Pitch( NoteName.C, Accidental.Sharp, 4 );
+    var flat = new Pitch( NoteName.D, Accidental.Flat, 4 );
+
+    sharp.Equals( flat )
+         .Should()
+         .BeFalse();
+
+    ( sharp == flat ).Should()
+                     .BeFalse();
+
+    sharp.EnharmonicEquals( flat )
+         .Should()
+         .BeTrue();
+
+    Pitch.EnharmonicComparer.Equals( sharp, flat )
+         .Should()
+         .BeTrue();
+  }
+
+  [Fact]
+  public void EnharmonicCompareTo_ShouldReturnZero_WhenPitchesAreEnharmonic()
+  {
+    var sharp = new Pitch( NoteName.C, Accidental.Sharp, 4 );
+    var flat = new Pitch( NoteName.D, Accidental.Flat, 4 );
+
+    sharp.CompareTo( flat )
+         .Should()
+         .NotBe( 0 );
+
+    sharp.EnharmonicCompareTo( flat )
+         .Should()
+         .Be( 0 );
+  }
+
   [Theory]
   [MemberData( nameof( CreateTestData ) )]
   public void Create_ShouldReturnExpectedValue_WhenUsingToneAndAccidental(
@@ -302,7 +340,7 @@ public sealed class PitchTests
     Accidental accidental,
     int octave )
   {
-    var target = Pitch.Create( noteName, accidental, octave );
+    var target = new Pitch( noteName, accidental, octave );
 
     target.PitchClass.NoteName.Should()
           .Be( noteName );
@@ -321,8 +359,31 @@ public sealed class PitchTests
     Accidental accidental,
     int octave )
   {
-    var pitchClass = PitchClass.Create( noteName, accidental );
-    var act = () => Pitch.Create( pitchClass, octave );
+    var pitchClass = new PitchClass( noteName, accidental );
+    var act = () => new Pitch( pitchClass, octave );
+
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
+  }
+
+  [Fact]
+  public void Constructor_ShouldCalculateMidiValue_WhenGivenPitchClassAndOctave()
+  {
+    var target = new Pitch( PitchClass.A, 4 );
+
+    target.Midi.Should()
+          .Be( 69 );
+  }
+
+  [Theory]
+  [MemberData( nameof( OutOfRangePitches ) )]
+  public void Constructor_ShouldThrowArgumentOutOfRangeException_WhenPitchIsOutOfRange(
+    NoteName noteName,
+    Accidental accidental,
+    int octave )
+  {
+    var pitchClass = new PitchClass( noteName, accidental );
+    var act = () => new Pitch( pitchClass, octave );
 
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
@@ -331,21 +392,21 @@ public sealed class PitchTests
   [Fact]
   public void DecrementOperator_ShouldReturnExpectedValue_WhenDecrementingPitch()
   {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+    var c2 = new Pitch( NoteName.C, Accidental.Natural, 2 );
 
     ( --c2 ).Should()
-            .Be( Pitch.Create( NoteName.B, Accidental.Natural, 1 ) );
+            .Be( new Pitch( NoteName.B, Accidental.Natural, 1 ) );
 
     ( --c2 ).Should()
-            .Be( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ) );
+            .Be( new Pitch( NoteName.A, Accidental.Sharp, 1 ) );
   }
 
   [Fact]
   public void EqualityOperator_ShouldReturnExpectedValue_WhenComparingPitches()
   {
-    var a = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var b = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var c = Pitch.Create( NoteName.B, Accidental.Natural, 1 );
+    var a = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var b = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var c = new Pitch( NoteName.B, Accidental.Natural, 1 );
 
     ( a == b ).Should()
               .BeTrue();
@@ -360,7 +421,7 @@ public sealed class PitchTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingDifferentTypes()
   {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var actual = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     // ReSharper disable once SuspiciousTypeConversion.Global
     actual.Equals( int.MinValue )
@@ -371,7 +432,7 @@ public sealed class PitchTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingObjectOfDifferentType()
   {
-    object actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    object actual = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     actual.Equals( int.MinValue )
           .Should()
@@ -381,7 +442,7 @@ public sealed class PitchTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingToNull()
   {
-    object actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    object actual = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     actual.Equals( null )
           .Should()
@@ -391,7 +452,7 @@ public sealed class PitchTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenComparingToNull_ObjectVariant()
   {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var actual = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     actual.Equals( null )
           .Should()
@@ -401,7 +462,7 @@ public sealed class PitchTests
   [Fact]
   public void Equals_ShouldReturnTrue_WhenComparingTheSameObject()
   {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var actual = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     actual.Equals( actual )
           .Should()
@@ -411,9 +472,9 @@ public sealed class PitchTests
   [Fact]
   public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
   {
-    object x = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    object y = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    object z = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    object x = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    object y = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    object z = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
@@ -444,9 +505,9 @@ public sealed class PitchTests
   [Fact]
   public void Equals_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
   {
-    var x = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var y = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var z = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var x = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var y = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var z = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     x.Equals( x )
      .Should()
@@ -487,7 +548,7 @@ public sealed class PitchTests
   [Fact]
   public void GetEnharmonic_ShouldReturnExpectedPitch_WhenGivenEnharmonicNoteName()
   {
-    var pitch = Pitch.Create( NoteName.C, Accidental.Sharp, 4 );
+    var pitch = new Pitch( NoteName.C, Accidental.Sharp, 4 );
 
     var enharmonic = pitch.GetEnharmonic( NoteName.D );
 
@@ -505,8 +566,8 @@ public sealed class PitchTests
   [Fact]
   public void GetHashCode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
   {
-    var actual = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var expected = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
+    var actual = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var expected = new Pitch( NoteName.A, Accidental.Natural, 1 );
 
     expected.Equals( actual )
             .Should()
@@ -520,21 +581,21 @@ public sealed class PitchTests
   [Fact]
   public void IncrementOperator_ShouldReturnExpectedValue_WhenIncrementingPitch()
   {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+    var c2 = new Pitch( NoteName.C, Accidental.Natural, 2 );
 
     ( ++c2 ).Should()
-            .Be( Pitch.Create( NoteName.C, Accidental.Sharp, 2 ) );
+            .Be( new Pitch( NoteName.C, Accidental.Sharp, 2 ) );
 
     ( ++c2 ).Should()
-            .Be( Pitch.Create( NoteName.D, Accidental.Natural, 2 ) );
+            .Be( new Pitch( NoteName.D, Accidental.Natural, 2 ) );
   }
 
   [Fact]
   public void InequalityOperator_ShouldReturnExpectedValue_WhenComparingPitches()
   {
-    var a = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var b = Pitch.Create( NoteName.A, Accidental.Natural, 1 );
-    var c = Pitch.Create( NoteName.B, Accidental.Natural, 1 );
+    var a = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var b = new Pitch( NoteName.A, Accidental.Natural, 1 );
+    var c = new Pitch( NoteName.B, Accidental.Natural, 1 );
 
     ( a != c ).Should()
               .BeTrue();
@@ -550,7 +611,7 @@ public sealed class PitchTests
   public void IsValid_ShouldReturnFalse_ForEmpty()
   {
     // Arrange
-    var pitch = Pitch.Empty;
+    var pitch = default( Pitch );
 
     // Act
     var result = pitch.IsValid;
@@ -588,23 +649,6 @@ public sealed class PitchTests
           .BeTrue();
   }
 
-  [Fact]
-  public void Max_ShouldReturnExpectedValue_WhenComparingPitches()
-  {
-    // Arrange
-    var pitchA4 = Pitch.Parse( "A4" );
-    var pitchB4 = Pitch.Parse( "B4" );
-
-    // Act & Assert
-    Pitch.Max( pitchA4, pitchB4 )
-         .Should()
-         .Be( pitchB4 );
-
-    Pitch.Max( pitchB4, pitchA4 )
-         .Should()
-         .Be( pitchB4 );
-  }
-
   [Theory]
   [MemberData( nameof( MidiTestData ) )]
   public void Midi_ShouldReturnExpectedValue_WhenCalculatingMidiValue(
@@ -619,34 +663,21 @@ public sealed class PitchTests
   [Fact]
   public void Midi_ShouldThrowArgumentOutOfRangeException_WhenMidiValueIsInvalid()
   {
-    var act = () => Pitch.CreateFromMidi( 11 );
+    var act = () =>
+    {
+      var pitch = new Pitch( 11 );
+      return pitch;
+    };
 
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
   }
 
   [Fact]
-  public void Min_ShouldReturnExpectedValue_WhenComparingPitches()
-  {
-    // Arrange
-    var pitchA4 = Pitch.Parse( "A4" );
-    var pitchB4 = Pitch.Parse( "B4" );
-
-    // Act & Assert
-    Pitch.Min( pitchA4, pitchB4 )
-         .Should()
-         .Be( pitchA4 );
-
-    Pitch.Min( pitchB4, pitchA4 )
-         .Should()
-         .Be( pitchA4 );
-  }
-
-  [Fact]
   public void NoteName_ShouldReturnPitchClassNoteName_WhenAccessed()
   {
     // Arrange
-    var pitch = Pitch.Create( PitchClass.GSharp, 3 );
+    var pitch = new Pitch( PitchClass.GSharp, 3 );
 
     // Act
     var result = pitch.NoteName;
@@ -677,7 +708,7 @@ public sealed class PitchTests
   {
     // Arrange
     var expected = PitchClass.DSharp;
-    var pitch = Pitch.Create( expected, 4 );
+    var pitch = new Pitch( expected, 4 );
 
     // Act
     var result = pitch.PitchClass;
@@ -690,7 +721,7 @@ public sealed class PitchTests
   [Fact]
   public void Pitch_ShouldImplementIPitchClassContract()
   {
-    IPitch<Pitch> pitch = Pitch.Create( NoteName.C, Accidental.Natural, 4 );
+    IPitch<Pitch> pitch = new Pitch( NoteName.C, Accidental.Natural, 4 );
 
     pitch.NoteName.Should()
          .Be( NoteName.C );
@@ -700,33 +731,33 @@ public sealed class PitchTests
 
     pitch.Transpose( 1 )
          .Should()
-         .Be( Pitch.Create( NoteName.C, Accidental.Sharp, 4 ) );
+         .Be( new Pitch( NoteName.C, Accidental.Sharp, 4 ) );
 
     pitch.Transpose( -1 )
          .Should()
-         .Be( Pitch.Create( NoteName.B, Accidental.Natural, 3 ) );
+         .Be( new Pitch( NoteName.B, Accidental.Natural, 3 ) );
   }
 
   [Fact]
   public void SubtractionOperator_ShouldReturnExpectedValue_WhenSubtractingPitchAndInt()
   {
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
+    var c2 = new Pitch( NoteName.C, Accidental.Natural, 2 );
 
     ( c2 - 1 ).Should()
-              .Be( Pitch.Create( NoteName.B, Accidental.Natural, 1 ) );
+              .Be( new Pitch( NoteName.B, Accidental.Natural, 1 ) );
 
     ( c2 - 2 ).Should()
-              .Be( Pitch.Create( NoteName.A, Accidental.Sharp, 1 ) );
+              .Be( new Pitch( NoteName.A, Accidental.Sharp, 1 ) );
   }
 
   [Fact]
   public void SubtractionOperator_ShouldReturnExpectedValue_WhenSubtractingTwoPitches()
   {
-    var cDoubleFlat2 = Pitch.Create( NoteName.C, Accidental.DoubleFlat, 2 );
-    var cFlat2 = Pitch.Create( NoteName.C, Accidental.Flat, 2 );
-    var c2 = Pitch.Create( NoteName.C, Accidental.Natural, 2 );
-    var cSharp2 = Pitch.Create( NoteName.C, Accidental.Sharp, 2 );
-    var cDoubleSharp2 = Pitch.Create( NoteName.C, Accidental.DoubleSharp, 2 );
+    var cDoubleFlat2 = new Pitch( NoteName.C, Accidental.DoubleFlat, 2 );
+    var cFlat2 = new Pitch( NoteName.C, Accidental.Flat, 2 );
+    var c2 = new Pitch( NoteName.C, Accidental.Natural, 2 );
+    var cSharp2 = new Pitch( NoteName.C, Accidental.Sharp, 2 );
+    var cDoubleSharp2 = new Pitch( NoteName.C, Accidental.DoubleSharp, 2 );
 
     // Test interval with same pitches in the same octave with different accidentals
     ( cDoubleFlat2 - cDoubleFlat2 ).Should()
@@ -756,7 +787,7 @@ public sealed class PitchTests
     ( cDoubleSharp2 - cDoubleFlat2 ).Should()
                                     .Be( 4 );
 
-    var c3 = Pitch.Create( NoteName.C, Accidental.Natural, 3 );
+    var c3 = new Pitch( NoteName.C, Accidental.Natural, 3 );
 
     ( c2 - c3 ).Should()
                .Be( -12 );
@@ -768,19 +799,19 @@ public sealed class PitchTests
   [Fact]
   public void ToString_ShouldReturnDefaultFormat_WhenFormatIsEmpty()
   {
-    Pitch.Create( NoteName.C, Accidental.Sharp, 4 )
-         .ToString( "" )
-         .Should()
-         .Be( "C#4" );
+    new Pitch( NoteName.C, Accidental.Sharp, 4 )
+      .ToString( "" )
+      .Should()
+      .Be( "C#4" );
   }
 
   [Fact]
   public void ToString_ShouldReturnDefaultFormat_WhenFormatIsNull()
   {
-    Pitch.Create( NoteName.C, Accidental.Sharp, 4 )
-         .ToString( null! )
-         .Should()
-         .Be( "C#4" );
+    new Pitch( NoteName.C, Accidental.Sharp, 4 )
+      .ToString( null! )
+      .Should()
+      .Be( "C#4" );
   }
 
   [Theory]
@@ -791,7 +822,7 @@ public sealed class PitchTests
     int octave,
     string expected )
   {
-    var target = Pitch.Create( noteName, accidental, octave );
+    var target = new Pitch( noteName, accidental, octave );
 
     target.ToString()
           .Should()
@@ -818,7 +849,7 @@ public sealed class PitchTests
 
     // Assert
     result.Should()
-          .Be( (int) Pitch.MaxValue - (int) Pitch.MinValue );
+          .Be( Pitch.MaxValue - Pitch.MinValue );
 
     result.Should()
           .BePositive();
@@ -835,7 +866,7 @@ public sealed class PitchTests
 
     // Assert
     result.Should()
-          .Be( (int) Pitch.MaxValue - (int) Pitch.MinValue );
+          .Be( Pitch.MaxValue - Pitch.MinValue );
 
     result.Should()
           .BePositive();
@@ -870,7 +901,7 @@ public sealed class PitchTests
          .BeTrue();
 
     actual.Should()
-          .Be( Pitch.Create( expectedNoteName, expectedAccidental, expectedOctave ) );
+          .Be( new Pitch( expectedNoteName, expectedAccidental, expectedOctave ) );
   }
 
   #endregion

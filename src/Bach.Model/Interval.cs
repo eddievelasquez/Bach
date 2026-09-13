@@ -57,7 +57,14 @@ public readonly struct Interval
 
   // Base semitone count for each interval quantity (unison, second, third, ..., fourteenth)
   // without considering quality.
-  private static readonly int[] s_quantitySemitones = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23];
+  private static readonly int[] s_quantitySemitones =
+  [
+    0, 2, 4,
+    5, 7, 9,
+    11, 12, 14,
+    16, 17, 19,
+    21, 23
+  ];
 
   /// <summary>
   ///   The Unison interval
@@ -354,7 +361,10 @@ public readonly struct Interval
   ///   Gets the enharmonic equivalent of the interval.
   /// </summary>
   /// <returns>The enharmonic equivalent of the interval.</returns>
-  /// <remarks>If the interval is descending, the enharmonic equivalent will have a smaller quantity; if ascending, a larger quantity.</remarks>
+  /// <remarks>
+  ///   If the interval is descending, the enharmonic equivalent will have a smaller quantity; if ascending, a larger
+  ///   quantity.
+  /// </remarks>
   public Interval GetEnharmonicEquivalent()
   {
     /*
@@ -457,9 +467,15 @@ public readonly struct Interval
   ///   <para>
   ///     "s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.
   ///   </para>
-  ///   <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  ///   <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
-  ///   <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
+  ///   <para>
+  ///     "S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.
+  ///   </para>
+  ///   <para>
+  ///     "m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.
+  ///   </para>
+  ///   <para>
+  ///     "M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.
+  ///   </para>
   ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
   ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
@@ -483,9 +499,15 @@ public readonly struct Interval
   ///   <para>
   ///     "s": Classical symbol pattern. e.g. (m)minor, (d)diminished, (A)augmented. Excludes perfect and major.
   ///   </para>
-  ///   <para>"S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.</para>
-  ///   <para>"m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.</para>
-  ///   <para>"M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.</para>
+  ///   <para>
+  ///     "S": Classical symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (d)diminished, (A)augmented.
+  ///   </para>
+  ///   <para>
+  ///     "m": Modern symbol pattern. e.g. (m)minor, (°)diminished, (+)augmented. Excludes perfect and major.
+  ///   </para>
+  ///   <para>
+  ///     "M": Modern symbol pattern. e.g. (P)perfect, (M)major, (m)minor, (°)diminished, (+)augmented.
+  ///   </para>
   ///   <para>"q": Numeric quantity pattern. e.g. 1, 2, 3, etc.</para>
   ///   <para>"Q": Ordinal quantity pattern. e.g. First, Second, Third.</para>
   /// </remarks>
@@ -674,6 +696,56 @@ public readonly struct Interval
     return true;
   }
 
+  /// <summary>
+  ///   Converts a semitone distance from the unison into the corresponding interval.
+  /// </summary>
+  /// <param name="semitones">The semitone distance from the unison.</param>
+  /// <returns>The interval represented by the semitone distance.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the semitone distance is outside the supported range.</exception>
+  public static Interval FromSemitones(
+    int semitones )
+  {
+    if( semitones == 0 )
+    {
+      return Unison;
+    }
+
+    // If the semitone distance is negative, it indicates a descending interval.
+    if( semitones < 0 )
+    {
+      return FromSemitones( -semitones )
+        .FlipDirection();
+    }
+
+    // Iterate through the quantities to find the matching interval.
+    for( var quantityIndex = 1; quantityIndex < s_quantitySemitones.Length; quantityIndex++ )
+    {
+      var quantity = (IntervalQuantity) ( quantityIndex + 1 );
+      var quantitySemitones = s_quantitySemitones[quantityIndex];
+
+      // If the semitone distance matches the base semitone count for the quantity, we found a perfect or major interval
+      if( semitones == quantitySemitones )
+      {
+        return new Interval( quantity, quantity.IsPerfectBased ? IntervalQuality.Perfect : IntervalQuality.Major );
+      }
+
+      // If the semitone distance is less than the base semitone count for the quantity, we have a minor or augmented interval
+      if( semitones < quantitySemitones )
+      {
+        return quantity.IsPerfectBased
+          ? new Interval( quantity - 1, IntervalQuality.Augmented )
+          : new Interval( quantity, IntervalQuality.Minor );
+      }
+    }
+
+    // If we reach here, the semitone distance is outside the supported range of intervals.
+    throw new ArgumentOutOfRangeException(
+      nameof( semitones ),
+      semitones,
+      $"Semitone distance must be within the supported range of zero to {s_quantitySemitones[^1]}."
+    );
+  }
+
   #endregion
 
   #region Implementation
@@ -784,7 +856,8 @@ public readonly struct Interval
     alterationDegree = quality switch
     {
       IntervalQuality.Augmented => offset, // Positive offset for augmented intervals
-      IntervalQuality.Diminished => quantity.IsPerfectBased ? -offset : -offset - 1, // Negative offset for diminished intervals
+      IntervalQuality.Diminished =>
+        quantity.IsPerfectBased ? -offset : -offset - 1, // Negative offset for diminished intervals
       _ => 1 // Default alteration degree for perfect and major intervals
     };
 

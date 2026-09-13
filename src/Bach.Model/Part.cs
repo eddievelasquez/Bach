@@ -316,7 +316,7 @@ public sealed class Part
     // If the tail is empty, we assume a default major chord for the root note.
     if( tail.IsEmpty )
     {
-      chord = PitchChord.Create( root, ChordFormula.Major );
+      chord = new PitchChord( root, ChordFormula.Major, 4, 0 );
       return true;
     }
 
@@ -337,7 +337,7 @@ public sealed class Part
         return false;
       }
 
-      bass = Pitch.Create( bassClass, 4 );
+      bass = new Pitch( bassClass, 4 );
     }
     else if( !bassTail.IsEmpty )
     {
@@ -354,7 +354,7 @@ public sealed class Part
       return false;
     }
 
-    chord = PitchChord.Create( root, ChordFormula.Major, bass.Octave, inversion );
+    chord = new PitchChord( root, ChordFormula.Major, bass.Octave, inversion );
     return true;
   }
 

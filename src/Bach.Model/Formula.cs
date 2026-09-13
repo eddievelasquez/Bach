@@ -189,36 +189,34 @@ public abstract class Formula
     };
   }
 
-  /// <summary>Generates a sequence of pitches based on the formula's intervals.</summary>
+  /// <summary>
+  /// Generates a sequence of pitches based on the formula's intervals, starting from the provided root pitch.
+  /// </summary>
   /// <param name="root">The root pitch.</param>
-  /// <returns> An enumerator for a sequence of pitches.</returns>
+  /// <returns>An enumerator for a sequence of pitches.</returns>
   public IEnumerable<Pitch> Generate(
     Pitch root )
   {
-    var intervalCount = Intervals.Count;
-    var index = 0;
+    var currentRoot = root;
 
     while( true )
     {
-      var interval = Intervals[index % intervalCount];
-      var pitch = root + interval;
-
-      // Do we need to change the pitch's octave?
-      var octaveAdd = index / intervalCount;
-
-      if( octaveAdd > 0 )
+      foreach( var interval in Intervals )
       {
-        pitch += octaveAdd * Constants.OctaveSemitoneCount;
+        // Stop when the next transposition is outside the supported pitch range.
+        if( !Pitch.TryTranspose( currentRoot, interval, out var pitch ) )
+        {
+          yield break;
+        }
+
+        yield return pitch;
       }
 
-      if( pitch > Pitch.MaxValue )
+      // Formula intervals repeat from the root one octave higher on the next cycle.
+      if( !Pitch.TryTranspose( currentRoot, Interval.Octave, out currentRoot ) )
       {
         yield break;
       }
-
-      yield return pitch;
-
-      ++index;
     }
   }
 

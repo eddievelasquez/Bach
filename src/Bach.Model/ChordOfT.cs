@@ -231,10 +231,10 @@ public abstract class Chord<TSelf, TPitch>
   {
     if( Inversion != 0 )
     {
-      yield return Pitch.Create( Bass.PitchClass, octave );
+      yield return new Pitch( Bass.PitchClass, octave );
     }
 
-    foreach( var pitch in Formula.Generate( Pitch.Create( Root.PitchClass, octave ) ) )
+    foreach( var pitch in Formula.Generate( new Pitch( Root.PitchClass, octave ) ) )
     {
       yield return pitch;
     }

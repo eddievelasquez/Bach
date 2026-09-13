@@ -44,11 +44,15 @@ internal static class ArrayExtensions
     /// </returns>
     public bool IsSortedUnique()
     {
+      // Check if the list is empty or has only one element, in which case it is considered sorted and unique.
+      // Start from the second element and compare it with the previous one. If any element is less than or equal to the previous one, the list is not sorted or has duplicates.
       for( var i = 1; i < values.Count; ++i )
       {
+        // Compare the current element with the previous one.
         var result = values[i - 1]
           .CompareTo( values[i] );
 
+        // If the result is greater than or equal to zero, it means the list is not sorted or has duplicates.
         if( result >= 0 )
         {
           return false;

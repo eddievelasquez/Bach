@@ -1,20 +1,20 @@
-// Module Name: AccidentalTest.cs
+// Module Name: AccidentalTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -121,14 +121,6 @@ public sealed class AccidentalTests
     { Accidental.Flat, -1, Accidental.DoubleFlat }
   };
 
-  public static TheoryData<Accidental, Accidental> ValidIncrementData { get; } = new()
-  {
-    { Accidental.DoubleFlat, Accidental.Flat },
-    { Accidental.Flat, Accidental.Natural },
-    { Accidental.Natural, Accidental.Sharp },
-    { Accidental.Sharp, Accidental.DoubleSharp }
-  };
-
   public static TheoryData<Accidental, int> InvalidAdditionData { get; } = new()
   {
     { Accidental.DoubleFlat, 5 },
@@ -172,14 +164,6 @@ public sealed class AccidentalTests
     { Accidental.Flat, 1, Accidental.DoubleFlat }
   };
 
-  public static TheoryData<Accidental, Accidental> ValidDecrementData { get; } = new()
-  {
-    { Accidental.DoubleSharp, Accidental.Sharp },
-    { Accidental.Sharp, Accidental.Natural },
-    { Accidental.Natural, Accidental.Flat },
-    { Accidental.Flat, Accidental.DoubleFlat }
-  };
-
   public static TheoryData<Accidental, int> InvalidSubtractionData { get; } = new()
   {
     { Accidental.DoubleFlat, -5 },
@@ -192,39 +176,6 @@ public sealed class AccidentalTests
     { Accidental.Natural, 3 },
     { Accidental.Flat, 2 },
     { Accidental.DoubleFlat, 1 }
-  };
-
-  public static TheoryData<Accidental, int, Accidental> AddData { get; } = new()
-  {
-    { Accidental.Natural, 1, Accidental.Sharp },
-    { Accidental.Flat, 2, Accidental.Sharp },
-    { Accidental.DoubleFlat, 4, Accidental.DoubleSharp },
-    { Accidental.DoubleSharp, -4, Accidental.DoubleFlat },
-    { Accidental.Sharp, -1, Accidental.Natural }
-  };
-
-  public static TheoryData<Accidental, int> AddOutOfRangeData { get; } = new()
-  {
-    { Accidental.DoubleSharp, 1 },
-    { Accidental.DoubleFlat, -1 }
-  };
-
-  public static TheoryData<Accidental, Accidental, int> TypedCompareData { get; } = new()
-  {
-    { (Accidental) ( -2 ), (Accidental) ( -1 ), -1 },
-    { (Accidental) ( -1 ), (Accidental) ( -1 ), 0 },
-    { (Accidental) 0, (Accidental) 0, 0 },
-    { (Accidental) 1, (Accidental) 0, 1 },
-    { (Accidental) 2, (Accidental) 1, 1 }
-  };
-
-  public static TheoryData<Accidental> HashCodeData { get; } = new()
-  {
-    (Accidental) ( -2 ),
-    (Accidental) ( -1 ),
-    Accidental.Natural,
-    Accidental.Sharp,
-    Accidental.DoubleSharp
   };
 
   public static TheoryData<string?, Accidental> ParseStringData { get; } = new()
@@ -248,14 +199,6 @@ public sealed class AccidentalTests
     { "bb", Accidental.DoubleFlat },
     { "#", Accidental.Sharp },
     { "##", Accidental.DoubleSharp }
-  };
-
-  public static TheoryData<Accidental, int, Accidental> SubtractData { get; } = new()
-  {
-    { Accidental.Sharp, 1, Accidental.Natural },
-    { Accidental.Natural, 1, Accidental.Flat },
-    { Accidental.DoubleSharp, 4, Accidental.DoubleFlat },
-    { Accidental.Flat, -1, Accidental.Natural }
   };
 
   public static TheoryData<Accidental, string> SymbolData { get; } = new()
@@ -304,24 +247,6 @@ public sealed class AccidentalTests
   #region Public Methods
 
   [Theory]
-  [MemberData( nameof( AddData ) )]
-  public void Add_ShouldReturnAccidentalWithSum_WhenStepsAreValid(
-    Accidental start,
-    int steps,
-    Accidental expected )
-  {
-    // Act
-    var result = start.Add( steps );
-
-    // Assert
-    result.Should()
-          .Be( expected );
-
-    ( (int) result ).Should()
-                    .Be( (int) expected );
-  }
-
-  [Theory]
   [MemberData( nameof( ValidAdditionData ) )]
   public void Add_ShouldSucceed(
     Accidental accidental,
@@ -346,378 +271,15 @@ public sealed class AccidentalTests
   }
 
   [Theory]
-  [MemberData( nameof( AddOutOfRangeData ) )]
-  public void Add_ShouldThrowArgumentOutOfRangeException_WhenResultIsOutOfRange(
-    Accidental start,
-    int steps )
-  {
-    // Act
-    Action act = () => start.Add( steps );
-
-    // Assert
-    act.Should()
-       .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Theory]
-  [MemberData( nameof( ValidAdditionData ) )]
-  public void AdditionOperator_ShouldSucceed(
+  [MemberData( nameof( ValidSubtractionData ) )]
+  public void Subtract_ShouldSucceed(
     Accidental accidental,
-    int increment,
+    int value,
     Accidental expectedAccidental )
   {
-    ( accidental + increment ).Should()
-                              .Be( expectedAccidental );
-  }
-
-  [Theory]
-  [MemberData( nameof( InvalidAdditionData ) )]
-  public void AdditionOperator_ShouldThrowArgumentOutOfRange(
-    Accidental accidental,
-    int increment )
-  {
-    var act = () => accidental + increment;
-
-    act.Should()
-       .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Fact]
-  public void CompareTo_Object_Accidental_DelegatesToTypedCompareTo()
-  {
-    // Arrange
-    var left = (Accidental) ( -1 );
-    var right = (Accidental) 1;
-
-    // Act
-    var objResult = left.CompareTo( (object) right );
-    var typedResult = left.CompareTo( right );
-
-    // Assert
-    objResult.Should()
-             .Be( typedResult );
-  }
-
-  [Fact]
-  public void CompareTo_Object_NonAccidental_ThrowsArgumentException()
-  {
-    // Arrange
-    var a = Accidental.Natural;
-
-    // Act
-    Action act = () => a.CompareTo( "not accidental" );
-
-    // Assert
-    act.Should()
-       .Throw<ArgumentException>()
-       .WithMessage( "Object must be of type Accidental" );
-  }
-
-  [Fact]
-  public void CompareTo_Object_Null_ReturnsOne()
-  {
-    // Arrange
-    var a = Accidental.Natural;
-
-    // Act
-    var result = a.CompareTo( null );
-
-    // Assert
-    result.Should()
-          .Be( 1 );
-  }
-
-  [Fact]
-  public void CompareTo_ShouldSatisfyEquivalenceRelation()
-  {
-    object x = Accidental.Natural;
-    object y = new Accidental();
-    object z = (Accidental) 0;
-
-    ( (IComparable) x ).CompareTo( x )
-                       .Should()
-                       .Be( 0 ); // Reflexive
-
-    ( (IComparable) x ).CompareTo( y )
-                       .Should()
-                       .Be( 0 ); // Symmetric
-
-    ( (IComparable) y ).CompareTo( x )
-                       .Should()
-                       .Be( 0 );
-
-    ( (IComparable) y ).CompareTo( z )
-                       .Should()
-                       .Be( 0 ); // Transitive
-
-    ( (IComparable) x ).CompareTo( z )
-                       .Should()
-                       .Be( 0 );
-
-    ( (IComparable) x ).CompareTo( null )
-                       .Should()
-                       .NotBe( 0 ); // Never equal to null
-  }
-
-  [Theory]
-  [MemberData( nameof( TypedCompareData ) )]
-  public void CompareTo_TypedAccidental_ReturnsExpectedSign(
-    Accidental left,
-    Accidental right,
-    int expectedSign )
-  {
-    // Act
-    var result = left.CompareTo( right );
-
-    // Assert normalized sign
-    Math.Sign( result )
-        .Should()
-        .Be( Math.Sign( expectedSign ) );
-  }
-
-  [Theory]
-  [MemberData( nameof( ValidDecrementData ) )]
-  public void DecrementOperator_ShouldSucceed(
-    Accidental accidental,
-    Accidental expectedAccidental )
-  {
-    ( --accidental ).Should()
-                    .Be( expectedAccidental );
-  }
-
-  [Fact]
-  public void DecrementOperator_ShouldThrowArgumentOutOfRange()
-  {
-    var accidental = Accidental.DoubleFlat;
-    var act = () => --accidental;
-
-    act.Should()
-       .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Fact]
-  public void EqualityOperator_ShouldReturnFalse_WhenComparingToNull()
-  {
-    var lhs = Accidental.Natural;
-#pragma warning disable CS8073
-    ( lhs == null! ).Should()
-                    .BeFalse();
-#pragma warning restore CS8073
-  }
-
-  [Fact]
-  public void EqualityOperator_ShouldReturnTrue_WhenComparingEquivalentObjects()
-  {
-    var lhs = Accidental.Natural;
-    var rhs = new Accidental();
-
-    ( lhs == rhs ).Should()
-                  .BeTrue();
-  }
-
-  [Fact]
-  public void EqualityOperator_ShouldReturnTrue_WhenComparingTheSameObject()
-  {
-    var lhs = Accidental.Natural;
-#pragma warning disable 1718
-
-    // ReSharper disable once EqualExpressionComparison
-    ( lhs == lhs ).Should()
-                  .BeTrue();
-#pragma warning restore 1718
-  }
-
-  [Fact]
-  public void Equals_Object_Behavior_Null_Type_And_SameValue()
-  {
-    // Arrange
-    var a = Accidental.Flat; // -1
-
-    // Act & Assert
-    a.Equals( null )
-     .Should()
-     .BeFalse();
-
-    a.Equals( "not accidental" )
-     .Should()
-     .BeFalse();
-
-    a.Equals( (object) Accidental.Flat )
-     .Should()
-     .BeTrue();
-  }
-
-  [Fact]
-  public void Equals_ReturnFalse_WhenComparingObjectOfDifferentType()
-  {
-    object actual = Accidental.Natural;
-
-    actual.Equals( int.MinValue )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ReturnsFalse_WhenComparingToNull()
-  {
-    var actual = Accidental.Natural;
-
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingToNull()
-  {
-    object actual = Accidental.Natural;
-
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnTrue_WhenComparingTheSameObject()
-  {
-    var actual = Accidental.Natural;
-
-    actual.Equals( actual )
-          .Should()
-          .BeTrue();
-  }
-
-  [Fact]
-  public void Equals_ShouldSatisfyEquivalenceRelation()
-  {
-    object x = Accidental.Natural;
-    object y = new Accidental();
-    object z = (Accidental) 0;
-
-    // ReSharper disable once EqualExpressionComparison
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-
-    x.Equals( null )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
-
-  [Fact]
-  public void Equals_TypedAccidental_ReturnsFalseForDifferentValue()
-  {
-    // Arrange
-    var a = (Accidental) ( -2 );
-    var b = (Accidental) 1;
-
-    // Act
-    var eq = a.Equals( b );
-
-    // Assert
-    eq.Should()
-      .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_TypedAccidental_ReturnsTrueForSameValue()
-  {
-    // Arrange
-    var a = (Accidental) 2;
-    var b = (Accidental) 2;
-
-    // Act
-    var eq = a.Equals( b );
-
-    // Assert
-    eq.Should()
-      .BeTrue();
-  }
-
-  [Theory]
-  [MemberData( nameof( HashCodeData ) )]
-  public void GetHashCode_ShouldReturnUnderlyingValue_WhenCalled(
-    Accidental accidental )
-  {
-    // Act
-    var hash = accidental.GetHashCode();
-
-    // Assert
-    hash.Should()
-        .Be( (int) accidental );
-  }
-
-  [Fact]
-  public void GetHashcode_ShouldReturnTheSameValue_WhenHashingEquivalentObjects()
-  {
-    var actual = Accidental.Natural;
-    var expected = new Accidental();
-
-    expected.Equals( actual )
-            .Should()
-            .BeTrue();
-
-    actual.GetHashCode()
-          .Should()
-          .Be( expected.GetHashCode() );
-  }
-
-  [Theory]
-  [MemberData( nameof( ValidIncrementData ) )]
-  public void IncrementOperator_ShouldSucceed(
-    Accidental accidental,
-    Accidental expectedAccidental )
-  {
-    ( ++accidental ).Should()
-                    .Be( expectedAccidental );
-  }
-
-  [Fact]
-  public void IncrementOperator_ShouldThrowArgumentOutOfRange()
-  {
-    var accidental = Accidental.DoubleSharp;
-    var act = () => ++accidental;
-
-    act.Should()
-       .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Fact]
-  public void InequalityOperator_ShouldReturnFalse_WhenComparingTheSameObject()
-  {
-    var lhs = Accidental.Natural;
-#pragma warning disable 1718
-
-    // ReSharper disable once EqualExpressionComparison
-    ( lhs != lhs ).Should()
-                  .BeFalse();
-#pragma warning restore 1718
-  }
-
-  [Fact]
-  public void InequalityOperator_ShouldReturnTrue_WhenComparingTwoDifferentObjects()
-  {
-    var lhs = Accidental.Natural;
-    var rhs = Accidental.Sharp;
-
-    ( lhs != rhs ).Should()
-                  .BeTrue();
+    accidental.Subtract( value )
+              .Should()
+              .Be( expectedAccidental );
   }
 
   [Fact]
@@ -727,7 +289,7 @@ public sealed class AccidentalTests
     var input = "x";
 
     // Act
-    Action act = () => Accidental.Parse( input.AsSpan(), null );
+    Action act = () => Accidental.Parse( input.AsSpan() );
 
     // Assert
     act.Should()
@@ -786,169 +348,11 @@ public sealed class AccidentalTests
     Accidental expected )
   {
     // Act
-    var result = Accidental.Parse( input, null );
+    var result = Accidental.Parse( input );
 
     // Assert
     result.Should()
           .Be( expected );
-  }
-
-  [Fact]
-  public void RelationalOperators_ShouldSatisfyOrdering()
-  {
-    ( Accidental.DoubleFlat < Accidental.Flat ).Should()
-                                               .BeTrue();
-
-    ( Accidental.DoubleFlat <= Accidental.Flat ).Should()
-                                                .BeTrue();
-
-    ( Accidental.Flat < Accidental.Natural ).Should()
-                                            .BeTrue();
-
-    ( Accidental.Flat <= Accidental.Natural ).Should()
-                                             .BeTrue();
-
-    ( Accidental.Natural < Accidental.Sharp ).Should()
-                                             .BeTrue();
-
-    ( Accidental.Natural <= Accidental.Sharp ).Should()
-                                              .BeTrue();
-
-    ( Accidental.Sharp < Accidental.DoubleSharp ).Should()
-                                                 .BeTrue();
-
-    ( Accidental.Sharp <= Accidental.DoubleSharp ).Should()
-                                                  .BeTrue();
-
-    ( Accidental.DoubleSharp > Accidental.Sharp ).Should()
-                                                 .BeTrue();
-
-    ( Accidental.DoubleSharp >= Accidental.Sharp ).Should()
-                                                  .BeTrue();
-
-    ( Accidental.Sharp > Accidental.Natural ).Should()
-                                             .BeTrue();
-
-    ( Accidental.Sharp >= Accidental.Natural ).Should()
-                                              .BeTrue();
-
-    ( Accidental.Natural > Accidental.Flat ).Should()
-                                            .BeTrue();
-
-    ( Accidental.Natural >= Accidental.Flat ).Should()
-                                             .BeTrue();
-
-    ( Accidental.Flat > Accidental.DoubleFlat ).Should()
-                                               .BeTrue();
-
-    ( Accidental.Flat >= Accidental.DoubleFlat ).Should()
-                                                .BeTrue();
-  }
-
-  [Fact]
-  public void StronglyTypedCompareTo_ShouldSatisfyEquivalenceRelation()
-  {
-    var x = Accidental.Natural;
-    var y = new Accidental();
-    var z = (Accidental) 0;
-
-    x.CompareTo( x )
-     .Should()
-     .Be( 0 ); // Reflexive
-
-    x.CompareTo( y )
-     .Should()
-     .Be( 0 ); // Symmetric
-
-    y.CompareTo( x )
-     .Should()
-     .Be( 0 );
-
-    y.CompareTo( z )
-     .Should()
-     .Be( 0 ); // Transitive
-
-    x.CompareTo( z )
-     .Should()
-     .Be( 0 );
-
-    x.CompareTo( null )
-     .Should()
-     .NotBe( 0 ); // Never equal to null
-  }
-
-  [Fact]
-  public void StronglyTypedEquals_RetursFalse_WhenComparingDifferentAccidentalst()
-  {
-    var actual = Accidental.Natural;
-
-    // ReSharper disable once SuspiciousTypeConversion.Global
-    actual.Equals( int.MinValue )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void StronglyTypedEquals_ShouldSatisfyEquivalenceRelation()
-  {
-    var x = Accidental.Natural;
-    var y = new Accidental();
-    var z = (Accidental) 0;
-
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-
-    x.Equals( null )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
-
-  [Theory]
-  [MemberData( nameof( SubtractData ) )]
-  public void Subtract_ShouldReturnSameAsAddWithNegatedSteps_WhenCalled(
-    Accidental start,
-    int steps,
-    Accidental expected )
-  {
-    // Act
-    var result = start.Subtract( steps );
-
-    // Assert
-    result.Should()
-          .Be( expected );
-
-    // Verify behavior equals Add(-steps)
-    result.Should()
-          .Be( start.Add( -steps ) );
-  }
-
-  [Theory]
-  [MemberData( nameof( ValidSubtractionData ) )]
-  public void Subtract_ShouldSucceed(
-    Accidental accidental,
-    int decrement,
-    Accidental expectedAccidental )
-  {
-    accidental.Subtract( decrement )
-              .Should()
-              .Be( expectedAccidental );
   }
 
   [Theory]
@@ -958,29 +362,6 @@ public sealed class AccidentalTests
     int decrement )
   {
     var act = () => accidental.Subtract( decrement );
-
-    act.Should()
-       .Throw<ArgumentOutOfRangeException>();
-  }
-
-  [Theory]
-  [MemberData( nameof( ValidSubtractionData ) )]
-  public void SubtractionOperator_ShouldSucceed(
-    Accidental accidental,
-    int decrement,
-    Accidental expectedAccidental )
-  {
-    ( accidental - decrement ).Should()
-                              .Be( expectedAccidental );
-  }
-
-  [Theory]
-  [MemberData( nameof( InvalidSubtractionData ) )]
-  public void SubtractionOperator_ShouldThrowArgumentOutOfRange(
-    Accidental accidental,
-    int decrement )
-  {
-    var act = () => accidental - decrement;
 
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
@@ -1283,6 +664,15 @@ public sealed class AccidentalTests
 
     accidental.Should()
               .Be( Accidental.DoubleSharp );
+  }
+
+  [Fact]
+  public void ToSymbol_ShouldThrowArgumentOutOfRange_WhenValueIsUndefined()
+  {
+    var act = () => ( (Accidental) 99 ).ToSymbol();
+
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
   }
 
   #endregion

@@ -344,16 +344,16 @@ public sealed class ScaleFormulaBuilder
 
     // 1. Check that the number of intervals is at least the minimum allowed for a scale (5 steps for a pentatonic scale)
     // No need to check the descending intervals because they must match the ascending intervals in count if provided.
-    if( _ascendingIntervals.Count < Constants.MinimumScaleStepCount )
+    if( _ascendingIntervals.Count < Constants.MinimumScaleIntervalCount )
     {
-      throw new InvalidOperationException( $"A scale must contain at least {Constants.MinimumScaleStepCount} intervals" );
+      throw new InvalidOperationException( $"A scale must contain at least {Constants.MinimumScaleIntervalCount} intervals" );
     }
 
     // 2. Check that the number of intervals does not exceed the maximum allowed for a scale (12 steps for a chromatic scale)
     // No need to check the descending intervals because they must match the ascending intervals in count if provided.
-    if( _ascendingIntervals.Count > Constants.MaximumScaleStepCount )
+    if( _ascendingIntervals.Count > Constants.MaximumScaleIntervalCount )
     {
-      throw new InvalidOperationException( $"A scale must contain at most {Constants.MaximumScaleStepCount} intervals" );
+      throw new InvalidOperationException( $"A scale must contain at most {Constants.MaximumScaleIntervalCount} intervals" );
     }
 
     // Add default values

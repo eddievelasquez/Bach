@@ -42,24 +42,14 @@ internal static class Constants
   public const int OctaveSemitoneCount = 12;
 
   /// <summary>
-  ///   The minimum size of a scale step is 1 semitone.
-  /// </summary>
-  public const int MinimumScaleStepSize = 1;
-
-  /// <summary>
-  ///   The maximum size of a scale step is 4 semitones.
-  /// </summary>
-  public const int MaximumScaleStepSize = 4;
-
-  /// <summary>
   ///   In Western music, the minimum number of steps in a scale is 5, which corresponds to the pentatonic scale.
   /// </summary>
-  public const int MinimumScaleStepCount = 5;
+  public const int MinimumScaleIntervalCount = 5;
 
   /// <summary>
   ///   The maximum number of steps in a scale is equal to the number of semitones in an octave.
   /// </summary>
-  public const int MaximumScaleStepCount = OctaveSemitoneCount;
+  public const int MaximumScaleIntervalCount = OctaveSemitoneCount;
 
   /// <summary>
   ///   The symbol for a diminished interval in modern notation.

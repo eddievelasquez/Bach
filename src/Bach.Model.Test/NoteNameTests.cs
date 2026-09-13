@@ -1,20 +1,20 @@
-// Module Name: NoteNameTest.cs
+// Module Name: NoteNameTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -28,478 +28,7 @@ namespace Bach.Model.Test;
 
 public sealed class NoteNameTests
 {
-  #region Public Methods
-
-  [Theory]
-  [MemberData( nameof( NoteSteps ) )]
-  public void Add_ShouldReturnExpectedValue_WhenAddingSteps(
-    NoteName start,
-    int steps,
-    NoteName expected )
-  {
-    start.Add( steps )
-         .Should()
-         .Be( expected );
-  }
-
-  [Theory]
-  [MemberData( nameof( NoteSteps ) )]
-  public void AdditionOperator_ShouldReturnExpectedValue_WhenAddingSteps(
-    NoteName start,
-    int steps,
-    NoteName expected )
-  {
-    ( start + steps ).Should()
-                     .Be( expected );
-  }
-
-  [Fact]
-  public void CompareTo_ShouldReturnExpectedValue_WhenComparingNoteNames()
-  {
-    // Arrange
-    var lesser = NoteName.C;
-    var greater = NoteName.D;
-
-    // Act
-    var lt = lesser.CompareTo( greater );
-    var gt = greater.CompareTo( lesser );
-    var eq = lesser.CompareTo( NoteName.C );
-
-    // Assert
-    lt.Should()
-      .BeNegative();
-
-    gt.Should()
-      .BePositive();
-
-    eq.Should()
-      .Be( 0 );
-  }
-
-  [Theory]
-  [MemberData( nameof( DecrementSteps ) )]
-  public void DecrementOperator_ShouldReturnExpectedValue(
-    NoteName start,
-    int times,
-    NoteName expected )
-  {
-    var noteName = start;
-
-    for( var i = 0; i < times; i++ )
-    {
-      --noteName;
-    }
-
-    noteName.Should()
-            .Be( expected );
-  }
-
-  [Fact]
-  public void Equals_ObjectVariant_ShouldReturnFalse_WhenComparingWithDifferentType()
-  {
-    // Arrange
-    object value = NoteName.C;
-
-    // Act
-    var areEqual = value.Equals( 42 );
-
-    // Assert
-    areEqual.Should()
-            .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingWithDifferentType()
-  {
-    object actual = NoteName.C;
-
-    actual.Equals( int.MinValue )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingWithNull_ObjectVariant()
-  {
-    object actual = NoteName.C;
-
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenComparingWithNull_TypeSafeVariant()
-  {
-    var actual = NoteName.C;
-
-    actual.Equals( null )
-          .Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnTrue_WhenComparingWithSameObject()
-  {
-    var actual = NoteName.C;
-
-    actual.Equals( actual )
-          .Should()
-          .BeTrue();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnTrue_WhenValuesAreEqual_TypeSafe()
-  {
-    // Arrange
-    var a = NoteName.C;
-    var b = NoteName.C;
-
-    // Act
-    var areEqual = a.Equals( b );
-
-    // Assert
-    areEqual.Should()
-            .BeTrue();
-  }
-
-  [Fact]
-  public void Equals_ShouldSatisfyEquivalenceRelation_ObjectVariant()
-  {
-    object x = NoteName.C;
-    object y = new NoteName();
-    object z = (NoteName) 0;
-
-    // ReSharper disable once EqualExpressionComparison
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-
-    x.Equals( null )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
-
-  [Fact]
-  public void Equals_ShouldSatisfyEquivalenceRelation_TypeSafeVariant()
-  {
-    var x = NoteName.C;
-    var y = new NoteName();
-    var z = (NoteName) 0;
-
-    x.Equals( x )
-     .Should()
-     .BeTrue(); // Reflexive
-
-    x.Equals( y )
-     .Should()
-     .BeTrue(); // Symmetric
-
-    y.Equals( x )
-     .Should()
-     .BeTrue();
-
-    y.Equals( z )
-     .Should()
-     .BeTrue(); // Transitive
-
-    x.Equals( z )
-     .Should()
-     .BeTrue();
-
-    x.Equals( null )
-     .Should()
-     .BeFalse(); // Never equal to null
-  }
-
-  [Fact]
-  public void GetHashCode_ShouldBeEqual_ForEqualObjects_AndDifferentForDifferentObjects()
-  {
-    // Arrange
-    var a = NoteName.C;
-    var b = NoteName.C;
-    var c = NoteName.D;
-
-    // Act
-    var hashA = a.GetHashCode();
-    var hashB = b.GetHashCode();
-    var hashC = c.GetHashCode();
-
-    // Assert
-    hashA.Should()
-         .Be( hashB );
-
-    hashA.Should()
-         .NotBe( hashC );
-  }
-
-  [Fact]
-  public void GetHashCode_ShouldReturnSameValue_WhenObjectsAreEqual()
-  {
-    var actual = NoteName.C;
-    var expected = new NoteName();
-
-    expected.Equals( actual )
-            .Should()
-            .BeTrue();
-
-    actual.GetHashCode()
-          .Should()
-          .Be( expected.GetHashCode() );
-  }
-
-  [Theory]
-  [MemberData( nameof( IncrementSteps ) )]
-  public void IncrementOperator_ShouldReturnExpectedValue_WhenIncrementing(
-    NoteName start,
-    int times,
-    NoteName expected )
-  {
-    var noteName = start;
-
-    for( var i = 0; i < times; i++ )
-    {
-      ++noteName;
-    }
-
-    noteName.Should()
-            .Be( expected );
-  }
-
-  [Theory]
-  [MemberData( nameof( NoteSteps ) )]
-  public void IntegerSubtractionOperator_ShouldReturnExpectedValue(
-    NoteName start,
-    int steps,
-    NoteName expected )
-  {
-    ( start - -steps ).Should()
-                      .Be( expected );
-  }
-
-  [Theory]
-  [MemberData( nameof( NoteNameSubtractionData ) )]
-  public void NoteNameSubtractionOperator_ShouldReturnExpectedValue_WhenSubtractingNoteNames(
-    NoteName left,
-    NoteName right,
-    int expected )
-  {
-    ( left - right ).Should()
-                    .Be( expected );
-  }
-
-  [Theory]
-  [MemberData( nameof( NoteNames ) )]
-  public void Parse_ShouldReturnExpectedValue_WhenInputIsValid(
-    string input,
-    NoteName expected )
-  {
-    NoteName.Parse( input )
-            .Should()
-            .Be( expected );
-  }
-
-  [Theory]
-  [MemberData( nameof( InvalidParseData ) )]
-  public void Parse_ShouldThrowArgumentException_WhenInputIsInvalid(
-    string? input,
-    Type expectedExceptionType )
-  {
-    var act = () => input!.ParsePitchClasses();
-
-    act.Should()
-       .Throw<Exception>()
-       .Where( e => e.GetType() == expectedExceptionType );
-  }
-
-  [Fact]
-  public void Parse_Span_ShouldReturnExpectedValue_WhenValid()
-  {
-    // Arrange
-    var span = "E".AsSpan();
-
-    // Act
-    var result = NoteName.Parse( span, null );
-
-    // Assert
-    result.Should()
-          .Be( NoteName.E );
-  }
-
-  [Fact]
-  public void Parse_StringWithProvider_ShouldReturnExpectedValue_WhenLowercaseProvided()
-  {
-    // Arrange
-    var value = "d";
-
-    // Act
-    var result = NoteName.Parse( value, CultureInfo.InvariantCulture );
-
-    // Assert
-    result.Should()
-          .Be( NoteName.D );
-  }
-
-  [Fact]
-  public void Parse_String_ShouldReturnExpectedValue_WhenValid()
-  {
-    // Arrange
-    var value = "C";
-
-    // Act
-    var result = NoteName.Parse( value );
-
-    // Assert
-    result.Should()
-          .Be( NoteName.C );
-  }
-
-  [Fact]
-  public void Parse_String_ShouldThrowArgumentException_WhenNullOrEmpty()
-  {
-    // Arrange
-    string? nullValue = null;
-
-    // Act / Assert
-    FluentActions.Invoking( () => NoteName.Parse( nullValue! ) )
-                 .Should()
-                 .Throw<ArgumentException>();
-
-    FluentActions.Invoking( () => NoteName.Parse( string.Empty ) )
-                 .Should()
-                 .Throw<ArgumentException>();
-  }
-
-  [Fact]
-  public void Subtract_Int_ShouldReturnNextNote_WhenNegativeOne()
-  {
-    // Act
-    var result = NoteName.C.Subtract( -1 );
-
-    // Assert
-    result.Should()
-          .Be( NoteName.D );
-  }
-
-  [Fact]
-  public void Subtract_Int_ShouldReturnPreviousNote_WhenOneStep()
-  {
-    // Act
-    var result = NoteName.C.Subtract( 1 );
-
-    // Assert
-    result.Should()
-          .Be( NoteName.B );
-  }
-
-  [Fact]
-  public void Subtract_Int_ShouldWrapAroundCorrectly_WhenLargeSteps()
-  {
-    // Act
-    var result = NoteName.C.Subtract( 8 );
-
-    // Assert
-    result.Should()
-          .Be( NoteName.B );
-  }
-
-  [Fact]
-  public void Subtract_NoteName_ShouldReturnCorrectDistance_BetweenNotes()
-  {
-    // Act / Assert
-    NoteName.D.Subtract( NoteName.C )
-            .Should()
-            .Be( 1 );
-
-    NoteName.C.Subtract( NoteName.B )
-            .Should()
-            .Be( 1 );
-
-    NoteName.C.Subtract( NoteName.C )
-            .Should()
-            .Be( 0 );
-
-    NoteName.B.Subtract( NoteName.C )
-            .Should()
-            .Be( 6 );
-  }
-
-  [Theory]
-  [MemberData( nameof( NoteNameSubtractionData ) )]
-  public void Subtract_ShouldReturnExpectedValue_WhenSubtractingNoteName(
-    NoteName left,
-    NoteName right,
-    int expected )
-  {
-    left.Subtract( right )
-        .Should()
-        .Be( expected );
-  }
-
-  [Theory]
-  [MemberData( nameof( SubtractStepsData ) )]
-  public void Subtract_ShouldReturnExpectedValue_WhenSubtractingSteps(
-    NoteName start,
-    int steps,
-    NoteName expected )
-  {
-    start.Subtract( steps )
-         .Should()
-         .Be( expected );
-  }
-
-  [Theory]
-  [InlineData( null )]
-  [InlineData( "" )]
-  public void TryParse_ShouldReturnFalse_WhenInputIsEmpty(
-    string? input )
-  {
-    NoteName.TryParse( input!, out _ )
-            .Should()
-            .BeFalse();
-  }
-
-  #endregion
-
-#pragma warning disable 1718
-  [Fact]
-  public void RelationalOperators_ShouldSatisfyOrdering()
-  {
-    ( NoteName.B > NoteName.C ).Should()
-                               .BeTrue();
-
-    ( NoteName.B >= NoteName.C ).Should()
-                                .BeTrue();
-
-    ( NoteName.C < NoteName.B ).Should()
-                               .BeTrue();
-
-    ( NoteName.C <= NoteName.B ).Should()
-                                .BeTrue();
-
-    // ReSharper disable once EqualExpressionComparison
-    ( NoteName.C == NoteName.C ).Should()
-                                .BeTrue();
-
-    ( NoteName.C != NoteName.B ).Should()
-                                .BeTrue();
-  }
+  #region Properties
 
   public static TheoryData<NoteName, int, NoteName> NoteSteps =>
     new()
@@ -558,19 +87,6 @@ public sealed class NoteNameTests
       { NoteName.G, 6, NoteName.F },
       { NoteName.G, 7, NoteName.G },
       { NoteName.G, 8, NoteName.A }
-    };
-
-  public static TheoryData<NoteName, int, NoteName> DecrementSteps =>
-    new()
-    {
-      { NoteName.C, 1, NoteName.B },
-      { NoteName.C, 2, NoteName.A },
-      { NoteName.C, 3, NoteName.G },
-      { NoteName.C, 4, NoteName.F },
-      { NoteName.C, 5, NoteName.E },
-      { NoteName.C, 6, NoteName.D },
-      { NoteName.C, 7, NoteName.C },
-      { NoteName.C, 8, NoteName.B }
     };
 
   public static TheoryData<NoteName, int, NoteName> IncrementSteps =>
@@ -676,4 +192,256 @@ public sealed class NoteNameTests
       { "", typeof( ArgumentException ) },
       { "Z", typeof( FormatException ) }
     };
+
+  #endregion
+
+  #region Public Methods
+
+  [Theory]
+  [MemberData( nameof( NoteSteps ) )]
+  public void Add_ShouldReturnExpectedValue_WhenAddingSteps(
+    NoteName start,
+    int steps,
+    NoteName expected )
+  {
+    start.Add( steps )
+         .Should()
+         .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( NoteSteps ) )]
+  public void AdditionOperator_ShouldReturnExpectedValue_WhenAddingSteps(
+    NoteName start,
+    int steps,
+    NoteName expected )
+  {
+    start.Add( steps )
+         .Should()
+         .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( IncrementSteps ) )]
+  public void Add_ShouldReturnExpectedValue_WhenIncrementing(
+    NoteName start,
+    int times,
+    NoteName expected )
+  {
+    var noteName = start;
+
+    for( var i = 0; i < times; i++ )
+    {
+      noteName = noteName.Add( 1 );
+    }
+
+    noteName.Should()
+            .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( NoteSteps ) )]
+  public void Subtract_ShouldReturnExpectedValue(
+    NoteName start,
+    int steps,
+    NoteName expected )
+  {
+    start.Subtract( -steps )
+         .Should()
+         .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( NoteNameSubtractionData ) )]
+  public void Subtract_ShouldReturnExpectedValue_WhenSubtractingNoteNames(
+    NoteName left,
+    NoteName right,
+    int expected )
+  {
+    left.Subtract( right )
+        .Should()
+        .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( NoteNames ) )]
+  public void Parse_ShouldReturnExpectedValue_WhenInputIsValid(
+    string input,
+    NoteName expected )
+  {
+    NoteName.Parse( input )
+            .Should()
+            .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( InvalidParseData ) )]
+  public void Parse_ShouldThrowArgumentException_WhenInputIsInvalid(
+    string? input,
+    Type expectedExceptionType )
+  {
+    var act = () => input!.ParsePitchClasses();
+
+    act.Should()
+       .Throw<Exception>()
+       .Where( e => e.GetType() == expectedExceptionType );
+  }
+
+  [Fact]
+  public void Parse_Span_ShouldReturnExpectedValue_WhenValid()
+  {
+    // Arrange
+    var span = "E".AsSpan();
+
+    // Act
+    var result = NoteName.Parse( span );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.E );
+  }
+
+  [Fact]
+  public void Parse_StringWithProvider_ShouldReturnExpectedValue_WhenLowercaseProvided()
+  {
+    // Arrange
+    var value = "d";
+
+    // Act
+    var result = NoteName.Parse( value, CultureInfo.InvariantCulture );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.D );
+  }
+
+  [Fact]
+  public void Parse_String_ShouldReturnExpectedValue_WhenValid()
+  {
+    // Arrange
+    var value = "C";
+
+    // Act
+    var result = NoteName.Parse( value );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.C );
+  }
+
+  [Fact]
+  public void Parse_String_ShouldThrowArgumentException_WhenNullOrEmpty()
+  {
+    // Arrange
+    string? nullValue = null;
+
+    // Act / Assert
+    FluentActions.Invoking( () => NoteName.Parse( nullValue! ) )
+                 .Should()
+                 .Throw<ArgumentException>();
+
+    FluentActions.Invoking( () => NoteName.Parse( string.Empty ) )
+                 .Should()
+                 .Throw<ArgumentException>();
+  }
+
+  [Fact]
+  public void Subtract_ShouldReturnNextNote_WhenNegativeOne()
+  {
+    // Act
+    var result = NoteName.C.Subtract( -1 );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.D );
+  }
+
+  [Fact]
+  public void Subtract_ShouldReturnPreviousNote_WhenOneStep()
+  {
+    // Act
+    var result = NoteName.C.Subtract( 1 );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.B );
+  }
+
+  [Fact]
+  public void Subtract_ShouldWrapAroundCorrectly_WhenLargeSteps()
+  {
+    // Act
+    var result = NoteName.C.Subtract( 8 );
+
+    // Assert
+    result.Should()
+          .Be( NoteName.B );
+  }
+
+  [Fact]
+  public void Subtract_ShouldReturnCorrectDistance_BetweenNotes()
+  {
+    // Act / Assert
+    NoteName.D.Subtract( NoteName.C )
+            .Should()
+            .Be( 1 );
+
+    NoteName.C.Subtract( NoteName.B )
+            .Should()
+            .Be( 1 );
+
+    NoteName.C.Subtract( NoteName.C )
+            .Should()
+            .Be( 0 );
+
+    NoteName.B.Subtract( NoteName.C )
+            .Should()
+            .Be( 6 );
+  }
+
+  [Theory]
+  [MemberData( nameof( NoteNameSubtractionData ) )]
+  public void Subtract_ShouldReturnExpectedValue_WhenSubtractingNoteName(
+    NoteName left,
+    NoteName right,
+    int expected )
+  {
+    left.Subtract( right )
+        .Should()
+        .Be( expected );
+  }
+
+  [Theory]
+  [MemberData( nameof( SubtractStepsData ) )]
+  public void Subtract_ShouldReturnExpectedValue_WhenSubtractingSteps(
+    NoteName start,
+    int steps,
+    NoteName expected )
+  {
+    start.Subtract( steps )
+         .Should()
+         .Be( expected );
+  }
+
+  [Theory]
+  [InlineData( null )]
+  [InlineData( "" )]
+  public void TryParse_ShouldReturnFalse_WhenInputIsEmpty(
+    string? input )
+  {
+    NoteName.TryParse( input!, out _ )
+            .Should()
+            .BeFalse();
+  }
+
+  [Fact]
+  public void Add_ShouldThrowArgumentOutOfRange_WhenValueIsUndefined()
+  {
+    var act = () => ( (NoteName) 99 ).Add( 0 );
+
+    act.Should()
+       .Throw<ArgumentOutOfRangeException>();
+  }
+
+  #endregion
 }

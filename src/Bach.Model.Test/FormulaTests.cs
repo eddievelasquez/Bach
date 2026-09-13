@@ -503,6 +503,24 @@ public sealed class FormulaTests
   }
 
   [Fact]
+  public void Generate_Pitch_ShouldReturnFormulaSpelling_WhenGeneratingMultipleOctaves()
+  {
+    // Arrange
+    var formula = new TestFormula( "f", "name", Interval.Unison, Interval.MajorThird, Interval.Fifth );
+    var root = Pitch.Parse( "C4" );
+
+    // Act
+    var seq = formula.Generate( root )
+                     .Take( 6 )
+                     .Select( pitch => pitch.ToString() )
+                     .ToArray();
+
+    // Assert
+    seq.Should()
+       .Equal( "C4", "E4", "G4", "C5", "E5", "G5" );
+  }
+
+  [Fact]
   public void Generate_Static_WithIntervals_Null_Throws()
   {
     // Arrange

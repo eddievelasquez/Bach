@@ -1,20 +1,20 @@
-// Module Name: PitchChordTest.cs
+// Module Name: PitchChordTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -31,20 +31,20 @@ public sealed class PitchChordTests
   [Fact]
   public void Bass_ShouldReturnCorrectPitchForSecondInversion()
   {
-    var root = Pitch.Create( PitchClass.G, 3 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 2 );
+    var root = new Pitch( PitchClass.G, 3 );
+    var chord = new PitchChord( root, ChordFormula.Major, 2 );
 
     var actual = chord.Bass;
 
     actual.Should()
-          .Be( Pitch.Create( PitchClass.D, 4 ) );
+          .Be( new Pitch( PitchClass.D, 4 ) );
   }
 
   [Fact]
   public void Bass_ShouldReturnFirstPitch_WhenInversionIsZero()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.C, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.Bass;
 
@@ -55,21 +55,21 @@ public sealed class PitchChordTests
   [Fact]
   public void Bass_ShouldReturnInvertedPitch_WhenInversionIsNonZero()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var root = new Pitch( PitchClass.C, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major, 1 );
 
     var actual = chord.Bass;
 
     actual.Should()
-          .Be( Pitch.Create( PitchClass.E, 4 ) );
+          .Be( new Pitch( PitchClass.E, 4 ) );
   }
 
   [Fact]
   public void Constructor_ShouldCreateMajorChord_WhenRootPitchProvided()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
+    var root = new Pitch( PitchClass.C, 4 );
 
-    var actual = PitchChord.Create( root, ChordFormula.Major );
+    var actual = new PitchChord( root, ChordFormula.Major );
 
     actual.Root.Should()
           .Be( root );
@@ -87,15 +87,15 @@ public sealed class PitchChordTests
           .Be( "C" );
 
     actual.Should()
-          .Equal( Pitch.Create( PitchClass.C, 4 ), Pitch.Create( PitchClass.E, 4 ), Pitch.Create( PitchClass.G, 4 ) );
+          .Equal( new Pitch( PitchClass.C, 4 ), new Pitch( PitchClass.E, 4 ), new Pitch( PitchClass.G, 4 ) );
   }
 
   [Fact]
   public void Constructor_WithRootAndFormulaIdOrName_ShouldInitializeWithRegistryFormula()
   {
-    var root = Pitch.Create( PitchClass.E, 4 );
+    var root = new Pitch( PitchClass.E, 4 );
 
-    var actual = PitchChord.Create( root, "Major" );
+    var actual = new PitchChord( root, "Major" );
 
     actual.Root.Should()
           .Be( root );
@@ -110,9 +110,9 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootAndFormulaIdOrName_ShouldResolveFormulaFromRegistry()
   {
-    var root = Pitch.Create( PitchClass.B, 2 );
+    var root = new Pitch( PitchClass.B, 2 );
 
-    var actual = PitchChord.Create( root, "Minor" );
+    var actual = new PitchChord( root, "Minor" );
 
     actual.Root.Should()
           .Be( root );
@@ -130,10 +130,10 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootAndFormula_ShouldCallConstructorWithZeroInversion()
   {
-    var root = Pitch.Create( PitchClass.F, 5 );
+    var root = new Pitch( PitchClass.F, 5 );
     var formula = Registry.ChordFormulas["Diminished"];
 
-    var actual = PitchChord.Create( root, formula );
+    var actual = new PitchChord( root, formula );
 
     actual.Root.Should()
           .Be( root );
@@ -151,10 +151,10 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootAndFormula_ShouldInitializeWithProvidedValues()
   {
-    var root = Pitch.Create( PitchClass.D, 3 );
+    var root = new Pitch( PitchClass.D, 3 );
     var formula = ChordFormula.Minor;
 
-    var actual = PitchChord.Create( root, formula );
+    var actual = new PitchChord( root, formula );
 
     actual.Root.Should()
           .Be( root );
@@ -169,11 +169,11 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootFormulaAndInversion_ShouldAcceptMaximumInversion()
   {
-    var root = Pitch.Create( PitchClass.D, 4 );
+    var root = new Pitch( PitchClass.D, 4 );
     var formula = ChordFormula.Major;
     var maxInversion = formula.Intervals.Count - 1;
 
-    var actual = PitchChord.Create( root, formula, maxInversion );
+    var actual = new PitchChord( root, formula, maxInversion );
 
     actual.Inversion.Should()
           .Be( maxInversion );
@@ -185,35 +185,35 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootFormulaAndInversion_ShouldGenerateCorrectPitches()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
+    var root = new Pitch( PitchClass.C, 4 );
     var formula = ChordFormula.Minor;
 
-    var actual = PitchChord.Create( root, formula );
+    var actual = new PitchChord( root, formula );
 
     actual.Should()
           .HaveCount( 3 );
 
     actual[0]
       .Should()
-      .Be( Pitch.Create( PitchClass.C, 4 ) );
+      .Be( new Pitch( PitchClass.C, 4 ) );
 
     actual[1]
       .Should()
-      .Be( Pitch.Create( PitchClass.DSharp, 4 ) );
+      .Be( new Pitch( PitchClass.EFlat, 4 ) );
 
     actual[2]
       .Should()
-      .Be( Pitch.Create( PitchClass.G, 4 ) );
+      .Be( new Pitch( PitchClass.G, 4 ) );
   }
 
   [Fact]
   public void Constructor_WithRootFormulaAndInversion_ShouldInitializeWithProvidedValues()
   {
-    var root = Pitch.Create( PitchClass.G, 3 );
+    var root = new Pitch( PitchClass.G, 3 );
     var formula = ChordFormula.Major;
     var inversion = 1;
 
-    var actual = PitchChord.Create( root, formula, inversion );
+    var actual = new PitchChord( root, formula, inversion );
 
     actual.Root.Should()
           .Be( root );
@@ -228,10 +228,10 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootFormulaAndInversion_ShouldThrowArgumentNullException_WhenFormulaIsNull()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
+    var root = new Pitch( PitchClass.C, 4 );
     ChordFormula? formula = null;
 
-    var act = () => PitchChord.Create( root, formula! );
+    var act = () => new PitchChord( root, formula! );
 
     act.Should()
        .Throw<ArgumentNullException>();
@@ -240,10 +240,10 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootFormulaAndInversion_ShouldThrowArgumentOutOfRangeException_WhenInversionIsNegative()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
+    var root = new Pitch( PitchClass.C, 4 );
     var formula = ChordFormula.Major;
 
-    var act = () => PitchChord.Create( root, formula, -1 );
+    var act = () => new PitchChord( root, formula, -1 );
 
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
@@ -252,10 +252,10 @@ public sealed class PitchChordTests
   [Fact]
   public void Constructor_WithRootFormulaAndInversion_ShouldThrowArgumentOutOfRangeException_WhenInversionIsTooLarge()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
+    var root = new Pitch( PitchClass.C, 4 );
     var formula = ChordFormula.Major;
 
-    var act = () => PitchChord.Create( root, formula, 3 );
+    var act = () => new PitchChord( root, formula, 3 );
 
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
@@ -264,8 +264,8 @@ public sealed class PitchChordTests
   [Fact]
   public void EqualsObject_ShouldReturnFalse_WhenObjectIsNotPitchChord()
   {
-    var root = Pitch.Create( PitchClass.E, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.E, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major );
     object other = "not a chord";
 
     var actual = chord.Equals( other );
@@ -277,8 +277,8 @@ public sealed class PitchChordTests
   [Fact]
   public void EqualsObject_ShouldReturnFalse_WhenObjectIsNull()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.C, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.Equals( (object?) null );
 
@@ -289,8 +289,8 @@ public sealed class PitchChordTests
   [Fact]
   public void EqualsObject_ShouldReturnFalse_WhenObjectIsPitchChordWithDifferentValues()
   {
-    var chord1 = PitchChord.Create( Pitch.Create( PitchClass.C, 4 ), ChordFormula.Major );
-    object chord2 = PitchChord.Create( Pitch.Create( PitchClass.D, 4 ), ChordFormula.Major );
+    var chord1 = new PitchChord( new Pitch( PitchClass.C, 4 ), ChordFormula.Major );
+    object chord2 = new PitchChord( new Pitch( PitchClass.D, 4 ), ChordFormula.Major );
 
     var actual = chord1.Equals( chord2 );
 
@@ -301,8 +301,8 @@ public sealed class PitchChordTests
   [Fact]
   public void EqualsObject_ShouldReturnTrue_WhenComparingSameReference()
   {
-    var root = Pitch.Create( PitchClass.F, 3 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.F, 3 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.Equals( (object) chord );
 
@@ -313,9 +313,9 @@ public sealed class PitchChordTests
   [Fact]
   public void EqualsObject_ShouldReturnTrue_WhenObjectIsPitchChordWithSameValues()
   {
-    var root = Pitch.Create( PitchClass.B, 2 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Minor );
-    object chord2 = PitchChord.Create( root, ChordFormula.Minor );
+    var root = new Pitch( PitchClass.B, 2 );
+    var chord1 = new PitchChord( root, ChordFormula.Minor );
+    object chord2 = new PitchChord( root, ChordFormula.Minor );
 
     var actual = chord1.Equals( chord2 );
 
@@ -326,9 +326,9 @@ public sealed class PitchChordTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenFormulasAreDifferent()
   {
-    var root = Pitch.Create( PitchClass.G, 3 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Major );
-    var chord2 = PitchChord.Create( root, ChordFormula.Minor );
+    var root = new Pitch( PitchClass.G, 3 );
+    var chord1 = new PitchChord( root, ChordFormula.Major );
+    var chord2 = new PitchChord( root, ChordFormula.Minor );
 
     var actual = chord1.Equals( chord2 );
 
@@ -339,9 +339,9 @@ public sealed class PitchChordTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenInversionsAreDifferent()
   {
-    var root = Pitch.Create( PitchClass.A, 4 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Major );
-    var chord2 = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var root = new Pitch( PitchClass.A, 4 );
+    var chord1 = new PitchChord( root, ChordFormula.Major );
+    var chord2 = new PitchChord( root, ChordFormula.Major, 1 );
 
     var actual = chord1.Equals( chord2 );
 
@@ -352,8 +352,8 @@ public sealed class PitchChordTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenOtherIsNull()
   {
-    var root = Pitch.Create( PitchClass.E, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.E, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.Equals( null );
 
@@ -364,8 +364,8 @@ public sealed class PitchChordTests
   [Fact]
   public void Equals_ShouldReturnFalse_WhenRootsAreDifferent()
   {
-    var chord1 = PitchChord.Create( Pitch.Create( PitchClass.C, 4 ), ChordFormula.Major );
-    var chord2 = PitchChord.Create( Pitch.Create( PitchClass.D, 4 ), ChordFormula.Major );
+    var chord1 = new PitchChord( new Pitch( PitchClass.C, 4 ), ChordFormula.Major );
+    var chord2 = new PitchChord( new Pitch( PitchClass.D, 4 ), ChordFormula.Major );
 
     var actual = chord1.Equals( chord2 );
 
@@ -376,9 +376,9 @@ public sealed class PitchChordTests
   [Fact]
   public void Equals_ShouldReturnTrue_WhenChordsHaveSameRootFormulaAndInversion()
   {
-    var root = Pitch.Create( PitchClass.D, 3 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Minor, 1 );
-    var chord2 = PitchChord.Create( root, ChordFormula.Minor, 1 );
+    var root = new Pitch( PitchClass.D, 3 );
+    var chord1 = new PitchChord( root, ChordFormula.Minor, 1 );
+    var chord2 = new PitchChord( root, ChordFormula.Minor, 1 );
 
     var actual = chord1.Equals( chord2 );
 
@@ -389,8 +389,8 @@ public sealed class PitchChordTests
   [Fact]
   public void Equals_ShouldReturnTrue_WhenComparingSameReference()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.C, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.Equals( chord );
 
@@ -401,9 +401,9 @@ public sealed class PitchChordTests
   [Fact]
   public void GetHashCode_ShouldReturnDifferentValue_WhenFormulasAreDifferent()
   {
-    var root = Pitch.Create( PitchClass.G, 3 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Major );
-    var chord2 = PitchChord.Create( root, ChordFormula.Minor );
+    var root = new Pitch( PitchClass.G, 3 );
+    var chord1 = new PitchChord( root, ChordFormula.Major );
+    var chord2 = new PitchChord( root, ChordFormula.Minor );
 
     var hash1 = chord1.GetHashCode();
     var hash2 = chord2.GetHashCode();
@@ -415,9 +415,9 @@ public sealed class PitchChordTests
   [Fact]
   public void GetHashCode_ShouldReturnDifferentValue_WhenInversionsAreDifferent()
   {
-    var root = Pitch.Create( PitchClass.A, 4 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Major );
-    var chord2 = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var root = new Pitch( PitchClass.A, 4 );
+    var chord1 = new PitchChord( root, ChordFormula.Major );
+    var chord2 = new PitchChord( root, ChordFormula.Major, 1 );
 
     var hash1 = chord1.GetHashCode();
     var hash2 = chord2.GetHashCode();
@@ -429,8 +429,8 @@ public sealed class PitchChordTests
   [Fact]
   public void GetHashCode_ShouldReturnDifferentValue_WhenRootsAreDifferent()
   {
-    var chord1 = PitchChord.Create( Pitch.Create( PitchClass.C, 4 ), ChordFormula.Major );
-    var chord2 = PitchChord.Create( Pitch.Create( PitchClass.D, 4 ), ChordFormula.Major );
+    var chord1 = new PitchChord( new Pitch( PitchClass.C, 4 ), ChordFormula.Major );
+    var chord2 = new PitchChord( new Pitch( PitchClass.D, 4 ), ChordFormula.Major );
 
     var hash1 = chord1.GetHashCode();
     var hash2 = chord2.GetHashCode();
@@ -442,9 +442,9 @@ public sealed class PitchChordTests
   [Fact]
   public void GetHashCode_ShouldReturnSameValue_WhenChordsHaveSameRootFormulaAndInversion()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord1 = PitchChord.Create( root, ChordFormula.Major, 1 );
-    var chord2 = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var root = new Pitch( PitchClass.C, 4 );
+    var chord1 = new PitchChord( root, ChordFormula.Major, 1 );
+    var chord2 = new PitchChord( root, ChordFormula.Major, 1 );
 
     var hash1 = chord1.GetHashCode();
     var hash2 = chord2.GetHashCode();
@@ -456,26 +456,26 @@ public sealed class PitchChordTests
   [Fact]
   public void GetInversion_ShouldCreateExpectedInversion_WhenRequested()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
+    var root = new Pitch( PitchClass.C, 4 );
 
-    var actual = PitchChord.Create( root, ChordFormula.Major )
+    var actual = new PitchChord( root, ChordFormula.Major )
                            .GetInversion( 1 );
 
     actual.Inversion.Should()
           .Be( 1 );
 
     actual.Bass.Should()
-          .Be( Pitch.Create( PitchClass.E, 4 ) );
+          .Be( new Pitch( PitchClass.E, 4 ) );
 
     actual.Should()
-          .Equal( Pitch.Create( PitchClass.E, 4 ), Pitch.Create( PitchClass.G, 4 ), Pitch.Create( PitchClass.C, 5 ) );
+          .Equal( new Pitch( PitchClass.E, 4 ), new Pitch( PitchClass.G, 4 ), new Pitch( PitchClass.C, 5 ) );
   }
 
   [Fact]
   public void GetInversion_ShouldCreateNewInstance()
   {
-    var root = Pitch.Create( PitchClass.E, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.E, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.GetInversion( 1 );
 
@@ -492,9 +492,9 @@ public sealed class PitchChordTests
   [Fact]
   public void GetInversion_ShouldPreserveRootAndFormula()
   {
-    var root = Pitch.Create( PitchClass.FSharp, 3 );
+    var root = new Pitch( PitchClass.FSharp, 3 );
     var formula = Registry.ChordFormulas["Augmented"];
-    var chord = PitchChord.Create( root, formula );
+    var chord = new PitchChord( root, formula );
 
     var actual = chord.GetInversion( 1 );
 
@@ -508,8 +508,8 @@ public sealed class PitchChordTests
   [Fact]
   public void GetInversion_ShouldReturnRootPosition_WhenInversionIsZero()
   {
-    var root = Pitch.Create( PitchClass.F, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major, 1 );
+    var root = new Pitch( PitchClass.F, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major, 1 );
 
     var actual = chord.GetInversion( 0 );
 
@@ -526,8 +526,8 @@ public sealed class PitchChordTests
   [Fact]
   public void GetInversion_ShouldReturnSecondInversion_WhenInversionIsTwo()
   {
-    var root = Pitch.Create( PitchClass.A, 3 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.A, 3 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.GetInversion( 2 );
 
@@ -538,19 +538,19 @@ public sealed class PitchChordTests
           .Be( root );
 
     actual.Bass.Should()
-          .Be( Pitch.Create( PitchClass.E, 4 ) );
+          .Be( new Pitch( PitchClass.E, 4 ) );
   }
 
   [Fact]
   public void ImplementsGenericInterface_ShouldExposeSharedContract()
   {
-    var chord = PitchChord.Create( PitchClass.C, "Major" );
+    var chord = new PitchChord(PitchClass.C, "Major", 4, 0 );
 
     chord.Root.Should()
-         .Be( Pitch.Create( PitchClass.C, 4 ) );
+         .Be( new Pitch( PitchClass.C, 4 ) );
 
     chord.Bass.Should()
-         .Be( Pitch.Create( PitchClass.C, 4 ) );
+         .Be( new Pitch( PitchClass.C, 4 ) );
 
     chord.Inversion.Should()
          .Be( 0 );
@@ -570,10 +570,10 @@ public sealed class PitchChordTests
              .Be( 1 );
 
     inversion.Root.Should()
-             .Be( Pitch.Create( PitchClass.C, 4 ) );
+             .Be( new Pitch( PitchClass.C, 4 ) );
 
     inversion.Bass.Should()
-             .Be( Pitch.Create( PitchClass.E, 4 ) );
+             .Be( new Pitch( PitchClass.E, 4 ) );
   }
 
   [Fact]
@@ -581,7 +581,7 @@ public sealed class PitchChordTests
   {
     var formula = new ChordFormula( "custom", "Custom", null, "P1,M3,P5" );
 
-    var chord = PitchChord.Create( PitchClass.C, formula );
+    var chord = new PitchChord( PitchClass.C, formula, 4, 0 );
 
     chord.Name.Should()
          .Be( "CCustom" );
@@ -593,7 +593,7 @@ public sealed class PitchChordTests
     var actual = PitchChord.Parse( "C/E" );
 
     actual.Root.Should()
-          .Be( Pitch.Create( PitchClass.C, 4 ) );
+          .Be( new Pitch( PitchClass.C, 4 ) );
 
     actual.Formula.Should()
           .Be( ChordFormula.Major );
@@ -602,7 +602,7 @@ public sealed class PitchChordTests
           .Be( 1 );
 
     actual.Bass.Should()
-          .Be( Pitch.Create( PitchClass.E, 4 ) );
+          .Be( new Pitch( PitchClass.E, 4 ) );
   }
 
   [Fact]
@@ -611,7 +611,7 @@ public sealed class PitchChordTests
     var actual = PitchChord.Parse( "C" );
 
     actual.Root.Should()
-          .Be( Pitch.Create( PitchClass.C, 4 ) );
+          .Be( new Pitch( PitchClass.C, 4 ) );
 
     actual.Formula.Should()
           .Be( ChordFormula.Major );
@@ -623,8 +623,8 @@ public sealed class PitchChordTests
   [Fact]
   public void ToString_ShouldReturnDifferentValues_WhenChordsAreDifferent()
   {
-    var chord1 = PitchChord.Create( Pitch.Create( PitchClass.C, 4 ), ChordFormula.Major );
-    var chord2 = PitchChord.Create( Pitch.Create( PitchClass.D, 4 ), ChordFormula.Minor );
+    var chord1 = new PitchChord( new Pitch( PitchClass.C, 4 ), ChordFormula.Major );
+    var chord2 = new PitchChord( new Pitch( PitchClass.D, 4 ), ChordFormula.Minor );
 
     var string1 = chord1.ToString();
     var string2 = chord2.ToString();
@@ -636,8 +636,8 @@ public sealed class PitchChordTests
   [Fact]
   public void ToString_ShouldReturnName()
   {
-    var root = Pitch.Create( PitchClass.C, 4 );
-    var chord = PitchChord.Create( root, ChordFormula.Major );
+    var root = new Pitch( PitchClass.C, 4 );
+    var chord = new PitchChord( root, ChordFormula.Major );
 
     var actual = chord.ToString();
 
@@ -741,7 +741,7 @@ public sealed class PitchChordTests
          .NotBeNull();
 
     chord.Root.Should()
-         .Be( Pitch.Create( PitchClass.C, 4 ) );
+         .Be( new Pitch( PitchClass.C, 4 ) );
 
     chord.Formula.Should()
          .Be( ChordFormula.Minor );
@@ -762,7 +762,7 @@ public sealed class PitchChordTests
          .NotBeNull();
 
     chord.Root.Should()
-         .Be( Pitch.Create( PitchClass.C, 4 ) );
+         .Be( new Pitch( PitchClass.C, 4 ) );
 
     chord.Formula.Should()
          .Be( Registry.ChordFormulas["Major11"] );
@@ -771,7 +771,7 @@ public sealed class PitchChordTests
          .Be( 1 );
 
     chord.Bass.Should()
-         .Be( Pitch.Create( PitchClass.E, 4 ) );
+         .Be( new Pitch( PitchClass.E, 4 ) );
   }
 
   [Fact]
@@ -786,7 +786,7 @@ public sealed class PitchChordTests
          .NotBeNull();
 
     chord.Root.Should()
-         .Be( Pitch.Create( PitchClass.C, 4 ) );
+         .Be( new Pitch( PitchClass.C, 4 ) );
 
     chord.Formula.Should()
          .Be( ChordFormula.Major );
@@ -807,7 +807,7 @@ public sealed class PitchChordTests
          .NotBeNull();
 
     chord.Root.Should()
-         .Be( Pitch.Create( PitchClass.C, 3 ) );
+         .Be( new Pitch( PitchClass.C, 3 ) );
 
     chord.Formula.Should()
          .Be( Registry.ChordFormulas["Major11"] );
@@ -816,7 +816,7 @@ public sealed class PitchChordTests
          .Be( 1 );
 
     chord.Bass.Should()
-         .Be( Pitch.Create( PitchClass.E, 3 ) );
+         .Be( new Pitch( PitchClass.E, 3 ) );
   }
 
   #endregion

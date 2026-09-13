@@ -1,20 +1,20 @@
 // Module Name: Pitch.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Bach.Model.Internal;
 
@@ -49,99 +48,102 @@ public readonly struct Pitch
   /// <summary>The maximum supported octave.</summary>
   public const int MaxOctave = 9;
 
+  private const int MIN_MIDI = 12; // C0
+  private const int MAX_MIDI = 127; // B9
+
   internal const double A4Frequency = 440.0;
 
-  private static readonly int[] s_semitonesBetween =
-  [
-    2, // C-D
-    2, // D-E
-    1, // E-F
-    2, // F-G
-    2, // G-A
-    2, // A-B
-    1 // B-C
-  ];
-
-  // Midi supports C-1, but we only support C0 and above
-  private static readonly int s_minAbsoluteValue = CalcAbsoluteValue( NoteName.C, Accidental.Natural, MinOctave );
-
-  // G9 is the highest pitch supported by MIDI
-  private static readonly int s_maxAbsoluteValue = CalcAbsoluteValue( NoteName.G, Accidental.Natural, MaxOctave );
-
-  private static readonly Pitch s_a4 = Create( NoteName.A, Accidental.Natural, 4 );
-
-  /// <summary>An empty <see cref="Pitch"/>.</summary>
-  public static readonly Pitch Empty = new( PitchClass.B, 9, 128 );
-
-  /// <summary>The minimum possible <see cref="Pitch"/>> value.</summary>
-  public static readonly Pitch MinValue = Create( PitchClass.C, MinOctave );
+  /// <summary>The minimum possible <see cref="Pitch"/> value.</summary>
+  public static readonly Pitch MinValue = new( ToMidi( PitchClass.C, MinOctave ) );
 
   /// <summary>The maximum possible <see cref="Pitch"/> value.</summary>
-  public static readonly Pitch MaxValue = Create( PitchClass.G, MaxOctave );
+  public static readonly Pitch MaxValue = new( ToMidi( PitchClass.G, MaxOctave ) );
+
+  private static readonly Pitch s_a4 = new( ToMidi( PitchClass.A, 4 ) );
 
   #endregion
 
   #region Fields
 
-  private readonly byte _absoluteValue;
-  private readonly byte _octave;
-  private readonly ushort _note;
+  private readonly byte _midi;
+  private readonly PitchClass _pitchClass;
 
   #endregion
 
   #region Constructors
 
-  private Pitch(
-    int absoluteValue )
+  /// <summary>
+  ///   Creates a pitch from a MIDI value.
+  /// </summary>
+  /// <param name="midi">The MIDI value of the pitch.</param>
+  public Pitch(
+    int midi )
   {
-    ArgumentOutOfRangeException.ThrowIfLessThan( absoluteValue, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( absoluteValue, 127 );
+    ArgumentOutOfRangeException.ThrowIfLessThan( midi, MIN_MIDI );
+    ArgumentOutOfRangeException.ThrowIfGreaterThan( midi, MAX_MIDI );
 
-    _absoluteValue = (byte) absoluteValue;
-    CalcNote( _absoluteValue, out var note, out _octave );
-    _note = (ushort) note;
+    _midi = (byte) midi;
+    _pitchClass = ToPitchClass( _midi );
   }
 
-  private Pitch(
+  /// <summary>
+  ///   Creates a pitch from a pitch class and octave.
+  /// </summary>
+  /// <param name="pitchClass">The pitch class.</param>
+  /// <param name="octave">The octave.</param>
+  /// <exception cref="ArgumentOutOfRangeException">
+  ///   Thrown when the octave or resulting pitch is outside the supported range C0 to G9.
+  /// </exception>
+  public Pitch(
     PitchClass pitchClass,
-    int octave,
-    int absoluteValue )
+    int octave )
   {
-    _note = (ushort) pitchClass;
-    _octave = (byte) octave;
-    _absoluteValue = (byte) absoluteValue;
+    var midi = ToMidi( pitchClass, octave );
+
+    if( midi < MIN_MIDI || midi > MAX_MIDI )
+    {
+      throw new ArgumentOutOfRangeException(
+        $"The {pitchClass} in octave {octave} is outside the supported range {MinValue} to {MaxValue}."
+      );
+    }
+
+    _pitchClass = pitchClass;
+    _midi = (byte) midi;
+  }
+
+  /// <summary>
+  ///   Creates a pitch from a note name, accidental, and octave.
+  /// </summary>
+  /// <param name="noteName">The name of the note.</param>
+  /// <param name="accidental">The accidental of the note.</param>
+  /// <param name="octave">The octave of the note.</param>
+  public Pitch(
+    NoteName noteName,
+    Accidental accidental,
+    int octave )
+    : this( new PitchClass( noteName, accidental ), octave )
+  {
   }
 
   #endregion
 
   #region Properties
 
-  /// <summary>Gets the number of total pitches.</summary>
-  /// <value>The total number of pitch count.</value>
-  public static int TotalPitchCount => MaxValue._absoluteValue - MinValue._absoluteValue;
+  /// <summary>
+  ///   Gets an equality comparer that compares pitches by enharmonic equivalence rather than spelling.
+  /// </summary>
+  public static IEqualityComparer<Pitch> EnharmonicComparer { get; } = new EnharmonicEqualityComparer();
+
+  /// <summary>Gets the total number of supported pitches.</summary>
+  /// <value>The total number of supported pitches.</value>
+  public static int TotalPitchCount => MAX_MIDI - MIN_MIDI;
 
   /// <summary>Gets a value indicating whether this instance is a valid pitch.</summary>
-  /// <value>True if this instance is a valid false, false if it is not.</value>
+  /// <value>True if this instance is a valid pitch, false if it is not.</value>
   public bool IsValid
   {
-    get
-    {
-      var abs = _absoluteValue + (int) PitchClass.Accidental;
-      return abs >= s_minAbsoluteValue && abs <= s_maxAbsoluteValue;
-    }
+    get { return Midi is >= MIN_MIDI and <= MAX_MIDI; }
   }
-
-  /// <summary>Gets the pitch's pitch class.</summary>
-  /// <value>The pitch class.</value>
-  public PitchClass PitchClass => (PitchClass) _note;
-
-  /// <summary>Gets the note name of the pitch.</summary>
-  /// <value>The note name.</value>
-  public NoteName NoteName => PitchClass.NoteName;
-
-  /// <summary>Gets the accidental of the pitch.</summary>
-  /// <value>The accidental.</value>
-  public Accidental Accidental => PitchClass.Accidental;
 
   /// <summary>Gets the pitch's frequency.</summary>
   /// <value>The frequency.</value>
@@ -149,129 +151,62 @@ public readonly struct Pitch
   {
     get
     {
-      var interval = _absoluteValue - s_a4._absoluteValue;
+      var interval = Midi - s_a4.Midi;
       var freq = Math.Pow( 2, interval / (double) Constants.OctaveSemitoneCount ) * A4Frequency;
       return freq;
     }
   }
 
-  /// <summary>Gets the pitch's MIDI value.</summary>
-  /// <value>The MIDI value.</value>
-  public int Midi => _absoluteValue + Constants.OctaveSemitoneCount;
-
-  /// <summary>
-  ///   Gets the pitch classes contained in the event.
-  /// </summary>
-  public IEnumerable<PitchClass> PitchClasses
-  {
-    get { yield return PitchClass; }
-  }
-
-  /// <inheritdoc/>>
-  public bool Any(
-    PitchClass pitchClass )
-  {
-    return PitchClass == pitchClass;
-  }
-
   /// <summary>Gets the pitch's octave.</summary>
   /// <value>The octave.</value>
-  public int Octave => _octave;
+  public int Octave => ( Midi - Constants.OctaveSemitoneCount - PitchClass.SemitoneOffset ) / Constants.OctaveSemitoneCount;
+
+  /// <summary>Gets the pitch's MIDI value.</summary>
+  /// <value>The MIDI value.</value>
+  public int Midi => _midi;
 
   #endregion
 
   #region Public Methods
 
-  /// <summary>Adds an Interval to a given Pitch.</summary>
-  /// <param name="pitch">The <see cref="Pitch"/>>.</param>
-  /// <param name="interval">An <see cref="Interval"/>> to add to it.</param>
-  /// <returns>A Pitch.</returns>
-  public static Pitch Add(
-    Pitch pitch,
-    Interval interval )
-  {
-    var absoluteValue = (byte) ( pitch._absoluteValue + interval.SemitoneCount );
-    CalcNote( absoluteValue, out _, out var octave );
-
-    var newPitchClass = pitch.PitchClass + interval;
-    var result = new Pitch( newPitchClass, octave, absoluteValue );
-    return result;
-  }
-
   /// <inheritdoc/>
   public int CompareTo(
     Pitch other )
   {
-    return _absoluteValue - other._absoluteValue;
+    var result = EnharmonicCompareTo( other );
+    return result != 0 ? result : PitchClass.CompareTo( other.PitchClass );
   }
 
-  /// <summary>Creates a new Pitch.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0 to G9.</exception>
-  /// <param name="pitchClass">The pitch class.</param>
-  /// <param name="octave">The octave.</param>
-  /// <returns>A Pitch.</returns>
-  public static Pitch Create(
-    PitchClass pitchClass,
-    int octave )
+  /// <summary>
+  ///   Compares the chromatic pitch height of this instance to another pitch, ignoring spelling.
+  /// </summary>
+  /// <param name="other">The pitch to compare against.</param>
+  /// <returns>
+  ///   A negative value if this instance sounds lower than <paramref name="other"/>, zero if both
+  ///   sound at the same pitch height, or a positive value if this instance sounds higher.
+  /// </returns>
+  public int EnharmonicCompareTo(
+    Pitch other )
   {
-    ArgumentOutOfRangeException.ThrowIfLessThan( octave, MinOctave );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( octave, MaxOctave );
-
-    var abs = CalcAbsoluteValue( pitchClass.NoteName, pitchClass.Accidental, octave );
-
-    if( abs < s_minAbsoluteValue )
-    {
-      throw new ArgumentOutOfRangeException( $"Must be equal to or greater than {new Pitch( s_minAbsoluteValue )}" );
-    }
-
-    if( abs > s_maxAbsoluteValue )
-    {
-      throw new ArgumentOutOfRangeException( $"Must be equal to or less than {new Pitch( s_maxAbsoluteValue )}" );
-    }
-
-    return new Pitch( pitchClass, octave, abs );
-  }
-
-  /// <summary>Creates a new Pitch.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0 to G9.</exception>
-  /// <param name="noteName">Name of the pitch class.</param>
-  /// <param name="accidental">The accidental.</param>
-  /// <param name="octave">The octave.</param>
-  /// <returns>A Pitch.</returns>
-  public static Pitch Create(
-    NoteName noteName,
-    Accidental accidental,
-    int octave )
-  {
-    return Create( PitchClass.Create( noteName, accidental ), octave );
-  }
-
-  /// <summary>Creates a pitch from a MIDI pitch value.</summary>
-  /// <exception cref="ArgumentOutOfRangeException">Thrown when created pitch would be out of the supported range C0 to G9.</exception>
-  /// <param name="midi">The MIDI pitch.</param>
-  /// <returns>A pitch.</returns>
-  public static Pitch CreateFromMidi(
-    int midi )
-  {
-    ArgumentOutOfRangeException.ThrowIfLessThan( midi, 0 );
-    ArgumentOutOfRangeException.ThrowIfGreaterThan( midi, 127 );
-
-    var absoluteValue = midi - Constants.OctaveSemitoneCount;
-
-    if( absoluteValue < 0 )
-    {
-      throw new ArgumentOutOfRangeException( nameof( midi ), "midi is out of range" );
-    }
-
-    var note = new Pitch( absoluteValue );
-    return note;
+    return Midi.CompareTo( other.Midi );
   }
 
   /// <inheritdoc/>
   public bool Equals(
     Pitch obj )
   {
-    return obj._absoluteValue == _absoluteValue;
+    return CompareTo( obj ) == 0;
+  }
+
+  /// <summary>
+  ///   Determines whether this instance and another pitch are enharmonically equivalent.
+  /// </summary>
+  /// <param name="other">The pitch to compare against.</param>
+  /// <returns>True if both pitches have the same sounding pitch; otherwise, false.</returns>
+  public bool EnharmonicEquals(
+    Pitch other )
+  {
+    return Midi == other.Midi;
   }
 
   /// <inheritdoc/>
@@ -283,7 +218,9 @@ public readonly struct Pitch
 
   /// <summary>Gets an enharmonic pitch with the given note name.</summary>
   /// <param name="noteName">The target note name.</param>
-  /// <returns>The enharmonic pitch, or null if none exists or the result would fall outside the supported range.</returns>
+  /// <returns>
+  ///   The enharmonic pitch, or null if none exists or the result would fall outside the supported range.
+  /// </returns>
   public Pitch? GetEnharmonic(
     NoteName noteName )
   {
@@ -296,7 +233,7 @@ public readonly struct Pitch
 
     try
     {
-      return Create( enharmonicPitchClass.Value, Octave );
+      return new Pitch( enharmonicPitchClass.Value, Octave );
     }
     catch( ArgumentOutOfRangeException )
     {
@@ -307,29 +244,7 @@ public readonly struct Pitch
   /// <inheritdoc/>
   public override int GetHashCode()
   {
-    return _absoluteValue;
-  }
-
-  /// <summary>Determines the maximum of the given pitches.</summary>
-  /// <param name="a">A Pitch to process.</param>
-  /// <param name="b">A Pitch to process.</param>
-  /// <returns>The maximum value.</returns>
-  public static Pitch Max(
-    Pitch a,
-    Pitch b )
-  {
-    return a._absoluteValue >= b._absoluteValue ? a : b;
-  }
-
-  /// <summary>Determines the minimum of the given pitches.</summary>
-  /// <param name="a">A Pitch to process.</param>
-  /// <param name="b">A Pitch to process.</param>
-  /// <returns>The minimum value.</returns>
-  public static Pitch Min(
-    Pitch a,
-    Pitch b )
-  {
-    return a._absoluteValue <= b._absoluteValue ? a : b;
+    return Midi;
   }
 
   /// <summary>Parses the provided string.</summary>
@@ -444,7 +359,7 @@ public readonly struct Pitch
   public Pitch Transpose(
     int semitoneCount )
   {
-    var result = new Pitch( _absoluteValue + semitoneCount );
+    var result = new Pitch( Midi + semitoneCount );
     return result;
   }
 
@@ -454,7 +369,42 @@ public readonly struct Pitch
   public Pitch Transpose(
     Interval interval )
   {
-    return Add( this, interval );
+    var newPitchClass = PitchClass + interval;
+    var newMidi = Midi + interval.SemitoneCount;
+
+    var octave = ( newMidi - Constants.OctaveSemitoneCount - newPitchClass.SemitoneOffset )
+                 / Constants.OctaveSemitoneCount;
+
+    return new Pitch( newPitchClass, octave );
+  }
+
+  /// <summary>
+  ///   Attempts to transpose a pitch by the given interval.
+  /// </summary>
+  /// <param name="pitch">The pitch to transpose.</param>
+  /// <param name="interval">The interval to transpose by.</param>
+  /// <param name="result">The resulting pitch if the transpose is successful.</param>
+  /// <returns>True if the transpose is successful, false otherwise.</returns>
+  public static bool TryTranspose(
+    Pitch pitch,
+    Interval interval,
+    out Pitch result )
+  {
+    var newMidi = pitch.Midi + interval.SemitoneCount;
+
+    if( newMidi < MIN_MIDI || newMidi > MAX_MIDI )
+    {
+      result = default;
+      return false;
+    }
+
+    var newPitchClass = pitch.PitchClass + interval;
+
+    var octave = ( newMidi - Constants.OctaveSemitoneCount - newPitchClass.SemitoneOffset )
+                 / Constants.OctaveSemitoneCount;
+
+    result = new Pitch( newPitchClass, octave );
+    return true;
   }
 
   /// <summary>Attempts to parse a Pitch from the given string.</summary>
@@ -468,7 +418,9 @@ public readonly struct Pitch
     return TryParse( value, null, out pitch );
   }
 
-  /// <summary>Attempts to parse a Pitch from the given string using the specified format provider.</summary>
+  /// <summary>
+  ///   Attempts to parse a Pitch from the given string using the specified format provider.
+  /// </summary>
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>
   /// <param name="pitch">[out] The pitch class.</param>
@@ -492,7 +444,9 @@ public readonly struct Pitch
     return TryParse( value, null, out pitch );
   }
 
-  /// <summary>Attempts to parse a Pitch from the given span using the specified format provider.</summary>
+  /// <summary>
+  ///   Attempts to parse a Pitch from the given span using the specified format provider.
+  /// </summary>
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>
   /// <param name="pitch">[out] The pitch class.</param>
@@ -509,7 +463,7 @@ public readonly struct Pitch
       return true;
     }
 
-    pitch = Empty;
+    pitch = default;
     return false;
   }
 
@@ -546,42 +500,79 @@ public readonly struct Pitch
 
   #endregion
 
+  #region IPartEvent Implementation
+
+  /// <inheritdoc/>
+  bool IPartEvent.Any(
+    PitchClass pitchClass )
+  {
+    return PitchClass == pitchClass;
+  }
+
+  /// <summary>
+  ///   Gets the pitch classes contained in the event.
+  /// </summary>
+  IEnumerable<PitchClass> IPartEvent.PitchClasses
+  {
+    get { yield return PitchClass; }
+  }
+
+  #endregion
+
+  #region IPitch<Pitch> Implementation
+
+  /// <summary>Gets the note name of the pitch.</summary>
+  /// <value>The note name.</value>
+  public NoteName NoteName => PitchClass.NoteName;
+
+  /// <summary>Gets the accidental of the pitch.</summary>
+  /// <value>The accidental.</value>
+  public Accidental Accidental => PitchClass.Accidental;
+
+  /// <summary>Gets the pitch's pitch class.</summary>
+  /// <value>The pitch class.</value>
+  public PitchClass PitchClass => _pitchClass;
+
+  #endregion
+
   #region Implementation
 
-  private static int CalcAbsoluteValue(
-    NoteName noteName,
-    Accidental accidental,
+  /// <summary>
+  ///   Calculates the MIDI value of a pitch class at a given octave.
+  /// </summary>
+  /// <param name="pitchClass">The pitch class.</param>
+  /// <param name="octave">The octave of the pitch.</param>
+  /// <returns>The MIDI value of the pitch.</returns>
+  private static int ToMidi(
+    PitchClass pitchClass,
     int octave )
   {
-    var absoluteValue = octave * Constants.OctaveSemitoneCount + SemitonesBetween( NoteName.C, noteName ) + (int) accidental;
-    return absoluteValue;
+    var midi = ( octave + 1 ) * Constants.OctaveSemitoneCount + pitchClass.SemitoneOffset;
+    return midi;
   }
 
-  private static void CalcNote(
-    byte absoluteValue,
-    out PitchClass pitchClass,
-    out byte octave )
+  /// <summary>
+  ///   Calculates the pitch class from a MIDI value.
+  /// </summary>
+  /// <param name="midi">The MIDI value of the pitch.</param>
+  /// <returns>The calculated pitch class.</returns>
+  private static PitchClass ToPitchClass(
+    byte midi )
   {
-    octave = (byte) Math.DivRem( absoluteValue, Constants.OctaveSemitoneCount, out var remainder );
-    pitchClass = PitchClass.LookupPitchClass( remainder );
+    // Calculate the semitone offset within the octave.
+    Math.DivRem( midi - Constants.OctaveSemitoneCount, Constants.OctaveSemitoneCount, out var semitonesInOctave );
+
+    return PitchClass.LookupPitchClass( semitonesInOctave );
   }
 
-  private static int SemitonesBetween(
-    NoteName start,
-    NoteName end )
-  {
-    var semitones = 0;
-    var noteName = start;
-
-    while( noteName != end )
-    {
-      semitones += s_semitonesBetween[(int) noteName];
-      noteName = (NoteName) s_semitonesBetween.WrapIndex( 0, (int) ( noteName + 1 ) );
-    }
-
-    return semitones;
-  }
-
+  /// <summary>
+  ///   Attempts to parse a Pitch from the given span using the specified format provider.
+  /// </summary>
+  /// <param name="value">The span of characters to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitch">[out] The parsed pitch.</param>
+  /// <param name="tail">[out] The remaining unparsed characters.</param>
+  /// <returns>True if parsing was successful; otherwise, false.</returns>
   private static bool TryParseNotes(
     ReadOnlySpan<char> value,
     IFormatProvider? provider,
@@ -603,7 +594,7 @@ public readonly struct Pitch
     {
       if( !char.IsDigit( tail[0] ) )
       {
-        pitch = Create( pitchClass, octave );
+        pitch = new Pitch( pitchClass, octave );
         return true;
       }
 
@@ -617,35 +608,39 @@ public readonly struct Pitch
       tail = tail[1..];
     }
 
-    pitch = Create( pitchClass, octave );
+    pitch = new Pitch( pitchClass, octave );
     return true;
   }
 
+  /// <summary>
+  ///   Attempts to parse a Pitch from the given span using the specified format provider, interpreting the input as a
+  ///   MIDI pitch value.
+  /// </summary>
+  /// <param name="value">The span of characters to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="pitch">[out] The parsed pitch.</param>
+  /// <param name="tail">[out] The remaining unparsed characters.</param>
+  /// <returns>True if parsing was successful; otherwise, false.</returns>
   private static bool TryParseMidi(
     ReadOnlySpan<char> value,
     IFormatProvider? provider,
     out Pitch pitch,
     out ReadOnlySpan<char> tail )
   {
-    if( !int.TryParse( value, provider, out var midi ) )
+    // We expect the MIDI value to be a number between 12 and 127, inclusive.
+    if( !int.TryParse( value, provider, out var midi ) || midi is < MIN_MIDI or > MAX_MIDI )
     {
       pitch = default;
       tail = value;
       return false;
     }
 
-    if( midi is < 0 or > 127 )
-    {
-      pitch = default;
-      tail = value;
-      return false;
-    }
+    pitch = new Pitch( midi );
 
-    pitch = CreateFromMidi( midi );
-
+    // The tail is the remaining characters after the MIDI number. If the MIDI number is less than 100, it will be 2 digits; otherwise, it will be 3 digits.
+    // The case for less than 10 is not reachable because the minimum MIDI value is 12.
     tail = midi switch
     {
-      < 10  => value[1..],
       < 100 => value[2..],
       _     => value[3..]
     };
@@ -656,46 +651,6 @@ public readonly struct Pitch
   #endregion
 
   #region Operators
-
-  /// <summary>Explicit cast that converts the given Accidental to an int.</summary>
-  /// <param name="pitch">The pitch class name.</param>
-  /// <returns>The result of the operation.</returns>
-  public static explicit operator int(
-    Pitch pitch )
-  {
-    return pitch._absoluteValue;
-  }
-
-  /// <summary>Explicit cast that converts the given int to a Accidental.</summary>
-  /// <param name="value">The value.</param>
-  /// <returns>The result of the operation.</returns>
-  public static explicit operator Pitch(
-    int value )
-  {
-    return new Pitch( value );
-  }
-
-  /// <summary>Equality operator.</summary>
-  /// <param name="lhs">The first instance to compare.</param>
-  /// <param name="rhs">The second instance to compare.</param>
-  /// <returns>The result of the operation.</returns>
-  public static bool operator ==(
-    Pitch lhs,
-    Pitch rhs )
-  {
-    return Equals( lhs, rhs );
-  }
-
-  /// <summary>Inequality operator.</summary>
-  /// <param name="lhs">The first instance to compare.</param>
-  /// <param name="rhs">The second instance to compare.</param>
-  /// <returns>The result of the operation.</returns>
-  public static bool operator !=(
-    Pitch lhs,
-    Pitch rhs )
-  {
-    return !Equals( lhs, rhs );
-  }
 
   /// <summary>Greater-than comparison operator.</summary>
   /// <param name="left">The first instance to compare.</param>
@@ -741,6 +696,28 @@ public readonly struct Pitch
     return left.CompareTo( right ) <= 0;
   }
 
+  /// <summary>Equality operator.</summary>
+  /// <param name="lhs">The first instance to compare.</param>
+  /// <param name="rhs">The second instance to compare.</param>
+  /// <returns>The result of the operation.</returns>
+  public static bool operator ==(
+    Pitch lhs,
+    Pitch rhs )
+  {
+    return Equals( lhs, rhs );
+  }
+
+  /// <summary>Inequality operator.</summary>
+  /// <param name="lhs">The first instance to compare.</param>
+  /// <param name="rhs">The second instance to compare.</param>
+  /// <returns>The result of the operation.</returns>
+  public static bool operator !=(
+    Pitch lhs,
+    Pitch rhs )
+  {
+    return !Equals( lhs, rhs );
+  }
+
   /// <summary>Addition operator.</summary>
   /// <param name="pitch">The first value.</param>
   /// <param name="semitoneCount">A value to add to it.</param>
@@ -760,7 +737,7 @@ public readonly struct Pitch
     Pitch pitch,
     Interval interval )
   {
-    return Add( pitch, interval );
+    return pitch.Transpose( interval );
   }
 
   /// <summary>Increment operator.</summary>
@@ -800,7 +777,31 @@ public readonly struct Pitch
     Pitch left,
     Pitch right )
   {
-    return left._absoluteValue - right._absoluteValue;
+    return left.Midi - right.Midi;
+  }
+
+  #endregion
+
+  #region Nested Types
+
+  private sealed class EnharmonicEqualityComparer: IEqualityComparer<Pitch>
+  {
+    #region Public Methods
+
+    public bool Equals(
+      Pitch x,
+      Pitch y )
+    {
+      return x.EnharmonicEquals( y );
+    }
+
+    public int GetHashCode(
+      Pitch obj )
+    {
+      return obj._midi;
+    }
+
+    #endregion
   }
 
   #endregion

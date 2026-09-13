@@ -31,8 +31,9 @@ public sealed class FingeringTests
   [Fact]
   public void CreateTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var actual = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    var actual = result;
 
     actual.StringNumber.Should()
           .Be( 6 );
@@ -47,13 +48,21 @@ public sealed class FingeringTests
   [Fact]
   public void CreateThrowsWithOutOfRangePositionNumberTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var act1 = () => Fingering.Create( instrument, 6, -1 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var act1 = () =>
+    {
+      var result = new Fingering( instrument, 6, -1 );
+      return result;
+    };
 
     act1.Should()
         .Throw<ArgumentOutOfRangeException>();
 
-    var act2 = () => Fingering.Create( instrument, 6, 23 );
+    var act2 = () =>
+    {
+      var result = new Fingering( instrument, 6, 23 );
+      return result;
+    };
 
     act2.Should()
         .Throw<ArgumentOutOfRangeException>();
@@ -62,12 +71,20 @@ public sealed class FingeringTests
   [Fact]
   public void CreateThrowsWithOutOfRangeStringNumberTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var act1 = () => Fingering.Create( instrument, 0, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var act1 = () =>
+    {
+      var result = new Fingering( instrument, 0, 5 );
+      return result;
+    };
 
     act1.Should()
         .Throw<ArgumentOutOfRangeException>();
-    var act2 = () => Fingering.Create( instrument, 7, 5 );
+    var act2 = () =>
+    {
+      var result = new Fingering( instrument, 7, 5 );
+      return result;
+    };
 
     act2.Should()
         .Throw<ArgumentOutOfRangeException>();
@@ -76,10 +93,13 @@ public sealed class FingeringTests
   [Fact]
   public void EqualsContractTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    object x = Fingering.Create( instrument, 6, 5 );
-    object y = Fingering.Create( instrument, 6, 5 );
-    object z = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    object x = result;
+    var result1 = new Fingering( instrument, 6, 5 );
+    object y = result1;
+    var result2 = new Fingering( instrument, 6, 5 );
+    object z = result2;
 
     // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
@@ -110,8 +130,9 @@ public sealed class FingeringTests
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    object actual = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    object actual = result;
 
     actual.Equals( int.MinValue )
           .Should()
@@ -121,8 +142,9 @@ public sealed class FingeringTests
   [Fact]
   public void EqualsFailsWithNullTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    object actual = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    object actual = result;
 
     actual.Equals( null )
           .Should()
@@ -132,8 +154,9 @@ public sealed class FingeringTests
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var actual = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    var actual = result;
 
     actual.Equals( actual )
           .Should()
@@ -143,9 +166,11 @@ public sealed class FingeringTests
   [Fact]
   public void GetHashcodeTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var actual = Fingering.Create( instrument, 6, 5 );
-    var expected = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    var actual = result;
+    var result1 = new Fingering( instrument, 6, 5 );
+    var expected = result1;
 
     expected.Equals( actual )
             .Should()
@@ -157,16 +182,37 @@ public sealed class FingeringTests
   }
 
   [Fact]
+  public void MutedShouldReturnMutedFingering()
+  {
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = instrument.CreateMutedFingering( 6 );
+
+    result.StringNumber.Should()
+          .Be( 6 );
+
+    result.Position.Should()
+          .Be( -1 );
+
+    result.ToString()
+          .Should()
+          .Be( "6x" );
+  }
+
+  [Fact]
   public void ToStringTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
 
-    Fingering.Create( instrument, 6, 5 )
+    var result = new Fingering( instrument, 6, 5 );
+
+    result
              .ToString()
              .Should()
              .Be( "65" );
 
-    Fingering.Create( instrument, 6, 12 )
+    var result1 = new Fingering( instrument, 6, 12 );
+
+    result1
              .ToString()
              .Should()
              .Be( "612" );
@@ -175,10 +221,13 @@ public sealed class FingeringTests
   [Fact]
   public void TypeSafeEqualsContractTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var x = Fingering.Create( instrument, 6, 5 );
-    var y = Fingering.Create( instrument, 6, 5 );
-    var z = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    var x = result;
+    var result1 = new Fingering( instrument, 6, 5 );
+    var y = result1;
+    var result2 = new Fingering( instrument, 6, 5 );
+    var z = result2;
 
     x.Equals( x )
      .Should()
@@ -208,8 +257,9 @@ public sealed class FingeringTests
   [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var actual = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    var actual = result;
 
     // ReSharper disable once SuspiciousTypeConversion.Global
     actual.Equals( int.MinValue )
@@ -220,8 +270,9 @@ public sealed class FingeringTests
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
-    var instrument = StringedInstrument.Create( "guitar", 22 );
-    var actual = Fingering.Create( instrument, 6, 5 );
+    var instrument = new StringedInstrument( "guitar", 22, null );
+    var result = new Fingering( instrument, 6, 5 );
+    var actual = result;
 
     actual.Equals( null )
           .Should()
