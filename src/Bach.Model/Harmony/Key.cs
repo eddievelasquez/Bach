@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Harmony;
 

@@ -25,7 +25,6 @@
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Serialization.Internal;
 

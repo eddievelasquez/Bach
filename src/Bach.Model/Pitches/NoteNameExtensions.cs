@@ -22,8 +22,6 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Bach.Model.Internal;
-
 namespace Bach.Model.Pitches;
 
 /// <summary>Provides operations for <see cref="NoteName"/> values.</summary>

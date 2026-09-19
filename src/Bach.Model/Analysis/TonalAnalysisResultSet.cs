@@ -24,7 +24,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Analysis;
 

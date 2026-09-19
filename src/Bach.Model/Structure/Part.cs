@@ -26,7 +26,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Structure;
 

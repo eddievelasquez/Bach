@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Diagnostics.CodeAnalysis;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Harmony;
 

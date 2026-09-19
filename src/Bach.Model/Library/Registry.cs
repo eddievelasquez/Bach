@@ -28,9 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Bach.Model.Instruments;
-using Bach.Model.Internal;
-using Bach.Model.Serialization.Internal;
 using PersistentLibrary = Bach.Model.Serialization.Internal.Library;
 
 namespace Bach.Model.Library;

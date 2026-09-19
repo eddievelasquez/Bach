@@ -24,7 +24,6 @@
 
 using System.Collections.Generic;
 using System.Text;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Pitches;
 

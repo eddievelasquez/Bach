@@ -26,7 +26,6 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Scales;
 

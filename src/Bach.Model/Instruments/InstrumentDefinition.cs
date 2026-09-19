@@ -1,4 +1,4 @@
-﻿// Module Name: InstrumentDefinition.cs
+// Module Name: InstrumentDefinition.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 // 
@@ -23,7 +23,6 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Bach.Model.Instruments.Internal;
-using Bach.Model.Internal;
 
 namespace Bach.Model.Instruments;
 
