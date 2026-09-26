@@ -28,7 +28,10 @@ using System.Linq;
 
 namespace Bach.Model.Harmony;
 
-/// <summary>Represents a sequence of chords forming a progression.</summary>
+/// <summary>
+///   Represents an ordered progression as scale degrees. Its parse and format methods use Roman
+///   numeral notation, so the degrees can be interpreted in a governing scale or mode.
+/// </summary>
 public sealed class ChordProgression
   : IFormattable,
     IParsable<ChordProgression>

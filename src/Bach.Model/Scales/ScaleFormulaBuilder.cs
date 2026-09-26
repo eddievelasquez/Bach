@@ -29,7 +29,9 @@ using System.Linq;
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   Creates scale formulas.
+///   Builds a scale formula from its identity, aliases, and ordered ascending and descending
+///   intervals. Use the classification methods to attach structural and repertoire metadata before
+///   building the formula.
 /// </summary>
 public sealed class ScaleFormulaBuilder
 {

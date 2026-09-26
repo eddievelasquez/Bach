@@ -25,7 +25,8 @@
 namespace Bach.Model.Analysis;
 
 /// <summary>
-///   Represents a cadential pattern identified in the music.
+///   Records a detected cadence, including its event or pitch span, cadence kind, and the evidence
+///   for the classification.
 /// </summary>
 public sealed record CadentialPattern
 {

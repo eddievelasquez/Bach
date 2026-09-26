@@ -198,8 +198,10 @@ internal sealed class ChordCore<TSelf, TPitch>
 
   #region IChord<TSelf,TPitch> Implementation
 
-  /// <summary>An extended chord uses intervals whose quantity extends beyond the octave.</summary>
-  /// <value>True if this instance is an extended chord, false if not.</value>
+  /// <summary>
+  ///   Gets a value indicating whether the chord formula's highest interval extends beyond an octave,
+  ///   as in a ninth or eleventh chord. A formula whose highest interval is a seventh is not extended.
+  /// </summary>
   public bool IsExtended
   {
     get

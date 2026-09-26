@@ -27,7 +27,11 @@ using System.Linq;
 
 namespace Bach.Model.Intervals;
 
-/// <summary>Provides common extensions.</summary>
+/// <summary>
+///   Provides methods that calculate intervals from ordered pitch classes or parse note-name strings
+///   before calculating their intervals. The first pitch class is treated as the root, and results
+///   begin with a unison.
+/// </summary>
 public static class IntervalExtensions
 {
   #region Implementation

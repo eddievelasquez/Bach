@@ -25,7 +25,9 @@
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   Calculated structural scale categories.
+///   Identifies structural categories calculated for a scale formula. Use these categories to group
+///   formulas by properties such as scale type or number of degrees; they differ from registry-
+///   supplied repertoire tags.
 /// </summary>
 public enum ScaleCategory
 {

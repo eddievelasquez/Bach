@@ -441,7 +441,8 @@ public class PitchChord
   public Pitch Bass => _impl.Bass;
 
   /// <summary>
-  ///   Gets a value indicating whether the chord is an extended chord.
+  ///   Gets a value indicating whether the chord formula's highest interval extends beyond an octave,
+  ///   as in a ninth or eleventh chord. A formula whose highest interval is a seventh is not extended.
   /// </summary>
   public bool IsExtended => _impl.IsExtended;
 

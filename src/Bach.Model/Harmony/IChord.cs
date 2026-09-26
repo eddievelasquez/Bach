@@ -27,7 +27,8 @@ using System.Collections.Generic;
 namespace Bach.Model.Harmony;
 
 /// <summary>
-///   Represents a chord with a specific root element type.
+///   Defines a chord as an ordered list of pitch elements, with its root, bass, formula, inversion,
+///   and display name. Implementations can use pitch classes or pitches as their elements.
 /// </summary>
 /// <typeparam name="TChord">The type of the chord itself.</typeparam>
 /// <typeparam name="TPitch">The type of the chord's root and bass elements.</typeparam>
@@ -65,9 +66,9 @@ public interface IChord<TChord, out TPitch>
   TPitch Bass { get; }
 
   /// <summary>
-  ///   An extended chord uses intervals whose quantity extends beyond the octave.
+  ///   Gets a value indicating whether the chord formula's highest interval extends beyond an octave,
+  ///   as in a ninth or eleventh chord. A formula whose highest interval is a seventh is not extended.
   /// </summary>
-  /// <value>True if this instance is an extended chord, false if not.</value>
   bool IsExtended { get; }
 
   #endregion

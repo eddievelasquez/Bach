@@ -29,7 +29,8 @@ using System.Linq;
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   Classification metadata for a scale formula.
+///   Describes a scale formula with its canonical degree spelling, cardinality, structural
+///   categories, and repertoire tags. It can also record a parent formula and modal rotation.
 /// </summary>
 public sealed record ScaleClassification
 {

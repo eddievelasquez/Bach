@@ -28,7 +28,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Bach.Model.Harmony;
 
-/// <summary>A chord is a set of pitch classes defined by a ChordFormula .</summary>
+/// <summary>
+///   Represents an ordered set of pitch classes generated from a root and a chord formula.
+///   Use the inversion to choose which chord tone is the bass; use <see cref="GetPitches"/> to
+///   place the chord in an octave.
+/// </summary>
 public class Chord
   : IChord<Chord, PitchClass>,
     ISpanConsumingParsable<Chord>
@@ -514,7 +518,8 @@ public class Chord
   public PitchClass Bass => _impl.Bass;
 
   /// <summary>
-  ///   Gets a value indicating whether the chord is an extended chord.
+  ///   Gets a value indicating whether the chord formula's highest interval extends beyond an octave,
+  ///   as in a ninth or eleventh chord. A formula whose highest interval is a seventh is not extended.
   /// </summary>
   public bool IsExtended => _impl.IsExtended;
 

@@ -25,7 +25,8 @@
 namespace Bach.Model.Intervals;
 
 /// <summary>
-///   Extension methods for the <see cref="IntervalQuantity"/> enumeration.
+///   Classifies interval quantities as simple or compound and as perfect-based or major-based,
+///   computes their inversions, and parses numeric quantity notation.
 /// </summary>
 public static class IntervalQuantityExtensions
 {

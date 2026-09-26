@@ -24,7 +24,10 @@
 
 namespace Bach.Model.Harmony;
 
-/// <summary>A chord formula defines how the pitch classes of a chord relate to each other.</summary>
+/// <summary>
+///   Defines a chord by the intervals from its root to each chord tone. The formula also provides
+///   a display name and symbol used when naming or parsing chords.
+/// </summary>
 public sealed class ChordFormula: Formula
 {
   #region Constants

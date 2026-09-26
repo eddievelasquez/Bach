@@ -28,7 +28,8 @@ using System.Linq;
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   Represents a scale degree and resolves it within a key.
+///   Represents one of the seven diatonic scale degrees by number, name, and Roman numeral symbol.
+///   Parsing methods also support Nashville number notation.
 /// </summary>
 public readonly struct ScaleDegree: IParsable<ScaleDegree>
 {

@@ -25,7 +25,8 @@
 namespace Bach.Model.Pitches;
 
 /// <summary>
-///   Provides operations for <see cref="Accidental"/> values.
+///   Provides arithmetic and formatting operations for <see cref="Accidental"/> values, including
+///   ASCII and Unicode accidental symbols.
 /// </summary>
 public static class AccidentalExtensions
 {

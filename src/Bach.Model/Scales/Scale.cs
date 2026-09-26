@@ -30,7 +30,11 @@ using Comparer = Bach.Model.Internal.Comparer;
 
 namespace Bach.Model.Scales;
 
-/// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
+/// <summary>
+///   Represents the ordered pitch classes generated from a root and a scale formula. The formula
+///   supplies the intervals and directional behavior; the scale also reports whether its spelling
+///   requires double accidentals.
+/// </summary>
 public sealed class Scale
   : IReadOnlyList<PitchClass>,
     IEquatable<Scale>,

@@ -25,7 +25,8 @@
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   Registry-supplied repertoire tags for a scale formula.
+///   Identifies registry-supplied repertoire labels for a scale formula, such as blues, jazz, or
+///   common-practice. These tags describe use or tradition, not calculated interval structure.
 /// </summary>
 public enum ScaleTag
 {

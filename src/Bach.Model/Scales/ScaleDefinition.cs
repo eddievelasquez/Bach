@@ -25,7 +25,8 @@
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   Represents a governing pitch-class collection for a key (major, minor, mode, or custom).
+///   Identifies the governing scale or mode for a key by its scale formula and, for modal keys,
+///   the interval relating its tonic to the relative-major tonic.
 /// </summary>
 public sealed class ScaleDefinition
 {
@@ -121,7 +122,7 @@ public sealed class ScaleDefinition
   public ScaleFormula Formula { get; }
 
   /// <summary>
-  ///   Gets the interval from a modal tonic down to the tonic of its relative major collection.
+  ///   Gets the interval from a modal tonic down to the tonic of its relative major scale.
   /// </summary>
   public Interval? RelativeMajorInterval { get; }
 
@@ -150,7 +151,7 @@ public sealed class ScaleDefinition
   /// </summary>
   /// <param name="formulaId">The formula id to wrap.</param>
   /// <param name="relativeMajorInterval">
-  ///   The interval from a modal tonic down to the tonic of its relative major collection.
+  ///   The interval from a modal tonic down to the tonic of its relative major scale.
   /// </param>
   public static ScaleDefinition FromFormulaId(
     string formulaId,

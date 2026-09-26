@@ -30,7 +30,9 @@ using System.Linq;
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   A scale formula defines how the pitchClasses of a scale relate to each other.
+///   Defines a scale's tonic-relative degrees, with separate authoritative sequences for ascending
+///   and descending motion. It also carries aliases and classification metadata used to identify
+///   and group the formula.
 /// </summary>
 public class ScaleFormula: Formula
 {

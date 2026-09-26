@@ -25,7 +25,8 @@
 namespace Bach.Model.Pitches;
 
 /// <summary>
-///   Defines the shared contract for pitch-like values.
+///   Marks values that represent a musical pitch or pitch class. Implementations use this interface
+///   to share generic pitch-related contracts; the interface does not define pitch operations.
 /// </summary>
 public interface IPitch
 {

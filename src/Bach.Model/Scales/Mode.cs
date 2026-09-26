@@ -29,7 +29,10 @@ using System.Text;
 
 namespace Bach.Model.Scales;
 
-/// <summary>A mode is a type of scale coupled with a set of melodic behaviors.</summary>
+/// <summary>
+///   Combines a scale with a diatonic mode formula to expose the mode's name and ordered pitch
+///   classes.
+/// </summary>
 public sealed class Mode
   : IEquatable<Mode>,
     IEnumerable<PitchClass>

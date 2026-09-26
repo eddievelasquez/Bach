@@ -28,7 +28,8 @@ using System.Linq;
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   Creates scale classification metadata.
+///   Builds classification metadata by collecting structural categories, repertoire tags, canonical
+///   degrees, and optional key-candidate or modal-parent information.
 /// </summary>
 public sealed class ScaleClassificationBuilder
 {

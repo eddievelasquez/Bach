@@ -29,7 +29,8 @@ using System.Linq;
 namespace Bach.Model.Intervals;
 
 /// <summary>
-///   Represents a collection of intervals.
+///   Represents a non-empty, read-only list of distinct intervals in ascending order. Construction
+///   fails if the supplied intervals are unsorted or contain duplicates.
 /// </summary>
 public sealed class IntervalCollection
   : IReadOnlyList<Interval>,

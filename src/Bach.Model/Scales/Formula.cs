@@ -29,7 +29,8 @@ using System.Text;
 namespace Bach.Model.Scales;
 
 /// <summary>
-///   A formula is a base class for constructing a sequence of pitch classes based on a series of intervals.
+///   Provides the shared identity, name, and ordered interval pattern for chord and scale formulas.
+///   Derived formulas use these intervals to define their pitch-class content.
 /// </summary>
 public abstract class Formula
   : INamedObject,

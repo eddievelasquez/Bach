@@ -27,7 +27,10 @@ using System.Linq;
 
 namespace Bach.Model.Instruments;
 
-/// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
+/// <summary>
+///   Represents the open-string pitches for a stringed instrument. The indexer uses one-based
+///   string numbers, matching instrument string numbering.
+/// </summary>
 public sealed class Tuning: IEquatable<Tuning>
 {
   #region Constructors

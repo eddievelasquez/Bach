@@ -25,7 +25,8 @@
 namespace Bach.Model.Analysis;
 
 /// <summary>
-///   Represents an applied harmonic function assigned to a musical event.
+///   Records an applied dominant or leading-tone triad that points to a target scale degree,
+///   together with the analyzed event or pitch and the evidence for the classification.
 /// </summary>
 public sealed record AppliedFunction
 {

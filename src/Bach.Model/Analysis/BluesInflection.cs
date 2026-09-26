@@ -25,7 +25,8 @@
 namespace Bach.Model.Analysis;
 
 /// <summary>
-///   Represents a blues inflection identified in the music.
+///   Records a blues-inflected event or pitch, its inflection kind, the spelled degree alteration,
+///   and the evidence for the classification.
 /// </summary>
 public sealed record BluesInflection
 {

@@ -25,7 +25,8 @@
 namespace Bach.Model.Analysis;
 
 /// <summary>
-///   Represents a modal-interchange (borrowed harmony) instance.
+///   Records a borrowed event or pitch as modal interchange, including its source scale or mode,
+///   affected degree in the local governing scale, and supporting evidence.
 /// </summary>
 public sealed record ModalInterchange
 {

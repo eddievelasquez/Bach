@@ -25,7 +25,8 @@
 namespace Bach.Model.Harmony;
 
 /// <summary>
-///   Represents a triad applied to a target scale degree.
+///   Records a dominant or leading-tone triad that points to a target scale degree, together with
+///   the applied function assigned to the triad.
 /// </summary>
 public sealed class AppliedTriad
 {

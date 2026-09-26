@@ -24,7 +24,9 @@
 
 namespace Bach.Model.Pitches;
 
-/// <summary>Provides operations for <see cref="NoteName"/> values.</summary>
+/// <summary>
+///   Provides parsing and diatonic step arithmetic for <see cref="NoteName"/> values.
+/// </summary>
 public static class NoteNameExtensions
 {
   #region Constants

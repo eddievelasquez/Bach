@@ -25,7 +25,8 @@
 namespace Bach.Model.Intervals;
 
 /// <summary>
-///   Extension methods for the <see cref="IntervalQuality"/> enum.
+///   Formats interval qualities as symbols or names and provides quality arithmetic, inversion, and
+///   validation against interval quantities.
 /// </summary>
 public static class IntervalQualityExtensions
 {

@@ -24,7 +24,10 @@
 
 namespace Bach.Model.Instruments;
 
-/// <summary>The base class for an instrument.</summary>
+/// <summary>
+///   Represents an instrument instance associated with an <see cref="InstrumentDefinition"/>.
+///   Derived types add playable configuration, such as a tuning and position count.
+/// </summary>
 public abstract class Instrument: IEquatable<Instrument>
 {
   #region Constructors
