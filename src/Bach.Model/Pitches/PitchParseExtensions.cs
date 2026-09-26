@@ -1,20 +1,20 @@
 // Module Name: PitchParseExtensions.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-// 
+//
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -112,7 +112,9 @@ internal static class PitchParseExtensions
   {
     #region Public Methods
 
-    /// <summary>Attempts to parse a pitch class collection from the given span using the specified format provider.</summary>
+    /// <summary>
+    ///   Attempts to parse a pitch class collection from the given span using the specified format provider.
+    /// </summary>
     /// <param name="provider">The format provider.</param>
     /// <param name="result">[out] The list of parsed pitch classes.</param>
     /// <returns><c>true</c> if it succeeds, <c>false</c> if it fails.</returns>
@@ -137,7 +139,7 @@ internal static class PitchParseExtensions
       [NotNullWhen( true )] out List<PitchClass>? pitchClasses,
       out ReadOnlySpan<char> tail )
     {
-      return span.TryParsePitchesImpl( provider, out pitchClasses, out tail );
+      return span.TryParsePitchesImpl( provider, out pitchClasses, PitchClass.TryParse, out tail );
     }
 
     /// <summary>
@@ -166,7 +168,7 @@ internal static class PitchParseExtensions
       [NotNullWhen( true )] out List<Pitch>? pitchClasses,
       out ReadOnlySpan<char> tail )
     {
-      return span.TryParsePitchesImpl( provider, out pitchClasses, out tail );
+      return span.TryParsePitchesImpl( provider, out pitchClasses, Pitch.TryParse, out tail );
     }
 
     #endregion
@@ -176,8 +178,9 @@ internal static class PitchParseExtensions
     private bool TryParsePitchesImpl<TPitch>(
       IFormatProvider? provider,
       [NotNullWhen( true )] out List<TPitch>? pitches,
+      TryParseValue<TPitch> parser,
       out ReadOnlySpan<char> tail )
-      where TPitch: IPitch<TPitch>
+      where TPitch: IPitch
     {
       // An empty span is not valid
       if( span.IsEmpty )
@@ -201,7 +204,9 @@ internal static class PitchParseExtensions
       // Parse each pitch in the range and add it to the list.
       for( var i = 0; i < rangeCount; i++ )
       {
-        if( !TPitch.TryParse( span[ranges[i]], provider, out var pitch ) )
+        var currentSpan = span[ranges[i]];
+
+        if( !parser( currentSpan, provider, out var pitch ) )
         {
           pitches = null;
           return false;
@@ -218,6 +223,24 @@ internal static class PitchParseExtensions
 
     #endregion
   }
+
+  #endregion
+
+  #region Nested Types
+
+  /// <summary>
+  ///   Represents a delegate that attempts to parse a value of type <typeparamref name="TValue"/> from a
+  ///   <see cref="ReadOnlySpan{Char}"/>.
+  /// </summary>
+  /// <typeparam name="TValue">The type of value to parse.</typeparam>
+  /// <param name="value">The span containing the value to parse.</param>
+  /// <param name="provider">The format provider.</param>
+  /// <param name="result">The parsed value.</param>
+  /// <returns><c>true</c> if parsing was successful; otherwise, <c>false</c>.</returns>
+  private delegate bool TryParseValue<TValue>(
+    ReadOnlySpan<char> value,
+    IFormatProvider? provider,
+    out TValue result );
 
   #endregion
 }

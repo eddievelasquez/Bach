@@ -1,4 +1,4 @@
-// Module Name: IChordFactory.cs
+// Module Name: PitchExtensions.cs
 // Project:     Bach.Model
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -22,30 +22,29 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Harmony;
+namespace Bach.Model.Pitches;
 
-/// <summary>
-///   Represents a factory for creating chords with a specific root element type.
-/// </summary>
-/// <typeparam name="TChord">The type of the chord itself.</typeparam>
-/// <typeparam name="TPitch">The type of the chord's root and bass elements.</typeparam>
-public interface IChordFactory<out TChord, in TPitch>
-  where TChord: PitchCollection<TPitch>, IChord<TChord, TPitch>, IChordFactory<TChord, TPitch>
-  where TPitch: IPitch<TPitch>
+internal static class PitchExtensions
 {
-  #region Public Methods
+  #region Implementation
 
-  /// <summary>
-  ///   Creates a new chord with the specified root, formula, and inversion.
-  /// </summary>
-  /// <param name="root">The root pitch of the chord.</param>
-  /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion of the chord. Defaults to zero.</param>
-  /// <returns>The created chord.</returns>
-  static abstract TChord Create(
-    TPitch root,
-    ChordFormula formula,
-    int inversion = 0 );
+  extension<TPitch>(
+    TPitch pitchLike )
+  {
+    #region Public Methods
+
+    public PitchClass GetPitchClass()
+    {
+      return pitchLike switch
+      {
+        Pitch pitch           => pitch.PitchClass,
+        PitchClass pitchClass => pitchClass,
+        _                     => throw new InvalidOperationException( $"Invalid type for TPitch: {pitchLike!.GetType()}" )
+      };
+    }
+
+    #endregion
+  }
 
   #endregion
 }

@@ -32,11 +32,27 @@ namespace Bach.Model.Harmony;
 /// <typeparam name="TChord">The type of the chord itself.</typeparam>
 /// <typeparam name="TPitch">The type of the chord's root and bass elements.</typeparam>
 public interface IChord<TChord, out TPitch>
-  : ISpanParsable<TChord>
-  where TChord: PitchCollection<TPitch>, IChord<TChord, TPitch>, IChordFactory<TChord, TPitch>
-  where TPitch: IPitch<TPitch>
+  : IReadOnlyList<TPitch>,
+    IEquatable<TChord>
+  where TChord: IReadOnlyList<TPitch>, IChord<TChord, TPitch>
+  where TPitch: struct, IPitch
 {
   #region Properties
+
+  /// <summary>
+  ///   Gets the display name of the chord.
+  /// </summary>
+  string Name { get; }
+
+  /// <summary>
+  ///   Gets the chord formula.
+  /// </summary>
+  ChordFormula Formula { get; }
+
+  /// <summary>
+  ///   Gets the inversion number of the chord.
+  /// </summary>
+  int Inversion { get; }
 
   /// <summary>
   ///   Gets the root of the chord.
@@ -49,39 +65,10 @@ public interface IChord<TChord, out TPitch>
   TPitch Bass { get; }
 
   /// <summary>
-  ///   Gets the inversion number of the chord.
+  ///   An extended chord uses intervals whose quantity extends beyond the octave.
   /// </summary>
-  int Inversion { get; }
-
-  /// <summary>
-  ///   Gets the chord formula.
-  /// </summary>
-  ChordFormula Formula { get; }
-
-  /// <summary>
-  ///   Gets the display name of the chord.
-  /// </summary>
-  string Name { get; }
-
-  #endregion
-
-  #region Public Methods
-
-  /// <summary>
-  ///   Creates an inversion of the current chord.
-  /// </summary>
-  /// <param name="inversion">The inversion to create.</param>
-  /// <returns>An inverted chord.</returns>
-  TChord GetInversion(
-    int inversion );
-
-  /// <summary>
-  ///   Gets the pitches of the chord at the specified octave.
-  /// </summary>
-  /// <param name="octave">The octave to get the pitches at.</param>
-  /// <returns>The pitches of the chord at the specified octave.</returns>
-  IEnumerable<Pitch> GetPitches(
-    int octave );
+  /// <value>True if this instance is an extended chord, false if not.</value>
+  bool IsExtended { get; }
 
   #endregion
 }

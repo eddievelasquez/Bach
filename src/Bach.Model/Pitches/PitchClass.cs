@@ -45,8 +45,12 @@ namespace Bach.Model.Pitches;
 ///   <see cref="HashSet{T}"/> used in pitch-class-set operations).
 /// </remarks>
 public readonly struct PitchClass
-  : IPitch<PitchClass>,
-    IComparisonOperators<PitchClass, PitchClass, bool>
+  : IPitch,
+    IComparisonOperators<PitchClass, PitchClass, bool>,
+    IEquatable<PitchClass>,
+    IComparable<PitchClass>,
+    ISpanConsumingParsable<PitchClass>,
+    IFormattable
 {
   #region Nested Types
 
@@ -208,11 +212,6 @@ public readonly struct PitchClass
   ///   <see cref="Equals(PitchClass)"/> and <see cref="GetHashCode"/> members remain spelling-sensitive.
   /// </remarks>
   public static IEqualityComparer<PitchClass> EnharmonicComparer { get; } = new EnharmonicEqualityComparer();
-
-  /// <summary>
-  ///   Gets the pitch class of the pitch-like value.
-  /// </summary>
-  PitchClass IPitch<PitchClass>.PitchClass => this;
 
   /// <summary>Gets the name of the pitch class.</summary>
   /// <value>The name of the pitch class.</value>

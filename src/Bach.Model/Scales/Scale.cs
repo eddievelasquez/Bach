@@ -22,21 +22,29 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Comparer = Bach.Model.Internal.Comparer;
 
 namespace Bach.Model.Scales;
 
 /// <summary>A scale is a set of pitchClasses defined by a ScaleFormula .</summary>
 public sealed class Scale
-  : PitchCollection<PitchClass>,
+  : IReadOnlyList<PitchClass>,
     IEquatable<Scale>,
     IFormattable
 {
   #region Constants
 
   private const string DEFAULT_TO_STRING_FORMAT = "N {S}";
+
+  #endregion
+
+  #region Fields
+
+  private readonly PitchClass[] _pitches;
 
   #endregion
 
@@ -74,10 +82,11 @@ public sealed class Scale
     PitchClass root,
     ScaleFormula formula,
     PitchClass[] pitchClasses )
-    : base( pitchClasses )
   {
     ArgumentNullException.ThrowIfNull( formula );
     ArgumentNullException.ThrowIfNull( pitchClasses );
+
+    _pitches = pitchClasses;
 
     Root = root;
     Formula = formula;
@@ -110,6 +119,14 @@ public sealed class Scale
   /// </remarks>
   /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
   public bool Theoretical { get; }
+
+  /// <summary>
+  ///   Gets the pitchClass at the specified index in the scale.
+  /// </summary>
+  /// <param name="index">The index of the pitchClass to retrieve.</param>
+  /// <returns>The pitchClass at the specified index.</returns>
+  public PitchClass this[
+    int index ] => _pitches[index];
 
   #endregion
 
@@ -153,6 +170,26 @@ public sealed class Scale
     return obj is Scale other && Equals( other );
   }
 
+  /// <summary>
+  ///   Returns the index of the specified pitchClass in the scale.
+  /// </summary>
+  /// <param name="pitchClass">The pitchClass to locate in the scale.</param>
+  /// <returns>The index of the specified pitchClass in the scale, or -1 if not found.</returns>
+  public int IndexOf(
+    PitchClass pitchClass )
+  {
+    return _pitches.IndexOf( pitchClass );
+  }
+
+  /// <summary>
+  ///   Returns an enumerator that iterates through the scale.
+  /// </summary>
+  /// <returns>An enumerator that iterates through the scale.</returns>
+  public IEnumerator<PitchClass> GetEnumerator()
+  {
+    return ( (IEnumerable<PitchClass>) _pitches ).GetEnumerator();
+  }
+
   /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
   /// <returns>An enumerable that iterates through the scale in ascending fashion.</returns>
   public IEnumerable<PitchClass> GetAscending()
@@ -161,39 +198,12 @@ public sealed class Scale
   }
 
   /// <summary>
-  /// Returns an enumerable that iterates through the scale in descending fashion.
+  ///   Returns an enumerable that iterates through the scale in descending fashion.
   /// </summary>
   /// <returns>An enumerable that iterates through the scale in descending fashion.</returns>
   public IEnumerable<PitchClass> GetDescending()
   {
     return GeneratePitchClasses( Formula.DescendingDegrees );
-  }
-
-  private IEnumerable<PitchClass> GeneratePitchClasses(
-    IReadOnlyList<ScaleDegreeStep> degreeSteps )
-  {
-    // The root is always the first note in the scale; if the first interval is not Unison,
-    // we need to yield the root
-    if( degreeSteps[0].Interval != Interval.Unison)
-    {
-      yield return Root;
-    }
-
-    // The rest of the notes in the scale are based on the provided intervals.
-
-    // maxIterationCount provides a way to break out of an otherwise infinite
-    // loop, as it doesn't make sense to generate more pitch classes than
-    // the number of pitches that are supported.
-    var maxIterationCount = Pitch.TotalPitchCount;
-    var index = 0;
-
-    while( maxIterationCount-- >= 0 )
-    {
-      var pitchClass = Root + degreeSteps[index].Interval;
-      yield return pitchClass;
-
-      index = this.WrapIndex( index + 1 );
-    }
   }
 
   /// <summary>Gets an enharmonic scale for this instance.</summary>
@@ -281,6 +291,7 @@ public sealed class Scale
       } while( root != PitchClass.C );
     }
 #else
+
     // We calculate the intervals between the given pitch classes and then check which scales contain those intervals.
     var rootNotes = new CircularArray<PitchClass>( pitchClasses );
 
@@ -375,7 +386,7 @@ public sealed class Scale
           break;
 
         case 'I':
-          buf.Append( string.Join(',', Formula.Intervals ) );
+          buf.Append( string.Join( ',', Formula.Intervals ) );
           break;
 
         case 'N':
@@ -387,7 +398,13 @@ public sealed class Scale
           break;
 
         case 'S':
-          buf.Append( string.Join( ",", Formula.Generate( Root ).Take( Formula.Intervals.Count ) ) );
+          buf.Append(
+            string.Join(
+              ",",
+              Formula.Generate( Root )
+                     .Take( Formula.Intervals.Count )
+            )
+          );
           break;
 
         default:
@@ -401,7 +418,56 @@ public sealed class Scale
 
   #endregion
 
+  #region IEnumerable Implementation
+
+  /// <summary>
+  ///   Returns an enumerator that iterates through the scale.
+  /// </summary>
+  /// <returns>An enumerator that iterates through the scale.</returns>
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  #endregion
+
+  #region IReadOnlyCollection<PitchClass> Implementation
+
+  /// <summary>
+  ///   Gets the number of pitchClasses in the scale.
+  /// </summary>
+  public int Count => _pitches.Length;
+
+  #endregion
+
   #region Implementation
+
+  private IEnumerable<PitchClass> GeneratePitchClasses(
+    IReadOnlyList<ScaleDegreeStep> degreeSteps )
+  {
+    // The root is always the first note in the scale; if the first interval is not Unison,
+    // we need to yield the root
+    if( degreeSteps[0].Interval != Interval.Unison )
+    {
+      yield return Root;
+    }
+
+    // The rest of the notes in the scale are based on the provided intervals.
+
+    // maxIterationCount provides a way to break out of an otherwise infinite
+    // loop, as it doesn't make sense to generate more pitch classes than
+    // the number of pitches that are supported.
+    var maxIterationCount = Pitch.TotalPitchCount;
+    var index = 0;
+
+    while( maxIterationCount-- >= 0 )
+    {
+      var pitchClass = Root + degreeSteps[index].Interval;
+      yield return pitchClass;
+
+      index = this.WrapIndex( index + 1 );
+    }
+  }
 
   private static PitchClass[] CreatePitchClasses(
     PitchClass root,

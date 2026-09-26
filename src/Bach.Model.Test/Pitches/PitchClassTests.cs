@@ -1,4 +1,4 @@
-// Module Name: PitchClassTest.cs
+// Module Name: PitchClassTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
 //
@@ -351,7 +351,11 @@ public sealed class PitchClassTests
       { NoteName.C, Accidental.DoubleSharp, "NX", "C𝄪" }
     };
 
-  public static TheoryData<string> TryParseInvalidStringsTestData => [(string) null!, "", "J", "C$"];
+  public static TheoryData<string> TryParseInvalidStringsTestData =>
+  [
+    (string) null!, "", "J",
+    "C$"
+  ];
 
   public static TheoryData<string, PitchClass> TryParseValidStringsTestData =>
     new()
@@ -996,21 +1000,6 @@ public sealed class PitchClassTests
             .Be( Interval.MajorSecond );
   }
 
-  [Fact]
-  public void IPitchPitchClass_PitchClassProperty_ShouldReturnSelf_WhenAccessed()
-  {
-    // Arrange
-    var original = PitchClass.B;
-    var asInterface = (IPitch<PitchClass>) original;
-
-    // Act
-    var pitchClass = asInterface.PitchClass;
-
-    // Assert
-    pitchClass.Should()
-              .Be( original );
-  }
-
   [Theory]
   [MemberData( nameof( ArithmeticIncrementTestData ) )]
   public void IncrementOperator_ShouldReturnExpectedPitchClass_WhenIncrementing(
@@ -1117,26 +1106,6 @@ public sealed class PitchClassTests
         .Be( "suffix" );
   }
 
-  [Fact]
-  public void PitchClass_ShouldImplementIPitchClassContract()
-  {
-    IPitch<PitchClass> pitchClass = PitchClass.C;
-
-    pitchClass.NoteName.Should()
-              .Be( NoteName.C );
-
-    pitchClass.Accidental.Should()
-              .Be( Accidental.Natural );
-
-    pitchClass.Transpose( 1 )
-              .Should()
-              .Be( PitchClass.CSharp );
-
-    pitchClass.Transpose( -1 )
-              .Should()
-              .Be( PitchClass.B );
-  }
-
   [Theory]
   [MemberData( nameof( NoteNamesAndAccidentals ) )]
   public void PredefinedNotes_ShouldReturnExpectedNoteNameAndAccidental(
@@ -1155,12 +1124,12 @@ public sealed class PitchClassTests
   public void RelationalOperators_ShouldReturnTrue_WhenComparingPitchClasses()
   {
     ( PitchClass.C == new PitchClass( NoteName.C ) ).Should()
-                                                        .BeTrue();
+                                                    .BeTrue();
 
     // C and B# sound identical but are spelled differently, so == (spelling-sensitive) is false
     // even though they compare as equal in chromatic pitch height.
     ( PitchClass.C != new PitchClass( NoteName.B, Accidental.Sharp ) ).Should()
-                                                                         .BeTrue();
+                                                                      .BeTrue();
 
     ( PitchClass.C != PitchClass.B ).Should()
                                     .BeTrue();
@@ -1181,7 +1150,11 @@ public sealed class PitchClassTests
   [Fact]
   public void EnharmonicComparer_ShouldTreatEnharmonicSpellingsAsEqual_WhenUsedInHashSet()
   {
-    var set = new HashSet<PitchClass>( PitchClass.EnharmonicComparer ) { PitchClass.CSharp, PitchClass.DFlat };
+    var set = new HashSet<PitchClass>( PitchClass.EnharmonicComparer )
+    {
+      PitchClass.CSharp,
+      PitchClass.DFlat
+    };
 
     set.Should()
        .ContainSingle();
@@ -1190,7 +1163,11 @@ public sealed class PitchClassTests
   [Fact]
   public void EnharmonicComparer_ShouldTreatDifferentPitchesAsDistinct_WhenUsedInHashSet()
   {
-    var set = new HashSet<PitchClass>( PitchClass.EnharmonicComparer ) { PitchClass.C, PitchClass.D };
+    var set = new HashSet<PitchClass>( PitchClass.EnharmonicComparer )
+    {
+      PitchClass.C,
+      PitchClass.D
+    };
 
     set.Should()
        .HaveCount( 2 );

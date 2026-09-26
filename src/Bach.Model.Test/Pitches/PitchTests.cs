@@ -719,26 +719,6 @@ public sealed class PitchTests
   }
 
   [Fact]
-  public void Pitch_ShouldImplementIPitchClassContract()
-  {
-    IPitch<Pitch> pitch = new Pitch( NoteName.C, Accidental.Natural, 4 );
-
-    pitch.NoteName.Should()
-         .Be( NoteName.C );
-
-    pitch.Accidental.Should()
-         .Be( Accidental.Natural );
-
-    pitch.Transpose( 1 )
-         .Should()
-         .Be( new Pitch( NoteName.C, Accidental.Sharp, 4 ) );
-
-    pitch.Transpose( -1 )
-         .Should()
-         .Be( new Pitch( NoteName.B, Accidental.Natural, 3 ) );
-  }
-
-  [Fact]
   public void SubtractionOperator_ShouldReturnExpectedValue_WhenSubtractingPitchAndInt()
   {
     var c2 = new Pitch( NoteName.C, Accidental.Natural, 2 );

@@ -152,9 +152,8 @@ public abstract class Formula
       return false;
     }
 
-    return Comparer.IdComparer.Equals( Id, other.Id )
-           && Comparer.NameComparer.Equals( Name, other.Name )
-           && Intervals.SequenceEqual( other.Intervals );
+    // Formulas are entity objects considered equal if they have the same id, as the id is unique for each formula.
+    return Comparer.IdComparer.Equals( Id, other.Id );
   }
 
   /// <inheritdoc/>
@@ -178,13 +177,12 @@ public abstract class Formula
   /// <exception cref="ArgumentException">Thrown when the root pitch is not supported.</exception>
   public IEnumerable<TPitch> Generate<TPitch>(
     TPitch root )
-    where TPitch: IPitch<TPitch>
   {
     return root switch
     {
       Pitch pitch           => (IEnumerable<TPitch>) Generate( pitch ),
       PitchClass pitchClass => (IEnumerable<TPitch>) Generate( pitchClass ),
-      _                     => throw new ArgumentException( "Unsupported pitch type.", nameof( root ) )
+      _                     => throw new ArgumentException( "Unsupported pitch type", nameof( root ) )
     };
   }
 

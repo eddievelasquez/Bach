@@ -22,15 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Bach.Model.Harmony;
 
 /// <summary>A chord is a set of pitch classes defined by a ChordFormula .</summary>
 public class Chord
-  : Chord<Chord, PitchClass>,
-    IChordFactory<Chord, PitchClass>,
-    IChordParser<Chord>
+  : IChord<Chord, PitchClass>,
+    ISpanConsumingParsable<Chord>
 {
   #region Constants
 
@@ -156,6 +157,12 @@ public class Chord
 
   #endregion
 
+  #region Fields
+
+  private readonly ChordCore<Chord, PitchClass> _impl;
+
+  #endregion
+
   #region Constructors
 
   /// <summary>
@@ -168,8 +175,8 @@ public class Chord
     PitchClass root,
     ChordFormula formula,
     int inversion = 0 )
-    : base( root, formula, inversion )
   {
+    _impl = new ChordCore<Chord, PitchClass>( root, formula, inversion );
   }
 
   /// <summary>
@@ -182,13 +189,171 @@ public class Chord
     PitchClass root,
     string formulaIdOrName,
     int inversion = 0 )
-    : base( root, Registry.ChordFormulas[formulaIdOrName], inversion )
+    : this( root, Registry.ChordFormulas[formulaIdOrName], inversion )
   {
   }
 
   #endregion
 
+  #region Properties
+
+  /// <summary>
+  ///   Gets the pitch class at the specified index in the chord's collection of pitch classes.
+  /// </summary>
+  /// <param name="index">The index of the pitch class to retrieve.</param>
+  /// <returns>The pitch class at the specified index.</returns>
+  public PitchClass this[
+    int index ] =>
+    _impl[index];
+
+  #endregion
+
   #region Public Methods
+
+  /// <summary>
+  ///   Determines whether the specified object is equal to the current chord.
+  /// </summary>
+  /// <param name="obj">The object to compare with the current chord.</param>
+  /// <returns>
+  ///   <c>true</c> if the specified object is equal to the current chord; otherwise, <c>false</c>.
+  /// </returns>
+  public override bool Equals(
+    object? obj )
+  {
+    return _impl.Equals( obj );
+  }
+
+  /// <summary>
+  ///   Returns a hash code for the current chord.
+  /// </summary>
+  /// <returns>A hash code for the current chord.</returns>
+  public override int GetHashCode()
+  {
+    return _impl.GetHashCode();
+  }
+
+  /// <summary>
+  ///   Returns a string representation of the chord, which is its name.
+  /// </summary>
+  /// <returns>A string representation of the chord, which is its name.</returns>
+  public override string ToString()
+  {
+    return Name;
+  }
+
+  /// <summary>
+  ///   Returns the inversion of the chord.
+  /// </summary>
+  /// <param name="inversion">The inversion to retrieve.</param>
+  /// <returns>The specified inversion of the chord.</returns>
+  public virtual Chord GetInversion(
+    int inversion )
+  {
+    return new Chord( Root, Formula, inversion );
+  }
+
+  /// <summary>
+  ///   Returns the pitches of the chord in the specified octave.
+  /// </summary>
+  /// <param name="octave">The octave in which to retrieve the pitches.</param>
+  /// <returns>The pitches of the chord in the specified octave.</returns>
+  public IEnumerable<Pitch> GetPitches(
+    int octave )
+  {
+    return _impl.GetPitches( octave );
+  }
+
+  /// <summary>
+  ///   Parses a string representation of a chord and returns the corresponding Chord object.
+  /// </summary>
+  /// <param name="s">The string representation of the chord.</param>
+  /// <returns>The corresponding Chord object.</returns>
+  public static Chord Parse(
+    string s )
+  {
+    ArgumentNullException.ThrowIfNull( s );
+    return Parse( s.AsSpan(), null );
+  }
+
+  /// <summary>
+  ///   Parses a string representation of a chord and returns the corresponding Chord object.
+  /// </summary>
+  /// <param name="s">The string representation of the chord.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <returns>The corresponding Chord object.</returns>
+  public static Chord Parse(
+    string s,
+    IFormatProvider? provider )
+  {
+    ArgumentNullException.ThrowIfNull( s );
+    return Parse( s.AsSpan(), provider );
+  }
+
+  /// <summary>
+  ///   Parses a string representation of a chord and returns the corresponding Chord object.
+  /// </summary>
+  /// <param name="span">The string representation of the chord.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <returns>The corresponding Chord object.</returns>
+  /// <exception cref="ArgumentException">Thrown when the input string is invalid.</exception>
+  /// <exception cref="FormatException">Thrown when the input string is not a valid chord representation.</exception>
+  public static Chord Parse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider )
+  {
+    if( span.IsEmpty )
+    {
+      throw new ArgumentException( "Value cannot be empty.", nameof( span ) );
+    }
+
+    return TryParse( span, provider, out var chord )
+      ? chord
+      : throw new FormatException( $"{span} is not a valid chord" );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a string representation of a chord and returns the corresponding Chord object.
+  /// </summary>
+  /// <param name="s">The string representation of the chord.</param>
+  /// <param name="chord">The parsed Chord object, or null if parsing fails.</param>
+  /// <returns>true if the string was successfully parsed; otherwise, false.</returns>
+  public static bool TryParse(
+    [NotNullWhen( true )] string? s,
+    [NotNullWhen( true )] out Chord? chord )
+  {
+    return TryParse( s.AsSpan(), null, out chord );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a string representation of a chord and returns the corresponding Chord object.
+  /// </summary>
+  /// <param name="s">The string representation of the chord.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <param name="chord">The parsed Chord object, or null if parsing fails.</param>
+  /// <returns>true if the string was successfully parsed; otherwise, false.</returns>
+  public static bool TryParse(
+    [NotNullWhen( true )] string? s,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out Chord? chord )
+  {
+    return TryParse( s.AsSpan(), provider, out chord );
+  }
+
+  /// <summary>
+  ///   Attempts to parse a string representation of a chord and returns the corresponding Chord object.
+  /// </summary>
+  /// <param name="span">The string representation of the chord.</param>
+  /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+  /// <param name="chord">The parsed Chord object, or null if parsing fails.</param>
+  /// <returns>true if the string was successfully parsed; otherwise, false.</returns>
+  public static bool TryParse(
+    ReadOnlySpan<char> span,
+    IFormatProvider? provider,
+    [NotNullWhen( true )] out Chord? chord )
+  {
+    // We want to ensure that the entire string is consumed, so we check if the tail is empty after parsing.
+    return TryParse( span, provider, out chord, out var tail ) && tail.IsEmpty;
+  }
 
   /// <summary>
   ///   Attempts to parse a string representation of a chord and returns the corresponding Chord object, along with any
@@ -267,10 +432,6 @@ public class Chord
     return true;
   }
 
-  #endregion
-
-  #region IChordFactory<Chord,PitchClass> Implementation
-
   /// <summary>
   ///   Creates a new chord instance with the specified root, formula, and inversion.
   /// </summary>
@@ -278,13 +439,108 @@ public class Chord
   /// <param name="formula">The formula used to generate the chord.</param>
   /// <param name="inversion">The inversion.</param>
   /// <returns>A new chord instance with the specified parameters.</returns>
-  static Chord IChordFactory<Chord, PitchClass>.Create(
+  public static Chord Create(
     PitchClass root,
     ChordFormula formula,
     int inversion )
   {
     return new Chord( root, formula, inversion );
   }
+
+  /// <summary>
+  ///   Returns an enumerator that iterates through the collection of pitch classes in the chord.
+  /// </summary>
+  /// <returns>
+  ///   An enumerator that can be used to iterate through the collection of pitch classes in the chord.
+  /// </returns>
+  public IEnumerator<PitchClass> GetEnumerator()
+  {
+    return _impl.GetEnumerator();
+  }
+
+  /// <summary>
+  ///   Determines whether the specified chord is equal to the current chord.
+  /// </summary>
+  /// <param name="other">The chord to compare with the current chord.</param>
+  /// <returns>
+  ///   <c>true</c> if the specified chord is equal to the current chord; otherwise, <c>false</c>.
+  /// </returns>
+  public bool Equals(
+    Chord? other )
+  {
+    return _impl.Equals( other );
+  }
+
+  /// <summary>
+  ///   Returns the index of the specified pitch class in the chord's collection of pitch classes.
+  /// </summary>
+  /// <param name="pitch">The pitch class to locate in the chord's collection of pitch classes.</param>
+  /// <returns>
+  ///   The index of the specified pitch class in the chord's collection of pitch classes.
+  /// </returns>
+  public int IndexOf(
+    PitchClass pitch )
+  {
+    return _impl.IndexOf( pitch );
+  }
+
+  #endregion
+
+  #region IChord<Chord,PitchClass> Implementation
+
+  /// <summary>
+  ///   Gets the display name of the chord.
+  /// </summary>
+  public string Name => _impl.Name;
+
+  /// <summary>
+  ///   Gets the chord formula.
+  /// </summary>
+  public ChordFormula Formula => _impl.Formula;
+
+  /// <summary>
+  ///   Gets the inversion number of the chord.
+  /// </summary>
+  public int Inversion => _impl.Inversion;
+
+  /// <summary>
+  ///   Gets the root of the chord.
+  /// </summary>
+  public PitchClass Root => _impl.Root;
+
+  /// <summary>
+  ///   Gets the bass of the chord.
+  /// </summary>
+  public PitchClass Bass => _impl.Bass;
+
+  /// <summary>
+  ///   Gets a value indicating whether the chord is an extended chord.
+  /// </summary>
+  public bool IsExtended => _impl.IsExtended;
+
+  #endregion
+
+  #region IEnumerable Implementation
+
+  /// <summary>
+  ///   Returns an enumerator that iterates through the collection of pitch classes in the chord.
+  /// </summary>
+  /// <returns>
+  ///   An enumerator that can be used to iterate through the collection of pitch classes in the chord.
+  /// </returns>
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  #endregion
+
+  #region IReadOnlyCollection<PitchClass> Implementation
+
+  /// <summary>
+  ///   Gets the number of pitch classes in the chord's collection of pitch classes.
+  /// </summary>
+  public int Count => _impl.Count;
 
   #endregion
 }

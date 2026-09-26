@@ -35,7 +35,7 @@ public sealed class FormulaTests
   #region Nested Types
 
   // Minimal fake pitch-like implementation to exercise the unsupported branch in the generic Generate<TPitch>
-  private readonly struct FakePitch: IPitch<FakePitch>
+  private readonly struct FakePitch: IPitch
   {
     #region Properties
 
@@ -348,36 +348,6 @@ public sealed class FormulaTests
   }
 
   [Fact]
-  public void Equals_ShouldReturnFalse_WhenIntervalsDiffer()
-  {
-    // Arrange
-    var a = new TestFormula( "id", "name", Interval.Unison );
-    var b = new TestFormula( "id", "name", Interval.MajorThird );
-
-    // Act
-    var result = a.Equals( b );
-
-    // Assert
-    result.Should()
-          .BeFalse();
-  }
-
-  [Fact]
-  public void Equals_ShouldReturnFalse_WhenNameDiffers()
-  {
-    // Arrange
-    var a = new TestFormula( "id", "name-a", Interval.Unison );
-    var b = new TestFormula( "id", "name-b", Interval.Unison );
-
-    // Act
-    var result = a.Equals( b );
-
-    // Assert
-    result.Should()
-          .BeFalse();
-  }
-
-  [Fact]
   public void Equals_ShouldReturnFalse_WhenOtherIsNull()
   {
     // Arrange
@@ -442,7 +412,7 @@ public sealed class FormulaTests
       .Be( "root" );
 
     ex.Message.Should()
-      .Contain( "Unsupported pitch type." );
+      .Contain( "Unsupported pitch type" );
   }
 
   [Fact]
