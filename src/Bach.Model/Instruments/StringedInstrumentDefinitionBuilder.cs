@@ -53,9 +53,9 @@ public sealed class StringedInstrumentDefinitionBuilder
 
   #region Constructors
 
-  /// <summary>Constructor.</summary>
-  /// <param name="id">The language-neutral identifier for the instrument to build. The id will be used to create the name.</param>
-  /// <param name="stringCount">Number of strings of the instrument to build.</param>
+  /// <summary>Creates a builder for an instrument whose ID is also its name.</summary>
+  /// <param name="id">The instrument's language-neutral identifier.</param>
+  /// <param name="stringCount">The number of strings.</param>
   public StringedInstrumentDefinitionBuilder(
     string id,
     int stringCount )
@@ -63,10 +63,10 @@ public sealed class StringedInstrumentDefinitionBuilder
     _state = new StringedInstrumentDefinitionState( id, id, stringCount );
   }
 
-  /// <summary>Constructor.</summary>
-  /// <param name="id">The language-neutral id for the instrument to build.</param>
-  /// <param name="name">The localizable name of the instrument to build.</param>
-  /// <param name="stringCount">Number of strings of the instrument to build.</param>
+  /// <summary>Creates a builder for an instrument with the specified ID, name, and string count.</summary>
+  /// <param name="id">The instrument's language-neutral identifier.</param>
+  /// <param name="name">The instrument's localizable name.</param>
+  /// <param name="stringCount">The number of strings.</param>
   public StringedInstrumentDefinitionBuilder(
     string id,
     string name,
@@ -79,11 +79,11 @@ public sealed class StringedInstrumentDefinitionBuilder
 
   #region Public Methods
 
-  /// <summary>Adds a tuning to the instrument to build.</summary>
+  /// <summary>Adds a tuning from a string of pitch names.</summary>
   /// <param name="id">The language-neutral identifier for the tuning.</param>
   /// <param name="name">The localizable name of the tuning.</param>
-  /// <param name="pitches">A string that represents the pitches.</param>
-  /// <returns>This instance.</returns>
+  /// <param name="pitches">The pitches in the tuning, one for each string.</param>
+  /// <returns>This builder.</returns>
   public StringedInstrumentDefinitionBuilder AddTuning(
     string id,
     string name,
@@ -92,13 +92,12 @@ public sealed class StringedInstrumentDefinitionBuilder
     return AddTuning( id, name, pitches.ParsePitches() );
   }
 
-  /// <summary>Adds a tuning to the instrument to build.</summary>
+  /// <summary>Adds a tuning whose ID is also its name.</summary>
   /// <param name="id">
-  ///   The language-neutral identifier for the tuning. The id will be used to create the
-  ///   tunings name.
+  ///   The tuning's language-neutral identifier.
   /// </param>
-  /// <param name="pitches">An array with the tunings pitches.</param>
-  /// <returns>This instance.</returns>
+  /// <param name="pitches">The pitches in the tuning, one for each string.</param>
+  /// <returns>This builder.</returns>
   public StringedInstrumentDefinitionBuilder AddTuning(
     string id,
     params Pitch[] pitches )
@@ -106,15 +105,15 @@ public sealed class StringedInstrumentDefinitionBuilder
     return AddTuning( id, id, pitches );
   }
 
-  /// <summary>Adds a tuning to the instrument to build.</summary>
+  /// <summary>Adds a tuning with the specified ID, name, and pitches.</summary>
   /// <param name="id">The language-neutral identifier for the tuning.</param>
   /// <param name="name">The localizable name of the tuning.</param>
-  /// <param name="pitches">A pitch collection.</param>
-  /// <returns>This instance.</returns>
-  /// <exception cref="ArgumentNullException">Thrown when either the id, name or pitch collection are null.</exception>
+  /// <param name="pitches">The pitches in the tuning, one for each string.</param>
+  /// <returns>This builder.</returns>
+  /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> or <paramref name="name"/> is null.</exception>
   /// <exception cref="ArgumentException">
-  ///   Thrown when either the id or name are empty, or when the number of pitches in the
-  ///   pitch collection doesn't match the number of string for the instrument.
+  ///   Thrown when <paramref name="id"/> or <paramref name="name"/> is empty, or when the number
+  ///   of pitches does not match the instrument's string count.
   /// </exception>
   public StringedInstrumentDefinitionBuilder AddTuning(
     string id,

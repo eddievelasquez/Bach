@@ -27,10 +27,10 @@ using System.Collections.Generic;
 namespace Bach.Model.Analysis;
 
 /// <summary>
-///   Evaluates tonal evidence for a candidate key during tonal evaluation.
+///   Evaluates tonal evidence for a candidate key.
 /// </summary>
 /// <remarks>
-///   Evaluators are evaluated in descending <see cref="Priority"/> order. Priority does not suppress
+///   Evaluators run in descending <see cref="Priority"/> order. Priority does not suppress
 ///   lower-priority evaluators; it establishes deterministic evidence order and precedence for aggregation.
 /// </remarks>
 public interface ITonalEvidenceEvaluator
@@ -38,7 +38,7 @@ public interface ITonalEvidenceEvaluator
   #region Properties
 
   /// <summary>
-  ///   Gets the evaluator   priority. Higher values run first.
+  ///   Gets the evaluator's priority. Higher values run first.
   /// </summary>
   int Priority { get; }
 
@@ -50,7 +50,7 @@ public interface ITonalEvidenceEvaluator
   ///   Evaluates one candidate and returns its evidence.
   /// </summary>
   /// <param name="context">The immutable candidate evaluation context.</param>
-  /// <returns>The evidence discovered by this provider.</returns>
+  /// <returns>The evidence found by this evaluator.</returns>
   IEnumerable<TonalEvidence> Evaluate(
     TonalEvidenceContext context );
 

@@ -140,16 +140,14 @@ public sealed class IntervalCollection
   }
 
   /// <summary>
-  ///   Searches for the specified interval using the optional provided comparer and returns the index of its
-  ///   occurrence in the collection.
+  ///   Returns the index of an interval that matches the specified interval.
   /// </summary>
-  /// <param name="interval">The interval to locate</param>
+  /// <param name="interval">The interval to find.</param>
   /// <param name="comparer">
-  ///   The optional <see cref="IComparer&lt;Interval&gt;"/>  implementation to use when comparing intervals. If no
-  ///   comparer is provided, the intervals will be compared using an exact match.
+  ///   The comparer to use. If you omit it, the method compares intervals for exact equality.
   /// </param>
   /// <returns>
-  ///   The index of the occurrence of <paramref name="interval"/> in the collection, if found; otherwise, -1.
+  ///   The index of the matching interval, or -1 if no interval matches.
   /// </returns>
   public int IndexOf(
     Interval interval,

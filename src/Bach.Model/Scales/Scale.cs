@@ -54,9 +54,9 @@ public sealed class Scale
 
   #region Constructors
 
-  /// <summary>Constructor.</summary>
-  /// <param name="root">The root pitchClass of the scale.</param>
-  /// <param name="formula">The formula used to generate the scale.</param>
+  /// <summary>Creates a scale from a root pitch class and scale formula.</summary>
+  /// <param name="root">The root pitch class.</param>
+  /// <param name="formula">The formula that defines the scale.</param>
   /// <exception cref="ArgumentNullException">Thrown when the formula is null.</exception>
   public Scale(
     PitchClass root,
@@ -65,10 +65,10 @@ public sealed class Scale
   {
   }
 
-  /// <summary>Constructor.</summary>
-  /// <param name="root">The root pitchClass of the scale.</param>
-  /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  /// <exception cref="ArgumentNullException">Thrown when the formula name is null.</exception>
+  /// <summary>Creates a scale from a root pitch class and a registered formula.</summary>
+  /// <param name="root">The root pitch class.</param>
+  /// <param name="formulaIdOrName">The formula ID or name in the registry.</param>
+  /// <exception cref="ArgumentNullException">Thrown when <paramref name="formulaIdOrName"/> is null.</exception>
   public Scale(
     PitchClass root,
     string formulaIdOrName )
@@ -79,9 +79,9 @@ public sealed class Scale
   /// <summary>
   ///   Constructor.
   /// </summary>
-  /// <param name="root">The root pitchClass of the scale.</param>
-  /// <param name="formula">The formula used to generate the scale.</param>
-  /// <param name="pitchClasses">The collection of pitch classes.</param>
+  /// <param name="root">The root pitch class.</param>
+  /// <param name="formula">The formula that defines the scale.</param>
+  /// <param name="pitchClasses">The scale's pitch classes.</param>
   private Scale(
     PitchClass root,
     ScaleFormula formula,
@@ -114,21 +114,19 @@ public sealed class Scale
   /// <value>The <see cref="ScaleFormula"/>.</value>
   public ScaleFormula Formula { get; }
 
-  /// <summary>Determines if this scale is theoretical.</summary>
+  /// <summary>Gets whether the scale uses a theoretical spelling.</summary>
   /// <remarks>
-  ///   A theoretical scale is one that contains at least one double flat or double sharp accidental.
-  ///   These scales exist in music theory but are not used in practice because of their complexity.
-  ///   There's always another practical scale that contains exactly the same enharmonic pitches in the same order.
-  ///   See <see cref="GetEnharmonicScale"/> to get that scale.
+  ///   A theoretical scale has at least one double-flat or double-sharp accidental. Use
+  ///   <see cref="GetEnharmonicScale"/> to get an enharmonically equivalent spelling.
   /// </remarks>
-  /// <returns>True if the scale is theoretical; otherwise, it returns false.</returns>
+  /// <value><see langword="true"/> if the scale uses a theoretical spelling; otherwise, <see langword="false"/>.</value>
   public bool Theoretical { get; }
 
   /// <summary>
-  ///   Gets the pitchClass at the specified index in the scale.
+  ///   Gets the pitch class at the specified index in the scale.
   /// </summary>
-  /// <param name="index">The index of the pitchClass to retrieve.</param>
-  /// <returns>The pitchClass at the specified index.</returns>
+  /// <param name="index">The index of the pitch class to retrieve.</param>
+  /// <returns>The pitch class at the specified index.</returns>
   public PitchClass this[
     int index ] => _pitches[index];
 
@@ -136,9 +134,9 @@ public sealed class Scale
 
   #region Public Methods
 
-  /// <summary>Determines if this instance contains the given pitchClasses.</summary>
-  /// <param name="notes">The pitchClasses.</param>
-  /// <returns>True if all the pitchClasses are in this scale; otherwise, false.</returns>
+  /// <summary>Gets whether the scale contains every specified pitch class.</summary>
+  /// <param name="notes">The pitch classes to find.</param>
+  /// <returns><see langword="true"/> if the scale contains every pitch class; otherwise, <see langword="false"/>.</returns>
   public bool Contains(
     IEnumerable<PitchClass> notes )
   {
@@ -175,10 +173,10 @@ public sealed class Scale
   }
 
   /// <summary>
-  ///   Returns the index of the specified pitchClass in the scale.
+  ///   Returns the index of the specified pitch class in the scale.
   /// </summary>
-  /// <param name="pitchClass">The pitchClass to locate in the scale.</param>
-  /// <returns>The index of the specified pitchClass in the scale, or -1 if not found.</returns>
+  /// <param name="pitchClass">The pitch class to find.</param>
+  /// <returns>The pitch class index, or -1 if the scale does not contain it.</returns>
   public int IndexOf(
     PitchClass pitchClass )
   {
@@ -194,27 +192,27 @@ public sealed class Scale
     return ( (IEnumerable<PitchClass>) _pitches ).GetEnumerator();
   }
 
-  /// <summary>Returns an enumerable that iterates through the scale in ascending fashion.</summary>
-  /// <returns>An enumerable that iterates through the scale in ascending fashion.</returns>
+  /// <summary>Returns the scale's pitch classes in ascending order.</summary>
+  /// <returns>The pitch classes in ascending order.</returns>
   public IEnumerable<PitchClass> GetAscending()
   {
     return GeneratePitchClasses( Formula.AscendingDegrees );
   }
 
   /// <summary>
-  ///   Returns an enumerable that iterates through the scale in descending fashion.
+  ///   Returns the scale's pitch classes in descending order.
   /// </summary>
-  /// <returns>An enumerable that iterates through the scale in descending fashion.</returns>
+  /// <returns>The pitch classes in descending order.</returns>
   public IEnumerable<PitchClass> GetDescending()
   {
     return GeneratePitchClasses( Formula.DescendingDegrees );
   }
 
-  /// <summary>Gets an enharmonic scale for this instance.</summary>
-  /// <returns>The enharmonic scale.</returns>
+  /// <summary>Returns an enharmonic spelling of this scale.</summary>
+  /// <returns>An enharmonically equivalent scale.</returns>
   /// <remarks>
-  ///   An enharmonic scale is a scale that contains notes that are enharmonically equivalent to the notes in this scale.
-  ///   For example, a C# major scale is enharmonically equivalent to a Db major scale.
+  ///   The returned scale has pitch classes that sound the same as this scale but may use different
+  ///   note names. For example, C-sharp major and D-flat major are enharmonically equivalent.
   /// </remarks>
   public Scale GetEnharmonicScale()
   {
@@ -242,9 +240,9 @@ public sealed class Scale
     return HashCode.Combine( Root, Formula );
   }
 
-  /// <summary>Returns a rendered version of the scale starting with the provided pitch.</summary>
-  /// <param name="octave">The octave for the first pitch.</param>
-  /// <returns>An enumerator for a pitch sequence for this scale.</returns>
+  /// <summary>Returns the scale's pitches, starting at the specified octave.</summary>
+  /// <param name="octave">The octave of the first pitch.</param>
+  /// <returns>The scale's pitches in ascending order.</returns>
   public IEnumerable<Pitch> Render(
     int octave )
   {
@@ -252,14 +250,13 @@ public sealed class Scale
   }
 
   /// <summary>
-  ///   Enumerates the scales that contain the given pitchClasses matching exactly the intervals between them.
+  ///   Finds scales that contain the specified pitch classes and match their interval pattern.
   /// </summary>
-  /// <param name="notes">The pitchClasses.</param>
+  /// <param name="notes">The pitch classes to find.</param>
   /// <returns>
-  ///   An enumerator to all the scales that contain the pitchClasses. NOTE: this method performs collection
-  ///   matching only. It is a discovery utility and does not perform tonal inference, scoring, or evidence
-  ///   aggregation. Use the tonal evaluator in <c>Bach.Model.Analysis</c> for evidence-based key/candidate
-  ///   evaluation.
+  ///   The matching scales. This method matches pitch-class patterns. It does not infer tonal
+  ///   centers or score evidence. Use the tonal evaluator in <c>Bach.Model.Analysis</c> for tonal
+  ///   analysis.
   /// </returns>
   public static IEnumerable<Scale> ScalesContaining(
     IEnumerable<PitchClass> notes )
@@ -267,11 +264,11 @@ public sealed class Scale
     return ScalesContaining( IntervalMatch.Exact, notes );
   }
 
-  /// <summary>Enumerates the scales that contain the given pitchClasses.</summary>
+  /// <summary>Finds scales that contain the specified pitch classes.</summary>
   /// <param name="match">Interval matching strategy.</param>
-  /// <param name="pitchClasses">The pitchClasses.</param>
+  /// <param name="pitchClasses">The pitch classes to find.</param>
   /// <returns>
-  ///   An enumerator to all the scales that contain the pitchClasses.
+  ///   The scales that contain the specified pitch classes.
   /// </returns>
   public static IEnumerable<Scale> ScalesContaining(
     IntervalMatch match,
@@ -343,8 +340,8 @@ public sealed class Scale
   ///   <para>"N": Name pattern. e.g. "C Major".</para>
   ///   <para>"R": Root pattern. e.g. "C".</para>
   ///   <para>"F": Formula name pattern. e.g. "Major".</para>
-  ///   <para>"S": PitchClasses pattern. e.g. "C,E,G".</para>
-  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  ///   <para>"S": Pitch class sequence, such as "C,E,G".</para>
+  ///   <para>"I": Interval sequence, such as "P1,M3,P5".</para>
   /// </remarks>
   public string ToString(
     string format )
@@ -367,8 +364,8 @@ public sealed class Scale
   ///   <para>"N": Name pattern. e.g. "C Major".</para>
   ///   <para>"R": Root pattern. e.g. "C".</para>
   ///   <para>"F": Formula name pattern. e.g. "Major".</para>
-  ///   <para>"S": PitchClasses pattern. e.g. "C,E,G".</para>
-  ///   <para>"I": Intervals pattern. e.g. "P1,M3,P5".</para>
+  ///   <para>"S": Pitch class sequence, such as "C,E,G".</para>
+  ///   <para>"I": Interval sequence, such as "P1,M3,P5".</para>
   /// </remarks>
   public string ToString(
     string? format,
@@ -438,7 +435,7 @@ public sealed class Scale
   #region IReadOnlyCollection<PitchClass> Implementation
 
   /// <summary>
-  ///   Gets the number of pitchClasses in the scale.
+  ///   Gets the number of pitch classes in the scale.
   /// </summary>
   public int Count => _pitches.Length;
 

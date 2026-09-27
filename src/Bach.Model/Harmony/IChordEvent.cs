@@ -44,7 +44,8 @@ public interface IChordEvent
   Pitch Bass { get; }
 
   /// <summary>
-  ///   Gets the inversion number of the chord event.
+  ///   Gets the bass-position index. Zero puts the root in the bass; each higher value puts the next
+  ///   chord tone in the bass. For a triad, one is first inversion and two is second inversion.
   /// </summary>
   int Inversion { get; }
 

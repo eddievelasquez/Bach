@@ -28,8 +28,8 @@ using System.Linq;
 namespace Bach.Model.Analysis;
 
 /// <summary>
-/// Builder class for constructing a <see cref="TonalEvidenceEvaluatorPipeline"/> with a customizable set of
-/// <see cref="ITonalEvidenceEvaluator"/> instances.
+/// Builds a <see cref="TonalEvidenceEvaluatorPipeline"/> from selected
+/// <see cref="ITonalEvidenceEvaluator"/> implementations.
 /// </summary>
 public class TonalEvidenceEvaluatorPipelineBuilder
 {
@@ -42,9 +42,9 @@ public class TonalEvidenceEvaluatorPipelineBuilder
   #region Public Methods
 
   /// <summary>
-  /// Adds the default set of tonal evidence evaluators to the pipeline builder.
+  /// Adds the default tonal evidence evaluators.
   /// </summary>
-  /// <returns>The current instance of <see cref="TonalEvidenceEvaluatorPipelineBuilder"/>.</returns>
+  /// <returns>This builder.</returns>
   public TonalEvidenceEvaluatorPipelineBuilder AddDefaultEvaluators()
   {
     AddEvaluator<PitchClassEvidenceEvaluator>();
@@ -56,10 +56,10 @@ public class TonalEvidenceEvaluatorPipelineBuilder
   }
 
   /// <summary>
-  /// Adds a new <see cref="ITonalEvidenceEvaluator"/> of type <typeparamref name="T"/> to the pipeline builder.
+  /// Adds an evaluator of type <typeparamref name="T"/>.
   /// </summary>
   /// <typeparam name="T">The type of the tonal evidence evaluator to add.</typeparam>
-  /// <returns>The current instance of <see cref="TonalEvidenceEvaluatorPipelineBuilder"/>.</returns>
+  /// <returns>This builder.</returns>
   public TonalEvidenceEvaluatorPipelineBuilder AddEvaluator<T>()
     where T: ITonalEvidenceEvaluator, new()
   {
@@ -68,10 +68,10 @@ public class TonalEvidenceEvaluatorPipelineBuilder
   }
 
   /// <summary>
-  /// Adds a new <see cref="ITonalEvidenceEvaluator"/> instance to the pipeline builder.
+  /// Adds an evaluator to the pipeline.
   /// </summary>
   /// <param name="evaluator">The evaluator to add.</param>
-  /// <returns>The current instance of <see cref="TonalEvidenceEvaluatorPipelineBuilder"/>.</returns>
+  /// <returns>This builder.</returns>
   public TonalEvidenceEvaluatorPipelineBuilder AddEvaluator(
     ITonalEvidenceEvaluator evaluator )
   {
@@ -81,10 +81,10 @@ public class TonalEvidenceEvaluatorPipelineBuilder
   }
 
   /// <summary>
-  /// Builds and returns a <see cref="TonalEvidenceEvaluatorPipeline"/> instance with the configured evaluators.
+  /// Builds a pipeline with the configured evaluators.
   /// </summary>
-  /// <returns>The constructed <see cref="TonalEvidenceEvaluatorPipeline"/> instance.</returns>
-  /// <exception cref="InvalidOperationException">Thrown if no evaluators have been added.</exception>
+  /// <returns>The configured pipeline.</returns>
+  /// <exception cref="InvalidOperationException">Thrown when no evaluators have been added.</exception>
   public TonalEvidenceEvaluatorPipeline Build()
   {
     if( _evaluators.Count == 0 )

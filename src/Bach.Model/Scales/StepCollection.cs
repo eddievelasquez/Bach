@@ -28,18 +28,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Bach.Model.Scales;
 
 /// <summary>
-/// Represents a collection of musical steps that span an octave.
+/// Represents a sequence of musical steps that spans an octave.
 /// </summary>
 /// <remarks>
-/// <see cref="StepCollection"/> only enforces shape-level rules at construction: each step
-/// character must map to a known step size, and (when parsing) the number of steps must fall
-/// within the supported range. It does <b>not</b> guarantee music-theory invariants such as
-/// octave closure (steps summing to 12 semitones) or a valid scale cardinality. The only
-/// supported way to get a <see cref="StepCollection"/> that is guaranteed to represent a
-/// valid scale is through <see cref="ScaleFormulaBuilder.Build"/>, which performs that
-/// validation before constructing the owning <see cref="ScaleFormula"/>. A <see cref="StepCollection"/>
-/// returned directly from a constructor or a <c>Parse</c>/<c>TryParse</c> call should be treated
-/// as unverified until it has passed through <see cref="ScaleFormulaBuilder"/>.
+/// This type checks that each step has a known size and that parsed input has a supported number
+/// of steps. It does not check that the steps span an octave or form a valid scale. Pass the steps
+/// to <see cref="ScaleFormulaBuilder.Build"/> to validate a scale formula.
 /// </remarks>
 public static class StepCollection
 {
@@ -50,10 +44,10 @@ public static class StepCollection
   #endregion
 
   /// <summary>
-  /// Parses a string into a <see cref="List{Int32}"/>.
+  /// Parses a string into a list of step sizes.
   /// </summary>
-  /// <param name="s">The string to parse.</param>
-  /// <returns>The parsed <see cref="List{Int32}"/>.</returns>
+  /// <param name="s">The string that contains the steps.</param>
+  /// <returns>The parsed step sizes.</returns>
   /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
   /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
   public static List<int> Parse(
@@ -63,16 +57,16 @@ public static class StepCollection
   }
 
   /// <summary>
-  /// Parses a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="List{Int32}"/>.
+  /// Parses a character span into a list of step sizes.
   /// </summary>
-  /// <param name="span">The span of characters to parse.</param>
-  /// <returns>The parsed <see cref="List{Int32}"/>.</returns>
+  /// <param name="span">The span that contains the steps.</param>
+  /// <returns>The parsed step sizes.</returns>
   /// <exception cref="ArgumentException">Thrown when the span is empty.</exception>
   /// <exception cref="FormatException">Thrown when the span is not in a valid format.</exception>
   /// <remarks>
-  /// Parsing only validates that the number of steps is within the supported range and that each
-  /// step character is recognized; it does not verify octave closure (steps summing to 12
-  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to get a validated scale formula.
+  /// This method checks that the number of steps is in the supported range and that each step
+  /// character is valid. It does not check that the steps span an octave. Use
+  /// <see cref="ScaleFormulaBuilder.Build"/> to validate a scale formula.
   /// </remarks>
   public static List<int> Parse(
     ReadOnlySpan<char> span )
@@ -88,11 +82,11 @@ public static class StepCollection
   }
 
   /// <summary>
-  /// Tries to parse a string into a <see cref="List{Int32}"/>.
+  /// Tries to parse a string into step sizes.
   /// </summary>
-  /// <param name="s">The string to parse.</param>
-  /// <param name="steps">The resulting <see cref="List{Int32}"/> if parsing is successful.</param>
-  /// <returns>True if parsing is successful; otherwise, false.</returns>
+  /// <param name="s">The string that contains the steps.</param>
+  /// <param name="steps">The parsed step sizes, or <see langword="null"/> if parsing fails.</param>
+  /// <returns><see langword="true"/> if parsing succeeds; otherwise, <see langword="false"/>.</returns>
   public static bool TryParse(
     [NotNullWhen( true )] string? s,
     [NotNullWhen( true )] out List<int>? steps )
@@ -101,15 +95,15 @@ public static class StepCollection
   }
 
   /// <summary>
-  /// Tries to parse a <see cref="ReadOnlySpan{T}"/> of characters into a <see cref="List{Int32}"/>.
+  /// Tries to parse a character span into step sizes.
   /// </summary>
-  /// <param name="span">The span of characters to parse.</param>
-  /// <param name="steps">The resulting <see cref="List{Int32}"/> if parsing is successful.</param>
-  /// <returns>True if parsing is successful; otherwise, false.</returns>
+  /// <param name="span">The span that contains the steps.</param>
+  /// <param name="steps">The parsed step sizes, or <see langword="null"/> if parsing fails.</param>
+  /// <returns><see langword="true"/> if parsing succeeds; otherwise, <see langword="false"/>.</returns>
   /// <remarks>
-  /// Parsing only validates that the number of steps is within the supported range and that each
-  /// step character is recognized; it does not verify octave closure (steps summing to 12
-  /// semitones). Use <see cref="ScaleFormulaBuilder"/> to get a validated scale formula.
+  /// This method checks that the number of steps is in the supported range and that each step
+  /// character is valid. It does not check that the steps span an octave. Use
+  /// <see cref="ScaleFormulaBuilder.Build"/> to validate a scale formula.
   /// </remarks>
   public static bool TryParse(
     ReadOnlySpan<char> span,

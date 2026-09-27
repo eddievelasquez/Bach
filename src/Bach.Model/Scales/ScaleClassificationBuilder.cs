@@ -53,7 +53,7 @@ public sealed class ScaleClassificationBuilder
   ///   The category to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder AddCategory(
     ScaleCategory category )
@@ -69,7 +69,7 @@ public sealed class ScaleClassificationBuilder
   ///   The categories to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder AddCategories(
     IEnumerable<ScaleCategory> categories )
@@ -86,7 +86,7 @@ public sealed class ScaleClassificationBuilder
   ///   The tag to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder AddRepertoireTag(
     ScaleTag tag )
@@ -102,7 +102,7 @@ public sealed class ScaleClassificationBuilder
   ///   The tags to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder AddRepertoireTags(
     IEnumerable<ScaleTag> tags )
@@ -119,7 +119,7 @@ public sealed class ScaleClassificationBuilder
   ///   The semicolon-delimited string of tags to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder AddRepertoireTag(
     string? tag )
@@ -143,7 +143,7 @@ public sealed class ScaleClassificationBuilder
   ///   The ascending degrees.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder SetAscendingDegrees(
     IReadOnlyList<ScaleDegreeStep>? ascendingDegrees )
@@ -159,7 +159,7 @@ public sealed class ScaleClassificationBuilder
   ///   The parent scale formula identifier.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder SetParentScaleId(
     string? parentScaleId )
@@ -175,7 +175,7 @@ public sealed class ScaleClassificationBuilder
   ///   The modal rotation index.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder SetModalRotationIndex(
     int? modalRotationIndex )
@@ -191,7 +191,7 @@ public sealed class ScaleClassificationBuilder
   ///   The key-candidate value.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleClassificationBuilder SetKeyCandidate(
     bool isKeyCandidate )

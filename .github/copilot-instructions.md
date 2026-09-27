@@ -46,7 +46,7 @@ Bach is a .NET 10 library for Western tonal music theory. The solution contains 
 
 ## Documentation and instructions
 
-- Write prose, documentation, comments, and commit messages in ASD-STE100 Simplified Technical English.
+- Write prose, documentation, comments, and commit messages in ASD-STE100 Simplified Technical English and follow Zinsser's four principles of writing: clarity, simplicity, brevity, and humanity.
 - Scoped rules for C#, tests, and README API references live in .github/instructions/.
 - Use the bach-test-engineer agent when focused test design or test changes are needed.
 

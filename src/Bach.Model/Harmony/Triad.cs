@@ -72,11 +72,11 @@ public sealed class Triad: Chord
   #region Constructors
 
   /// <summary>
-  ///   Constructor.
+  ///   Creates a triad with the specified root, quality, and bass position.
   /// </summary>
   /// <param name="root">The triad's root pitch class.</param>
   /// <param name="quality">The triad's quality.</param>
-  /// <param name="inversion">The triad's inversion.</param>
+  /// <param name="inversion">The bass-position index: zero is root position, one is first inversion, and two is second inversion.</param>
   public Triad(
     PitchClass root,
     TriadQuality quality,
@@ -98,9 +98,10 @@ public sealed class Triad: Chord
 
   #region Public Methods
 
-  /// <summary>Generates an inversion for the current triad.</summary>
-  /// <param name="inversion">The inversion to generate.</param>
-  /// <returns>A Triad.</returns>
+  /// <summary>Returns the triad with the specified chord tone in the bass.</summary>
+  /// <param name="inversion">The bass-position index: zero is root position, one is first inversion, and two is second inversion.</param>
+  /// <returns>A triad with the specified chord tone in the bass.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the index is outside the triad's range of zero to two.</exception>
   public override Triad GetInversion(
     int inversion )
   {

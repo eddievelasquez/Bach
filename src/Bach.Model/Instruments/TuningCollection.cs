@@ -79,15 +79,15 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
     string id ] => _tunings[id];
 
   /// <summary>
-  ///   Gets an enumerable collection that contains the keys for all the tunings in the collection.
+  ///   Gets the IDs of all tunings.
   /// </summary>
-  /// <value>An enumerable collection that contains the keys.</value>
+  /// <value>The language-neutral IDs.</value>
   public IEnumerable<string> Keys => _tunings.Keys;
 
   /// <summary>
-  ///   Gets an enumerable collection that contains all the tunings in the collection.
+  ///   Gets all tunings.
   /// </summary>
-  /// <value>An enumerable collection that contains the tunings.</value>
+  /// <value>The tunings.</value>
   public IEnumerable<Tuning> Values => _tunings.Values;
 
   #endregion
@@ -95,12 +95,11 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   #region Public Methods
 
   /// <summary>
-  ///   Determines whether the collection contains a tuning that has the specified language-neutral id.
+  ///   Gets whether a tuning has the specified language-neutral ID.
   /// </summary>
-  /// <param name="id">The id to locate.</param>
+  /// <param name="id">The language-neutral ID to find.</param>
   /// <returns>
-  ///   true if the collection contains an tuning that has the specified id; otherwise,
-  ///   false.
+  ///   <see langword="true"/> if the collection contains the ID; otherwise, <see langword="false"/>.
   /// </returns>
   public bool ContainsKey(
     string id )

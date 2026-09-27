@@ -30,7 +30,7 @@ using System.Linq;
 namespace Bach.Model.Harmony;
 
 /// <summary>
-///   A chord expressed as a collection of actual pitches rather than pitch classes.
+///   Represents a chord as an ordered list of pitches rather than pitch classes.
 /// </summary>
 public class PitchChord
   : IChord<Pitch>,
@@ -50,7 +50,7 @@ public class PitchChord
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   public PitchChord(
     Pitch root,
     ChordFormula formula,
@@ -64,7 +64,7 @@ public class PitchChord
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   public PitchChord(
     Pitch root,
     string formulaIdOrName,
@@ -75,12 +75,12 @@ public class PitchChord
 
   /// <summary>
   ///   Initializes a new instance of the <see cref="PitchChord"/> class using a root pitch class, formula, octave, and
-  ///   inversion.
+  ///   bass position.
   /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
   /// <param name="octave">The octave of the root pitch.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   public PitchChord(
     PitchClass root,
     ChordFormula formula,
@@ -92,12 +92,12 @@ public class PitchChord
 
   /// <summary>
   ///   Initializes a new instance of the <see cref="PitchChord"/> class using a root pitch class, formula ID or name,
-  ///   octave, and inversion.
+  ///   octave, and bass position.
   /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formulaIdOrName">ID or name of the formula as defined in the Registry.</param>
   /// <param name="octave">The octave of the root pitch.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   public PitchChord(
     PitchClass root,
     string formulaIdOrName,
@@ -112,7 +112,7 @@ public class PitchChord
   #region Properties
 
   /// <summary>
-  ///   Gets the pitch at the specified index in the chord's collection of pitches.
+  ///   Gets the pitch at the specified index in the chord.
   /// </summary>
   /// <param name="index">The zero-based index of the pitch to get.</param>
   /// <returns>The pitch at the specified index.</returns>
@@ -156,10 +156,11 @@ public class PitchChord
   }
 
   /// <summary>
-  ///   Creates an inversion of the current chord.
+  ///   Returns the chord with the specified chord tone in the bass.
   /// </summary>
-  /// <param name="inversion">The inversion number.</param>
-  /// <returns>A new <see cref="PitchChord"/> representing the specified inversion.</returns>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
+  /// <returns>A chord with the specified chord tone in the bass.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the index is outside the formula's chord-tone range.</exception>
   public PitchChord GetInversion(
     int inversion )
   {
@@ -359,11 +360,11 @@ public class PitchChord
   }
 
   /// <summary>
-  ///   Creates a new <see cref="PitchChord"/> instance with the specified root, formula, and inversion.
+  ///   Creates a chord with the specified root, formula, and bass position.
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   /// <returns>A new <see cref="PitchChord"/> instance with the specified parameters.</returns>
   public static PitchChord Create(
     Pitch root,
@@ -426,7 +427,8 @@ public class PitchChord
   public ChordFormula Formula => _impl.Formula;
 
   /// <summary>
-  ///   Gets the inversion number of the chord.
+  ///   Gets the bass-position index. Zero puts the root in the bass; each higher value puts the next
+  ///   chord tone in the bass. For a triad, one is first inversion and two is second inversion.
   /// </summary>
   public int Inversion => _impl.Inversion;
 

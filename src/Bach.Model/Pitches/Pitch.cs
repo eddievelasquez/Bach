@@ -28,8 +28,7 @@ using System.Text;
 namespace Bach.Model.Pitches;
 
 /// <summary>
-///   A Pitch represents the pitch of a sound (<see cref="PitchClass"/>)
-///   on a given octave.
+///   Represents a pitch by its pitch class and octave.
 /// </summary>
 /// <remarks>
 ///   The octave of a Pitch ranges from 0 to 9, which corresponds to
@@ -250,12 +249,11 @@ public readonly struct Pitch
     return Midi;
   }
 
-  /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a Pitch.</exception>
-  /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
-  /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <param name="value">The value to parse.</param>
-  /// <returns>A Pitch.</returns>
+  /// <summary>Parses a pitch from a string.</summary>
+  /// <param name="value">The string to parse.</param>
+  /// <returns>The parsed pitch.</returns>
+  /// <exception cref="FormatException">Thrown when the string does not represent a pitch.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
   public static Pitch Parse(
     string value )
   {
@@ -263,10 +261,12 @@ public readonly struct Pitch
     return Parse( value.AsSpan(), null );
   }
 
-  /// <summary>Parses the provided string using the specified format provider.</summary>
-  /// <param name="value">The value to parse.</param>
+  /// <summary>Parses a pitch from a string with the specified format provider.</summary>
+  /// <param name="value">The string to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>A Pitch.</returns>
+  /// <returns>The parsed pitch.</returns>
+  /// <exception cref="FormatException">Thrown when the string does not represent a pitch.</exception>
+  /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
   public static Pitch Parse(
     string value,
     IFormatProvider? provider )
@@ -275,10 +275,11 @@ public readonly struct Pitch
     return Parse( value.AsSpan(), provider );
   }
 
-  /// <summary>Parses the provided span using the specified format provider.</summary>
-  /// <param name="value">The value to parse.</param>
+  /// <summary>Parses a pitch from a character span with the specified format provider.</summary>
+  /// <param name="value">The span to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>A Pitch.</returns>
+  /// <returns>The parsed pitch.</returns>
+  /// <exception cref="FormatException">Thrown when the span does not represent a pitch.</exception>
   public static Pitch Parse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider )
@@ -356,9 +357,10 @@ public readonly struct Pitch
     return buf.ToString();
   }
 
-  /// <summary>Adds number of semitones to the current instance.</summary>
-  /// <param name="semitoneCount">Number of semitones.</param>
-  /// <returns>A Pitch.</returns>
+  /// <summary>Transposes the pitch by the specified number of semitones.</summary>
+  /// <param name="semitoneCount">The number of semitones. Negative values transpose downward.</param>
+  /// <returns>The transposed pitch.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the transposed pitch is outside the supported range.</exception>
   public Pitch Transpose(
     int semitoneCount )
   {
@@ -366,9 +368,10 @@ public readonly struct Pitch
     return result;
   }
 
-  /// <summary>Adds an interval to the current instance.</summary>
-  /// <param name="interval">An interval to add.</param>
-  /// <returns>A Pitch.</returns>
+  /// <summary>Transposes the pitch by the specified interval.</summary>
+  /// <param name="interval">The interval to apply.</param>
+  /// <returns>The transposed pitch.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the transposed pitch is outside the supported range.</exception>
   public Pitch Transpose(
     Interval interval )
   {

@@ -95,12 +95,12 @@ public static class NoteNameExtensions
     }
 
     /// <summary>
-    /// Parses a note name from a span of characters.
+    /// Parses a note name from a character span.
     /// </summary>
     /// <param name="value">The span of characters representing the note name.</param>
     /// <param name="provider">An optional format provider.</param>
-    /// <returns>The parsed <see cref="NoteName"/>.</returns>
-    /// <exception cref="FormatException"></exception>
+    /// <returns>The parsed note name.</returns>
+    /// <exception cref="FormatException">Thrown when the span does not contain a valid note name.</exception>
     public static NoteName Parse(
       ReadOnlySpan<char> value,
       IFormatProvider? provider = null )

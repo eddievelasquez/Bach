@@ -140,26 +140,26 @@ public class ScaleFormula: Formula
   public IReadOnlySet<string> Aliases { get; }
 
   /// <summary>
-  ///   Gets a value indicating whether this instance is diatonic.
+  ///   Gets whether this formula is diatonic.
   /// </summary>
   /// <value>
-  ///   <c>true</c> if this instance is diatonic,   <c>false</c> if not.
+  ///   <see langword="true"/> if this formula is diatonic; otherwise, <see langword="false"/>.
   /// </value>
   public bool IsDiatonic => Classification.Categories.Contains( ScaleCategory.Diatonic );
 
   /// <summary>
-  ///   Query if this instance is a major scale formula.
+  ///   Gets whether this formula is classified as major.
   /// </summary>
   /// <value>
-  ///   <c>true</c> if this instance is major; otherwise, <c>false</c>.
+  ///   <see langword="true"/> if this formula is classified as major; otherwise, <see langword="false"/>.
   /// </value>
   public bool IsMajor => Classification.Categories.Contains( ScaleCategory.Major );
 
   /// <summary>
-  ///   Query if this instance is a minor scale formula.
+  ///   Gets whether this formula is classified as minor.
   /// </summary>
   /// <value>
-  ///   <c>true</c> if this instance is minor; otherwise, <c>false</c>.
+  ///   <see langword="true"/> if this formula is classified as minor; otherwise, <see langword="false"/>.
   /// </value>
   public bool IsMinor => Classification.Categories.Contains( ScaleCategory.Minor );
 
@@ -171,7 +171,7 @@ public class ScaleFormula: Formula
   ///   Gets the semitone separations between consecutive ascending degrees.
   /// </summary>
   /// <returns>
-  ///   An int enumerable of semitone steps.
+  ///   The semitone steps between consecutive ascending degrees.
   /// </returns>
   public IEnumerable<int> GetSemitoneSteps()
   {

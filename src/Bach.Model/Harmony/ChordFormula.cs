@@ -32,13 +32,12 @@ public sealed class ChordFormula: Formula
 {
   #region Constructors
 
-  /// <summary>Constructor.</summary>
+  /// <summary>Creates a chord formula from its ID, name, symbol, and intervals.</summary>
   /// <param name="id">The language-neutral id of the chord.</param>
   /// <param name="name">The localizable name of the chord.</param>
   /// <param name="symbol">The symbol for the chord.</param>
   /// <param name="intervals">
-  ///   The intervals that describe the relationship between the pitch classes that
-  ///   compose the chord.
+  ///   The intervals from the root to each chord tone.
   /// </param>
   public ChordFormula(
     string id,
@@ -52,14 +51,13 @@ public sealed class ChordFormula: Formula
     Symbol = symbol ?? name;
   }
 
-  /// <summary>Constructor.</summary>
+  /// <summary>Creates a chord formula from a comma-separated interval string.</summary>
   /// <param name="id">The language-neutral id of the chord.</param>
   /// <param name="name">The localizable name of the chord.</param>
   /// <param name="symbol">The symbol for the chord.</param>
   /// <param name="formula">
-  ///   The string representation of the formula for the chord. The formula is a
-  ///   sequence of comma-separated intervals. See
-  ///   <see cref="Interval.ToString()"/> for the format of an interval.
+  ///   The comma-separated intervals from the root to each chord tone. See
+  ///   <see cref="Interval.ToString()"/> for the interval format.
   /// </param>
   public ChordFormula(
     string id,

@@ -242,12 +242,11 @@ public abstract class Formula
   }
 
   /// <summary>
-  ///   Generates a sequence of pitchClasses based on the provided formula's intervals and starting on the provided
-  ///   <see cref="PitchClass"/>.
+  ///   Generates pitch classes from a root pitch class and an interval sequence.
   /// </summary>
   /// <param name="root">The root pitch class.</param>
-  /// <param name="intervals">The intervals.</param>
-  /// <returns> An enumerator for a sequence of pitchClasses.</returns>
+  /// <param name="intervals">The intervals to apply to the root.</param>
+  /// <returns>The generated pitch classes.</returns>
   public static IEnumerable<PitchClass> Generate(
     PitchClass root,
     IEnumerable<Interval> intervals )
@@ -262,9 +261,11 @@ public abstract class Formula
     return Comparer.IdComparer.GetHashCode( Id );
   }
 
-  /// <summary>Parse intervals.</summary>
-  /// <param name="formula">The formula.</param>
-  /// <returns>.</returns>
+  /// <summary>Parses intervals from a comma-separated string.</summary>
+  /// <param name="formula">The string that contains the intervals.</param>
+  /// <returns>The parsed intervals, or an empty array if the string is empty.</returns>
+  /// <exception cref="ArgumentNullException">Thrown when <paramref name="formula"/> is null.</exception>
+  /// <exception cref="FormatException">Thrown when the string contains an invalid interval.</exception>
   public static Interval[] ParseIntervals(
     string formula )
   {
@@ -272,10 +273,10 @@ public abstract class Formula
     return ParseIntervals( formula.AsSpan() );
   }
 
-  /// <summary>Parse intervals.</summary>
-  /// <exception cref="FormatException">Thrown when the format of the formula is incorrect.</exception>
-  /// <param name="formula">The formula.</param>
-  /// <returns>.</returns>
+  /// <summary>Parses intervals from a comma-separated character span.</summary>
+  /// <param name="formula">The span that contains the intervals.</param>
+  /// <returns>The parsed intervals, or an empty array if the span is empty.</returns>
+  /// <exception cref="FormatException">Thrown when the span contains an invalid interval.</exception>
   public static Interval[] ParseIntervals(
     ReadOnlySpan<char> formula )
   {

@@ -29,12 +29,11 @@ using System.Text;
 namespace Bach.Model.Pitches;
 
 /// <summary>
-///   A PitchClass represents a combination of a <see cref="P:Bach.Model.NoteName"/>
-///   and an optional <see cref="P:Bach.Model.Accidental"/> following
-///   the <see href="https://en.wikipedia.org/wiki/Scientific_pitch_notation">Scientific Pitch Notation</see>.
+///   Represents a note name with an accidental, using
+///   <see href="https://en.wikipedia.org/wiki/Scientific_pitch_notation">scientific pitch notation</see>.
 /// </summary>
 /// <remarks>
-///   <see cref="PitchClass"/>'s equality and ordering members (<see cref="Equals(PitchClass)"/>,
+  ///   Equality and ordering members (<see cref="Equals(PitchClass)"/>,
 ///   <see cref="GetHashCode"/>, <see cref="CompareTo"/>, and the relational operators) are all
 ///   spelling-sensitive: two pitch classes are only equal (and only compare as equal) when they
 ///   share the same note name and accidental, so C♯ and D♭ are <b>not</b> equal. Use
@@ -235,11 +234,10 @@ public readonly struct PitchClass
 
   /// <inheritdoc/>
   /// <remarks>
-  ///   This ordering is spelling-sensitive, consistent with <see cref="Equals(PitchClass)"/>: it
+  ///   This ordering is spelling-sensitive, consistent with <see cref="Equals(PitchClass)"/>. It
   ///   orders first by note name (C, D, E, F, G, A, B) and then by accidental (double flat to double
   ///   sharp), so <c>CompareTo(other) == 0</c> if and only if <c>Equals(other) == true</c>. C♯ and D♭
-  ///   so they do <b>not</b> compare as equal. Use <see cref="EnharmonicCompareTo"/> for an ordering
-  ///   based on chromatic pitch height (enharmonic position) instead.
+  ///   do not compare as equal. Use <see cref="EnharmonicCompareTo"/> to order by pitch height
   /// </remarks>
   public int CompareTo(
     PitchClass other )
@@ -285,18 +283,16 @@ public readonly struct PitchClass
   }
 
   /// <summary>
-  ///   Determines whether this instance and another pitch class are enharmonically equivalent, i.e.,
-  ///   they represent the same sounding pitch class regardless of spelling.
+  ///   Determines whether two pitch classes have the same sounding pitch, regardless of spelling.
   /// </summary>
   /// <param name="other">The pitch class to compare against.</param>
-  /// <returns>True if both pitch classes are enharmonically equivalent; otherwise, false.</returns>
+  /// <returns><see langword="true"/> if the pitch classes are enharmonically equivalent; otherwise, <see langword="false"/>.</returns>
   /// <remarks>
   ///   Unlike <see cref="Equals(PitchClass)"/>, which is spelling-sensitive, this comparison treats
-  ///   enharmonically-equivalent spellings as equal (e.g., C♯ and D♭ are
-  ///   <see cref="EnharmonicEquals"/>-equal but not <see cref="Equals(PitchClass)"/>-equal). Use
-  ///   this when the sounding pitch class is what matters rather than its spelling, e.g., pitch-class-set
-  ///   membership or key-signature-agnostic comparisons. See also <see cref="EnharmonicComparer"/> for an
-  ///   <see cref="IEqualityComparer{T}"/> with this behavior.
+  ///   This method treats enharmonic spellings as equal. For example, C-sharp and D-flat are equal
+  ///   here but not under <see cref="Equals(PitchClass)"/>. Use this method when the sounding pitch
+  ///   matters more than its spelling. Use <see cref="EnharmonicComparer"/> to apply this equality
+  ///   rule in a collection.
   /// </remarks>
   public bool EnharmonicEquals(
     PitchClass other )
@@ -307,9 +303,9 @@ public readonly struct PitchClass
   /// <summary>
   ///   Determines whether this instance and a specified object are equal.
   /// </summary>
-  /// <param name="obj">The object to compare with the current instance.</param>
+  /// <param name="obj">The object to compare with this pitch class.</param>
   /// <returns>
-  ///   True if the specified object is a <see cref="PitchClass"/> and is equal to the current instance; otherwise, false.
+  ///   <see langword="true"/> if the object is an equal <see cref="PitchClass"/>; otherwise, <see langword="false"/>.
   /// </returns>
   public override bool Equals(
     object? obj )
@@ -317,9 +313,9 @@ public readonly struct PitchClass
     return obj is PitchClass other && Equals( other );
   }
 
-  /// <summary>Gets the enharmonic pitch class for this instance or null if none exists.</summary>
+  /// <summary>Gets this pitch class with the specified enharmonic note name.</summary>
   /// <param name="noteName">The name of the enharmonic pitch class.</param>
-  /// <returns>The enharmonic.</returns>
+  /// <returns>The enharmonic pitch class, or <see langword="null"/> if none exists.</returns>
   public PitchClass? GetEnharmonic(
     NoteName noteName )
   {
@@ -336,7 +332,7 @@ public readonly struct PitchClass
     return HashCode.Combine( _noteName, _accidental );
   }
 
-  /// <summary>Determines the interval between this instance and the provided pitch class.</summary>
+  /// <summary>Gets the interval from this pitch class to another.</summary>
   /// <param name="pitchClass">The pitch class.</param>
   /// <returns>An interval.</returns>
   public Interval GetIntervalTo(
@@ -355,7 +351,7 @@ public readonly struct PitchClass
   }
 
   /// <summary>Parses the provided string.</summary>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a PitchClass.</exception>
+  /// <exception cref="FormatException">Thrown when the string does not represent a pitch class.</exception>
   /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   /// <param name="value">The value to parse.</param>
@@ -373,7 +369,7 @@ public readonly struct PitchClass
   /// <param name="value">The value to parse.</param>
   /// <param name="provider">The format provider.</param>
   /// <returns>A PitchClass.</returns>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a a PitchClass.</exception>
+  /// <exception cref="FormatException">Thrown when the string does not represent a pitch class.</exception>
   /// <exception cref="ArgumentNullException">Thrown when a null string is provided.</exception>
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
   public static PitchClass Parse(
@@ -391,7 +387,7 @@ public readonly struct PitchClass
   /// <param name="provider">The format provider.</param>
   /// <returns>A PitchClass.</returns>
   /// <exception cref="ArgumentException">Thrown when an empty string is provided.</exception>
-  /// <exception cref="FormatException">Thrown when the provided string doesn't represent a PitchClass.</exception>
+  /// <exception cref="FormatException">Thrown when the string does not represent a pitch class.</exception>
   public static PitchClass Parse(
     ReadOnlySpan<char> value,
     IFormatProvider? provider )

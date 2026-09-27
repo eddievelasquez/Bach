@@ -41,7 +41,7 @@ public interface IPartEvent
   #region Public Methods
 
   /// <summary>
-  ///   Determines whether the event contains any of the specified pitch class.
+  ///   Determines whether the event contains the specified pitch class.
   /// </summary>
   /// <param name="pitchClass">The pitch class to check for.</param>
   /// <returns>

@@ -28,7 +28,7 @@ using System.Linq;
 namespace Bach.Model.Analysis;
 
 /// <summary>
-///   Provides a base class for tonal evidence providers that evaluate pitch classes against a candidate scale.
+///   Provides a base class for evaluators that assess tonal evidence for a candidate key.
 /// </summary>
 public abstract class TonalEvidenceEvaluator: ITonalEvidenceEvaluator
 {

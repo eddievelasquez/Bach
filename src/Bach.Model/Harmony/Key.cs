@@ -131,10 +131,10 @@ public sealed class Key
   #region Public Methods
 
   /// <summary>
-  ///   Parses a string representation of a key into a <see cref="Key"/> object.
+  ///   Parses a key from its string representation.
   /// </summary>
-  /// <param name="value">The string representation of the key.</param>
-  /// <returns>The parsed <see cref="Key"/> object.</returns>
+  /// <param name="value">The key string to parse.</param>
+  /// <returns>The parsed key.</returns>
   public static Key Parse(
     string value )
   {
@@ -143,12 +143,12 @@ public sealed class Key
   }
 
   /// <summary>
-  ///   Parses a string representation of a key into a <see cref="Key"/> object.
+  ///   Parses a key from its string representation.
   /// </summary>
-  /// <param name="value">The string representation of the key.</param>
+  /// <param name="value">The key string to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed <see cref="Key"/> object.</returns>
-  /// <exception cref="FormatException"></exception>
+  /// <returns>The parsed key.</returns>
+  /// <exception cref="FormatException">Thrown when the string is not a valid key.</exception>
   public static Key Parse(
     string value,
     IFormatProvider? provider )
@@ -158,12 +158,12 @@ public sealed class Key
   }
 
   /// <summary>
-  ///   Parses a string representation of a key into a <see cref="Key"/> object.
+  ///   Parses a key from its string representation.
   /// </summary>
-  /// <param name="s">The string representation of the key.</param>
+  /// <param name="s">The key string to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed <see cref="Key"/> object.</returns>
-  /// <exception cref="FormatException"></exception>
+  /// <returns>The parsed key.</returns>
+  /// <exception cref="FormatException">Thrown when the span is not a valid key.</exception>
   public static Key Parse(
     ReadOnlySpan<char> s,
     IFormatProvider? provider )

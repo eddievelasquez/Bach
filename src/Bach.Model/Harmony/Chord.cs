@@ -29,8 +29,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Bach.Model.Harmony;
 
 /// <summary>
-///   Represents an ordered set of pitch classes generated from a root and a chord formula.
-///   Use the inversion to choose which chord tone is the bass; use <see cref="GetPitches"/> to
+///   Represents an ordered list of pitch classes generated from a root and a chord formula.
+///   The bass-position index selects which chord tone is the bass; use <see cref="GetPitches"/> to
 ///   place the chord in an octave.
 /// </summary>
 public class Chord
@@ -174,7 +174,7 @@ public class Chord
   /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   public Chord(
     PitchClass root,
     ChordFormula formula,
@@ -188,7 +188,7 @@ public class Chord
   /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formulaIdOrName">The identifier or name of the formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   public Chord(
     PitchClass root,
     string formulaIdOrName,
@@ -246,10 +246,11 @@ public class Chord
   }
 
   /// <summary>
-  ///   Returns the inversion of the chord.
+  ///   Returns the chord with the specified chord tone in the bass.
   /// </summary>
-  /// <param name="inversion">The inversion to retrieve.</param>
-  /// <returns>The specified inversion of the chord.</returns>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
+  /// <returns>A chord with the specified chord tone in the bass.</returns>
+  /// <exception cref="ArgumentOutOfRangeException">Thrown when the index is outside the formula's chord-tone range.</exception>
   public virtual Chord GetInversion(
     int inversion )
   {
@@ -437,11 +438,11 @@ public class Chord
   }
 
   /// <summary>
-  ///   Creates a new chord instance with the specified root, formula, and inversion.
+  ///   Creates a chord with the specified root, formula, and bass position.
   /// </summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   /// <returns>A new chord instance with the specified parameters.</returns>
   public static Chord Create(
     PitchClass root,
@@ -452,10 +453,10 @@ public class Chord
   }
 
   /// <summary>
-  ///   Returns an enumerator that iterates through the collection of pitch classes in the chord.
+  ///   Returns an enumerator for the chord's pitch classes.
   /// </summary>
   /// <returns>
-  ///   An enumerator that can be used to iterate through the collection of pitch classes in the chord.
+  ///   An enumerator for the chord's pitch classes.
   /// </returns>
   public IEnumerator<PitchClass> GetEnumerator()
   {
@@ -476,11 +477,11 @@ public class Chord
   }
 
   /// <summary>
-  ///   Returns the index of the specified pitch class in the chord's collection of pitch classes.
+  ///   Returns the index of the specified pitch class in the chord.
   /// </summary>
-  /// <param name="pitch">The pitch class to locate in the chord's collection of pitch classes.</param>
+  /// <param name="pitch">The pitch class to find.</param>
   /// <returns>
-  ///   The index of the specified pitch class in the chord's collection of pitch classes.
+  ///   The pitch class index, or -1 if the chord does not contain it.
   /// </returns>
   public int IndexOf(
     PitchClass pitch )
@@ -503,7 +504,8 @@ public class Chord
   public ChordFormula Formula => _impl.Formula;
 
   /// <summary>
-  ///   Gets the inversion number of the chord.
+  ///   Gets the bass-position index. Zero puts the root in the bass; each higher value puts the next
+  ///   chord tone in the bass. For a triad, one is first inversion and two is second inversion.
   /// </summary>
   public int Inversion => _impl.Inversion;
 
@@ -528,10 +530,10 @@ public class Chord
   #region IEnumerable Implementation
 
   /// <summary>
-  ///   Returns an enumerator that iterates through the collection of pitch classes in the chord.
+  ///   Returns an enumerator for the chord's pitch classes.
   /// </summary>
   /// <returns>
-  ///   An enumerator that can be used to iterate through the collection of pitch classes in the chord.
+  ///   An enumerator for the chord's pitch classes.
   /// </returns>
   IEnumerator IEnumerable.GetEnumerator()
   {

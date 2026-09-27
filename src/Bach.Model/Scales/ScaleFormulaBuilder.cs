@@ -96,7 +96,7 @@ public sealed class ScaleFormulaBuilder
   ///   The scale formula's identifier.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder SetId(
     string id )
@@ -112,7 +112,7 @@ public sealed class ScaleFormulaBuilder
   ///   The name.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder SetName(
     string name )
@@ -130,7 +130,7 @@ public sealed class ScaleFormulaBuilder
   ///   The interval to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder AddAscendingInterval(
     Interval interval )
@@ -146,7 +146,7 @@ public sealed class ScaleFormulaBuilder
   ///   The intervals to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder AddAscendingIntervals(
     IEnumerable<Interval> intervals )
@@ -163,7 +163,7 @@ public sealed class ScaleFormulaBuilder
   ///   The intervals to set.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   /// <remarks>
   ///   Clears any existing ascending intervals before setting the new ones.
@@ -184,7 +184,7 @@ public sealed class ScaleFormulaBuilder
   ///   The interval to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder AddDescendingInterval(
     Interval interval )
@@ -200,7 +200,7 @@ public sealed class ScaleFormulaBuilder
   ///   The intervals to add.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder AddDescendingIntervals(
     IEnumerable<Interval> intervals )
@@ -217,7 +217,7 @@ public sealed class ScaleFormulaBuilder
   ///   The intervals to set.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   /// <remarks>
   ///   Clears any existing descending intervals before setting the new ones.
@@ -241,7 +241,7 @@ public sealed class ScaleFormulaBuilder
   ///   The alias.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder AddAlias(
     string? alias )
@@ -265,7 +265,7 @@ public sealed class ScaleFormulaBuilder
   ///   The aliases.
   /// </param>
   /// <returns>
-  ///   This instance.
+  ///   This builder.
   /// </returns>
   public ScaleFormulaBuilder AddAliases(
     IEnumerable<string> aliases )
@@ -282,10 +282,10 @@ public sealed class ScaleFormulaBuilder
   }
 
   /// <summary>
-  /// Configures the scale formula's classification using the provided action.
+  /// Configures the scale formula's classification.
   /// </summary>
-  /// <param name="classifyAction">The action to configure the scale classification.</param>
-  /// <returns>This instance.</returns>
+  /// <param name="classifyAction">The action that configures the classification.</param>
+  /// <returns>This builder.</returns>
   public ScaleFormulaBuilder Classify( Action<ScaleClassificationBuilder> classifyAction )
   {
     ArgumentNullException.ThrowIfNull( classifyAction );
@@ -294,20 +294,18 @@ public sealed class ScaleFormulaBuilder
   }
 
   /// <summary>
-  ///   Builds a scale formula instance.
+  ///   Builds the scale formula.
   /// </summary>
   /// <remarks>
-  ///   The scale formula will have a default id if none was provided. This id is equivalent to the scale formula's name
-  ///   without any whitespace characters.
-  ///   The "Diatonic", "Major" or "Minor" categories will be automatically added if the provided intervals satisfy the
-  ///   category's requirements.
+  ///   If you do not set an ID, the builder uses the formula name without whitespace. The builder
+  ///   also adds the "Diatonic", "Major", or "Minor" category when the intervals meet its rules.
   /// </remarks>
   /// <returns>
   ///   A scale formula.
   /// </returns>
   /// <exception cref="System.InvalidOperationException">
-  ///   Missing the scale formula's name, or the interval list is empty, or the
-  ///   interval list is unordered or contains duplicate intervals.
+  ///   Thrown when the formula has no name, has no ascending intervals, or has intervals that are
+  ///   unordered or duplicated.
   /// </exception>
   public ScaleFormula Build()
   {

@@ -127,11 +127,12 @@ public sealed class Part
   }
 
   /// <summary>
-  ///   Parses a string representation of a musical part and returns a <see cref="Part"/> object.
+  ///   Parses a part from its string representation.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed <see cref="Part"/> object.</returns>
+  /// <returns>The parsed part.</returns>
+  /// <exception cref="FormatException">Thrown when the string does not represent a valid part.</exception>
   public static Part Parse(
     string s,
     IFormatProvider? provider = null )
@@ -140,12 +141,12 @@ public sealed class Part
   }
 
   /// <summary>
-  ///   Parses a span of characters representing a musical part and returns a <see cref="Part"/> object.
+  ///   Parses a part from a character span.
   /// </summary>
   /// <param name="span">The span of characters to parse.</param>
   /// <param name="provider">The format provider.</param>
-  /// <returns>The parsed <see cref="Part"/> object.</returns>
-  /// <exception cref="FormatException"></exception>
+  /// <returns>The parsed part.</returns>
+  /// <exception cref="FormatException">Thrown when the span does not represent a valid part.</exception>
   public static Part Parse(
     ReadOnlySpan<char> span,
     IFormatProvider? provider )
@@ -156,11 +157,11 @@ public sealed class Part
   }
 
   /// <summary>
-  ///   Attempts to parse a string representation of a musical part and returns a boolean indicating success or failure.
+  ///   Attempts to parse a part from its string representation.
   /// </summary>
   /// <param name="s">The string to parse.</param>
   /// <param name="part">The parsed <see cref="Part"/> object.</param>
-  /// <returns>true if the string was parsed successfully; otherwise, false.</returns>
+  /// <returns><see langword="true"/> if parsing succeeds; otherwise, <see langword="false"/>.</returns>
   public static bool TryParse(
     string? s,
     [NotNullWhen( true )] out Part? part )

@@ -39,9 +39,9 @@ public sealed class Mode
 {
   #region Constructors
 
-  /// <summary>Constructor.</summary>
-  /// <param name="scale">The scale.</param>
-  /// <param name="formula">The mode formula.</param>
+  /// <summary>Creates a mode from a scale and mode formula.</summary>
+  /// <param name="scale">The scale that supplies the pitch classes.</param>
+  /// <param name="formula">The formula that defines the mode.</param>
   /// <exception cref="ArgumentNullException">Thrown when the scale or the formula are null.</exception>
   public Mode(
     Scale scale,
@@ -60,8 +60,8 @@ public sealed class Mode
 
   #region Properties
 
-  /// <summary>Gets the mode's pitchClasses.</summary>
-  /// <value>The pitchClasses.</value>
+  /// <summary>Gets the mode's pitch classes.</summary>
+  /// <value>The pitch classes in the mode.</value>
   public IReadOnlyList<PitchClass> PitchClasses { get; }
 
   /// <summary>Gets the mode's scale.</summary>

@@ -53,10 +53,10 @@ internal sealed class ChordCore<TPitch>
   /// <summary>Specialized constructor for use only by derived classes.</summary>
   /// <param name="root">The root pitch class of the chord.</param>
   /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
+  /// <param name="inversion">The bass-position index: zero puts the root in the bass; each higher value selects the next chord tone.</param>
   /// <exception cref="ArgumentNullException">Thrown when formula is null.</exception>
   /// <exception cref="ArgumentOutOfRangeException">
-  ///   Thrown when the inversion is less than zero or greater than the number of intervals in the chord's formula.
+  ///   Thrown when the index is less than zero or greater than the number of chord tones minus one.
   /// </exception>
   public ChordCore(
     TPitch root,
@@ -76,7 +76,7 @@ internal sealed class ChordCore<TPitch>
   #region Properties
 
   /// <summary>
-  ///   Gets the pitch at the specified index in the chord's collection of pitches.
+  ///   Gets the pitch at the specified index in the chord.
   /// </summary>
   /// <param name="index">The index of the pitch to retrieve.</param>
   /// <returns>The pitch at the specified index.</returns>
@@ -113,19 +113,19 @@ internal sealed class ChordCore<TPitch>
   }
 
   /// <summary>
-  ///   Returns an enumerator that iterates through the collection of pitches in the chord.
+  ///   Returns an enumerator for the chord's pitches.
   /// </summary>
-  /// <returns>An enumerator that can be used to iterate through the collection of pitches.</returns>
+  /// <returns>An enumerator for the chord's pitches.</returns>
   public IEnumerator<TPitch> GetEnumerator()
   {
     return ( (IEnumerable<TPitch>) _pitches ).GetEnumerator();
   }
 
   /// <summary>
-  ///   Returns the index of the specified pitch in the chord's collection of pitches.
+  ///   Returns the index of the specified pitch in the chord.
   /// </summary>
-  /// <param name="pitch">The pitch to locate in the collection.</param>
-  /// <returns>The index of the specified pitch if found; otherwise, -1.</returns>
+  /// <param name="pitch">The pitch to find.</param>
+  /// <returns>The pitch index, or -1 if the chord does not contain the pitch.</returns>
   public int IndexOf(
     TPitch pitch )
   {
@@ -190,8 +190,8 @@ internal sealed class ChordCore<TPitch>
   /// <value>The formula.</value>
   public ChordFormula Formula { get; }
 
-  /// <summary>Gets the inversion number of the current instance.</summary>
-  /// <value>The inversion.</value>
+  /// <summary>Gets the bass-position index for the chord.</summary>
+  /// <value>Zero puts the root in the bass; each higher value puts the next chord tone there.</value>
   public int Inversion { get; }
 
   /// <summary>Gets the root pitch for the chord.</summary>
@@ -199,7 +199,7 @@ internal sealed class ChordCore<TPitch>
   public TPitch Root { get; }
 
   /// <summary>
-  ///   Gets the bass pitch class for the chord. The Bass pitch differs from the root for chord inversions.
+  ///   Gets the bass element of the chord. It differs from the root when the chord is inverted.
   /// </summary>
   /// <value>The bass.</value>
   public TPitch Bass => this[0];
@@ -227,11 +227,11 @@ internal sealed class ChordCore<TPitch>
   #region Implementation
 
   /// <summary>
-  ///   Creates the pitches for the chord based on the root, formula, and inversion.
+  ///   Creates the chord pitches with the selected chord tone in the bass.
   /// </summary>
   /// <param name="root">The root pitch of the chord.</param>
   /// <param name="formula">The chord formula.</param>
-  /// <param name="inversion">The inversion of the chord.</param>
+  /// <param name="inversion">The bass-position index. Zero puts the root in the bass.</param>
   /// <returns>The pitches of the chord.</returns>
   private static TPitch[] CreatePitches(
     TPitch root,
