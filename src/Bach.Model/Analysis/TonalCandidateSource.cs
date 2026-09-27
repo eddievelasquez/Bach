@@ -56,7 +56,7 @@ public static class TonalCandidateSource
   public static IEnumerable<Key> GetDefaultCandidates(
     RepertoireProfile? profile = null )
   {
-    return Registry.ScaleFormulas.Where( formula => formula.Classification.IsKeyCandidate )
+    return Registry.Instance.ScaleFormulas.Where( formula => formula.Classification.IsKeyCandidate )
                    .Where( formula => profile is null
                                       || formula.Classification.RepertoireTags.Count == 0
                                       || formula.Classification.RepertoireTags.Any( t => profile.EnabledTags.Contains( t ) )

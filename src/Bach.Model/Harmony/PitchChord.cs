@@ -69,7 +69,7 @@ public class PitchChord
     Pitch root,
     string formulaIdOrName,
     int inversion = 0 )
-    : this( root, Registry.ChordFormulas[formulaIdOrName], inversion )
+    : this( root, Registry.Instance.ChordFormulas[formulaIdOrName], inversion )
   {
   }
 
@@ -103,7 +103,7 @@ public class PitchChord
     string formulaIdOrName,
     int octave = 4,
     int inversion = 0 )
-    : this( root, Registry.ChordFormulas[formulaIdOrName], octave, inversion )
+    : this( root, Registry.Instance.ChordFormulas[formulaIdOrName], octave, inversion )
   {
   }
 
@@ -293,7 +293,7 @@ public class PitchChord
     var nonSymbolPos = tail.IndexOfNonChordSymbol();
     var formulaSymbolSpan = nonSymbolPos != -1 ? tail[..nonSymbolPos] : tail;
 
-    if( !Registry.TryGetChordFormulaBySymbol( formulaSymbolSpan, out var chordFormula ) )
+    if( !Registry.Instance.TryGetChordFormulaBySymbol( formulaSymbolSpan, out var chordFormula ) )
     {
       chord = null;
       return false;

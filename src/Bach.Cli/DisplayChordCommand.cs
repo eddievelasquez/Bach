@@ -60,7 +60,7 @@ internal sealed class DisplayChordCommand: BachCommand
     string chordName,
     IEnumerable<string> roots )
   {
-    var formula = Registry.ChordFormulas[chordName];
+    var formula = Registry.Instance.ChordFormulas[chordName];
 
     WriteList( $"{formula.Name} chord => ", formula.Intervals );
 

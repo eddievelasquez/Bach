@@ -54,7 +54,7 @@ internal sealed class ListScalesCommand: BachCommand
   {
     WriteTitle( "Scales" );
 
-    foreach( var formula in Registry.ScaleFormulas )
+    foreach( var formula in Registry.Instance.ScaleFormulas )
     {
       WriteLine( formula.Name );
       WriteList( "  Formula:    ", formula.Intervals );

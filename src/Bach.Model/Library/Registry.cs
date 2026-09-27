@@ -36,7 +36,7 @@ namespace Bach.Model.Library;
 ///   The registry provides access to all the predefined formulas and definitions that can be found in the
 ///   Bach.Model.Library.json file.
 /// </summary>
-public static class Registry
+public sealed class Registry
 {
   #region Constants
 
@@ -45,7 +45,12 @@ public static class Registry
   private static readonly JsonSerializerOptions s_jsonSerializerOptions =
     new() { Converters = { new PersistentScaleDegreesJsonConverterFactory() } };
 
-  private static readonly Lookup<ChordFormula> s_chordSymbolLookup;
+  private readonly Lookup<ChordFormula> _chordSymbolLookup;
+
+  /// <summary>
+  ///   Gets the shared registry instance.
+  /// </summary>
+  public static Registry Instance { get; } = new();
 
   #endregion
 
@@ -56,7 +61,7 @@ public static class Registry
     "S3877:Exceptions should not be thrown from unexpected methods",
     Justification = "Must abort if the library cannot be loaded"
   )]
-  static Registry()
+  private Registry()
   {
     var path = GetLibraryPath();
     var library = LoadLibrary( path );
@@ -72,7 +77,7 @@ public static class Registry
     StringedInstrumentDefinitions = LoadStringedInstruments( library );
 
     // Create a lookup for chord formulas by symbol for fast access
-    s_chordSymbolLookup = new Lookup<ChordFormula>( ChordFormulas, cf => cf.Symbol );
+    _chordSymbolLookup = new Lookup<ChordFormula>( ChordFormulas, cf => cf.Symbol );
   }
 
   #endregion
@@ -85,7 +90,7 @@ public static class Registry
   /// <value>
   ///   The scale formulas.
   /// </value>
-  public static NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
+  public NamedObjectCollection<ScaleFormula> ScaleFormulas { get; }
 
   /// <summary>
   ///   Gets the collection of chord formulas.
@@ -93,7 +98,7 @@ public static class Registry
   /// <value>
   ///   The chord formulas.
   /// </value>
-  public static NamedObjectCollection<ChordFormula> ChordFormulas { get; }
+  public NamedObjectCollection<ChordFormula> ChordFormulas { get; }
 
   /// <summary>
   ///   Gets the collection of stringed instrument definitions.
@@ -101,7 +106,7 @@ public static class Registry
   /// <value>
   ///   The stringed instrument definitions.
   /// </value>
-  public static NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
+  public NamedObjectCollection<StringedInstrumentDefinition> StringedInstrumentDefinitions { get; }
 
   #endregion
 
@@ -120,7 +125,7 @@ public static class Registry
   /// <returns>
   ///   true if the chord formula is found; otherwise, false.
   /// </returns>
-  public static bool TryGetChordFormula(
+  public bool TryGetChordFormula(
     string idOrName,
     [MaybeNullWhen( false )] out ChordFormula result )
   {
@@ -140,11 +145,11 @@ public static class Registry
   /// <returns>
   ///   true if the chord formula is found; otherwise, false.
   /// </returns>
-  public static bool TryGetChordFormulaBySymbol(
+  public bool TryGetChordFormulaBySymbol(
     string symbol,
     [MaybeNullWhen( false )] out ChordFormula result )
   {
-    return s_chordSymbolLookup.TryGetValue( symbol, out result );
+    return _chordSymbolLookup.TryGetValue( symbol, out result );
   }
 
   /// <summary>
@@ -160,11 +165,11 @@ public static class Registry
   /// <returns>
   ///   true if the chord formula is found; otherwise, false.
   /// </returns>
-  public static bool TryGetChordFormulaBySymbol(
+  public bool TryGetChordFormulaBySymbol(
     ReadOnlySpan<char> symbol,
     [MaybeNullWhen( false )] out ChordFormula result )
   {
-    return s_chordSymbolLookup.TryGetValue( symbol, out result );
+    return _chordSymbolLookup.TryGetValue( symbol, out result );
   }
 
   /// <summary>
@@ -180,7 +185,7 @@ public static class Registry
   /// <returns>
   ///   true if the scale formula is found; otherwise, false.
   /// </returns>
-  public static bool TryGetScaleFormula(
+  public bool TryGetScaleFormula(
     string idOrName,
     [MaybeNullWhen( false )] out ScaleFormula result )
   {
@@ -201,7 +206,7 @@ public static class Registry
   /// <returns>
   ///   true if the stringed instrument definition is found; otherwise, false.
   /// </returns>
-  public static bool TryGetStringedInstrumentDefinition(
+  public bool TryGetStringedInstrumentDefinition(
     string idOrName,
     [MaybeNullWhen( false )] out StringedInstrumentDefinition result )
   {

@@ -72,7 +72,7 @@ public sealed class Scale
   public Scale(
     PitchClass root,
     string formulaIdOrName )
-    : this( root, Registry.ScaleFormulas[formulaIdOrName] )
+    : this( root, Registry.Instance.ScaleFormulas[formulaIdOrName] )
   {
   }
 
@@ -278,7 +278,7 @@ public sealed class Scale
     IEnumerable<PitchClass> pitchClasses )
   {
 #if BRUTE_FORCE_MATCHING
-    foreach( var formula in Registry.ScaleFormulas )
+    foreach( var formula in Registry.Instance.ScaleFormulas )
     {
       var root = PitchClass.C;
 
@@ -306,7 +306,7 @@ public sealed class Scale
                                .ToArray();
 
       // Check which scales contain those intervals.
-      foreach( var formula in Registry.ScaleFormulas )
+      foreach( var formula in Registry.Instance.ScaleFormulas )
       {
         if( !formula.Contains( intervals, match ) )
         {

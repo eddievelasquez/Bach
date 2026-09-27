@@ -33,7 +33,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void CreateWithDefinitionDefaultTuningTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = new StringedInstrument( definition, 22, (Tuning?)null );
@@ -54,7 +54,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void CreateWithDefinitionTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = new StringedInstrument( definition, 22, expectedTuning );
@@ -75,7 +75,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void CreateWithDefinitionThrowsOnMismatchedStringCountTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var act = () => new StringedInstrument( definition, 0, (Tuning?)null );
 
     act.Should()
@@ -85,7 +85,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void CreateWithDefinitionThrowsOnNullDefinitionTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var expectedTuning = definition.Tunings.Standard;
     var act = () => new StringedInstrument( (StringedInstrumentDefinition)null!, 22, expectedTuning );
 
@@ -96,7 +96,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void CreateWithNamesDefaultTuningTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = new StringedInstrument( "guitar", 22, null );
@@ -117,7 +117,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void CreateWithNamesTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var expectedTuning = definition.Tunings.Standard;
 
     var instrument = new StringedInstrument( "guitar", 22, "standard" );
@@ -156,7 +156,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void EqualsContractTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     object x = new StringedInstrument( definition, 22, (Tuning?)null );
     object y = new StringedInstrument( definition, 22, (Tuning?)null );
@@ -191,9 +191,9 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     object a = new StringedInstrument( definition, 22, (Tuning?)null );
-    object b = new StringedInstrument( Registry.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
+    object b = new StringedInstrument( Registry.Instance.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
 
     a.Equals( b )
      .Should()
@@ -215,7 +215,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void EqualsFailsWithNullTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     object actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( null )
@@ -226,7 +226,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( actual )
@@ -237,7 +237,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void GetHashcodeTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var actual = new StringedInstrument( definition, 22, (Tuning?)null );
     var expected = new StringedInstrument( definition, 22, (Tuning?)null );
 
@@ -255,7 +255,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 0, 4 )
@@ -268,7 +268,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 12, 4 )
@@ -281,7 +281,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 3, 4 )
@@ -294,7 +294,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 5, 4 )
@@ -307,7 +307,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 8, 4 )
@@ -320,7 +320,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
 
     var chord = new Chord( PitchClass.C, formula, 0 )
                      .GetInversion( 1 );
@@ -335,7 +335,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 12, 4 )
@@ -348,7 +348,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 3, 4 )
@@ -361,7 +361,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 5, 4 )
@@ -374,7 +374,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.C, formula, 0 );
 
     RenderChord( instrument, chord, 8, 4 )
@@ -387,7 +387,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 0, 4 )
@@ -400,7 +400,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 12, 4 )
@@ -413,7 +413,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 5, 4 )
@@ -426,7 +426,7 @@ public sealed class StringedInstrumentTests
   {
     var instrument = new StringedInstrument( "guitar", 22, null );
 
-    ChordFormula formula = Registry.ChordFormulas["Major"];
+    ChordFormula formula = Registry.Instance.ChordFormulas["Major"];
     var chord = new Chord( PitchClass.D, formula, 0 );
 
     RenderChord( instrument, chord, 7, 4 )
@@ -521,7 +521,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void TestFactoryDefaultTuning()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var instrument = new StringedInstrument( definition, 22, (Tuning?)null );
 
     instrument.Tuning.Should()
@@ -531,7 +531,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void TestFactoryInvalidPositionCount()
   {
-    var act = () => new StringedInstrument( Registry.StringedInstrumentDefinitions["bass"], 0, (Tuning?)null );
+    var act = () => new StringedInstrument( Registry.Instance.StringedInstrumentDefinitions["bass"], 0, (Tuning?)null );
 
     act.Should()
        .Throw<ArgumentOutOfRangeException>();
@@ -549,7 +549,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void TypeSafeEqualsContractTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     var x = new StringedInstrument( definition, 22, (Tuning?)null );
     var y = new StringedInstrument( definition, 22, (Tuning?)null );
@@ -583,9 +583,9 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var a = new StringedInstrument( definition, 22, (Tuning?)null );
-    var b = new StringedInstrument( Registry.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
+    var b = new StringedInstrument( Registry.Instance.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
 
     a.Equals( b )
      .Should()
@@ -607,7 +607,7 @@ public sealed class StringedInstrumentTests
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( null )

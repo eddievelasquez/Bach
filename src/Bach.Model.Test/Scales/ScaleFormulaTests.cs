@@ -206,7 +206,7 @@ public sealed class ScaleFormulaTests
     string scaleName,
     int[] expectedSteps )
   {
-    var formula = Registry.ScaleFormulas[scaleName];
+    var formula = Registry.Instance.ScaleFormulas[scaleName];
 
     formula.GetSemitoneSteps()
          .Should()

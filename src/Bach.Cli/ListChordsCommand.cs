@@ -54,7 +54,7 @@ internal sealed class ListChordsCommand: BachCommand
   {
     WriteTitle( "Chords" );
 
-    foreach( var formula in Registry.ChordFormulas )
+    foreach( var formula in Registry.Instance.ChordFormulas )
     {
       WriteLine( formula.Name );
       WriteLine( "  Symbol:  ", formula.Symbol );

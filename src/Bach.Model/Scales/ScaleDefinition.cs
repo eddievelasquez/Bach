@@ -103,7 +103,7 @@ public sealed class ScaleDefinition
     Interval? relativeMajorInterval = null )
   {
     FormulaId = formulaId ?? throw new ArgumentNullException( nameof( formulaId ) );
-    Formula = Registry.ScaleFormulas[FormulaId];
+    Formula = Registry.Instance.ScaleFormulas[FormulaId];
     RelativeMajorInterval = relativeMajorInterval;
   }
 

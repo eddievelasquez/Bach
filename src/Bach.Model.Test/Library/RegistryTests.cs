@@ -33,9 +33,16 @@ public sealed class RegistryTests
   #region Public Methods
 
   [Fact]
+  public void Instance_ShouldReturnSameInstance_WhenAccessedMultipleTimes()
+  {
+      Registry.Instance.Should()
+        .BeSameAs( Registry.Instance );
+  }
+
+  [Fact]
   public void ChordFormulas_ShouldReturnExpectedValues_WhenAccessedById()
   {
-    var chordFormulas = Registry.ChordFormulas.ToArray();
+    var chordFormulas = Registry.Instance.ChordFormulas.ToArray();
 
     chordFormulas.Should()
                  .NotBeNull();
@@ -45,7 +52,7 @@ public sealed class RegistryTests
 
     foreach( var expected in chordFormulas )
     {
-      var actual = Registry.ChordFormulas[expected.Id];
+      var actual = Registry.Instance.ChordFormulas[expected.Id];
 
       actual.Should()
             .Be( expected );
@@ -55,7 +62,7 @@ public sealed class RegistryTests
   [Fact]
   public void ScaleFormula_ShouldLoadClassificationMetadata_WhenLoadedFromRegistry()
   {
-    var dorian = Registry.ScaleFormulas["Dorian"];
+    var dorian = Registry.Instance.ScaleFormulas["Dorian"];
 
     dorian.Classification.ParentScaleId.Should()
           .Be( "Major" );
@@ -81,7 +88,7 @@ public sealed class RegistryTests
   [Fact]
   public void ScaleFormula_ShouldSeparateRepertoireTagsFromCalculatedCategories_WhenLoadedFromRegistry()
   {
-    var blues = Registry.ScaleFormulas["MinorBlues"];
+    var blues = Registry.Instance.ScaleFormulas["MinorBlues"];
 
     blues.Classification.RepertoireTags.Should()
          .Contain( ScaleTag.Blues );
@@ -96,11 +103,11 @@ public sealed class RegistryTests
   [Fact]
   public void ScaleFormula_ShouldLoadCollectionAndRepertoireMetadata_WhenUsingRepresentativeEntries()
   {
-    var major = Registry.ScaleFormulas["Major"];
-    var naturalMinor = Registry.ScaleFormulas["NaturalMinor"];
-    var harmonicMinor = Registry.ScaleFormulas["HarmonicMinor"];
-    var melodicMinor = Registry.ScaleFormulas["MelodicMinor"];
-    var jazz = Registry.ScaleFormulas["BebopDominant"];
+    var major = Registry.Instance.ScaleFormulas["Major"];
+    var naturalMinor = Registry.Instance.ScaleFormulas["NaturalMinor"];
+    var harmonicMinor = Registry.Instance.ScaleFormulas["HarmonicMinor"];
+    var melodicMinor = Registry.Instance.ScaleFormulas["MelodicMinor"];
+    var jazz = Registry.Instance.ScaleFormulas["BebopDominant"];
 
     major.Classification.IsKeyCandidate.Should()
          .BeTrue();
@@ -137,7 +144,7 @@ public sealed class RegistryTests
   [Fact]
   public void ScaleFormulas_ShouldReturnExpectedValues_WhenAccessedById()
   {
-    var scaleFormulas = Registry.ScaleFormulas.ToArray();
+    var scaleFormulas = Registry.Instance.ScaleFormulas.ToArray();
 
     scaleFormulas.Should()
                  .NotBeNull();
@@ -147,7 +154,7 @@ public sealed class RegistryTests
 
     foreach( var expected in scaleFormulas )
     {
-      var actual = Registry.ScaleFormulas[expected.Id];
+      var actual = Registry.Instance.ScaleFormulas[expected.Id];
 
       actual.Should()
             .Be( expected );
@@ -157,7 +164,7 @@ public sealed class RegistryTests
   [Fact]
   public void StringedInstrumentDefinitions_ShouldReturnExpectedValues_WhenAccessedById()
   {
-    var instrumentDefinitions = Registry.StringedInstrumentDefinitions.ToArray();
+    var instrumentDefinitions = Registry.Instance.StringedInstrumentDefinitions.ToArray();
 
     instrumentDefinitions.Should()
                          .NotBeNull();
@@ -167,7 +174,7 @@ public sealed class RegistryTests
 
     foreach( var expected in instrumentDefinitions )
     {
-      InstrumentDefinition actual = Registry.StringedInstrumentDefinitions[expected.Id];
+      InstrumentDefinition actual = Registry.Instance.StringedInstrumentDefinitions[expected.Id];
 
       actual.Should()
             .Be( expected );
@@ -177,7 +184,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetChordFormula_ShouldReturnFalse_WhenChordFormulaDoesNotExist()
   {
-    var result = Registry.TryGetChordFormula( "NonExistentChord", out var formula );
+    var result = Registry.Instance.TryGetChordFormula( "NonExistentChord", out var formula );
 
     result.Should()
           .BeFalse();
@@ -189,7 +196,7 @@ public sealed class RegistryTests
   [Fact]
   public void Indexer_ShouldReturnFalse_WhenChordFormulaDoesNotExist()
   {
-    var act = () => Registry.ChordFormulas["NonExistentChord"];
+    var act = () => Registry.Instance.ChordFormulas["NonExistentChord"];
 
     act.Should()
        .Throw<KeyNotFoundException>()
@@ -199,7 +206,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetChordFormula_ShouldReturnTrue_WhenChordFormulaExistsById()
   {
-    var result = Registry.TryGetChordFormula( "Major", out var formula );
+    var result = Registry.Instance.TryGetChordFormula( "Major", out var formula );
 
     result.Should()
           .BeTrue();
@@ -214,7 +221,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetChordFormula_ShouldReturnTrue_WhenChordFormulaExistsByName()
   {
-    var result = Registry.TryGetChordFormula( "Major", out var formula );
+    var result = Registry.Instance.TryGetChordFormula( "Major", out var formula );
 
     result.Should()
           .BeTrue();
@@ -229,7 +236,7 @@ public sealed class RegistryTests
   [Fact]
   public void Indexer_Should_Throw_WhenScaleFormulaDoesNotExist()
   {
-    var act = () => Registry.ScaleFormulas["NonExistentScale"];
+    var act = () => Registry.Instance.ScaleFormulas["NonExistentScale"];
 
     act.Should()
        .Throw<KeyNotFoundException>()
@@ -239,7 +246,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetScaleFormula_ShouldReturnFalse_WhenScaleFormulaDoesNotExist()
   {
-    var result = Registry.TryGetScaleFormula( "NonExistentScale", out var formula );
+    var result = Registry.Instance.TryGetScaleFormula( "NonExistentScale", out var formula );
 
     result.Should()
           .BeFalse();
@@ -251,7 +258,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetScaleFormula_ShouldReturnTrue_WhenScaleFormulaExistsById()
   {
-    var result = Registry.TryGetScaleFormula( "Major", out var formula );
+    var result = Registry.Instance.TryGetScaleFormula( "Major", out var formula );
 
     result.Should()
           .BeTrue();
@@ -266,7 +273,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetScaleFormula_ShouldReturnTrue_WhenScaleFormulaExistsByName()
   {
-    var result = Registry.TryGetScaleFormula( "Natural Minor", out var formula );
+    var result = Registry.Instance.TryGetScaleFormula( "Natural Minor", out var formula );
 
     result.Should()
           .BeTrue();
@@ -281,7 +288,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetStringedInstrumentDefinition_ShouldReturnFalse_WhenInstrumentDoesNotExist()
   {
-    var result = Registry.TryGetStringedInstrumentDefinition( "NonExistentInstrument", out var definition );
+    var result = Registry.Instance.TryGetStringedInstrumentDefinition( "NonExistentInstrument", out var definition );
 
     result.Should()
           .BeFalse();
@@ -293,7 +300,7 @@ public sealed class RegistryTests
   [Fact]
   public void Indexer_ShouldReturnFalse_WhenInstrumentDoesNotExist()
   {
-    var act = () => Registry.StringedInstrumentDefinitions["NonExistentInstrument"];
+    var act = () => Registry.Instance.StringedInstrumentDefinitions["NonExistentInstrument"];
 
     act.Should()
        .Throw<KeyNotFoundException>()
@@ -303,7 +310,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetStringedInstrumentDefinition_ShouldReturnTrue_WhenInstrumentExistsById()
   {
-    var result = Registry.TryGetStringedInstrumentDefinition( "Guitar", out var definition );
+    var result = Registry.Instance.TryGetStringedInstrumentDefinition( "Guitar", out var definition );
 
     result.Should()
           .BeTrue();
@@ -318,7 +325,7 @@ public sealed class RegistryTests
   [Fact]
   public void TryGetStringedInstrumentDefinition_ShouldReturnTrue_WhenInstrumentExistsByName()
   {
-    var result = Registry.TryGetStringedInstrumentDefinition( "Guitar", out var definition );
+    var result = Registry.Instance.TryGetStringedInstrumentDefinition( "Guitar", out var definition );
 
     result.Should()
           .BeTrue();

@@ -79,7 +79,7 @@ public sealed class StringedInstrument
     string instrumentDefinitionId,
     int positionCount,
     string? tuningId = null )
-    : this( Registry.StringedInstrumentDefinitions[instrumentDefinitionId], positionCount, tuningId )
+    : this( Registry.Instance.StringedInstrumentDefinitions[instrumentDefinitionId], positionCount, tuningId )
   {
   }
 

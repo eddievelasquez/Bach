@@ -210,7 +210,7 @@ public sealed class ScaleTests
           .BeEquivalentTo( PitchClass.C );
 
     actual.Formula.Should()
-          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
+          .BeEquivalentTo( Registry.Instance.ScaleFormulas["Major"] );
   }
 
   [Fact]
@@ -246,7 +246,7 @@ public sealed class ScaleTests
          .Be( root );
 
     scale.Formula.Should()
-         .BeEquivalentTo( Registry.ScaleFormulas[name] );
+         .BeEquivalentTo( Registry.Instance.ScaleFormulas[name] );
 
     scale.Name.Should()
          .Be( "C" );
@@ -270,7 +270,7 @@ public sealed class ScaleTests
   public void Constructor_WithFormula_ShouldInitializeProperties_WhenGivenValidFormula()
   {
     // Arrange
-    var formula = Registry.ScaleFormulas["Major"]!;
+    var formula = Registry.Instance.ScaleFormulas["Major"]!;
     var root = PitchClass.C;
 
     // Act
@@ -483,7 +483,7 @@ public sealed class ScaleTests
   [Fact]
   public void FormulaConstructor_ShouldInitializeCorrectly_WhenGivenValidFormula()
   {
-    var formula = Registry.ScaleFormulas["Major"];
+    var formula = Registry.Instance.ScaleFormulas["Major"];
     var actual = new Scale( PitchClass.C, formula );
 
     actual.Name.Should()
@@ -493,7 +493,7 @@ public sealed class ScaleTests
           .BeEquivalentTo( PitchClass.C );
 
     actual.Formula.Should()
-          .BeEquivalentTo( Registry.ScaleFormulas["Major"] );
+          .BeEquivalentTo( Registry.Instance.ScaleFormulas["Major"] );
   }
 
   [Fact]
@@ -844,7 +844,7 @@ public sealed class ScaleTests
     var scale = new Scale( PitchClass.C, "MinorPentatonic" );
 
     scale.Count.Should()
-         .Be( Registry.ScaleFormulas["MinorPentatonic"].Intervals.Count );
+         .Be( Registry.Instance.ScaleFormulas["MinorPentatonic"].Intervals.Count );
   }
 
   [Theory]

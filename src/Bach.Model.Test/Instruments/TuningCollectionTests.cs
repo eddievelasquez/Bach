@@ -33,7 +33,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void ContainsKeyTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     definition.Tunings.ContainsKey( "standard" )
               .Should()
@@ -47,7 +47,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void ContainsKeyThrowsOnNullKeyTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var act = () => definition.Tunings.ContainsKey( null! );
 
     act.Should()
@@ -57,7 +57,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void GetEnumeratorOfObjectTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var tunings = definition.Tunings.ToArray();
 
     using var enumerator = definition.Tunings.GetEnumerator();
@@ -81,7 +81,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void GetEnumeratorTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var tunings = definition.Tunings.ToArray();
 
     using var enumerator = definition.Tunings.GetEnumerator();
@@ -105,7 +105,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void KeysTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     definition.Tunings.Keys.Count()
               .Should()
@@ -115,7 +115,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void TryGetValueTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     definition.Tunings.TryGetValue( "standard", out var tuning )
               .Should()
@@ -128,7 +128,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void TryGetValueThrowsOnNullKeyTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     var act = () => definition.Tunings.TryGetValue( null!, out _ );
 
     act.Should()
@@ -138,7 +138,7 @@ public sealed class TuningCollectionTests
   [Fact]
   public void ValuesTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     definition.Tunings.Values.Count()
               .Should()

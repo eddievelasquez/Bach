@@ -31,9 +31,9 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void EqualsContractTest()
   {
-    object x = Registry.StringedInstrumentDefinitions["guitar"];
-    object y = Registry.StringedInstrumentDefinitions["guitar"];
-    object z = Registry.StringedInstrumentDefinitions["guitar"];
+    object x = Registry.Instance.StringedInstrumentDefinitions["guitar"];
+    object y = Registry.Instance.StringedInstrumentDefinitions["guitar"];
+    object z = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     // ReSharper disable once EqualExpressionComparison
     x.Equals( x )
@@ -64,7 +64,7 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
-    object actual = Registry.StringedInstrumentDefinitions["guitar"];
+    object actual = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     actual.Equals( int.MinValue )
           .Should()
@@ -74,7 +74,7 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void EqualsFailsWithNullTest()
   {
-    object actual = Registry.StringedInstrumentDefinitions["guitar"];
+    object actual = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     actual.Equals( null )
           .Should()
@@ -84,7 +84,7 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
-    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition actual = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     actual.Equals( actual )
           .Should()
@@ -98,7 +98,7 @@ public sealed class InstrumentDefinitionTests
     builder.AddTuning( (string) "Standard", (string) "Standard", [.. "E4,B3,G3,D3,A2,E2".ParsePitches()] );
 
     object a = builder.Build();
-    object b = Registry.StringedInstrumentDefinitions["guitar"];
+    object b = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     a.Equals( b )
      .Should()
@@ -112,8 +112,8 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void GetHashcodeTest()
   {
-    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
-    InstrumentDefinition expected = Registry.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition actual = Registry.Instance.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition expected = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     expected.Equals( actual )
             .Should()
@@ -127,9 +127,9 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void TypeSafeEqualsContractTest()
   {
-    InstrumentDefinition x = Registry.StringedInstrumentDefinitions["guitar"];
-    InstrumentDefinition y = Registry.StringedInstrumentDefinitions["guitar"];
-    InstrumentDefinition z = Registry.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition x = Registry.Instance.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition y = Registry.Instance.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition z = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     x.Equals( x )
      .Should()
@@ -159,7 +159,7 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
-    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition actual = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     // ReSharper disable once SuspiciousTypeConversion.Global
     actual.Equals( int.MinValue )
@@ -170,7 +170,7 @@ public sealed class InstrumentDefinitionTests
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
-    InstrumentDefinition actual = Registry.StringedInstrumentDefinitions["guitar"];
+    InstrumentDefinition actual = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     actual.Equals( null )
           .Should()

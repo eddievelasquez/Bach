@@ -92,10 +92,10 @@ public sealed class KeyTests
   public void Definitions_ShouldUseRegistryFormulas_WhenUsingMinorCollections()
   {
     ScaleDefinition.HarmonicMinor.Formula.Should()
-                    .BeSameAs( Registry.ScaleFormulas[ "HarmonicMinor" ] );
+                    .BeSameAs( Registry.Instance.ScaleFormulas[ "HarmonicMinor" ] );
 
     ScaleDefinition.MelodicMinor.Formula.Should()
-                    .BeSameAs( Registry.ScaleFormulas[ "MelodicMinor" ] );
+                    .BeSameAs( Registry.Instance.ScaleFormulas[ "MelodicMinor" ] );
   }
 
   [Theory]

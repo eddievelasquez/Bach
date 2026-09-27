@@ -57,7 +57,7 @@ public sealed class InstrumentTests
   [Fact]
   public void EqualsContractTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     object x = new StringedInstrument( definition, 22, (Tuning?)null );
     object y = new StringedInstrument( definition, 22, (Tuning?)null );
@@ -92,9 +92,9 @@ public sealed class InstrumentTests
   [Fact]
   public void EqualsFailsWithDifferentTypeTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     object a = new StringedInstrument( definition, 22, (Tuning?)null );
-    object b = new StringedInstrument( Registry.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
+    object b = new StringedInstrument( Registry.Instance.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
 
     a.Equals( b )
      .Should()
@@ -116,7 +116,7 @@ public sealed class InstrumentTests
   [Fact]
   public void EqualsFailsWithNullTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     object actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( null )
@@ -127,7 +127,7 @@ public sealed class InstrumentTests
   [Fact]
   public void EqualsSucceedsWithSameObjectTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     Instrument actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( actual )
@@ -138,7 +138,7 @@ public sealed class InstrumentTests
   [Fact]
   public void GetHashcodeTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     Instrument actual = new StringedInstrument( definition, 22, (Tuning?)null );
     Instrument expected = new StringedInstrument( definition, 22, (Tuning?)null );
 
@@ -154,7 +154,7 @@ public sealed class InstrumentTests
   [Fact]
   public void TypeSafeEqualsContractTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
 
     Instrument x = new StringedInstrument( definition, 22, (Tuning?)null );
     Instrument y = new StringedInstrument( definition, 22, (Tuning?)null );
@@ -188,9 +188,9 @@ public sealed class InstrumentTests
   [Fact]
   public void TypeSafeEqualsFailsWithDifferentTypeTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     Instrument a = new StringedInstrument( definition, 22, (Tuning?)null );
-    Instrument b = new StringedInstrument( Registry.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
+    Instrument b = new StringedInstrument( Registry.Instance.StringedInstrumentDefinitions["bass"], 22, (Tuning?)null );
 
     a.Equals( b )
      .Should()
@@ -212,7 +212,7 @@ public sealed class InstrumentTests
   [Fact]
   public void TypeSafeEqualsFailsWithNullTest()
   {
-    var definition = Registry.StringedInstrumentDefinitions["guitar"];
+    var definition = Registry.Instance.StringedInstrumentDefinitions["guitar"];
     Instrument actual = new StringedInstrument( definition, 22, (Tuning?)null );
 
     actual.Equals( null )

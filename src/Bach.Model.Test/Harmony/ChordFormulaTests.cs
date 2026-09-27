@@ -233,10 +233,25 @@ public sealed class ChordFormulaTests
   public void StaticProperties_ShouldResolveRegisteredFormulas()
   {
     ChordFormula.Major.Should()
-                .BeSameAs( Registry.ChordFormulas["Major"] );
+                .BeSameAs( Registry.Instance.ChordFormulas["Major"] );
+
+      ChordFormula.Major7.Should()
+                        .BeSameAs( Registry.Instance.ChordFormulas["Major7"] );
 
     ChordFormula.Minor.Should()
-                .BeSameAs( Registry.ChordFormulas["Minor"] );
+                .BeSameAs( Registry.Instance.ChordFormulas["Minor"] );
+
+      ChordFormula.Minor7.Should()
+                        .BeSameAs( Registry.Instance.ChordFormulas["Minor7"] );
+
+      ChordFormula.Dominant7.Should()
+                        .BeSameAs( Registry.Instance.ChordFormulas["Dominant7"] );
+
+      ChordFormula.Diminished.Should()
+                        .BeSameAs( Registry.Instance.ChordFormulas["Diminished"] );
+
+      ChordFormula.HalfDiminished7.Should()
+                        .BeSameAs( Registry.Instance.ChordFormulas["HalfDiminished"] );
   }
 
   [Fact]

@@ -103,14 +103,14 @@ public sealed class ChordTests
   [Fact]
   public void Constructor_ShouldInitializeChordUsingFormula()
   {
-    var formula = Registry.ChordFormulas["Minor"];
+    var formula = Registry.Instance.ChordFormulas["Minor"];
     var target = new Chord( PitchClass.C, formula );
 
     target.Root.Should()
           .Be( PitchClass.C );
 
     target.Formula.Should()
-          .Be( Registry.ChordFormulas["Minor"] );
+          .Be( Registry.Instance.ChordFormulas["Minor"] );
 
     target.Name.Should()
           .Be( "Cm" );
@@ -132,7 +132,7 @@ public sealed class ChordTests
           .Be( PitchClass.C );
 
     target.Formula.Should()
-          .Be( Registry.ChordFormulas["Minor"] );
+          .Be( Registry.Instance.ChordFormulas["Minor"] );
 
     target.Name.Should()
           .Be( "Cm" );
@@ -346,7 +346,7 @@ public sealed class ChordTests
          .Be( 0 );
 
     chord.Formula.Should()
-         .Be( Registry.ChordFormulas["Major"] );
+         .Be( Registry.Instance.ChordFormulas["Major"] );
 
     chord.Name.Should()
          .Be( "C" );

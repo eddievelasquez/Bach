@@ -30,21 +30,6 @@ namespace Bach.Model.Harmony;
 /// </summary>
 public sealed class ChordFormula: Formula
 {
-  #region Constants
-
-  // Use Lazy<T> to avoid circular dependency issues when initializing the chord formulas in the registry.
-  private static readonly Lazy<ChordFormula> s_major = new( () => Registry.ChordFormulas[nameof( Major )] );
-  private static readonly Lazy<ChordFormula> s_major7 = new( () => Registry.ChordFormulas[nameof( Major7 )] );
-  private static readonly Lazy<ChordFormula> s_minor = new( () => Registry.ChordFormulas[nameof( Minor )] );
-  private static readonly Lazy<ChordFormula> s_minor7 = new( () => Registry.ChordFormulas[nameof( Minor7 )] );
-  private static readonly Lazy<ChordFormula> s_dominant7 = new( () => Registry.ChordFormulas[nameof( Dominant7 )] );
-  private static readonly Lazy<ChordFormula> s_diminished = new( () => Registry.ChordFormulas[nameof( Diminished )] );
-
-  private static readonly Lazy<ChordFormula> s_halfDiminished7 =
-    new( () => Registry.ChordFormulas[nameof( HalfDiminished7 )] );
-
-  #endregion
-
   #region Constructors
 
   /// <summary>Constructor.</summary>
@@ -92,37 +77,37 @@ public sealed class ChordFormula: Formula
   /// <summary>
   ///   Gets the chord formula for a major chord.
   /// </summary>
-  public static ChordFormula Major => s_major.Value;
+  public static ChordFormula Major => Registry.Instance.ChordFormulas[nameof( Major )];
 
   /// <summary>
   ///   Gets the chord formula for a major seventh chord.
   /// </summary>
-  public static ChordFormula Major7 => s_major7.Value;
+  public static ChordFormula Major7 => Registry.Instance.ChordFormulas[nameof( Major7 )];
 
   /// <summary>
   ///   Gets the chord formula for a minor chord.
   /// </summary>
-  public static ChordFormula Minor => s_minor.Value;
+  public static ChordFormula Minor => Registry.Instance.ChordFormulas[nameof( Minor )];
 
   /// <summary>
   ///   Gets the chord formula for a minor seventh chord.
   /// </summary>
-  public static ChordFormula Minor7 => s_minor7.Value;
+  public static ChordFormula Minor7 => Registry.Instance.ChordFormulas[nameof( Minor7 )];
 
   /// <summary>
   ///   Gets the chord formula for a dominant seventh chord.
   /// </summary>
-  public static ChordFormula Dominant7 => s_dominant7.Value;
+  public static ChordFormula Dominant7 => Registry.Instance.ChordFormulas[nameof( Dominant7 )];
 
   /// <summary>
   ///   Gets the chord formula for a diminished chord.
   /// </summary>
-  public static ChordFormula Diminished => s_diminished.Value;
+  public static ChordFormula Diminished => Registry.Instance.ChordFormulas[nameof( Diminished )];
 
   /// <summary>
   ///   Gets the chord formula for a half-diminished seventh chord.
   /// </summary>
-  public static ChordFormula HalfDiminished7 => s_halfDiminished7.Value;
+  public static ChordFormula HalfDiminished7 => Registry.Instance.ChordFormulas["HalfDiminished"];
 
   /// <summary>Gets the symbol for the chord.</summary>
   /// <value>The symbol.</value>

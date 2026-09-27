@@ -101,7 +101,7 @@ public sealed class PitchChordTests
           .Be( root );
 
     actual.Formula.Should()
-          .Be( Registry.ChordFormulas["Major"] );
+          .Be( Registry.Instance.ChordFormulas["Major"] );
 
     actual.Inversion.Should()
           .Be( 0 );
@@ -118,7 +118,7 @@ public sealed class PitchChordTests
           .Be( root );
 
     actual.Formula.Should()
-          .Be( Registry.ChordFormulas["Minor"] );
+          .Be( Registry.Instance.ChordFormulas["Minor"] );
 
     actual.Inversion.Should()
           .Be( 0 );
@@ -131,7 +131,7 @@ public sealed class PitchChordTests
   public void Constructor_WithRootAndFormula_ShouldCallConstructorWithZeroInversion()
   {
     var root = new Pitch( PitchClass.F, 5 );
-    var formula = Registry.ChordFormulas["Diminished"];
+    var formula = Registry.Instance.ChordFormulas["Diminished"];
 
     var actual = new PitchChord( root, formula );
 
@@ -493,7 +493,7 @@ public sealed class PitchChordTests
   public void GetInversion_ShouldPreserveRootAndFormula()
   {
     var root = new Pitch( PitchClass.FSharp, 3 );
-    var formula = Registry.ChordFormulas["Augmented"];
+    var formula = Registry.Instance.ChordFormulas["Augmented"];
     var chord = new PitchChord( root, formula );
 
     var actual = chord.GetInversion( 1 );
@@ -556,7 +556,7 @@ public sealed class PitchChordTests
          .Be( 0 );
 
     chord.Formula.Should()
-         .Be( Registry.ChordFormulas["Major"] );
+         .Be( Registry.Instance.ChordFormulas["Major"] );
 
     chord.Name.Should()
          .Be( "C" );
@@ -765,7 +765,7 @@ public sealed class PitchChordTests
          .Be( new Pitch( PitchClass.C, 4 ) );
 
     chord.Formula.Should()
-         .Be( Registry.ChordFormulas["Major11"] );
+         .Be( Registry.Instance.ChordFormulas["Major11"] );
 
     chord.Inversion.Should()
          .Be( 1 );
@@ -810,7 +810,7 @@ public sealed class PitchChordTests
          .Be( new Pitch( PitchClass.C, 3 ) );
 
     chord.Formula.Should()
-         .Be( Registry.ChordFormulas["Major11"] );
+         .Be( Registry.Instance.ChordFormulas["Major11"] );
 
     chord.Inversion.Should()
          .Be( 1 );

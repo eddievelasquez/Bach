@@ -38,7 +38,7 @@ public sealed class TypedScaleFormulaTests
   [Fact]
   public void Registry_ShouldLoadAllConvertedScales()
   {
-    Registry.ScaleFormulas.Should().HaveCountGreaterThanOrEqualTo( 59 );
-    Registry.ScaleFormulas.Should().OnlyContain( formula => formula.AscendingDegrees.Count > 0 );
+    Registry.Instance.ScaleFormulas.Should().HaveCountGreaterThanOrEqualTo( 59 );
+    Registry.Instance.ScaleFormulas.Should().OnlyContain( formula => formula.AscendingDegrees.Count > 0 );
   }
 }
