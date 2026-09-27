@@ -226,8 +226,13 @@ public sealed class ChordTests
   public void Equals_ShouldReturnFalse_WhenComparingDifferentType()
   {
     object actual = new Chord( PitchClass.C, "Major" );
+    object otherChordType = new PitchChord( new Pitch( PitchClass.C, 4 ), ChordFormula.Major );
 
     actual.Equals( int.MinValue )
+          .Should()
+          .BeFalse();
+
+    actual.Equals( otherChordType )
           .Should()
           .BeFalse();
   }

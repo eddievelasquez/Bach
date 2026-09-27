@@ -34,7 +34,7 @@ namespace Bach.Model.Harmony;
 ///   place the chord in an octave.
 /// </summary>
 public class Chord
-  : IChord<Chord, PitchClass>,
+  : IChord<PitchClass>,
     ISpanConsumingParsable<Chord>
 {
   #region Constants
@@ -163,7 +163,7 @@ public class Chord
 
   #region Fields
 
-  private readonly ChordCore<Chord, PitchClass> _impl;
+  private readonly ChordCore<PitchClass> _impl;
 
   #endregion
 
@@ -180,7 +180,7 @@ public class Chord
     ChordFormula formula,
     int inversion = 0 )
   {
-    _impl = new ChordCore<Chord, PitchClass>( root, formula, inversion );
+    _impl = new ChordCore<PitchClass>( root, formula, inversion );
   }
 
   /// <summary>
@@ -224,7 +224,7 @@ public class Chord
   public override bool Equals(
     object? obj )
   {
-    return _impl.Equals( obj );
+    return obj is Chord chord && _impl.Equals( chord._impl );
   }
 
   /// <summary>
@@ -472,7 +472,7 @@ public class Chord
   public bool Equals(
     Chord? other )
   {
-    return _impl.Equals( other );
+    return other is not null && _impl.Equals( other._impl );
   }
 
   /// <summary>

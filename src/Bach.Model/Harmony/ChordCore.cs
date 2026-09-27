@@ -33,15 +33,13 @@ namespace Bach.Model.Harmony;
 ///   Internal representation of a chord with a specific root element type and pitch type.
 /// </summary>
 /// <typeparam name="TPitch">The type of the pitches in the chord.</typeparam>
-/// <typeparam name="TSelf">The type of the chord itself.</typeparam>
 /// <remarks>
 ///   This class encompasses common chord functionality, including pitch generation, name generation, and equality
 ///   comparison. It is designed to be used by <see cref="Chord"/> and <see cref="PitchChord"/> for their implementation
-///   of the <see cref="IChord{TChord,TPitch}"/> interface.
+///   of the <see cref="IChord{TPitch}"/> interface.
 /// </remarks>
-internal sealed class ChordCore<TSelf, TPitch>
-  : IChord<TSelf, TPitch>
-  where TSelf: IReadOnlyList<TPitch>, IChord<TSelf, TPitch>
+internal sealed class ChordCore<TPitch>
+  : IChord<TPitch>
   where TPitch: struct, IPitch
 {
   #region Fields
@@ -53,13 +51,13 @@ internal sealed class ChordCore<TSelf, TPitch>
   #region Constructors
 
   /// <summary>Specialized constructor for use only by derived classes.</summary>
+  /// <param name="root">The root pitch class of the chord.</param>
+  /// <param name="formula">The formula used to generate the chord.</param>
+  /// <param name="inversion">The inversion.</param>
   /// <exception cref="ArgumentNullException">Thrown when formula is null.</exception>
   /// <exception cref="ArgumentOutOfRangeException">
   ///   Thrown when the inversion is less than zero or greater than the number of intervals in the chord's formula.
   /// </exception>
-  /// <param name="root">The root pitch class of the chord.</param>
-  /// <param name="formula">The formula used to generate the chord.</param>
-  /// <param name="inversion">The inversion.</param>
   public ChordCore(
     TPitch root,
     ChordFormula formula,
@@ -97,7 +95,7 @@ internal sealed class ChordCore<TSelf, TPitch>
   ///   <c>true</c> if the specified chord is equal to the current chord; otherwise, <c>false</c>.
   /// </returns>
   public bool Equals(
-    TSelf? other )
+    IChord<TPitch>? other )
   {
     if( other is null )
     {
@@ -135,34 +133,6 @@ internal sealed class ChordCore<TSelf, TPitch>
   }
 
   /// <summary>
-  ///   Determines whether the specified object is equal to the current chord.
-  /// </summary>
-  /// <param name="obj">The object to compare with the current chord.</param>
-  /// <returns>
-  ///   <c>true</c> if the specified object is equal to the current chord; otherwise, <c>false</c>.
-  /// </returns>
-  public override bool Equals(
-    object? obj )
-  {
-    if( obj is null )
-    {
-      return false;
-    }
-
-    if( ReferenceEquals( this, obj ) )
-    {
-      return true;
-    }
-
-    if( obj is TSelf chord )
-    {
-      return Equals( chord );
-    }
-
-    return false;
-  }
-
-  /// <summary>
   ///   Returns a hash code for the current chord.
   /// </summary>
   /// <returns>The hash code.</returns>
@@ -186,9 +156,10 @@ internal sealed class ChordCore<TSelf, TPitch>
       yield return new Pitch( bass, octave );
     }
 
-    var root = Root.GetPitchClass();
+    // Generate the pitches of the chord based on the root and formula.
+    var root = new Pitch( Root.GetPitchClass(), octave );
 
-    foreach( var pitch in Formula.Generate( new Pitch( root, octave ) ) )
+    foreach( var pitch in Formula.Generate( root ) )
     {
       yield return pitch;
     }
@@ -196,7 +167,7 @@ internal sealed class ChordCore<TSelf, TPitch>
 
   #endregion
 
-  #region IChord<TSelf,TPitch> Implementation
+  #region IChord<TPitch> Implementation
 
   /// <summary>
   ///   Gets a value indicating whether the chord formula's highest interval extends beyond an octave,

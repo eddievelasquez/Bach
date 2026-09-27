@@ -266,7 +266,7 @@ public sealed class PitchChordTests
   {
     var root = new Pitch( PitchClass.E, 4 );
     var chord = new PitchChord( root, ChordFormula.Major );
-    object other = "not a chord";
+    object other = new Chord( PitchClass.E, ChordFormula.Major );
 
     var actual = chord.Equals( other );
 

@@ -30,12 +30,9 @@ namespace Bach.Model.Harmony;
 ///   Defines a chord as an ordered list of pitch elements, with its root, bass, formula, inversion,
 ///   and display name. Implementations can use pitch classes or pitches as their elements.
 /// </summary>
-/// <typeparam name="TChord">The type of the chord itself.</typeparam>
 /// <typeparam name="TPitch">The type of the chord's root and bass elements.</typeparam>
-public interface IChord<TChord, out TPitch>
-  : IReadOnlyList<TPitch>,
-    IEquatable<TChord>
-  where TChord: IReadOnlyList<TPitch>, IChord<TChord, TPitch>
+public interface IChord<out TPitch>
+  : IReadOnlyList<TPitch>
   where TPitch: struct, IPitch
 {
   #region Properties

@@ -33,13 +33,13 @@ namespace Bach.Model.Harmony;
 ///   A chord expressed as a collection of actual pitches rather than pitch classes.
 /// </summary>
 public class PitchChord
-  : IChord<PitchChord, Pitch>,
+  : IChord<Pitch>,
     IChordEvent,
     ISpanConsumingParsable<PitchChord>
 {
   #region Fields
 
-  private readonly ChordCore<PitchChord, Pitch> _impl;
+  private readonly ChordCore<Pitch> _impl;
 
   #endregion
 
@@ -56,7 +56,7 @@ public class PitchChord
     ChordFormula formula,
     int inversion = 0 )
   {
-    _impl = new ChordCore<PitchChord, Pitch>( root, formula, inversion );
+    _impl = new ChordCore<Pitch>( root, formula, inversion );
   }
 
   /// <summary>
@@ -134,7 +134,7 @@ public class PitchChord
   public override bool Equals(
     object? obj )
   {
-    return _impl.Equals( obj );
+    return obj is PitchChord chord && _impl.Equals( chord._impl );
   }
 
   /// <summary>
@@ -408,7 +408,7 @@ public class PitchChord
   public bool Equals(
     PitchChord? other )
   {
-    return _impl.Equals( other );
+    return other is not null && _impl.Equals( other._impl );
   }
 
   #endregion
