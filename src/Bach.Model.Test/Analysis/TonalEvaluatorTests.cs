@@ -1,20 +1,20 @@
 // Module Name: TonalEvaluatorTests.cs
 // Project:     Bach.Model.Test
 // Copyright (c) 2012, 2026  Eddie Velasquez.
-//
+// 
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
 // All other rights reserved.
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
 // including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
 // do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or substantial
 // portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
 // PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -25,66 +25,136 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Bach.Model.Analysis;
 
 namespace Bach.Model.Analysis.Test;
 
 public class TonalEvaluatorTests
 {
-  #region Nested Types
-
-  private sealed class EmptyEvent: IPartEvent
-  {
-    #region Properties
-
-    public IEnumerable<PitchClass> PitchClasses => Array.Empty<PitchClass>();
-
-    #endregion
-
-    #region Public Methods
-
-    public bool Any(
-      PitchClass pitchClass ) => false;
-
-    #endregion
-  }
-
-  private sealed class TestEvidenceEvaluator(
-    int priority,
-    bool supports,
-    double scoreContribution = 0.0 ): ITonalEvidenceEvaluator
-  {
-    #region Properties
-
-    public int Priority { get; } = priority;
-
-    public bool Supports { get; } = supports;
-
-    public double ScoreContribution { get; } = scoreContribution;
-
-    #endregion
-
-    #region Public Methods
-
-    public IEnumerable<TonalEvidence> Evaluate(
-      TonalEvidenceContext context )
-    {
-      yield return new TonalEvidence(
-        new EvidenceReason(
-          EvidenceReasonCategory.AnalystObservation,
-          $"Test provider {Priority} was evaluated."
-        ),
-        Supports,
-        ScoreContribution
-      );
-    }
-
-    #endregion
-  }
-
-  #endregion
-
   #region Public Methods
+
+  [Fact]
+  public void PitchClassEvidenceEvaluator_ShouldClassifyPitchClasses_WhenSomeAreOutsideCandidateScale()
+  {
+    var part = Part.Parse( "C4,D4,F#4" );
+    var scope = new PartEventScope( part );
+
+    var context = new TonalEvidenceContext(
+      Key.Parse( "C" ),
+      scope,
+      scope.Events,
+      [PitchClass.C, PitchClass.D, PitchClass.FSharp],
+      TonalEvaluationOptions.Default
+    );
+
+    var evidence = new PitchClassEvidenceEvaluator().Evaluate( context )
+                                                    .ToArray();
+
+    evidence.Select( item => item.Supports )
+            .Should()
+            .Equal( true, true, false );
+
+    evidence.Select( item => item.Reason.Category )
+            .Should()
+            .AllBeEquivalentTo( EvidenceReasonCategory.ScaleContext );
+
+    evidence[0]
+      .Reason.Explanation.Should()
+      .Be( "Pitch class C is scale degree 1 in the candidate scale." );
+
+    evidence[2]
+      .Reason.Explanation.Should()
+      .Contain( "is outside the candidate scale." );
+  }
+
+  [Fact]
+  public void PitchClassEvidenceEvaluator_ShouldThrowArgumentNullException_WhenContextIsNull()
+  {
+    var action = () =>
+    {
+      _ = new PitchClassEvidenceEvaluator().Evaluate( null! )
+                                           .ToArray();
+    };
+
+    action.Should()
+          .Throw<ArgumentNullException>();
+  }
+
+  [Fact]
+  public void Pipeline_ShouldOrderEvaluatorsAndNormalizeScores_WhenPrioritiesDiffer()
+  {
+    var part = Part.Parse( "C4" );
+    var scope = new PartEventScope( part );
+
+    var context = new TonalEvidenceContext(
+      Key.Parse( "C" ),
+      scope,
+      scope.Events,
+      [PitchClass.C],
+      TonalEvaluationOptions.Default
+    );
+
+    var pipeline = new TonalEvidenceEvaluatorPipelineBuilder()
+                   .AddEvaluator( new TestEvidenceEvaluator( 5, true, 0.4 ) )
+                   .AddEvaluator( new TestEvidenceEvaluator( 10, false, 0.3 ) )
+                   .Build();
+
+    pipeline.MaxPriority.Should()
+            .Be( 10 );
+
+    var results = pipeline.Evaluate( context )
+                          .ToArray();
+
+    results.Select( result => result.Evidence.Reason.Explanation )
+           .Should()
+           .Equal( "Test provider 10 was evaluated.", "Test provider 5 was evaluated." );
+
+    results.Select( result => result.WeightedScore )
+           .Should()
+           .Equal( 0.3, 0.2 );
+  }
+
+  [Fact]
+  public void PipelineBuilder_Build_ShouldThrowInvalidOperationException_WhenNoEvaluatorsAreAdded()
+  {
+    Action action = () => new TonalEvidenceEvaluatorPipelineBuilder().Build();
+
+    action.Should()
+          .Throw<InvalidOperationException>();
+  }
+
+  [Fact]
+  public void PipelineBuilder_ShouldAddDefaultEvaluatorsInPriorityOrder_WhenDefaultsAreRequested()
+  {
+    var pipeline = new TonalEvidenceEvaluatorPipelineBuilder()
+                   .AddDefaultEvaluators()
+                   .Build();
+
+    pipeline.Evaluators.Select( evaluator => evaluator.GetType() )
+            .Should()
+            .Equal(
+              typeof( TonalCenterEvidenceEvaluator ),
+              typeof( AppliedFunctionEvidenceEvaluator ),
+              typeof( ChordEvidenceEvaluator ),
+              typeof( PitchClassEvidenceEvaluator )
+            );
+
+    pipeline.Evaluators.Select( evaluator => evaluator.Priority )
+            .Should()
+            .Equal( 40, 30, 20, 10 );
+  }
+
+  [Fact]
+  public void PipelineBuilder_ShouldAddTypedEvaluator_WhenGenericOverloadIsUsed()
+  {
+    var pipeline = new TonalEvidenceEvaluatorPipelineBuilder()
+                   .AddEvaluator<PitchClassEvidenceEvaluator>()
+                   .Build();
+
+    pipeline.Evaluators.Should()
+            .ContainSingle()
+            .Which.Should()
+            .BeOfType<PitchClassEvidenceEvaluator>();
+  }
 
   [Fact]
   public void Evaluate_ShouldRunCustomProvidersInPriorityOrderAndAggregateConflicts()
@@ -807,6 +877,63 @@ public class TonalEvaluatorTests
 
     return File.ReadAllText( fixturePath )
                .Trim();
+  }
+
+  #endregion
+
+  #region Nested Types
+
+  private sealed class EmptyEvent: IPartEvent
+  {
+    #region Public Methods
+
+    public bool Any(
+      PitchClass pitchClass ) => false;
+
+    #endregion
+
+    #region IPartEvent Implementation
+
+    public IEnumerable<PitchClass> PitchClasses => Array.Empty<PitchClass>();
+
+    #endregion
+  }
+
+  private sealed class TestEvidenceEvaluator(
+    int priority,
+    bool supports,
+    double scoreContribution = 0.0 ): ITonalEvidenceEvaluator
+  {
+    #region Properties
+
+    public bool Supports { get; } = supports;
+
+    public double ScoreContribution { get; } = scoreContribution;
+
+    #endregion
+
+    #region Public Methods
+
+    public IEnumerable<TonalEvidence> Evaluate(
+      TonalEvidenceContext context )
+    {
+      yield return new TonalEvidence(
+        new EvidenceReason(
+          EvidenceReasonCategory.AnalystObservation,
+          $"Test provider {Priority} was evaluated."
+        ),
+        Supports,
+        ScoreContribution
+      );
+    }
+
+    #endregion
+
+    #region ITonalEvidenceEvaluator Implementation
+
+    public int Priority { get; } = priority;
+
+    #endregion
   }
 
   #endregion
