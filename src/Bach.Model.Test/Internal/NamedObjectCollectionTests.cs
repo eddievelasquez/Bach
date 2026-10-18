@@ -1,0 +1,158 @@
+// Module Name: NamedObjectCollectionTest.cs
+// Project:     Bach.Model.Test
+// Copyright (c) 2012, 2026  Eddie Velasquez.
+//
+// This source is subject to the MIT License.
+// See http://opensource.org/licenses/MIT.
+// All other rights reserved.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+// and associated documentation files (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to
+// do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial
+// portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+// PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+// CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+namespace Bach.Model.Internal.Test;
+
+public sealed class NamedObjectCollectionTests
+{
+  #region Nested Types
+
+  private sealed record FakeNamedObject(
+    string Id,
+    string Name ): INamedObject;
+
+  private sealed class ValueEqualNamedObject(
+    string id,
+    string name,
+    string value ): INamedObject
+  {
+    public string Id { get; } = id;
+    public string Name { get; } = name;
+    public string Value { get; } = value;
+
+    public override bool Equals(
+      object? obj )
+    {
+      return obj is ValueEqualNamedObject other && Value == other.Value;
+    }
+
+    public override int GetHashCode()
+    {
+      return StringComparer.Ordinal.GetHashCode( Value );
+    }
+  }
+
+  #endregion
+
+  #region Public Methods
+
+  [Fact]
+  public void TryGetValue_ShouldResolveItemsByIdAndName()
+  {
+    var item = new FakeNamedObject( "alpha", "Alpha" );
+    var collection = new NamedObjectCollection<FakeNamedObject>( [item] );
+
+    collection["alpha"]
+      .Should()
+      .BeSameAs( item );
+
+    collection["Alpha"]
+      .Should()
+      .BeSameAs( item );
+
+    collection.TryGetValue( "ALPHA", out var result )
+              .Should()
+              .BeTrue();
+
+    result.Should()
+          .BeSameAs( item );
+  }
+
+  [Fact]
+  public void TryGetValue_ShouldResolveItemsBySpanIdAndName()
+  {
+    var item = new FakeNamedObject( "alpha", "Bravo" );
+    INamedObjectCollection<FakeNamedObject> collection = new NamedObjectCollection<FakeNamedObject>( [item] );
+
+    collection.TryGetValue( "ALPHA".AsSpan(), out var byId )
+              .Should()
+              .BeTrue();
+
+    byId.Should()
+        .BeSameAs( item );
+
+    collection.TryGetValue( "BRAVO".AsSpan(), out var byName )
+              .Should()
+              .BeTrue();
+
+    byName.Should()
+          .BeSameAs( item );
+
+    collection.TryGetValue( "missing".AsSpan(), out var missing )
+              .Should()
+              .BeFalse();
+
+    missing.Should()
+           .BeNull();
+  }
+
+  [Fact]
+  public void TryGetValue_ShouldReturnFalse_WhenItemDoesNotExist()
+  {
+    var collection = new NamedObjectCollection<FakeNamedObject>([]);
+
+    collection.TryGetValue( "missing", out var item )
+              .Should()
+              .BeFalse();
+
+    item.Should()
+        .BeNull();
+  }
+
+  [Fact]
+  public void Constructor_ShouldSkipNameKey_WhenExistingAndAddedValuesAreEqual()
+  {
+    var existing = new ValueEqualNamedObject( "shared", "first", "same" );
+    var added = new ValueEqualNamedObject( "second", "SHARED", "same" );
+    var collection = new NamedObjectCollection<ValueEqualNamedObject>( [existing, added] );
+
+    collection["shared"]
+      .Should()
+      .BeSameAs( existing );
+
+    collection["second"]
+      .Should()
+      .BeSameAs( added );
+
+    collection.Count.Should()
+              .Be( 2 );
+  }
+
+  [Fact]
+  public void Constructor_ShouldThrow_WhenIdAndNameKeysCollideForDifferentValues()
+  {
+    var items = new[]
+    {
+      new FakeNamedObject( "shared", "first" ),
+      new FakeNamedObject( "second", "SHARED" )
+    };
+
+    var act = () => new NamedObjectCollection<FakeNamedObject>( items );
+
+    act.Should()
+       .Throw<ArgumentException>();
+  }
+
+  #endregion
+}
