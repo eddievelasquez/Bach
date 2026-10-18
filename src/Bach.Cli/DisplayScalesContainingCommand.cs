@@ -1,6 +1,6 @@
-﻿// Module Name: DisplayScalesContainingCommand.cs
+// Module Name: DisplayScalesContainingCommand.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,23 +22,24 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Cli;
-
 using System.Collections.Generic;
 using System.CommandLine;
 using System.Linq;
-using Model;
+using Bach.Model.Pitches;
+using Bach.Model.Scales;
+
+namespace Bach.Cli;
 
 internal sealed class DisplayScalesContainingCommand: BachCommand
 {
   #region Constructors
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public DisplayScalesContainingCommand()
   {
     var notesArg = CreateMultiArgument<string>( "notes", "The notes that will be searched for" );
 
-    var command = CreateCommand( "scales-containing", arguments: new Argument[] { notesArg } );
+    var command = CreateCommand( "scales-containing", arguments: [notesArg] );
     command.SetHandler( Execute, notesArg );
     Command = command;
   }
@@ -47,7 +48,7 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
 
   #region Properties
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override Command Command { get; }
 
   #endregion
@@ -57,14 +58,15 @@ internal sealed class DisplayScalesContainingCommand: BachCommand
   private static void Execute(
     IEnumerable<string> notes )
   {
-    var pitchClasses = PitchClassCollection.Parse( string.Join( ",", notes ) );
+    var pitchClasses = notes.Select( PitchClass.Parse )
+                            .ToArray();
 
     WriteList( "Scales containing: ", pitchClasses );
     WriteLine();
 
     foreach( var scale in Scale.ScalesContaining( pitchClasses ) )
     {
-      WriteList( $"  {scale.Name}: ", scale.PitchClasses );
+      WriteList( $"  {scale.Name}: ", scale );
       WriteList( "    => ", scale.Formula.Intervals.Select( interval => interval.ToString( "Sq" ) ) );
       WriteLine();
     }

@@ -10,7 +10,7 @@
     },
     "Display Scale": {
       "commandName": "Project",
-      "commandLineArgs": "scale Major C A"
+      "commandLineArgs": "scale NaturalMinor C D E F G A B"
     },
     "Display Chord": {
       "commandName": "Project",

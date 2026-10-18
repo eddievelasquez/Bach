@@ -1,6 +1,6 @@
-﻿// Module Name: DisplayChordCommand.cs
+// Module Name: DisplayChordCommand.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,23 +22,25 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Cli;
-
 using System.Collections.Generic;
 using System.CommandLine;
-using Model;
+using Bach.Model.Harmony;
+using Bach.Model.Library;
+using Bach.Model.Pitches;
+
+namespace Bach.Cli;
 
 internal sealed class DisplayChordCommand: BachCommand
 {
   #region Constructors
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public DisplayChordCommand()
   {
     var nameArg = CreateArgument<string>( "name", "The name of the chord" );
     var rootsArg = CreateMultiArgument<string>( "root", "The chord root" );
 
-    var command = CreateCommand( "chord", arguments: new Argument[] { nameArg, rootsArg } );
+    var command = CreateCommand( "chord", arguments: [nameArg, rootsArg] );
     command.SetHandler( Execute, nameArg, rootsArg );
     Command = command;
   }
@@ -47,7 +49,7 @@ internal sealed class DisplayChordCommand: BachCommand
 
   #region Properties
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override Command Command { get; }
 
   #endregion
@@ -58,7 +60,7 @@ internal sealed class DisplayChordCommand: BachCommand
     string chordName,
     IEnumerable<string> roots )
   {
-    var formula = Registry.ChordFormulas[chordName];
+    var formula = Registry.Instance.ChordFormulas[chordName];
 
     WriteList( $"{formula.Name} chord => ", formula.Intervals );
 
@@ -67,7 +69,7 @@ internal sealed class DisplayChordCommand: BachCommand
       var root = PitchClass.Parse( rootValue );
       var chord = new Chord( root, formula );
 
-      WriteList( $"  {chord} {formula.Name}: ", chord.PitchClasses );
+      WriteList( $"  {chord} {formula.Name}: ", chord );
     }
 
     WriteLine();

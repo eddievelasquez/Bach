@@ -1,6 +1,6 @@
-﻿// Module Name: ListChordsCommand.cs
+// Module Name: ListChordsCommand.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Cli;
-
 using System.CommandLine;
-using Model;
+using Bach.Model.Library;
+
+namespace Bach.Cli;
 
 internal sealed class ListChordsCommand: BachCommand
 {
   #region Constructors
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public ListChordsCommand()
   {
     var command = CreateCommand( "chords" );
@@ -43,7 +43,7 @@ internal sealed class ListChordsCommand: BachCommand
 
   #region Properties
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override Command Command { get; }
 
   #endregion
@@ -54,7 +54,7 @@ internal sealed class ListChordsCommand: BachCommand
   {
     WriteTitle( "Chords" );
 
-    foreach( var formula in Registry.ChordFormulas )
+    foreach( var formula in Registry.Instance.ChordFormulas )
     {
       WriteLine( formula.Name );
       WriteLine( "  Symbol:  ", formula.Symbol );

@@ -1,6 +1,6 @@
-﻿// Module Name: ListScalesCommand.cs
+// Module Name: ListScalesCommand.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,16 +22,16 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Cli;
-
 using System.CommandLine;
-using Model;
+using Bach.Model.Library;
+
+namespace Bach.Cli;
 
 internal sealed class ListScalesCommand: BachCommand
 {
   #region Constructors
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public ListScalesCommand()
   {
     var command = CreateCommand( "scales" );
@@ -43,7 +43,7 @@ internal sealed class ListScalesCommand: BachCommand
 
   #region Properties
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override Command Command { get; }
 
   #endregion
@@ -54,7 +54,7 @@ internal sealed class ListScalesCommand: BachCommand
   {
     WriteTitle( "Scales" );
 
-    foreach( var formula in Registry.ScaleFormulas )
+    foreach( var formula in Registry.Instance.ScaleFormulas )
     {
       WriteLine( formula.Name );
       WriteList( "  Formula:    ", formula.Intervals );

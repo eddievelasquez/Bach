@@ -1,6 +1,6 @@
-﻿// Module Name: DisplayScaleCommand.cs
+// Module Name: DisplayScaleCommand.cs
 // Project:     Bach.Cli
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,23 +22,25 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Cli;
-
 using System.Collections.Generic;
 using System.CommandLine;
-using Model;
+using Bach.Model.Library;
+using Bach.Model.Pitches;
+using Bach.Model.Scales;
+
+namespace Bach.Cli;
 
 internal sealed class DisplayScaleCommand: BachCommand
 {
   #region Constructors
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public DisplayScaleCommand()
   {
     var nameArg = CreateArgument<string>( "name", "The name of the scale" );
     var rootsArg = CreateMultiArgument<string>( "roots", "The scale roots" );
 
-    var command = CreateCommand( "scale", arguments: new Argument[] { nameArg, rootsArg } );
+    var command = CreateCommand( "scale", arguments: [nameArg, rootsArg] );
     command.SetHandler( Execute, nameArg, rootsArg );
     Command = command;
   }
@@ -47,7 +49,7 @@ internal sealed class DisplayScaleCommand: BachCommand
 
   #region Properties
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override Command Command { get; }
 
   #endregion
@@ -58,7 +60,7 @@ internal sealed class DisplayScaleCommand: BachCommand
     string scaleName,
     IEnumerable<string> roots )
   {
-    var formula = Registry.ScaleFormulas[scaleName];
+    var formula = Registry.Instance.ScaleFormulas[scaleName];
 
     WriteList( $"{formula.Name} scale => ", formula.Intervals );
 
@@ -66,7 +68,7 @@ internal sealed class DisplayScaleCommand: BachCommand
     {
       var root = PitchClass.Parse( rootValue );
       var scale = new Scale( root, formula );
-      WriteList( $"  {root} {formula.Name}: ", scale.PitchClasses );
+      WriteList( $"  {root} {formula.Name}: ", scale );
     }
 
     WriteLine();
