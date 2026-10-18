@@ -1,6 +1,6 @@
 ﻿// Module Name: TuningCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,15 +22,19 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Instruments;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+
+namespace Bach.Model.Instruments;
+
 using Comparer = Model.Internal.Comparer;
 
-/// <summary>Collection of tunings.</summary>
+/// <summary>
+///   Provides read-only access to an instrument's tunings by language-neutral identifier, along
+///   with a shortcut for its standard tuning.
+/// </summary>
 public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
 {
   #region Fields
@@ -68,22 +72,22 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   /// <value>The count.</value>
   public int Count => _tunings.Count;
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   /// <summary>Gets the tuning that has the specified language-neutral id.</summary>
   /// <returns>The tuning that has the specified id in the read-only dictionary.</returns>
   public Tuning this[
     string id ] => _tunings[id];
 
   /// <summary>
-  ///   Gets an enumerable collection that contains the keys for all the tunings in the collection.
+  ///   Gets the IDs of all tunings.
   /// </summary>
-  /// <value>An enumerable collection that contains the keys.</value>
+  /// <value>The language-neutral IDs.</value>
   public IEnumerable<string> Keys => _tunings.Keys;
 
   /// <summary>
-  ///   Gets an enumerable collection that contains all the tunings in the collection.
+  ///   Gets all tunings.
   /// </summary>
-  /// <value>An enumerable collection that contains the tunings.</value>
+  /// <value>The tunings.</value>
   public IEnumerable<Tuning> Values => _tunings.Values;
 
   #endregion
@@ -91,12 +95,11 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
   #region Public Methods
 
   /// <summary>
-  ///   Determines whether the collection contains a tuning that has the specified language-neutral id.
+  ///   Gets whether a tuning has the specified language-neutral ID.
   /// </summary>
-  /// <param name="id">The id to locate.</param>
+  /// <param name="id">The language-neutral ID to find.</param>
   /// <returns>
-  ///   true if the collection contains an tuning that has the specified id; otherwise,
-  ///   false.
+  ///   <see langword="true"/> if the collection contains the ID; otherwise, <see langword="false"/>.
   /// </returns>
   public bool ContainsKey(
     string id )
@@ -104,13 +107,13 @@ public sealed class TuningCollection: IReadOnlyDictionary<string, Tuning>
     return _tunings.ContainsKey( id );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public IEnumerator<KeyValuePair<string, Tuning>> GetEnumerator()
   {
     return _tunings.GetEnumerator();
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   IEnumerator IEnumerable.GetEnumerator()
   {
     return GetEnumerator();

@@ -1,6 +1,6 @@
 ﻿// Module Name: StringedInstrumentDefinition.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,11 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Bach.Model.Instruments.Internal;
+
 namespace Bach.Model.Instruments;
 
-using Internal;
-
-/// <summary>A stringed instrument definition.</summary>
+/// <summary>
+///   Defines a stringed instrument's string count and available tunings. Each tuning supplies one
+///   open-string pitch for every string.
+/// </summary>
 public sealed class StringedInstrumentDefinition
   : InstrumentDefinition,
     IEquatable<StringedInstrumentDefinition>
@@ -57,7 +60,7 @@ public sealed class StringedInstrumentDefinition
 
   #region Public Methods
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     StringedInstrumentDefinition? other )
   {
@@ -74,7 +77,7 @@ public sealed class StringedInstrumentDefinition
     return base.Equals( other ) && StringCount == other.StringCount;
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -86,7 +89,7 @@ public sealed class StringedInstrumentDefinition
     return obj is StringedInstrumentDefinition other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return HashCode.Combine( base.GetHashCode(), StringCount );

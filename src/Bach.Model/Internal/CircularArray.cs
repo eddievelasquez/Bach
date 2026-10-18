@@ -1,6 +1,6 @@
 // Module Name: CircularArray.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,12 +22,12 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
+namespace Bach.Model.Internal;
 
 /// <summary>
 ///   Represents buffer that is circular.
@@ -46,7 +46,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance <see cref="CircularArray{T}" /> class
+  ///   Initializes a new instance <see cref="CircularArray{T}"/> class
   ///   that contains the provided items.
   /// </summary>
   public CircularArray(
@@ -58,7 +58,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
   }
 
   /// <summary>
-  ///   Initializes a new instance <see cref="CircularArray{T}" /> class
+  ///   Initializes a new instance <see cref="CircularArray{T}"/> class
   ///   that contains the provided items.
   /// </summary>
   public CircularArray(
@@ -81,7 +81,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
 
   /// <summary>
   ///   Gets the number of elements actually contained in the
-  ///   <see cref="CircularArray{T}" />.
+  ///   <see cref="CircularArray{T}"/>.
   /// </summary>
   public int Length => _items.Count;
 
@@ -110,7 +110,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
 
   #region Public Methods
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public IEnumerator<T> GetEnumerator()
   {
     for( var index = 0; index < Length; ++index )
@@ -120,7 +120,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     }
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   IEnumerator IEnumerable.GetEnumerator()
   {
     return GetEnumerator();
@@ -134,6 +134,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     int index )
   {
     var position = ( _head + index ) % Length;
+
     if( position < 0 )
     {
       throw new ArgumentOutOfRangeException( nameof( index ) );
@@ -147,6 +148,7 @@ internal sealed class CircularArray<T>: IEnumerable<T>
     T value )
   {
     var position = ( _head + index ) % Length;
+
     if( position < 0 )
     {
       throw new ArgumentOutOfRangeException( nameof( index ) );

@@ -1,6 +1,6 @@
-﻿// Module Name: InstrumentDefinition.cs
+// Module Name: InstrumentDefinition.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,12 +22,14 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Bach.Model.Instruments.Internal;
+
 namespace Bach.Model.Instruments;
 
-using Internal;
-using Model.Internal;
-
-/// <summary>A base class for an instrument definition.</summary>
+/// <summary>
+///   Defines an instrument's language-neutral identifier and localizable name. Specialized
+///   definitions add instrument-specific configuration, such as strings and tunings.
+/// </summary>
 public abstract class InstrumentDefinition
   : INamedObject,
     IEquatable<InstrumentDefinition>
@@ -47,17 +49,17 @@ public abstract class InstrumentDefinition
 
   internal InstrumentDefinitionState State { get; }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public string Id => State.Id;
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public string Name => State.Name;
 
   #endregion
 
   #region Public Methods
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     InstrumentDefinition? other )
   {
@@ -69,7 +71,7 @@ public abstract class InstrumentDefinition
     return other is not null && Comparer.IdComparer.Equals( Id, other.Id );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -81,7 +83,7 @@ public abstract class InstrumentDefinition
     return obj is InstrumentDefinition other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return Id.GetHashCode();

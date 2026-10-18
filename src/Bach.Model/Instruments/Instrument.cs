@@ -1,6 +1,6 @@
-﻿// Module Name: Instrument.cs
+// Module Name: Instrument.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -24,20 +24,23 @@
 
 namespace Bach.Model.Instruments;
 
-/// <summary>The base class for an instrument.</summary>
+/// <summary>
+///   Represents an instrument instance associated with an <see cref="InstrumentDefinition"/>.
+///   Derived types add playable configuration, such as a tuning and position count.
+/// </summary>
 public abstract class Instrument: IEquatable<Instrument>
 {
   #region Constructors
 
   /// <summary>
-  ///   Initializes a new instance of the <see cref="Instrument" /> class.
+  ///   Initializes a new instance of the <see cref="Instrument"/> class.
   /// </summary>
-  /// <param name="definition">The instrument definition.</param>
+  /// <param name="instrumentDefinition">The instrument definition.</param>
   protected Instrument(
-    InstrumentDefinition definition )
+    InstrumentDefinition instrumentDefinition )
   {
-    ArgumentNullException.ThrowIfNull( definition );
-    Definition = definition;
+    ArgumentNullException.ThrowIfNull( instrumentDefinition );
+    Definition = instrumentDefinition;
   }
 
   #endregion
@@ -52,7 +55,7 @@ public abstract class Instrument: IEquatable<Instrument>
 
   #region Public Methods
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     Instrument? other )
   {
@@ -64,7 +67,7 @@ public abstract class Instrument: IEquatable<Instrument>
     return other is not null && Definition.Equals( other.Definition );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -76,7 +79,7 @@ public abstract class Instrument: IEquatable<Instrument>
     return obj is Instrument other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     return Definition.GetHashCode();

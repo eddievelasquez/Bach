@@ -1,6 +1,6 @@
 // Module Name: Tuning.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,12 +22,15 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Bach.Model.Instruments;
 
-using System.Linq;
-using Model.Internal;
-
-/// <summary>A tuning is the set of pitches for a stringed instrument when no string has been pressed.</summary>
+/// <summary>
+///   Represents the open-string pitches for a stringed instrument. The indexer uses one-based
+///   string numbers, matching instrument string numbering.
+/// </summary>
 public sealed class Tuning: IEquatable<Tuning>
 {
   #region Constructors
@@ -36,7 +39,7 @@ public sealed class Tuning: IEquatable<Tuning>
     StringedInstrumentDefinition instrumentDefinition,
     string id,
     string name,
-    PitchCollection pitches )
+    IReadOnlyList<Pitch> pitches )
   {
     ArgumentNullException.ThrowIfNull( instrumentDefinition );
     ArgumentException.ThrowIfNullOrEmpty( id );
@@ -46,7 +49,7 @@ public sealed class Tuning: IEquatable<Tuning>
     InstrumentDefinition = instrumentDefinition;
     Id = id;
     Name = name;
-    Pitches = pitches;
+    Pitches = pitches.AsReadOnlyArray();
   }
 
   #endregion
@@ -67,7 +70,7 @@ public sealed class Tuning: IEquatable<Tuning>
 
   /// <summary>Gets the tunings pitches.</summary>
   /// <value>The pitches.</value>
-  public PitchCollection Pitches { get; }
+  public IReadOnlyList<Pitch> Pitches { get; }
 
   /// <summary>Indexer to get pitches within this tuning using array index syntax.</summary>
   /// <exception cref="ArgumentOutOfRangeException">
@@ -90,7 +93,7 @@ public sealed class Tuning: IEquatable<Tuning>
 
   #region Public Methods
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public bool Equals(
     Tuning? other )
   {
@@ -110,7 +113,7 @@ public sealed class Tuning: IEquatable<Tuning>
            && Pitches.SequenceEqual( other.Pitches );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override bool Equals(
     object? obj )
   {
@@ -122,7 +125,7 @@ public sealed class Tuning: IEquatable<Tuning>
     return obj is Tuning other && Equals( other );
   }
 
-  /// <inheritdoc />
+  /// <inheritdoc/>
   public override int GetHashCode()
   {
     var hash = new HashCode();

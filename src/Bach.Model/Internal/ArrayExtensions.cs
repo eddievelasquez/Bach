@@ -1,6 +1,6 @@
-﻿// Module Name: ArrayExtensions.cs
+// Module Name: ArrayExtensions.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,81 +22,124 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal;
-
 using System.Collections.Generic;
+
+namespace Bach.Model.Internal;
 
 internal static class ArrayExtensions
 {
-  #region Public Methods
+  #region Implementation
 
-  /// <summary>Determines whether the provided list is sorted and only contains unique elements</summary>
-  /// <typeparam name="T">Type of the list elements.</typeparam>
   /// <param name="values">The values.</param>
-  /// <returns>
-  ///   <c>true</c> if the list is sorted and only contains unique elements; otherwise, <c>false</c>.
-  /// </returns>
-  public static bool IsSortedUnique<T>(
-    this IReadOnlyList<T> values )
+  /// <typeparam name="T">Type of the list elements.</typeparam>
+  extension<T>(
+    IReadOnlyList<T> values )
     where T: IComparable<T>
   {
-    for( var i = 1; i < values.Count; ++i )
+    #region Public Methods
+
+    /// <summary>Determines whether the provided list is sorted and only contains unique elements</summary>
+    /// <returns>
+    ///   <c>true</c> if the list is sorted and only contains unique elements; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsSortedUnique()
     {
-      var result = values[i - 1]
-        .CompareTo( values[i] );
-      if( result >= 0 )
+      // Check if the list is empty or has only one element, in which case it is considered sorted and unique.
+      // Start from the second element and compare it with the previous one. If any element is less than or equal to the previous one, the list is not sorted or has duplicates.
+      for( var i = 1; i < values.Count; ++i )
       {
-        return false;
+        // Compare the current element with the previous one.
+        var result = values[i - 1]
+          .CompareTo( values[i] );
+
+        // If the result is greater than or equal to zero, it means the list is not sorted or has duplicates.
+        if( result >= 0 )
+        {
+          return false;
+        }
       }
+
+      return true;
     }
 
-    return true;
+    #endregion
   }
 
-  /// <summary>  Handles underflow and overflow of the provided index given a size.</summary>
-  /// <param name="size">The size.</param>
   /// <param name="index">The index.</param>
-  /// <returns>An index that is ensured to be in the range zero to size - 1.</returns>
-  public static int WrapIndex(
-    int size,
+  extension(
     int index )
   {
-    return ( index % size + size ) % size;
+    #region Public Methods
+
+    /// <summary>  Handles underflow and overflow of the provided index given a length.</summary>
+    /// <param name="length">The length.</param>
+    /// <returns>An index that is ensured to be in the range zero to length - 1.</returns>
+    public int Wrap(
+      int length )
+    {
+      // Handle underflow and overflow of the provided index by using the modulo operator.
+      // The result of the modulo operator can be negative, so we add length to ensure a
+      // positive result, and then take modulo length again to ensure it is within the range.
+      return ( ( index % length ) + length ) % length;
+    }
+
+    #endregion
   }
 
-  /// <summary>  Handles underflow and overflow of the provided index within the given collection.</summary>
   /// <param name="collection">The collection.</param>
-  /// <param name="index">The index.</param>
-  /// <returns>An index that is ensured to be within the range of elements of the list.</returns>
-  public static int WrapIndex<T>(
-    this ICollection<T> collection,
-    int index )
+  extension<T>(
+    ICollection<T> collection )
   {
-    return WrapIndex( collection.Count, index );
+    #region Public Methods
+
+    /// <summary>  Handles underflow and overflow of the provided index within the given collection.</summary>
+    /// <param name="index">The index.</param>
+    /// <returns>An index that is ensured to be within the range of elements of the list.</returns>
+    public int WrapIndex(
+      int index )
+    {
+      return index.Wrap( collection.Count );
+    }
+
+    #endregion
   }
 
-  /// <summary>  Handles underflow and overflow of the provided index within the given collection.</summary>
   /// <param name="collection">The collection.</param>
-  /// <param name="index">The index.</param>
-  /// <returns>An index that is ensured to be within the range of elements of the list.</returns>
-  public static int WrapIndex<T>(
-    this IReadOnlyCollection<T> collection,
-    int index )
+  extension<T>(
+    IReadOnlyCollection<T> collection )
   {
-    return WrapIndex( collection.Count, index );
+    #region Public Methods
+
+    /// <summary>  Handles underflow and overflow of the provided index within the given collection.</summary>
+    /// <param name="index">The index.</param>
+    /// <returns>An index that is ensured to be within the range of elements of the list.</returns>
+    public int WrapIndex(
+      int index )
+    {
+      return index.Wrap( collection.Count );
+    }
+
+    #endregion
   }
 
-  /// <summary>  Handles underflow and overflow of the provided index within the dimension of the given array.</summary>
   /// <param name="array">An array.</param>
-  /// <param name="dimension">The array's dimension to evaluate.</param>
-  /// <param name="index">The index.</param>
-  /// <returns>An index that is ensured to be within the range of elements of the dimension of the array.</returns>
-  public static int WrapIndex(
-    this Array array,
-    int dimension,
-    int index )
+  extension(
+    Array array )
   {
-    return WrapIndex( array.GetLength( dimension ), index );
+    #region Public Methods
+
+    /// <summary>  Handles underflow and overflow of the provided index within the dimension of the given array.</summary>
+    /// <param name="dimension">The array's dimension to evaluate.</param>
+    /// <param name="index">The index.</param>
+    /// <returns>An index that is ensured to be within the range of elements of the dimension of the array.</returns>
+    public int WrapIndex(
+      int dimension,
+      int index )
+    {
+      return index.Wrap( array.GetLength( dimension ) );
+    }
+
+    #endregion
   }
 
   #endregion

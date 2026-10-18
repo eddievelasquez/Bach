@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Deterministic>true</Deterministic>
     <Version>0.7.0</Version>
     <Authors>Eddie Velasquez</Authors>
     <Product>Bach Music Library</Product>
@@ -10,28 +8,28 @@
     <PackageProjectUrl />
     <RepositoryUrl>https://github.com/eddievelasquez/bach</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>A .NET library for Western tonal music theory.</Description>
     <RepositoryType>git</RepositoryType>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Bach.Model.Library.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Bach.Model.Library.json">
+      <LogicalName>Bach.Model.Library.json</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" />
+    <None Include="README.md"
+          Pack="true"
+          PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Bach.Model.ExternalAnnotations.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Bach.Model.Test" />
   </ItemGroup>
 </Project>

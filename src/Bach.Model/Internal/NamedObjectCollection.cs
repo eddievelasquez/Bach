@@ -1,6 +1,6 @@
-﻿// Module Name: NamedObjectCollection.cs
+// Module Name: NamedObjectCollection.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -22,48 +22,85 @@
 // CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-namespace Bach.Model.Internal;
-
+using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
-/// <summary>Collection of key-name objects.</summary>
-/// <typeparam name="T">Type parameter for the keyed object.</typeparam>
+namespace Bach.Model.Internal;
+
+/// <summary>
+///   Represents a collection of named objects indexed by both their identifier and display name.
+/// </summary>
+/// <typeparam name="T">
+///   The type of named object stored in the collection. The type must implement <see cref="INamedObject"/>.
+/// </typeparam>
+/// <remarks>
+///   The collection preserves insertion order and supports lookups by either the object identifier or its name.
+/// </remarks>
 [DebuggerDisplay( "Count = {Count}" )]
-public sealed class NamedObjectCollection<T>: Collection<T>
+internal sealed class NamedObjectCollection<T>: INamedObjectCollection<T>
   where T: INamedObject
 {
   #region Fields
 
-  private readonly Dictionary<string, T> _byId;
-  private readonly Dictionary<string, T> _byName;
+  private readonly FrozenDictionary<string, T> _byKeyOrName;
+  private readonly FrozenDictionary<string, T>.AlternateLookup<ReadOnlySpan<char>> _byKeyOrNameAltLookup;
+  private readonly T[] _values;
 
   #endregion
 
   #region Constructors
 
-  /// <inheritdoc />
-  internal NamedObjectCollection()
-    : base( new List<T>() )
+  /// <summary>
+  ///   Initializes a new instance of the <see cref="NamedObjectCollection{T}"/> class with the specified items.
+  /// </summary>
+  /// <param name="items">The items to initialize the collection with.</param>
+  public NamedObjectCollection(
+    IEnumerable<T> items )
   {
-    _byId = new Dictionary<string, T>( Comparer.IdComparer );
-    _byName = new Dictionary<string, T>( Comparer.NameComparer );
+    _values = [.. items];
+
+    var dict = new Dictionary<string, T>( Comparer.NameComparer );
+
+    foreach( var namedObject in _values )
+    {
+      // Add the id, an exception will be thrown if the id already exists in the dictionary.
+      dict.Add( namedObject.Id, namedObject );
+
+      // Names are unique as well, so no other entry should exist unless the name is the same as the id.
+      ref var existingValueRef = ref CollectionsMarshal.GetValueRefOrAddDefault(
+        dict,
+        namedObject.Name,
+        out var exists
+      );
+
+      // The name doesn't exist, so we can add it to the dictionary.
+      if( !exists )
+      {
+        existingValueRef = namedObject;
+        continue;
+      }
+
+      // If the existing value is not equal to the new value, throw an exception; otherwise,
+      // the id and name are the same so there's no need to add it again.
+      if( !EqualityComparer<T>.Default.Equals( existingValueRef, namedObject ) )
+      {
+        throw new ArgumentException( $"A different object with the id or name '{namedObject.Name}' already exists." );
+      }
+    }
+
+    _byKeyOrName = dict.ToFrozenDictionary( Comparer.NameComparer );
+    _byKeyOrNameAltLookup = _byKeyOrName.GetAlternateLookup<ReadOnlySpan<char>>();
   }
 
   #endregion
 
   #region Properties
-
-  private new List<T> Items
-  {
-    get
-    {
-      Debug.Assert( base.Items is List<T> );
-      return (List<T>) base.Items;
-    }
-  }
 
   /// <summary>
   ///   Gets the value associated with the specified ID or name.
@@ -80,7 +117,9 @@ public sealed class NamedObjectCollection<T>: Collection<T>
         return item;
       }
 
-      throw new KeyNotFoundException( string.Format( $"Id or name not found: {idOrName}" ) );
+      throw new KeyNotFoundException(
+        string.Format( $"{Humanize( GetType() )} with id or name '{idOrName}' was not found." )
+      );
     }
   }
 
@@ -104,90 +143,92 @@ public sealed class NamedObjectCollection<T>: Collection<T>
   {
     ArgumentException.ThrowIfNullOrEmpty( idOrName );
 
-    if( _byId.TryGetValue( idOrName, out item ) )
-    {
-      return true;
-    }
-
-    if( _byName.TryGetValue( idOrName, out item ) )
-    {
-      return true;
-    }
-
-    item = default;
-    return false;
+    return _byKeyOrName.TryGetValue( idOrName, out item );
   }
+
+  /// <summary>
+  ///   Tries to get the value associated with the specified ID or name.
+  /// </summary>
+  /// <param name="idOrName">The ID or name of the object.</param>
+  /// <param name="item">
+  ///   When this method returns, contains the value associated with the specified ID or name, if the ID or
+  ///   name is found; otherwise, the default value for the type of the value parameter. This parameter is passed
+  ///   uninitialized.
+  /// </param>
+  /// <returns>true if the ID or name is found; otherwise, false.</returns>
+  public bool TryGetValue(
+    ReadOnlySpan<char> idOrName,
+    [MaybeNullWhen( false )] out T item )
+  {
+    if( idOrName.IsEmpty )
+    {
+      item = default;
+      return false;
+    }
+
+    return _byKeyOrNameAltLookup.TryGetValue( idOrName, out item );
+  }
+
+  /// <summary>
+  ///   Returns an enumerator that iterates through the collection.
+  /// </summary>
+  /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+  public IEnumerator<T> GetEnumerator()
+  {
+    return _values.AsEnumerable()
+                  .GetEnumerator();
+  }
+
+  #endregion
+
+  #region IEnumerable Implementation
+
+  /// <summary>
+  ///   Returns an enumerator that iterates through the collection.
+  /// </summary>
+  /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+  IEnumerator IEnumerable.GetEnumerator()
+  {
+    return GetEnumerator();
+  }
+
+  #endregion
+
+  #region IReadOnlyCollection<T> Implementation
+
+  /// <summary>
+  ///   Gets the number of items in the collection.
+  /// </summary>
+  public int Count => _values.Length;
 
   #endregion
 
   #region Implementation
 
-  /// <inheritdoc />
-  protected override void ClearItems()
+  private static string Humanize(
+    Type type )
   {
-    base.ClearItems();
-
-    _byId.Clear();
-    _byName.Clear();
-  }
-
-  /// <inheritdoc />
-  protected override void InsertItem(
-    int index,
-    T item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-
-    _byId.Add( item.Id, item );
-    _byName.Add( item.Name, item );
-
-    base.InsertItem( index, item );
-  }
-
-  /// <inheritdoc />
-  protected override void RemoveItem(
-    int index )
-  {
-    var item = Items[index];
-    _byId.Remove( item.Id );
-    _byName.Remove( item.Name );
-
-    base.RemoveItem( index );
-  }
-
-  /// <inheritdoc />
-  protected override void SetItem(
-    int index,
-    T item )
-  {
-    ArgumentNullException.ThrowIfNull( item );
-
-    var existingItem = Items[index];
-    SetItem( _byId, item.Id, existingItem.Id, item );
-    SetItem( _byName, item.Name, existingItem.Name, item );
-
-    base.SetItem( index, item );
-  }
-
-  private static void SetItem(
-    Dictionary<string, T> dictionary,
-    string newId,
-    string existingId,
-    T item )
-  {
-    Debug.Assert( dictionary != null );
-    Debug.Assert( !string.IsNullOrEmpty( newId ) );
-    Debug.Assert( !string.IsNullOrEmpty( existingId ) );
-
-    if( dictionary.Comparer.Equals( newId, existingId ) )
+    if( !type.IsGenericType )
     {
-      dictionary[newId] = item;
+      return Humanize( type.Name );
     }
-    else
-    {
-      dictionary.Add( newId, item );
-      dictionary.Remove( existingId );
-    }
+
+    var gt = type.GetGenericArguments()
+                 .First();
+
+    return Humanize( gt.Name );
+  }
+
+  private static string Humanize(
+    string idOrName )
+  {
+    // Split a pascal-case or camel-case string into words and join them with spaces
+    var words = Regex.Matches( idOrName, @"[A-Z][a-z]*|[a-z]+|\d+" )
+                     .Select( m => m.Value )
+                     .ToArray();
+
+    var result = string.Join( " ", words );
+    return result;
   }
 
   #endregion

@@ -1,6 +1,6 @@
 // Module Name: GlobalUsings.cs
 // Project:     Bach.Model
-// Copyright (c) 2012, 2023  Eddie Velasquez.
+// Copyright (c) 2012, 2026  Eddie Velasquez.
 //
 // This source is subject to the MIT License.
 // See http://opensource.org/licenses/MIT.
@@ -23,3 +23,13 @@
 // OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 global using System;
+global using Bach.Model.Analysis.Internal;
+global using Bach.Model.Harmony;
+global using Bach.Model.Instruments;
+global using Bach.Model.Intervals;
+global using Bach.Model.Internal;
+global using Bach.Model.Library;
+global using Bach.Model.Pitches;
+global using Bach.Model.Scales;
+global using Bach.Model.Serialization.Internal;
+global using Bach.Model.Structure;
